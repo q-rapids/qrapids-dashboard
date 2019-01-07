@@ -18,7 +18,7 @@ You can find guidelines to contribute to the project in the [Q-Rapids repository
 
 ## Contact 
 
-For problems regarding this component, please open an issue in the [issues section](https://github.com/q-rapids/qrapids-dashboard/issues).
+For problems regarding this component, please open an issue in the [issues section](https://github.com/q-rapids/qrapids-dashboard/issues). You can find some guidelines for submitting issues in the [Q-Rapids repository](https://github.com/q-rapids/q-rapids/blob/master/CONTRIBUTING.md)
 
 For general information, please use the [Q-Rapids project website](http://www.q-rapids.eu/contact)
 
