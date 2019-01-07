@@ -10,15 +10,15 @@ This component has been created as a result of the Q-Rapids project funded by th
 
 ## Documentation
 
-You can find the user documentation in the repository [Wiki]() and the technical documentation of the RESTful API at [....]()
+You can find the user documentation in the repository [Wiki]() and the technical documentation of the RESTful API at [....]().
 
 ## Contributing
 
-You can find guidelines to contribute to the project in the [Q-Rapids repository](https://github.com/q-rapids/q-rapids/blob/master/CONTRIBUTING.md)
+You can find guidelines to contribute to the project in the [Q-Rapids repository](https://github.com/q-rapids/q-rapids/blob/master/CONTRIBUTING.md).
 
 ## Contact 
 
-For problems regarding this component, please open an issue in the [issues section](https://github.com/q-rapids/qrapids-dashboard/issues). You can find some guidelines for submitting issues in the [Q-Rapids repository](https://github.com/q-rapids/q-rapids/blob/master/CONTRIBUTING.md)
+For problems regarding this component, please open an issue in the [issues section](https://github.com/q-rapids/qrapids-dashboard/issues). You can find some guidelines for submitting issues in the [Q-Rapids repository](https://github.com/q-rapids/q-rapids/blob/master/CONTRIBUTING.md).
 
-For general information, please use the [Q-Rapids project website](http://www.q-rapids.eu/contact)
+For general information, please use the [Q-Rapids project website](http://www.q-rapids.eu/contact).
 
