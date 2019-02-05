@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+
+    <script type="text/javascript" src="../../static/js/lib/d3.v4.min.js" th:src="@{/js/lib/d3.v4.min.js}"></script>
+</head>
+<body >
+    <div th:replace="Fragments/Template :: logo"></div>
+    <br/>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
+    <br/>
+    <div style="text-align: right; padding-right: 2em;">
+        <button type="button" class="btn btn-primary" onclick="location.href='New';">New SI</button>
+        <button id="feedbackButton" type="button" class="btn btn-default" onclick="location.href='Feedback';">Feedback</button>
+    </div>
+    <br/>
+    <br/>
+    <div id="gaugeChart" class="container" style="text-align:center;"></div>
+    <br/>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" src="../../static/js/gaugeChart.js" th:src="@{/js/gaugeChart.js}"></script>
+<script>
+    window.onload = function() {
+        getData(200, 200, true, true);
+    };
+</script>
+</html>

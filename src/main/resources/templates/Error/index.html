@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragments/Template :: header">
+</head>
+
+<body>
+
+<section id="error-control">
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-lg-12" style="display: flex; align-items: center; justify-content: center; height: 80vh; width: 100%; flex-flow: column;">
+
+
+
+            <div class="row">
+
+                <div class="col-xs-12" style="margin-top: 10px; margin-left: 10px;">
+
+                    <h2 class="title" style="color: #0177a6;">
+                        <img class="container" th:src="@{/icons/qrapids.png}"
+                             src="../../static/icons/qrapids.png" alt="qrapids logo"/>
+                        Q-Rapids: Quality-aware rapid software development
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <h3 style="color: brown">
+                URL <span  th:text="${ error }"></span>
+                Status: <span  th:text="${ code }"></span>
+                <span style="color: #000;"  th:text="${ msg }"></span>
+            </h3>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</body>
+</html>

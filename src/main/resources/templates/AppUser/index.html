@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragments/Template :: header">
+</head>
+
+<link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
+<script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
+
+
+<body>
+
+<!-- Application Logo -->
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+
+<!-- NAvegation -->
+<div th:replace="Fragments/Template :: navbar"></div>
+
+<div th:replace="Fragments/Template :: alerts"></div>
+
+<section id="admin-control">
+
+    <div class="row" style="padding:0em 3em;">
+
+        <!-- Container -->
+        <div class="col-xs-12 col-sm-12 col-lg-12 full-height container">
+
+            <ul id="menu_top" class="col-xs-12 col-sm-12 col-lg-12 nav nav-tabs">
+
+                <li role="presentation" class="active">
+                    <a href="#users_list">Users</a>
+                </li>
+
+                <li role="presentation">
+                    <a href="#create_users">Create User</a>
+                </li>
+
+            </ul>
+
+            <div class="tab-content" style="margin-top:5em;margin-right:1em;">
+
+                <div role="tabpanel" class="tab-pane fade in active " id="users_list">
+
+                    <div class="panel panel-default">
+                        <!-- Default panel contents -->
+                        <div class="panel-heading">User's List</div>
+
+                        <!-- Table -->
+                        <table class="table table-striped">
+
+                            <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Admin</th>
+                                <th>User Group</th>
+                                <th scope="1">Actions</th>
+                            </tr>
+                            </thead>
+
+                            <!-- Childs -->
+                            <tbody>
+
+                            <tr th:each="user : ${users}">
+
+                                <td th:text="${user.getId()}"></td>
+                                <td th:text="${user.getUsername()}"></td>
+                                <td th:text="${user.getEmail()}"></td>
+                                <td>
+                                    <span th:if="${user.getAdmin()}" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                    <span th:if="${ ! user.getAdmin()}" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </td>
+                                <td th:text="${user.getUserGroup()?.getName()}"></td>
+                                <td>
+                                    <a th:href="@{/users/{id}/update(id=${user.getId()})}"> Edit </a>
+                                </td>
+                                <td>
+                                    <a th:href="@{/users/{id}/delete(id=${user.getId()})}"> Delete </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <!-- Childs -->
+
+                        </table>
+                    </div>
+
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="create_users">
+
+                    <article class="text-frame" style="padding-top:1em;margin-rigth:1em;">
+
+                        <h3>Register</h3>
+
+                        <div class="divisor-black"></div>
+
+                        <br/>
+
+                        <form class="full-width" th:object="${user}" th:action="@{/users/}" method="POST">
+
+                            <div class="form-group">
+                                <label for="username">Username *</label>
+                                <input type="text" class="form-control" th:name="username" th:id="username" th:field="*{username}"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email address *</label>
+                                <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" />
+                            </div>
+
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" th:name="admin" th:id="admin" th:field="*{admin}" /> Admin
+                                </label>
+                            </div>
+
+                            <div id="group_option" class="form-group">
+                                <label for="user_group">User group</label>
+                                <select class="selectpicker" th:name="userGroup" data-width="50%">
+
+                                    <option th:each="userGroup : ${ userGroups }"
+                                            th:value="${userGroup.getId()}"
+                                            th:text="${userGroup.getName()}"></option>
+
+                                </select>
+                            </div>
+
+
+                            <button type="submit" class="btn btn-border-black">Submit</button>
+                        </form>
+
+                    </article>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+<select id="shadow_slt" hidden="hidden">
+
+    <option th:value="${defautlUserGroup.getId()}"
+            th:text="${defautlUserGroup.getName()}"></option>
+
+</select>
+
+<input id="admin_on" type="text" th:value="${admin_select}" hidden="hidden"/>
+
+<script>
+
+    var admin = $('#admin_on').val()
+    if( admin ){
+        $('#admin').prop("checked", true);
+        $("#group_option").hide();
+    }else{
+        $("#group_option").show();
+    }
+
+    $("#admin").click(function (event) {
+
+        var admin = $(this).is(":checked");
+
+        if( admin ){
+            $('.selectpicker').selectpicker('val', "" );
+            $("#group_option").hide();
+        } else {
+            var _$ = [];
+            $('#shadow_slt').children('option').each(function(el){_$.push( $(this).val().toString() );})
+            $('.selectpicker').selectpicker('val', _$ );
+            $("#group_option").show();
+        }
+
+    });
+
+    var _$ = [];
+    $('#shadow_slt').children('option').each(function(el){_$.push( $(this).val().toString() );})
+    $('.selectpicker').selectpicker('val', _$ );
+
+
+    $('#menu_top li a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+
+</script>
+
+</body>
+</html>

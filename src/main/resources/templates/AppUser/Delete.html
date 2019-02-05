@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragments/Template :: header">
+</head>
+
+<body>
+
+<!-- Application Logo -->
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+
+<!-- NAvegation -->
+<div th:replace="Fragments/Template :: navbar"></div>
+
+<section class="container main">
+    <div class="row justify-content-sm-center justify-content-md-center ">
+        <div class="col-sm-10 col-md-8 col-lg-6 col-lg-offset-3" style="margin-top:5em;">
+
+            <div class="card" >
+
+                <div class="card-body">
+                    <h4 class="card-title">Delete</h4>
+
+                    <form th:action="@{/users/delete}" method="POST">
+
+                        <input type="hidden" th:name="id" th:value="${id}" hidden="hidden"/>
+
+                        <div class="form-group">
+                            <label for="name">Write confirmation name:</label>
+                            <p th:text="${name}" class="text-danger"></p>
+                            <input type="text"
+                                   class="form-control"
+                                   aria-describedby="name"
+                                   placeholder="Write the confirmation"
+                                   th:name="name"/>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger"> Delete </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

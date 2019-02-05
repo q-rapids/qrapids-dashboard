@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+</head>
+<body ng-app="TablesApp" ng-controller="TablesCtrl">
+    <div th:replace="Fragments/Template :: logo"></div>
+    <br/>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
+    <br/>
+    <div class="container" id="tableCurrent" ng-init="getStratInd('../DetailedStrategicIndicators/CurrentTable')">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Strategic Indicator</th>
+                <th>Description</th>
+                <th>Current Value</th>
+                <th>Categories</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="d in data">
+                <td id="name" ng-click="getURL(d.id, d.name, null, '../DetailedStrategicIndicators/CurrentTable', false)">{{d.name}}</td>
+                <td id="description">{{d.description}}</td>
+                <td id="value" ng-class="{'color-red': (d.lowerThreshold > d.value.first), 'color-green': (d.value.first > d.upperThreshold)}">{{d.value_description}}</td>
+                <td id="categories">{{d.categories_description}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <br/>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+</html>

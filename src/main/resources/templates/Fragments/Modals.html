@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+    <th:block th:fragment="projectModal">
+        <div class="modal fade" id="projectsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Select Project</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="list-group" id="projectsModalItems"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="QRListModal">
+        <div class="modal fade" id="QRListModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select from QR candidates</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="list-group" id="QRCandidates"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="showQRButton" type="button" class="btn btn-primary">Show QR</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="QRModal">
+        <div class="modal fade" id="QRModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Quality Requirement</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h4 id="QRType">Quality Requirement Candidate</h4>
+                        <div class="input-group" style="margin-top: 15px">
+                            <span class="input-group-addon input-group-addon-qr">Goal</span>
+                            <label for="QRGoal"></label><input id="QRGoal" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr">Requirement</span>
+                            <label for="QRRequirement"></label><textarea id="QRRequirement" type="text" class="form-control" style="resize: vertical"></textarea>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr">Description</span>
+                            <label for="QRDescription"></label><textarea id="QRDescription" type="text" class="form-control" style="resize: vertical"></textarea>
+                        </div>
+                        <div id="QRBacklogUrlDiv" style="display: none">
+                            <br/>
+                            <span>Backlog URL: </span>
+                            <a id="QRBacklogUrl"></a>
+                        </div>
+                        <hr/>
+                        <h4>Decision</h4>
+                        <div class="input-group" style="margin-top: 15px">
+                            <span>Action: </span>
+                            <div class="dropdown" style="display: inline-grid;">
+                                <button id="decisionTypeButton" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><text id="decisionType">Select</text> <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li id="addQR"><a href="#">Add QR</a></li>
+                                    <li id="ignoreQR"><a href="#">Ignore QR</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr">Rationale</span>
+                            <label for="QRDecisionRationale"></label><textarea id="QRDecisionRationale" type="text" class="form-control" style="resize: vertical"></textarea>
+                        </div>
+
+                    </div>
+                    <div id="cancelSaveFooter" class="modal-footer" style="display: block">
+                        <button id="cancelQRButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                        <button id="saveButton" type="button" class="btn btn-primary">Save</button>
+                    </div>
+                    <div id="closeFooter" class="modal-footer" style="display: none">
+                        <button id="closeQRButton" type="button" class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="messageModal">
+        <div class="modal fade" id="messageModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 id="messageModalTitle" class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <span id="messageModalContent"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="acceptButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Accept</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

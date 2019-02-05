@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <th:block th:fragment="HistoricChartView">
+        <th:block th:fragment="ChartView">
+            <th:block th:fragment="basicHeader">
+                <meta charset="UTF-8" />
+                <title>Q-Rapids</title>
+
+                <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+                <link rel="stylesheet" th:href="@{/css/stylesDashboard.css}" />
+
+                <link rel='shortcut icon' type='image/x-icon' th:href="@{/favicon.ico}"/>
+
+                <script type="text/javascript" th:src="@{/js/lib/angular.min.js}"></script>
+                <script type="text/javascript" th:src="@{/js/app/app.services.js}"></script>
+                <!--script type="text/javascript" th:src="@{/js/lib/popper.min.js}"></script-->
+
+                <script type="text/javascript" th:src="@{/js/lib/jquery.min.js}"></script>
+
+                <!-- Latest compiled and minified JavaScript -->
+                <script th:src="@{/js/bootstrap.min.js}"></script>
+
+                <script type="text/javascript" th:src="@{/js/lib/sockjs.min.js}"></script>
+                <script type="text/javascript" th:src="@{/js/lib/stomp.min.js}"></script>
+                <link rel="stylesheet" th:href="@{/css/animate.css}" />
+                <script type="text/javascript" th:src="@{/js/lib/bootstrap-notify.min.js}"></script>
+                <script type="text/javascript" th:src="@{/js/notificationsHandler.js}"></script>
+            </th:block>
+
+            <script type="text/javascript" th:src="@{/js/lib/moment.js}"></script>
+            <script type="text/javascript" th:src="@{/js/lib/Chart.min.js}"></script>
+        </th:block>
+
+        <th:block th:fragment="HistoricView">
+            <script type="text/javascript" th:src="@{/js/lib/gijgo.min.js}"></script>
+            <link rel="stylesheet" th:href="@{/css/gijgo.min.css}" />
+            <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}" />
+        </th:block>
+    </th:block>
+</head>
+<body>
+    <div class="topnav" id="myTopnav" th:fragment="navBarDashboard">
+        <a id="Assessment">Assessment</a>
+        <a id="Prediction">Prediction</a>
+        <a id="Simulation">Simulation</a>
+        <a id="QualityAlerts">Alerts</a>
+    </div>
+    <div class="subnav" id="submenuAssessment" th:fragment="navSubBarAssessmentDashboard">
+        <a id="StrategicIndicatorsAssessment">Strategic Indicators</a>
+        <a id="DetailedStrategicIndicatorsAssessment">Detailed Strategic Indicators</a>
+        <a id="QualityFactorsAssessment">Factors</a>
+        <a id="MetricsAssessment">Metrics</a>
+        <a id="RawDataAssessment" th:unless="${@environment.getProperty('rawdata.dashboard') == null}"
+           th:href="@{${@environment.getProperty('rawdata.dashboard')}}" target="_tab">Raw Data</a>
+        <span class="pull-right">
+            <div class="panel-body" style="color: #3F403F">
+                View mode:
+                <div class="btn-group">
+                    <button id="Chart" type="button" onclick="menuNav(time + 'Chart')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment graphically">
+                        <img class="icons" th:src="@{/icons/graphical.png}"
+                             src="../../static/icons/graphical.png" alt="graphical data"/>
+                    </button>
+                    <button id="Table" type="button" onclick="menuNav(time + 'Table')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment textually">
+                        <img class="icons" th:src="@{/icons/table.png}"
+                             src="../../static/icons/table.png" alt="table data"/>
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <button id="Current" type="button" onclick="menuNav('Current' + viewMode)" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View current assessment">
+                        <img class="icons" th:src="@{/icons/current.png}"
+                             src="../../static/icons/current.png" alt="current data"/>
+                    </button>
+                    <button id="Historic" type="button" onclick="menuNav('Historic' + viewMode)" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View historical assessments">
+                        <img class="icons" th:src="@{/icons/histo.png}"
+                             src="../../static/icons/histo.png" alt="historical data"/>
+                    </button>
+                </div>
+            </div>
+        </span>
+    </div>
+    <div class="subnav" id="submenuPrediction" th:fragment="navSubBarPredictionDashboard">
+        <a id="StrategicIndicatorsPrediction">Strategic Indicators</a>
+        <a id="DetailedStrategicIndicatorsPrediction">Detailed Strategic Indicators</a>
+        <a id="QualityFactorsPrediction">Factors</a>
+        <a id="MetricsPrediction">Metrics</a>
+    </div>
+    <p th:fragment="navLinkMetrics" style="margin-left: 20px; font-size: medium; font-family: Arial ">
+        <a id="originSI" onclick="navBack(true)"></a>
+        <span id = "arrow"></span>
+        <a id="origin" onclick="navBack(false)"></a></p>
+    <p th:fragment="navLinkQF" style="margin-left: 20px; font-size: medium; font-family: Arial "><a id="originSIQF" onclick="menuNav('../DetailedStrategicIndicators/' + time + viewMode)"></a></p>
+    <th:block th:fragment="HistoricChart">
+        <br/>
+        <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
+            <form class="form-inline well" style="float: right">
+                <div class="form-group" id="fromDiv">
+                    <label class="control-label">From: </label>
+                    <input id="datepickerFrom" width="250" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label"> To: </label>
+                    <input id="datepickerTo" width="250" class="form-control"/>
+                </div>
+                <button type="button" onclick="$('#chartContainer').empty();getData();" class="btn btn-default">Apply</button>
+                <div class="form-group dropdown">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
+                    <ul id="intervalsDropdown" class="dropdown-menu dropdown-menu-right"></ul>
+                </div>
+            </form>
+        </div>
+        <br/>
+        <div class="container" style="text-align:center;" id="chartContainer"></div>
+        <br/>
+    </th:block>
+</body>
+<th:block th:fragment="scriptsHistoric">
+    <script type="text/javascript" th:src="@{/js/scriptDatePicker.js}"></script>
+    <th:block th:fragment="scriptsBasic">
+        <script type="text/javascript" th:src="@{/js/navScript.js}"></script>
+    </th:block>
+</th:block>
+</html>

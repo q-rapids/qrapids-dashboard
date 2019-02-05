@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+</head>
+<body ng-app="TablesApp" ng-controller="TablesCtrl">
+    <div th:replace="Fragments/Template :: logo"></div>
+    <br/>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
+    <br/>
+    <h1 id="title" align="center"></h1>
+    <p style="margin-left: 20px; font-size: medium; font-family: Arial "><a id="originSIQF" href="../StrategicIndicators/CurrentTable"></a></p>
+    <br/>
+    <div class="container" id="tableCurrent" ng-init="getKPIFactor()">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Strategic Indicator</th>
+                <th>Factor</th>
+                <th>Description</th>
+                <th>Current Value</th>
+                <th>Rationale</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat-start="d in data"></tr>
+                <tr ng-repeat="factor in d.factors">
+                    <td ng-click="getURL(d.id, d.name, null, '../QualityFactor/CurrentTable', false)">{{d.name}}</td>
+                    <td>{{factor.name}}</td>
+                    <td>{{factor.description}}</td>
+                    <td>{{factor.value_description}}</td>
+                    <td>{{factor.rationale}}</td>
+                </tr>
+            <tr ng-repeat-end="d in data"></tr>
+            </tbody>
+        </table>
+    </div>
+    <br/>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+</html>

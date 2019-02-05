@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <script type="text/javascript" th:src="@{/js/app/newSI.services.js}"></script>
+</head>
+<body ng-app="NewSIApp" ng-controller="NewSICtrl">
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<br/>
+<div>
+    <h1 align="center">New Categories</h1>
+    <br/>
+    <br/>
+    <div style="padding-left: 20%; padding-right: 20%; text-align: left;">
+        <h3>Strategic Indicator Categories</h3>
+        <div id="tableSI" class="table-editable">
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Color</th>
+                    <th></th>
+                    <th>
+                        <span class="table-addSI glyphicon glyphicon-plus"></span>
+                    </th>
+                </tr>
+                <tr>
+                    <td contenteditable="true">Good</td>
+                    <td><input type="color"  value="#00ff00" /></td>
+                    <td>
+                        <span class="table-up glyphicon glyphicon-arrow-up"></span>
+                        <span class="table-down glyphicon glyphicon-arrow-down"></span>
+                    </td>
+                    <td>
+                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">Neutral</td>
+                    <td><input type="color"  value="#ff8000" /></td>
+                    <td>
+                        <span class="table-up glyphicon glyphicon-arrow-up"></span>
+                        <span class="table-down glyphicon glyphicon-arrow-down"></span>
+                    </td>
+                    <td>
+                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">Bad</td>
+                    <td><input type="color"  value="#ff0000" /></td>
+                    <td>
+                        <span class="table-up glyphicon glyphicon-arrow-up"></span>
+                        <span class="table-down glyphicon glyphicon-arrow-down"></span>
+                    </td>
+                    <td>
+                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                    </td>
+                </tr>
+                <!-- This is our clonable table line -->
+                <tr class="hide">
+                    <td contenteditable="true">Good</td>
+                    <td><input type="color"  value="#00ff00" /></td>
+                    <td>
+                        <span class="table-up glyphicon glyphicon-arrow-up"></span>
+                        <span class="table-down glyphicon glyphicon-arrow-down"></span>
+                    </td>
+                    <td>
+                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+        </div>
+        <h3>Quality Factors Categories</h3>
+        <div id="tableQF">
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Color</th>
+                    <th></th>
+                    <th>Upper Threshold (%)</th>
+                    <th>
+                        <span class="table-addQF glyphicon glyphicon-plus"></span>
+                    </th>
+                </tr>
+                <tr>
+                    <td contenteditable="true">Good</td>
+                    <td><input type="color"  value="#00ff00" /></td>
+                    <td>
+                        <span class="table-up glyphicon glyphicon-arrow-up"></span>
+                        <span class="table-down glyphicon glyphicon-arrow-down"></span>
+                    </td>
+                    <td><input type="number" name="upperThres" min="1" max="100" /></td>
+                    <td>
+                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">Neutral</td>
+                    <td><input type="color"  value="#ff8000" /></td>
+                    <td>
+                        <span class="table-up glyphicon glyphicon-arrow-up"></span>
+                        <span class="table-down glyphicon glyphicon-arrow-down"></span>
+                    </td>
+                    <td><input type="number" name="upperThres" min="1" max="100" /></td>
+                    <td>
+                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">Bad</td>
+                    <td><input type="color"  value="#ff0000" /></td>
+                    <td>
+                        <span class="table-up glyphicon glyphicon-arrow-up"></span>
+                        <span class="table-down glyphicon glyphicon-arrow-down"></span>
+                    </td>
+                    <td><input type="number" name="upperThres" min="1" max="100" /></td>
+                    <td>
+                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                    </td>
+                </tr>
+                <!-- This is our clonable table line -->
+                <tr class="hide">
+                    <td contenteditable="true">Good</td>
+                    <td><input type="color"  value="#00ff00" /></td>
+                    <td>
+                        <span class="table-up glyphicon glyphicon-arrow-up"></span>
+                        <span class="table-down glyphicon glyphicon-arrow-down"></span>
+                    </td>
+                    <td><input class="hide" type="number" name="upperThres" min="1" max="100" value="0"/></td>
+                    <td>
+                        <span class="table-remove glyphicon glyphicon-remove"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <button class="btn btn-primary" id="accept">Save</button>
+        <br/>
+        <br/>
+        <br/>
+        <script type="text/javascript" th:src="@{/js/categoriesScripts.js}"></script>
+    </div>
+</div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+</html>

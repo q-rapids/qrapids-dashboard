@@ -1,16 +1,24 @@
 # Q-Rapids Strategic Dashboard ![](https://img.shields.io/badge/License-Apache2.0-blue.svg)
-
 A dashboard for visualizing the quality of the company's products. This strategic dashboard is complemented with some specific features to support decision-makers managing **quality requirements**.
 
 This component has been created as a result of the Q-Rapids project funded by the European Union Horizon 2020 Research and Innovation programme under grant agreement No 732253.
 
 ## Main Functionality
+The main functionalities of the current version of Q-Rapids Dashboard are: providing several ways to visualize and explore the available data, generate predictions of the existing assessments, perform simulations on how the strategic indicators will evolve based on the value of the factors and generate quality requirements to correct deviations on the assessments.
 
 ## Technologies
+|Property|Description|
+| -------------------- | --------------------------------|
+| Type of component    | Web Application                 |
+| Build                | .war                            |
+| Programming language | Java                            |
+| DBMS                 | PostreSQL                       |
+| Frameworks           | Spring Boot, AngularJS, Gradle  |
+| External libraries   | Chart.js, ElasticSearch java API|
 
 ## Documentation
 
-You can find the user documentation in the repository [Wiki]() and the technical documentation of the RESTful API at [....]().
+You can find the user documentation in the repository [Wiki](https://github.com/q-rapids/qrapids-dashboard/wiki) and the technical documentation of the RESTful API [here](https://q-rapids.github.io/qrapids-dashboard).
 
 ## Contributing
 
@@ -23,8 +31,7 @@ Software licensed under the Apache License, Version 2.0 (the "License"); you may
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
-
-## Contact 
+## Contact
 
 For problems regarding this component, please open an issue in the [issues section](https://github.com/q-rapids/qrapids-dashboard/issues). You can find some guidelines for submitting issues in the [Q-Rapids repository](https://github.com/q-rapids/q-rapids/blob/master/CONTRIBUTING.md).
 

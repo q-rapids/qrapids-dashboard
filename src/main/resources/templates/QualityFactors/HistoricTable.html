@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <th:block th:replace="Fragments/TemplateDashboard :: HistoricView"></th:block>
+</head>
+<body ng-app="TablesApp" ng-controller="TablesCtrl">
+    <div th:replace="Fragments/Template :: logo"></div>
+    <br/>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
+    <br/>
+    <h1 id="title" align="center"></h1>
+    <p th:replace="Fragments/TemplateDashboard :: navLinkQF"></p>
+    <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
+        <form class="form-inline well" style="float: right">
+            <div class="form-group">
+                <label class="control-label">From: </label>
+                <input id="datepickerFrom" width="250" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label"> To: </label>
+                <input id="datepickerTo" width="250" class="form-control"/>
+            </div>
+            <button type="button" class="btn btn-default" ng-click="getFactorQualityHistoric()" ng-init="getFactorQualityHistoric()">Apply</button>
+            <div class="form-group dropdown">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a onclick="thisWeek()" ng-click="getFactorQualityHistoric()" href="#">This week</a></li>
+                    <li><a onclick="last7Days()" ng-click="getFactorQualityHistoric()" href="#">Last 7 days</a></li>
+                    <li><a onclick="last14Days()" ng-click="getFactorQualityHistoric()" href="#">Last 14 days</a></li>
+                    <li><a onclick="thisMonth()" ng-click="getFactorQualityHistoric()" href="#">This month</a></li>
+                    <li><a onclick="thisYear()" ng-click="getFactorQualityHistoric()" href="#">This year</a></li>
+                </ul>
+            </div>
+        </form>
+    </div>
+    <br/>
+    <div class="container" id="tableCurrent">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Factor</th>
+                <th>Metric</th>
+                <th>Description</th>
+                <th>Value</th>
+                <th>Rationale</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat-start="d in data"></tr>
+            <tr ng-repeat="metric in d.metrics">
+                <td>{{metric.date.year}}-{{metric.date.monthValue}}-{{metric.date.dayOfMonth}}</td>
+                <td ng-click="getURL(d.id, d.name, fact, '../Metrics/HistoricTable', true)">{{d.name}}</td>
+                <td>{{metric.name}}</td>
+                <td>{{metric.description}}</td>
+                <td>{{metric.value_description}}</td>
+                <td>{{metric.rationale}}</td>
+            </tr>
+            <tr ng-repeat-end="d in data"></tr>
+            </tbody>
+        </table>
+    </div>
+    <br/>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsHistoric"></th:block>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragments/Template :: header"></head>
+<link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
+<script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
+
+<body>
+
+<!-- Application Logo -->
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+
+<div th:replace="Fragments/Template :: alerts"></div>
+
+<div class="row" style="padding:0em 3em;">
+    <!-- Container -->
+    <div class="col-xs-12 col-sm-12 col-lg-12 full-height">
+
+        <article class="text-frame" style="padding-top:1em;margin-rigth:1em;">
+
+            <h3>Create User</h3>
+
+            <div class="divisor-black"></div>
+
+            <br/>
+
+            <div th:replace="Fragments/RegisterForm :: form(all=true,username_mod=true)"></div>
+
+        </article>
+
+
+    </div>
+</div>
+
+
+<script>
+
+
+    $("#form_password_text").hide();
+    // Handlers
+    $('.nav,ul li a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+
+    function formValidation ( event ) {
+
+        var pass = $('#password').val(),
+            confirmation = $('#password_confirmation').val();
+
+        if (! ( pass === confirmation ) ) {
+
+            $("#form_password").addClass("has-error");
+            $("#form_password_text").show();
+            $("#form_confirmation").addClass("has-error");
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+</script>
+
+</body>
+
+
+</html>

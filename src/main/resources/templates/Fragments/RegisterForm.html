@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+
+<body>
+
+<form id="form" onsubmit="return formValidation()" class="full-width" th:object="${appuser}" th:action="@{/signup}" method="POST" th:fragment="form">
+
+    <div class="form-group" th:if="${!username_mod}">
+        <label for="username">Username</label>
+        <input type="text" class="form-control" th:name="username" th:id="username" th:field="*{username}" disabled="disabled"/>
+    </div>
+
+    <div class="form-group" th:if="${username_mod}">
+        <label for="username">Username *</label>
+        <input type="text" class="form-control" th:name="username" th:id="username" th:field="*{username}" />
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email address *</label>
+        <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" required="required"/>
+    </div>
+
+    <div class="form-group" th:if="${ all }">
+        <label for="appuser_question">Security Question *</label>
+        <select class="selectpicker" th:name="appuser_question" data-width="50%">
+
+            <option th:each="question : ${ questions }"
+                    th:value="${question.getId()}"
+                    th:text="${question.getQuestion()}"></option>
+
+        </select>
+    </div>
+
+    <div class="form-group" th:if="${ all }">
+        <label for="answer">Answer *</label>
+        <input type="text" class="form-control" th:name="question" th:id="question" th:field="*{question}" required="required"/>
+    </div>
+
+    <div id="form_password" class="form-group" th:if="${ all }">
+        <label for="password">Password *</label>
+        <input type="password" class="form-control" th:name="password" th:id="password" th:field="*{password}" required="required"/>
+        <span id="form_password_text" class="help-block">The password and password confirmation, does not be the same.</span>
+    </div>
+
+    <div id="form_confirmation" class="form-group" th:if="${ all }">
+        <label for="password_confirmation">Password confirmation *</label>
+        <input id="password_confirmation" type="password" class="form-control" required="required"/>
+    </div>
+
+    <button type="submit" class="btn btn-border-black">Submit</button>
+
+</form>
+
+</body>
+</html>

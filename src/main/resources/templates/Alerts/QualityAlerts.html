@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+</head>
+
+<body ng-app="TablesApp" ng-controller="TablesCtrl">
+    <div th:replace="Fragments/Template :: logo"></div>
+    <br/>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <br/>
+    <!--div style="text-align: right; padding-right: 2em;">
+        <button type="button" class="btn btn-primary" ng-click="newAlert()">New Alert</button>
+    </div-->
+    <div class="container" id="tableCurrent" ng-init="getAlerts()">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Element id</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Threshold</th>
+                <th>Type</th>
+                <th>Value</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="d in data">
+                <td id="element_id" ng-class="{'color-red': (d.status == 'NEW')}">{{d.id_element}}</td>
+                <td id="name" ng-class="{'color-red': (d.status == 'NEW')}">{{d.name}}</td>
+                <td id="category" ng-class="{'color-red': (d.status == 'NEW')}">{{d.category}}</td>
+                <td id="date" ng-class="{'color-red': (d.status == 'NEW')}">{{d.date}}</td>
+                <td id="threshold" ng-class="{'color-red': (d.status == 'NEW')}">{{d.threshold}}</td>
+                <td id="type" ng-class="{'color-red': (d.status == 'NEW')}">{{d.type}}</td>
+                <td id="value" ng-class="{'color-red': (d.status == 'NEW')}">{{d.value}}</td>
+                <td id="status" ng-class="{'color-red': (d.status == 'NEW')}">{{d.status}}</td>
+                <td>
+                    <button ng-if="d.status == 'RESOLVED'" type="button" class="btn btn-default" ng-click="getDecision(d.id)"> Decision </button>
+                    <button ng-if="d.reqAssociat &amp;&amp; d.status != 'RESOLVED'" type="button" class="btn btn-default" ng-click="getQR(d.id)"> QR </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="Fragments/Modals :: QRListModal"></div>
+    <div th:replace="Fragments/Modals :: QRModal"></div>
+    <div th:replace="Fragments/Modals :: messageModal"></div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+
+<!-- <script type="text/javascript" src="../../static/js/feedback.js" th:src="@{/js/feedback.js}"></script> -->
+
+</html>
+
+<!-- ng-click="getURL(d.id, d.name, null, '../DetailedStrategicIndicators/CurrentTable', false)"> -->

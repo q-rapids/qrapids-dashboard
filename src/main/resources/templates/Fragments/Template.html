@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="header">
+
+    <meta charset="UTF-8" />
+    <title>Q-Rapids</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/auth/auth.css}" />
+
+    <link rel='shortcut icon' type='image/x-icon' th:href="@{/favicon.ico}"/>
+
+    <script type="text/javascript" th:src="@{/js/lib/moment.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/Chart.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/angular.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/app/app.services.js}"></script>
+
+    <script type="text/javascript" th:src="@{/js/lib/jquery.min.js}"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+
+    <script type="text/javascript" th:src="@{/js/lib/sockjs.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/stomp.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/animate.css}" />
+    <script type="text/javascript" th:src="@{/js/lib/bootstrap-notify.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/notificationsHandler.js}"></script>
+
+</head>
+
+<body ng-app="app" ng-controller="DataController as vm">
+
+<div th:fragment="logo">
+    <div class="row">
+        <div class="col-xs-10" style="margin-top: 10px;">
+            <h2 class="title" style="margin-left: 10px;color: #0177a6;" >
+                <img class="container" th:src="@{/icons/qrapids.png}" src="../../static/icons/qrapids.png" alt="qrapids logo"/>
+                Q-Rapids: Quality-aware rapid software development
+            </h2>
+        </div>
+        <div class="col-xs-2" style="margin-top: 10px;">
+            <a id="AlertsBanner">
+                <span id="alertsPending" style="background-color: yellow"></span>
+                <br/>
+                <span id="qrAlertsPending" style="background-color: yellow"></span>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-2" style="margin-top: 1em; margin-left: 1em">
+            <h4 style="display: inline">Project: </h4>
+            <div class="dropdown" style="display: inline-grid">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <span id = "projectsDropdownText" class="text">Projects</span>
+                    <span class="caret"></span>
+                </button>
+                <ul id="projectsDropdownItems" class="dropdown-menu dropdown-menu-left">
+                </ul>
+            </div>
+        </div>
+        <div th:if="${@environment.getProperty('security.enable')}"
+                class="col-xs-1 pull-right" style="margin-top: 1.5em; text-decoration: none">
+            <span>
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                <a th:href="@{/profile}">My profile</a>
+            </span>
+        </div>
+    </div>
+    <div th:replace="Fragments/Modals :: projectModal"></div>
+    <script type="text/javascript" th:src="@{/js/projectsSelector.js}"></script>
+</div>
+
+<br/>
+
+<nav class="topnav navbar" id="myTopnav" th:fragment="navbar" style="margin-bottom: 0px;">
+
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav" style="color: white">
+                <li>
+                    <a th:href="@{/StrategicIndicators/CurrentChart}"  ng-init="vm.getKPIFactor()">Strategic Indicators</a>
+                </li>
+
+                <li th:if="${ appuser?.hasRoute('/profile') }">
+                    <a th:href="@{/profile}">User Profile</a>
+                </li>
+
+                <li th:if="${ appuser?.hasRoute('/users') }">
+                    <a th:href="@{/users}">User's Administration</a>
+                </li>
+
+                <li th:if="${ appuser?.hasRoute('/usergroups') }">
+                    <a th:href="@{/usergroups}">User Group</a>
+                </li>
+
+
+                <li>
+                    <a th:href="@{/logout_user}">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                        Logout
+                    </a>
+                </li>
+
+                <!--
+                <li>
+                    <a th:href="@{/DetailedStrategicIndicators/CurrentChart}">Detailed Strategic Indicators</a>
+                </li>
+                <li>
+                    <a th:href="@{/QualityFactor/CurrentChart}">Quality Factors</a>
+                </li>
+                <li>
+                    <a th:href="@{/Metrics/CurrentChart}">Metrics</a>
+                </li>
+                -->
+
+                <!--
+                <li class="dropdown">
+
+                    <a class="dropdown-toggle"
+                       data-toggle="dropdown"
+                       role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false">More <span class="caret"></span></a>
+
+                    <ul class="dropdown-menu">
+
+
+                        <li th:if="${ appuser?.hasRoute('/users') }">
+                            <a th:href="@{/users}">User's Administration</a>
+                        </li>
+                        <li th:if="${ appuser?.hasRoute('/profile') }">
+                            <a th:href="@{/profile}">User Profile</a>
+                        </li>
+                        <li th:if="${ appuser?.hasRoute('/usergroups') }">
+                            <a th:href="@{/usergroups}">User Group</a>
+                        </li>
+
+
+                        <li>
+                            <a th:href="@{/logout_user}">
+                                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                                Logout
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+                -->
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right" th:if="${ tools }">
+
+                <li class="panel-body" style="color: white;">
+                    View mode:
+                    <div class="btn-group">
+                        <button type="button" onclick="location.href='CurrentChart'" class="btn btn-primary" style="background-color: #ffc380">
+                            <img class="icons" th:src="@{/icons/graphical.png}"
+                                 src="../../static/icons/graphical.png" alt="graphical data"/>
+                        </button>
+                        <button type="button" onclick="location.href='CurrentTable'" class="btn btn-primary" style="background-color: #ffffff">
+                            <img class="icons" th:src="@{/icons/table.png}"
+                                 src="../../static/icons/table.png" alt="table data"/>
+                        </button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" onclick="location.href='CurrentChart'" class="btn btn-primary" style="background-color: #ffc380">
+                            <img class="icons" th:src="@{/icons/radarlogo.png}"
+                                 src="../../static/icons/radarlogo.png" alt="current data"/>
+                        </button>
+                        <button type="button" onclick="location.href='HistoricChart'" class="btn btn-primary" style="background-color: #ffffff">
+                            <img class="icons" th:src="@{/icons/histo.png}"
+                                 src="../../static/icons/histo.png" alt="historical data"/>
+                        </button>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+</nav>
+
+<br/>
+
+<div th:fragment="alerts">
+    <div id="msg_success"
+         class="alert alert-success"
+         role="alert"
+         th:text="${#httpServletRequest.getParameter('success')}"
+         th:if="${(param.success != null)}"
+         onclick="document.getElementById('msg_success').style.display = 'none'" style="cursor: pointer;margin-bottom: 0px;">
+    </div>
+
+    <div id="msg_error"
+         class="alert alert-danger"
+         role="alert"
+         th:text="${#httpServletRequest.getParameter('error')}"
+         th:if="${(param.error != null)}"
+         onclick="document.getElementById('msg_error').style.display = 'none'" style="cursor: pointer;margin-bottom: 0px;">
+    </div>
+</div>
+
+</body>
+</html>

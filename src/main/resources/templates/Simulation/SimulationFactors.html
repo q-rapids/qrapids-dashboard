@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <script type="text/javascript" src="../../static/js/lib/d3.v4.min.js" th:src="@{/js/lib/d3.v4.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-slider.min.css}" />
+    <script type="text/javascript" th:src="@{/js/bootstrap-slider.min.js}"></script>
+</head>
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div style="width:100%; overflow: hidden; padding-left: 10%; padding-right: 10%;">
+    <br/>
+    <h1 align="center">Strategic Indicator Simulation</h1>
+    <br/>
+    <div id="factors" style=" width: 40%; float: left">
+        <h3>Factors</h3>
+        <br/>
+        <div id="qualityFactors">
+        </div>
+        <div style="margin-top: 3em;">
+            <button id="apply" class="btn btn-primary">Apply</button>
+            <button id="restore" class="btn btn-primary">Restore</button>
+        </div>
+    </div>
+    <div style="width: 60%; float: right; overflow: hidden; text-align: center">
+        <div id="gaugeChart" style="padding-left: 1em; width: 50%; float: left; ">
+            <h3>Current Assessment</h3>
+        </div>
+        <div id="simulationResult" style="padding-left: 1em; width: 50%; float: right; text-align: center ">
+        </div>
+    </div>
+</div>
+<br/>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" src="../../static/js/gaugeChart.js" th:src="@{/js/gaugeChart.js}"></script>
+<script type="text/javascript" src="../../static/js/simulation.js" th:src="@{/js/simulation.js}"></script>
+</html>

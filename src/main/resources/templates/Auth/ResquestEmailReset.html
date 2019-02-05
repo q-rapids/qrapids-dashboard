@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragments/Template :: header"></head>
+<link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
+<script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
+
+<body>
+
+<!-- Application Logo -->
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+
+<div th:replace="Fragments/Template :: alerts"></div>
+
+<div class="row" style="padding:0em 3em;">
+    <!-- Container -->
+    <div class="col-xs-12 col-sm-12 col-lg-12 full-height">
+
+        <article class="text-frame" style="padding-top:1em;margin-rigth:1em;">
+
+            <h3>Reset user password, write your current User email</h3>
+
+            <div class="divisor-black"></div>
+
+            <br/>
+
+
+            <form id="form" class="full-width" th:action="@{/reset-password}" method="POST" th:fragment="form">
+
+                <div class="form-group">
+                    <label for="email">Email address *</label>
+                    <input type="email" class="form-control" th:name="email" th:id="email" required="required"/>
+                </div>
+
+                <button type="submit" class="btn btn-border-black">Submit</button>
+
+            </form>
+
+        </article>
+
+
+    </div>
+</div>
+
+
+<script>
+
+    // Handlers
+    $('.nav,ul li a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+
+</script>
+
+</body>
+
+
+</html>
