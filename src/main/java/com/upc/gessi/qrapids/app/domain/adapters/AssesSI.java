@@ -14,11 +14,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.*;
 
 @Component
@@ -64,7 +62,7 @@ public class AssesSI {
             if (statusCode == HttpStatus.OK) {
                 Gson gson = new Gson();
                 DTOAssessmentSI assessmentSI = gson.fromJson(responseEntity.getBody(), DTOAssessmentSI.class);
-                dtoSiAssesment = DTOAssessmentSItoDTOSIAssesment(assessmentSI.getProbsCategories());
+                dtoSiAssesment = DTOAssessmentSItoDTOSIAssesment(assessmentSI.getProbsSICategories());
             }
             else {
                 dtoSiAssesment = new ArrayList<>();
@@ -103,8 +101,8 @@ public class AssesSI {
         if (catsEstimation.size() == QFCats.size()) {
             int i = 0;
             for (SICategory qfc : QFCats) {
-                if (qfc.getName().equals(catsEstimation.get(catsEstimation.size() - 1 - i).getIdcategorySI())) {
-                    result.add(new DTOSIAssesment(qfc.getId(), qfc.getName(), catsEstimation.get(catsEstimation.size() - 1 - i).getProbCategorySI(), qfc.getColor(), null));
+                if (qfc.getName().equals(catsEstimation.get(catsEstimation.size() - 1 - i).getIdSICategory())) {
+                    result.add(new DTOSIAssesment(qfc.getId(), qfc.getName(), catsEstimation.get(catsEstimation.size() - 1 - i).getProbSICategory(), qfc.getColor(), null));
                 }
                 ++i;
             }

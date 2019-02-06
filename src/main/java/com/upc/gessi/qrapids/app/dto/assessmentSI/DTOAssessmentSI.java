@@ -3,17 +3,17 @@ package com.upc.gessi.qrapids.app.dto.assessmentSI;
 import java.util.ArrayList;
 
 public class DTOAssessmentSI {
-    private ArrayList<DTOCategorySI> probsCategories;
+    private ArrayList<DTOCategorySI> probsSICategories;
 
-    DTOAssessmentSI(ArrayList<DTOCategorySI> probsCategories) {
-        this.probsCategories = probsCategories;
+    DTOAssessmentSI(ArrayList<DTOCategorySI> probsSICategories) {
+        this.probsSICategories = probsSICategories;
     }
 
     public DTOAssessmentSI() {
-        this.probsCategories = new ArrayList<>();
+        this.probsSICategories = new ArrayList<>();
     }
 
-    public ArrayList<DTOCategorySI> getProbsCategories() {
-        return probsCategories;
+    public ArrayList<DTOCategorySI> getProbsSICategories() {
+        return probsSICategories;
     }
 }

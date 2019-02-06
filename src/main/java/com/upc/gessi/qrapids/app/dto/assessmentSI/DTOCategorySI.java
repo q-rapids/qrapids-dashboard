@@ -1,27 +1,27 @@
 package com.upc.gessi.qrapids.app.dto.assessmentSI;
 
 public class DTOCategorySI {
-    private String idcategorySI;
-    private float probCategorySI;
+    private String idSICategory;
+    private float probSICategory;
 
-    public DTOCategorySI(String idcategorySI, float probCategorySI) {
-        this.idcategorySI = idcategorySI;
-        this.probCategorySI = probCategorySI;
+    public DTOCategorySI(String idSICategory, float probSICategory) {
+        this.idSICategory = idSICategory;
+        this.probSICategory = probSICategory;
     }
 
-    public String getIdcategorySI() {
-        return idcategorySI;
+    public String getIdSICategory() {
+        return idSICategory;
     }
 
-    public void setIdcategorySI(String idcategorySI) {
-        this.idcategorySI = idcategorySI;
+    public void setIdSICategory(String idSICategory) {
+        this.idSICategory = idSICategory;
     }
 
-    public float getProbCategorySI() {
-        return probCategorySI;
+    public float getProbSICategory() {
+        return probSICategory;
     }
 
-    public void setProbCategorySI(float probCategorySI) {
-        this.probCategorySI = probCategorySI;
+    public void setProbSICategory(float probSICategory) {
+        this.probSICategory = probSICategory;
     }
 }
