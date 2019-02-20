@@ -1,5 +1,24 @@
 var timeFormat = 'YYYY-MM-DD';
 
+Chart.plugins.register({
+    afterDraw: function(chart) {
+        if (chart.data.datasets.length === 0) {
+            // No data is present
+            var ctx = chart.chart.ctx;
+            var width = chart.chart.width;
+            var height = chart.chart.height;
+            chart.clear();
+
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = "Helvetica Nueue";
+            ctx.fillText(chart.data.error, width / 2, height / 2, width);
+            ctx.restore();
+        }
+    }
+});
+
 function drawChart() {
     for (i = 0; i < dades.length; ++i) {
         var a = document.createElement('a');
@@ -34,13 +53,7 @@ function drawChart() {
         var config = {
             type: 'line',
             data: {
-                datasets: [{
-                    label: text[i],
-                    backgroundColor: 'rgb(1, 119, 166)',
-                    borderColor: 'rgb(1, 119, 166)',
-                    data: dades[i],
-                    fill: false
-                }]
+                datasets: []
             },
             options: {
                 title: {
@@ -82,6 +95,19 @@ function drawChart() {
                 }
             }
         };
+
+        if (dades[i].length > 0) {
+            config.data.datasets.push({
+                label: text[i],
+                backgroundColor: 'rgb(1, 119, 166)',
+                borderColor: 'rgb(1, 119, 166)',
+                data: dades[i],
+                fill: false
+            });
+        }
+        else {
+            config.data.error = errors[i];
+        }
 
         //draw chart
         window.myLine = new Chart(ctx, config);

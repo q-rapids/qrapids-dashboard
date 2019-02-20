@@ -7,6 +7,7 @@ var texts = [];
 var ids = [];
 var labels = [];
 var value = [];
+var errors = [];
 
 function getData() {
     document.getElementById("loader").style.display = "block";
@@ -15,6 +16,8 @@ function getData() {
     ids = [];
     labels = [];
     value = [];
+    errors = [];
+    var technique = $("#selectedTechnique").text();
     var date1 = new Date($('#datepickerFrom').val());
     var date2 = new Date($('#datepickerTo').val());
     var timeDiff = date2.getTime() - date1.getTime();
@@ -27,6 +30,7 @@ function getData() {
             dataType: "json",
             url: url,
             data: {
+                "technique": technique,
                 "horizon": diffDays
             },
             cache: false,
@@ -44,6 +48,7 @@ function getData() {
                             value.push([[]]);
                             last = data[i].factors[0].id;
                             labels.push([data[i].factors[0].name]);
+                            errors.push([data[i].factors[0].forecastingError]);
                             k = 0;
                             for (j = 0; j < data[i].factors.length; ++j) {
                                 //check if we are still on the same factor
@@ -52,15 +57,18 @@ function getData() {
                                     last = data[i].factors[j].id;
                                     ++k;
                                     value[i].push([]);
+                                    errors[i].push(data[i].factors[j].forecastingError);
                                 }
                                 //push date and value to values vector
                                 if (!isNaN(data[i].factors[j].value)) {
-                                    value[i][k].push(
-                                        {
-                                            x: data[i].factors[j].date.year + "-" + data[i].factors[j].date.monthValue + "-" + data[i].factors[j].date.dayOfMonth,
-                                            y: data[i].factors[j].value
-                                        }
-                                    );
+                                    if (data[i].factors[j].value !== null) {
+                                        value[i][k].push(
+                                            {
+                                                x: data[i].factors[j].date.year + "-" + data[i].factors[j].date.monthValue + "-" + data[i].factors[j].date.dayOfMonth,
+                                                y: data[i].factors[j].value
+                                            }
+                                        );
+                                    }
                                 }
                             }
                         } else {
