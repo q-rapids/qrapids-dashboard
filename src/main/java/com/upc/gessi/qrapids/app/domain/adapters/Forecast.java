@@ -1,6 +1,11 @@
 package com.upc.gessi.qrapids.app.domain.adapters;
 
+import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import util.Constants;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -17,10 +22,7 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 import java.net.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class Forecast {
@@ -51,11 +53,62 @@ public class Forecast {
     @Autowired
     private AssesSI AssesSI;
 
-    public List<DTOMetric> ForecastMetric(List<DTOMetric> metric, String freq, String horizon, String prj) throws IOException {
+    public List<String> getForecastTechniques () {
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/api/ForecastTechniques");
+
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
+
+        HttpStatus statusCode = responseEntity.getStatusCode();
+        List<String> techniques = new ArrayList<>();
+        if (statusCode == HttpStatus.OK) {
+            Gson gson = new Gson();
+            String[] techniquesArray = gson.fromJson(responseEntity.getBody(), String[].class);
+            techniques = Arrays.asList(techniquesArray);
+        }
+        return techniques;
+    }
+
+    public void trainMetricForecast(List<DTOMetric> metrics, String freq, String prj) {
+        List<String> elements = new ArrayList<>();
+        for (DTOMetric metric : metrics) {
+            elements.add(metric.getId());
+        }
+        trainForecastRequest(elements, Constants.INDEX_METRICS, freq, prj);
+    }
+
+    public void trainFactorForecast(List<DTOQualityFactor> factors, String freq, String prj) {
+        List<String> elements = new ArrayList<>();
+        for (DTOQualityFactor factor : factors) {
+            elements.add(factor.getId());
+        }
+        trainForecastRequest(elements, Constants.INDEX_FACTORS, freq, prj);
+    }
+
+    private void trainForecastRequest(List<String> elements, String index, String freq, String prj) {
+        if (prefix == null) prefix = "";
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/api/Train")
+                .queryParam("host", connection.getIp())
+                .queryParam("port", String.valueOf(connection.getPort()))
+                .queryParam("path", path)
+                .queryParam("user", connection.getUsername())
+                .queryParam("pwd", connection.getPassword())
+                .queryParam("index", prefix + index + "." + prj)
+                .queryParam("elements", elements.toArray(new String[0]))
+                .queryParam("frequency", freq);
+
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
+
+        HttpStatus statusCode = responseEntity.getStatusCode();
+    }
+
+    public List<DTOMetric> ForecastMetric(List<DTOMetric> metric, String technique, String freq, String horizon, String prj) throws IOException {
         StringBuffer urlString = new StringBuffer(url + "/api/Metrics/Forecast?index_metrics=");
         if (prefix == null) prefix = "";
         urlString.append(URLEncoder.encode(prefix + Constants.INDEX_METRICS + "." + prj, "utf-8")).append("&frequency=").append(URLEncoder.encode(freq, "utf-8"));
         urlString.append("&horizon=").append(URLEncoder.encode(horizon, "utf-8"));
+        urlString.append("&technique=").append(URLEncoder.encode(technique, "utf-8"));
         for(DTOMetric m : metric) {
             urlString.append("&metric=").append(URLEncoder.encode(m.getId(), "utf-8"));
         }
@@ -89,46 +142,57 @@ public class Forecast {
             for (int i = 0; i < data.size(); ++i) {
                 JsonObject object = data.get(i).getAsJsonObject();
 
-                //check if json values are null
-                JsonArray lower80;
-                if (!object.get("lower80").isJsonNull()) lower80 = object.getAsJsonArray("lower80");
-                else lower80 = new JsonArray();
+                //check if error occurred
+                if (!object.get("error").isJsonNull()) {
+                    String error = object.get("error").getAsString();
+                    String id = object.get("id").getAsString();
+                    for (DTOMetric m : metric) {
+                        if (m.getId().equals(id)) {
+                            result.add(new DTOMetric(id, m.getName(), error));
+                        }
+                    }
+                }
+                else {
+                    //check if json values are null
+                    JsonArray lower80;
+                    if (!object.get("lower80").isJsonNull()) lower80 = object.getAsJsonArray("lower80");
+                    else lower80 = new JsonArray();
 
-                JsonArray upper80;
-                if (!object.get("upper80").isJsonNull()) upper80 = object.getAsJsonArray("upper80");
-                else upper80 = new JsonArray();
+                    JsonArray upper80;
+                    if (!object.get("upper80").isJsonNull()) upper80 = object.getAsJsonArray("upper80");
+                    else upper80 = new JsonArray();
 
-                JsonArray lower95;
-                if (!object.get("lower95").isJsonNull()) lower95 = object.getAsJsonArray("lower95");
-                else lower95 = new JsonArray();
+                    JsonArray lower95;
+                    if (!object.get("lower95").isJsonNull()) lower95 = object.getAsJsonArray("lower95");
+                    else lower95 = new JsonArray();
 
-                JsonArray upper95;
-                if (!object.get("upper95").isJsonNull()) upper95 = object.getAsJsonArray("upper95");
-                else upper95 = new JsonArray();
+                    JsonArray upper95;
+                    if (!object.get("upper95").isJsonNull()) upper95 = object.getAsJsonArray("upper95");
+                    else upper95 = new JsonArray();
 
-                JsonArray mean;
-                if (!object.get("mean").isJsonNull()) mean = object.getAsJsonArray("mean");
-                else mean = new JsonArray();
+                    JsonArray mean;
+                    if (!object.get("mean").isJsonNull()) mean = object.getAsJsonArray("mean");
+                    else mean = new JsonArray();
 
-                String id = object.get("id").getAsString();
+                    String id = object.get("id").getAsString();
 
-                for (DTOMetric m : metric) {
-                    if (m.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
-                        if (lower80.size() > 0) {
-                            for (int j = 0; j < lower80.size(); ++j) {
+                    for (DTOMetric m : metric) {
+                        if (m.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
+                            if (lower80.size() > 0) {
+                                for (int j = 0; j < lower80.size(); ++j) {
+                                    result.add(new DTOMetric(m.getId(), m.getName(),
+                                            m.getDescription(),
+                                            m.getDatasource(),
+                                            m.getRationale(),
+                                            LocalDate.now().plusDays((long) j), mean.get(j).getAsFloat(), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                                }
+                            } else {
                                 result.add(new DTOMetric(m.getId(), m.getName(),
                                         m.getDescription(),
                                         m.getDatasource(),
                                         m.getRationale(),
-                                        LocalDate.now().plusDays((long) j), mean.get(j).getAsFloat(), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                                        LocalDate.now(), null, null, null));
                             }
-                        }
-                        else {
-                            result.add(new DTOMetric(m.getId(), m.getName(),
-                                    m.getDescription(),
-                                    m.getDatasource(),
-                                    m.getRationale(),
-                                    LocalDate.now(), null, null, null));
                         }
                     }
                 }
@@ -138,11 +202,12 @@ public class Forecast {
         return null;
     }
 
-    public List<DTOQualityFactor> ForecastFactor(List<DTOQualityFactor> factor, String freq, String horizon, String prj) throws IOException {
+    public List<DTOQualityFactor> ForecastFactor(List<DTOQualityFactor> factor, String technique, String freq, String horizon, String prj) throws IOException {
         StringBuffer urlString = new StringBuffer(url + "/api/Metrics/Forecast?index_metrics=");
         if (prefix == null) prefix = "";
         urlString.append(URLEncoder.encode(prefix + Constants.INDEX_METRICS + "." + prj, "utf-8")).append("&frequency=").append(URLEncoder.encode(freq, "utf-8"));
         urlString.append("&horizon=").append(URLEncoder.encode(horizon, "utf-8"));
+        urlString.append("&technique=").append(URLEncoder.encode(technique, "utf-8"));
         Map<String, ArrayList<Integer>> metrics = new HashMap<>();
         Map<String, String> metricsNames = new HashMap<>();
 
@@ -194,50 +259,63 @@ public class Forecast {
             JsonArray data = parser.parse(content.toString()).getAsJsonArray();
             for (int i = 0; i < data.size(); ++i) {
                 JsonObject object = data.get(i).getAsJsonObject();
-                //check if json values are null
-                JsonArray lower80;
-                if (!object.get("lower80").isJsonNull()) lower80 = object.getAsJsonArray("lower80");
-                else lower80 = new JsonArray();
 
-                JsonArray upper80;
-                if (!object.get("upper80").isJsonNull()) upper80 = object.getAsJsonArray("upper80");
-                else upper80 = new JsonArray();
+                //check if error occurred
+                if (!object.get("error").isJsonNull()) {
+                    String error = object.get("error").getAsString();
+                    String id = object.get("id").getAsString();
+                    for (Map.Entry<String, ArrayList<Integer>> m : metrics.entrySet()) {
+                        if (m.getKey().equals(id)) {
+                            for (Integer index : m.getValue())
+                                metricsMatrix.get(index).add(new DTOMetric(id, metricsNames.get(m.getKey()), error));
+                        }
+                    }
+                }
+                else {
+                    //check if json values are null
+                    JsonArray lower80;
+                    if (!object.get("lower80").isJsonNull()) lower80 = object.getAsJsonArray("lower80");
+                    else lower80 = new JsonArray();
 
-                JsonArray lower95;
-                if (!object.get("lower95").isJsonNull()) lower95 = object.getAsJsonArray("lower95");
-                else lower95 = new JsonArray();
+                    JsonArray upper80;
+                    if (!object.get("upper80").isJsonNull()) upper80 = object.getAsJsonArray("upper80");
+                    else upper80 = new JsonArray();
 
-                JsonArray upper95;
-                if (!object.get("upper95").isJsonNull()) upper95 = object.getAsJsonArray("upper95");
-                else upper95 = new JsonArray();
+                    JsonArray lower95;
+                    if (!object.get("lower95").isJsonNull()) lower95 = object.getAsJsonArray("lower95");
+                    else lower95 = new JsonArray();
 
-                JsonArray mean;
-                if (!object.get("mean").isJsonNull()) mean = object.getAsJsonArray("mean");
-                else mean = new JsonArray();
+                    JsonArray upper95;
+                    if (!object.get("upper95").isJsonNull()) upper95 = object.getAsJsonArray("upper95");
+                    else upper95 = new JsonArray();
 
-                String id = object.get("id").getAsString();
+                    JsonArray mean;
+                    if (!object.get("mean").isJsonNull()) mean = object.getAsJsonArray("mean");
+                    else mean = new JsonArray();
 
-                for(Map.Entry<String, ArrayList<Integer>> m : metrics.entrySet()) {
-                    if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
-                        if (lower80.size() > 0) {
-                            for (int j = 0; j < lower80.size(); ++j) {
+                    String id = object.get("id").getAsString();
+
+                    for (Map.Entry<String, ArrayList<Integer>> m : metrics.entrySet()) {
+                        if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
+                            if (lower80.size() > 0) {
+                                for (int j = 0; j < lower80.size(); ++j) {
+                                    for (Integer index : m.getValue())
+                                        metricsMatrix.get(index).add(new DTOMetric(m.getKey(),
+                                                metricsNames.get(m.getKey()),
+                                                "",
+                                                "Forecast",
+                                                "Forecast",
+                                                LocalDate.now().plusDays((long) j), mean.get(j).getAsFloat(), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                                }
+                            } else {
                                 for (Integer index : m.getValue())
                                     metricsMatrix.get(index).add(new DTOMetric(m.getKey(),
                                             metricsNames.get(m.getKey()),
                                             "",
                                             "Forecast",
                                             "Forecast",
-                                            LocalDate.now().plusDays((long) j), mean.get(j).getAsFloat(), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                                            LocalDate.now(), null, null, null));
                             }
-                        }
-                        else {
-                            for (Integer index : m.getValue())
-                                metricsMatrix.get(index).add(new DTOMetric(m.getKey(),
-                                    metricsNames.get(m.getKey()),
-                                    "",
-                                    "Forecast",
-                                    "Forecast",
-                                    LocalDate.now(), null, null, null));
                         }
                     }
                 }
@@ -251,11 +329,12 @@ public class Forecast {
         return null;
     }
 
-    public List<DTODetailedStrategicIndicator> ForecastDSI(List<DTODetailedStrategicIndicator> dsi, String freq, String horizon, String prj) throws IOException {
+    public List<DTODetailedStrategicIndicator> ForecastDSI(List<DTODetailedStrategicIndicator> dsi, String technique, String freq, String horizon, String prj) throws IOException {
         StringBuffer urlString = new StringBuffer(url + "/api/QualityFactors/Forecast?index_factors=");
         if (prefix == null) prefix = "";
         urlString.append(URLEncoder.encode(prefix + Constants.INDEX_FACTORS + "." + prj, "utf-8")).append("&frequency=").append(URLEncoder.encode(freq, "utf-8"));
         urlString.append("&horizon=").append(URLEncoder.encode(horizon, "utf-8"));
+        urlString.append("&technique=").append(URLEncoder.encode(technique, "utf-8"));
         Map<String, ArrayList<Integer>> factors = new HashMap<>();
         Map<String, String> factorsNames = new HashMap<>();
 
@@ -307,41 +386,54 @@ public class Forecast {
             JsonArray data = parser.parse(content.toString()).getAsJsonArray();
             for (int i = 0; i < data.size(); ++i) {
                 JsonObject object = data.get(i).getAsJsonObject();
-                //check if json values are null
-                JsonArray lower80;
-                if (!object.get("lower80").isJsonNull()) lower80 = object.getAsJsonArray("lower80");
-                else lower80 = new JsonArray();
 
-                JsonArray upper80;
-                if (!object.get("upper80").isJsonNull()) upper80 = object.getAsJsonArray("upper80");
-                else upper80 = new JsonArray();
+                if (!object.get("error").isJsonNull()) {
+                    String error = object.get("error").getAsString();
+                    String id = object.get("id").getAsString();
+                    for (Map.Entry<String, ArrayList<Integer>> f : factors.entrySet()) {
+                        if (f.getKey().equals(id)) {
+                            for (Integer index : f.getValue())
+                                factorsMatrix.get(index).add(new DTOFactor(id, factorsNames.get(f.getKey()), error));
+                        }
+                    }
+                }
+                else {
+                    //check if json values are null
+                    JsonArray lower80;
+                    if (!object.get("lower80").isJsonNull()) lower80 = object.getAsJsonArray("lower80");
+                    else lower80 = new JsonArray();
 
-                JsonArray lower95;
-                if (!object.get("lower95").isJsonNull()) lower95 = object.getAsJsonArray("lower95");
-                else lower95 = new JsonArray();
+                    JsonArray upper80;
+                    if (!object.get("upper80").isJsonNull()) upper80 = object.getAsJsonArray("upper80");
+                    else upper80 = new JsonArray();
 
-                JsonArray upper95;
-                if (!object.get("upper95").isJsonNull()) upper95 = object.getAsJsonArray("upper95");
-                else upper95 = new JsonArray();
+                    JsonArray lower95;
+                    if (!object.get("lower95").isJsonNull()) lower95 = object.getAsJsonArray("lower95");
+                    else lower95 = new JsonArray();
 
-                JsonArray mean;
-                if (!object.get("mean").isJsonNull()) mean = object.getAsJsonArray("mean");
-                else mean = new JsonArray();
+                    JsonArray upper95;
+                    if (!object.get("upper95").isJsonNull()) upper95 = object.getAsJsonArray("upper95");
+                    else upper95 = new JsonArray();
 
-                String id = object.get("id").getAsString();
+                    JsonArray mean;
+                    if (!object.get("mean").isJsonNull()) mean = object.getAsJsonArray("mean");
+                    else mean = new JsonArray();
 
-                for(Map.Entry<String, ArrayList<Integer>> m : factors.entrySet()) {
-                    if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
-                        if (lower80.size() > 0) {
-                            for (int j = 0; j < lower80.size(); ++j) {
+                    String id = object.get("id").getAsString();
+
+                    for (Map.Entry<String, ArrayList<Integer>> m : factors.entrySet()) {
+                        if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
+                            if (lower80.size() > 0) {
+                                for (int j = 0; j < lower80.size(); ++j) {
+                                    for (Integer index : m.getValue())
+                                        factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
+                                                mean.get(j).getAsFloat(), LocalDate.now().plusDays((long) j), "Forecast", "Forecast", null));
+                                }
+                            } else {
                                 for (Integer index : m.getValue())
                                     factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
-                                            mean.get(j).getAsFloat(), LocalDate.now().plusDays((long) j), "Forecast", "Forecast", null));
+                                            null, LocalDate.now(), "Forecast", "Forecast", null));
                             }
-                        } else {
-                            for (Integer index : m.getValue())
-                                factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
-                                    null, LocalDate.now(), "Forecast", "Forecast", null));
                         }
                     }
                 }
@@ -355,14 +447,16 @@ public class Forecast {
         return null;
     }
 
-    public List<DTOStrategicIndicatorEvaluation> ForecastSI(String freq, String horizon, String prj) throws IOException {
-        List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj), freq, horizon, prj);
+    public List<DTOStrategicIndicatorEvaluation> ForecastSI(String technique, String freq, String horizon, String prj) throws IOException {
+        List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj), technique, freq, horizon, prj);
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
         String categories_description = util.getCategories().toString();
         for (DTODetailedStrategicIndicator dsi : dsis) {
             Map<LocalDate, List<DTOFactor>> listSIFactors = new HashMap<>();
             Map<LocalDate,Map<String,String>> mapSIFactors = new HashMap<>();
+            boolean factorHasForecastingError = false;
             for (DTOFactor factor : dsi.getFactors()) {
+                if (!factorHasForecastingError) factorHasForecastingError = (factor.getForecastingError() != null);
                 if (listSIFactors.containsKey(factor.getDate())) {
                     listSIFactors.get(factor.getDate()).add(factor);
                     mapSIFactors.get(factor.getDate()).put(factor.getId(), util.getQFLabelFromValue(factor.getValue()));
@@ -378,7 +472,10 @@ public class Forecast {
                 if (s.getName().replaceAll("\\s+","").toLowerCase().equals(dsi.getId()))
                     si = s;
             }
-            if (si != null && si.getNetwork() != null && si.getNetwork().length > 10) {
+            if (factorHasForecastingError) {
+                result.add(new DTOStrategicIndicatorEvaluation(dsi.getId(), dsi.getName(), "One or more factors have forecasting errors"));
+            }
+            else if (si != null && si.getNetwork() != null && si.getNetwork().length > 10) {
                 for(Map.Entry<LocalDate,Map<String,String>> m : mapSIFactors.entrySet()) {
                     File tempFile = File.createTempFile("network", ".dne", null);
                     FileOutputStream fos = new FileOutputStream(tempFile);

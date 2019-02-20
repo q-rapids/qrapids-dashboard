@@ -25,6 +25,7 @@ public class DTOStrategicIndicatorEvaluation {
     private String categories_description;
     private boolean hasBN;
     private boolean hasFeedback;
+    private String forecastingError;
 
     /**
      * Constructor of the DTO of Strategic Indicators Evaluation
@@ -50,6 +51,12 @@ public class DTOStrategicIndicatorEvaluation {
         setDatasource(datasource);
         setCategories_description(categories);
         setHasBN(hasBN);
+    }
+
+    public DTOStrategicIndicatorEvaluation(String id, String name, String forecastingError) {
+        this.id = id;
+        this.name = name;
+        this.forecastingError = forecastingError;
     }
 
     /**
@@ -178,5 +185,13 @@ public class DTOStrategicIndicatorEvaluation {
 
     public void setHasFeedback(boolean hasFeedback) {
         this.hasFeedback = hasFeedback;
+    }
+
+    public String getForecastingError() {
+        return forecastingError;
+    }
+
+    public void setForecastingError(String forecastingError) {
+        this.forecastingError = forecastingError;
     }
 }

@@ -1,21 +1,16 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
+import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
+import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
+import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import evaluation.StrategicIndicator;
 import org.springframework.dao.DataIntegrityViolationException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
-import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
-import com.upc.gessi.qrapids.app.dto.DTOFactor;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
-import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
@@ -59,6 +54,9 @@ public class Util {
     private QMAQualityFactors qmaqf;
 
     @Autowired
+    private QMAMetrics qmam;
+
+    @Autowired
     private QMAProjects qmaPrj;
 
     @Autowired
@@ -92,6 +90,9 @@ public class Util {
     private DecisionRepository decisionRepository;
 
     private List<SICategory> allCats;
+
+    @Autowired
+    private Forecast forecast;
 
 
     @RequestMapping("/api/newCategories")
@@ -236,6 +237,11 @@ public class Util {
             else
                 correct = AssessDateStrategicIndicators(prj, null);
 
+            // Train forecast models
+            if (prj == null)
+                trainForecastModelsAllProjects();
+            else
+                trainForecastModelsSingleProject(prj);
 
             if (correct)
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -249,6 +255,22 @@ public class Util {
             }
         }
     }
+
+    private void trainForecastModelsAllProjects() throws IOException, CategoriesException{
+        List<String> projects = qmaPrj.getAssessedProjects();
+        for (String prj: projects) {
+            trainForecastModelsSingleProject(prj);
+        }
+    }
+
+    private void trainForecastModelsSingleProject(String project) throws IOException {
+        List<DTOMetric> metrics = qmam.CurrentEvaluation(null, project);
+        forecast.trainMetricForecast(metrics, "7", project);
+
+        List<DTOQualityFactor> factors = qmaqf.CurrentEvaluation(null, project);
+        forecast.trainFactorForecast(factors, "7", project);
+    }
+
 
     private boolean AssessDateStrategicIndicators(String project, LocalDate evaluationDate) throws IOException, CategoriesException {
         boolean correct = true;
@@ -615,5 +637,10 @@ public class Util {
         return "{\"issue_url\":\"https://essi.upc.edu/jira/issue/999\"," +
                 "\"issue_id\":\"ID-999\"}";
 
+    }
+
+    @RequestMapping("/api/ForecastTechniques")
+    public List<String> getForecastTechniques() {
+        return forecast.getForecastTechniques();
     }
 }

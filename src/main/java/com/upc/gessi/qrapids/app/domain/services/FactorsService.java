@@ -49,14 +49,14 @@ public class FactorsService {
 
     @RequestMapping("/api/QualityFactors/PredictionData/{id}")
     public @ResponseBody
-    List<DTOQualityFactor> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
-        return qmaf.ForecastFactor(qmaqf.CurrentEvaluation(id, prj), "7", horizon, prj);
+    List<DTOQualityFactor> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
+        return qmaf.ForecastFactor(qmaqf.CurrentEvaluation(id, prj), technique,"7", horizon, prj);
     }
 
     @RequestMapping("/api/QualityFactors/PredictionData")
     public @ResponseBody
-    List<DTOQualityFactor> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon) throws IOException {
-        return qmaf.ForecastFactor(qmaqf.CurrentEvaluation(null, prj), "7", horizon, prj);
+    List<DTOQualityFactor> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
+        return qmaf.ForecastFactor(qmaqf.CurrentEvaluation(null, prj), technique, "7", horizon, prj);
     }
 
 }

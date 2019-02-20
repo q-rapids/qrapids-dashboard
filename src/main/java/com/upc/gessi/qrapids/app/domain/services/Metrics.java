@@ -42,14 +42,14 @@ public class Metrics {
 
     @RequestMapping("/api/Metrics/PredictionData/{id}")
     public @ResponseBody
-    List<DTOMetric> getMetricsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
-        return qmaf.ForecastMetric(qmam.CurrentEvaluation(id,prj), "7", horizon, prj);
+    List<DTOMetric> getMetricsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
+        return qmaf.ForecastMetric(qmam.CurrentEvaluation(id,prj), technique, "7", horizon, prj);
     }
 
     @RequestMapping("/api/Metrics/PredictionData")
     public @ResponseBody
-    List<DTOMetric> getMetricsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon) throws IOException {
-        return qmaf.ForecastMetric(qmam.CurrentEvaluation(null, prj), "7", horizon, prj);
+    List<DTOMetric> getMetricsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String techinique, @RequestParam("horizon") String horizon) throws IOException {
+        return qmaf.ForecastMetric(qmam.CurrentEvaluation(null, prj), techinique, "7", horizon, prj);
     }
 
 }

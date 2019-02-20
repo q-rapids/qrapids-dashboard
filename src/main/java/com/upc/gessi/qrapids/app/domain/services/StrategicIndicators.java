@@ -127,19 +127,19 @@ public class StrategicIndicators {
 
     @RequestMapping("/api/DetailedStrategicIndicators/PredictionData/{id}")
     public @ResponseBody
-    List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
-        return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(id, prj), "7", horizon, prj);
+    List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
+        return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(id, prj), technique, "7", horizon, prj);
     }
 
     @RequestMapping("/api/DetailedStrategicIndicators/PredictionData")
     public @ResponseBody
-    List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon) throws IOException {
-        return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(null, prj), "7", horizon, prj);
+    List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
+        return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(null, prj), technique,"7", horizon, prj);
     }
 
     @RequestMapping("/api/StrategicIndicators/PredictionData")
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon) throws IOException {
-        return qmaf.ForecastSI("7", horizon, prj);
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
+        return qmaf.ForecastSI(technique,"7", horizon, prj);
     }
 
     /*private List<DTOStrategicIndicatorEvaluation> mergeData(List<DTOStrategicIndicatorEvaluation> apiEval, List<Strategic_Indicator> dbEval) {

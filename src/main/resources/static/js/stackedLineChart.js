@@ -3,13 +3,38 @@ var config = [];
 
 var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)', 'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
 
+Chart.plugins.register({
+    afterDraw: function(chart) {
+        console.log(chart);
+        var allEmpty = true;
+        for (var i = 0; i < chart.data.datasets.length; i++) {
+            if (chart.data.datasets[i].data.length > 0) allEmpty = false;
+        }
+        if (allEmpty) {
+            // No data is present
+            var ctx = chart.chart.ctx;
+            var width = chart.chart.width;
+            var height = chart.chart.height;
+            chart.clear();
+
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = "Helvetica Nueue";
+            ctx.fillText(chart.data.errors[0], width / 2, height / 2, width);
+            ctx.restore();
+        }
+    }
+});
+
 function drawChart() {
     config = [];
     for (var i = 0; i < texts.length; ++i) {    //create config for each chart
         var c = {
             type: 'line',
             data: {
-                datasets: []
+                datasets: [],
+                errors: []
             },
             options: {
                 title: {
@@ -44,14 +69,19 @@ function drawChart() {
                 }
             }
         };
-        for (j = 0; j < value[i].length; ++j) { //add datasets to each the config
+
+        for (j = 0; j < value[i].length; ++j) {
+            var hidden = false;
+            if (value[i][j].length === 0) hidden = true;
             c.data.datasets.push({
                 label: labels[i][j],
+                hidden: hidden,
                 backgroundColor: colors[j % colors.length],
                 borderColor: colors[j % colors.length],
                 fill: false,
-                data: value[i][j],
+                data: value[i][j]
             });
+            c.data.errors.push(errors[i][j]);
         }
         config.push(c);
     }

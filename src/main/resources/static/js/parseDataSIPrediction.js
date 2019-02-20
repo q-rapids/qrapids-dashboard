@@ -4,6 +4,7 @@ var isSi = true;
 var text = [];
 var dades = [];
 var ids = [];
+var errors = [];
 
 function getData() {
     document.getElementById("loader").style.display = "block";
@@ -11,6 +12,8 @@ function getData() {
     text = [];
     dades = [];
     ids = [];
+    errors = [];
+    var technique = $("#selectedTechnique").text();
     var date1 = new Date($('#datepickerFrom').val());
     var date2 = new Date($('#datepickerTo').val());
     var timeDiff = date2.getTime() - date1.getTime();
@@ -23,6 +26,7 @@ function getData() {
             dataType: "json",
             url: "../api/StrategicIndicators/PredictionData",
             data: {
+                "technique": technique,
                 "horizon": diffDays
             },
             cache: false,
@@ -35,22 +39,26 @@ function getData() {
                     last = data[j].id;
                     text.push(data[j].name);
                     ids.push(data[j].id);
+                    errors.push(data[j].forecastingError);
                 }
                 while (data[j]) {
                     //check if we are still on the same Strategic Indicator
-                    if (data[j].id != last) {
+                    if (data[j].id !== last) {
                         dades.push(line);
                         line = [];
                         last = data[j].id;
                         text.push(data[j].name);
                         ids.push(data[j].id);
+                        errors.push(data[j].forecastingError);
                     }
                     //push date and value to line vector
-                    if (!isNaN(data[j].value.first)) {
-                        line.push({
-                            x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
-                            y: data[j].value.first
-                        });
+                    if (data[j].value !== null) {
+                        if (!isNaN(data[j].value.first)) {
+                            line.push({
+                                x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                                y: data[j].value.first
+                            });
+                        }
                     }
                     ++j;
                 }

@@ -36,6 +36,8 @@ function configureHistoric () {
     if (to.length == 0)
         to = parseDate(today);
     $('#datepickerTo').datepicker().value(to);
+
+    $('#techniqueDropdownDiv').hide();
 }
 
 function configurePrediction () {
@@ -52,6 +54,9 @@ function configurePrediction () {
     $('#fromDiv').find("span").css("pointer-events", "none");
 
     next7Days()
+
+    $('#techniqueDropdownDiv').show();
+    loadTechniques();
 }
 
 function thisWeek() {
@@ -70,6 +75,31 @@ function getPreviousMonday() {
         prevMonday = new Date().setDate(today.getDate() - day + 1);
     }
     return prevMonday;
+}
+
+function loadTechniques () {
+    jQuery.ajax({
+        dataType: "json",
+        url: "../api/ForecastTechniques",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (techniques) {
+            for (i = 0; i < techniques.length; i++) {
+                $("#techniqueDropdown").append('<li><a onclick="setTechnique(\''+techniques[i]+'\')" href="#">'+ techniques[i] +'</a></li>');
+            }
+        }
+    });
+
+    var lastUsedTechnique = sessionStorage.getItem("forecastingTechnique");
+    if (lastUsedTechnique != null) {
+        setTechnique(lastUsedTechnique);
+    }
+}
+
+function setTechnique(technique) {
+    sessionStorage.setItem("forecastingTechnique", technique);
+    $("#selectedTechnique").text(technique);
 }
 
 //Historic intervals
@@ -130,26 +160,3 @@ function parseDate(date) {
 }
 
 
-
-// $('#datepickerFrom').datepicker().on('changeDate', function (ev) {
-//     $('#datepickerFrom').change();
-// });
-//
-// $('#datepickerTo').datepicker().on('changeDate', function (ev) {
-//     $('#datepickerTo').change();
-// });
-//
-// $('#apply').change(function () {
-//     $('#chartContainer').empty();
-//     getData();
-//     drawChart();
-// });
-//
-// $('#datepickerTo').change(function () {
-//     $('#chartContainer').empty();
-//     getData();
-//     drawChart();
-// });
-
-// $('#datepickerFrom').prop('readonly', true);
-// $('#datepickerTo').prop('readonly', true);

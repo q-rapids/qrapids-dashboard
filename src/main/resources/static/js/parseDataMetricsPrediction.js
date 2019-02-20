@@ -9,6 +9,7 @@ var lower80 = [];
 var lower95 = [];
 var upper80 = [];
 var upper95 = [];
+var errors = [];
 
 function getData() {
     document.getElementById("loader").style.display = "block";
@@ -19,6 +20,8 @@ function getData() {
     lower95 = [];
     upper80 = [];
     upper95 = [];
+    errors = [];
+    var technique = $("#selectedTechnique").text();
     var date1 = new Date($('#datepickerFrom').val());
     var date2 = new Date($('#datepickerTo').val());
     var timeDiff = date2.getTime() - date1.getTime();
@@ -31,6 +34,7 @@ function getData() {
             dataType: "json",
             url: url,
             data: {
+                "technique": technique,
                 "horizon": diffDays
             },
             cache: false,
@@ -46,15 +50,17 @@ function getData() {
                 if (data[j]) {
                     last = data[j].id;
                     text.push(data[j].name);
+                    errors.push(data[j].forecastingError);
                 }
                 while (data[j]) {
                     //check if we are still on the same metric
-                    if (data[j].id != last) {
+                    if (data[j].id !== last) {
                         dades.push(line);
                         lower80.push(line80l);
                         upper80.push(line80u);
                         lower95.push(line95l);
                         upper95.push(line95u);
+                        errors.push(data[j].forecastingError);
                         line = [];
                         line80l = [];
                         line80u = [];

@@ -7,6 +7,7 @@ var texts = [];
 var ids = [];
 var labels = [];
 var value = [];
+var errors = [];
 
 function getData() {
     document.getElementById("loader").style.display = "block";
@@ -15,6 +16,8 @@ function getData() {
     ids = [];
     labels = [];
     value = [];
+    errors = [];
+    var technique = $("#selectedTechnique").text();
     var date1 = new Date($('#datepickerFrom').val());
     var date2 = new Date($('#datepickerTo').val());
     var timeDiff = date2.getTime() - date1.getTime();
@@ -27,6 +30,7 @@ function getData() {
             dataType: "json",
             url: url,
             data: {
+                "technique": technique,
                 "horizon": diffDays
             },
             cache: false,
@@ -42,6 +46,7 @@ function getData() {
                         value.push([[]]);
                         last = data[i].metrics[0].id;
                         labels.push([data[i].metrics[0].name]);
+                        errors.push([data[i].metrics[0].forecastingError]);
                         k = 0;
                         for (j = 0; j < data[i].metrics.length; ++j) {
                             //check if we are still on the same metric
@@ -50,16 +55,19 @@ function getData() {
                                 last = data[i].metrics[j].id;
                                 ++k;
                                 value[i].push([]);
+                                errors[i].push(data[i].metrics[j].forecastingError);
                             }
                             //push date and value to values vector
                             if (!isNaN(data[i].metrics[j].value)) {
-                                value[i][k].push(
-                                    {
-                                        x: data[i].metrics[j].date.year + "-" + data[i].metrics[j].date.monthValue
-                                        + "-" + data[i].metrics[j].date.dayOfMonth,
-                                        y: data[i].metrics[j].value
-                                    }
-                                );
+                                if (data[i].metrics[j].value !== null) {
+                                    value[i][k].push(
+                                        {
+                                            x: data[i].metrics[j].date.year + "-" + data[i].metrics[j].date.monthValue
+                                                + "-" + data[i].metrics[j].date.dayOfMonth,
+                                            y: data[i].metrics[j].value
+                                        }
+                                    );
+                                }
                             }
                         }
                     } else {
