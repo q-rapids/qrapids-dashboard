@@ -98,6 +98,12 @@ if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Edi
 } else if (currentURL.search("/QualityAlerts") !== -1) {
     id = "QualityAlerts";
     highlight(id);
+} else if (currentURL.search("/Products") !== -1) {
+    id = "Products";
+    highlight(id);
+} else if (currentURL.search("/Products/evaluation") !== -1) {
+    id = "ProductsAssess";
+    highlight(id);
 }
 
 function highlightAndSaveCurrentAssessment (id) {
@@ -154,6 +160,12 @@ $("#MetricsPrediction").attr("href", serverUrl + "/Metrics/PredictionChart");
 $("#Simulation").attr("href", serverUrl + "/Simulation");
 
 $("#QualityAlerts").attr("href", serverUrl + "/QualityAlerts");
+
+$("#Products").attr("href", serverUrl+"/Products");
+
+$("#ProductsAssess").attr("href", serverUrl+"/Products/evaluation");
+
+$("#ProjectsAssess").attr("href", serverUrl+"/Products/detailedEvaluation");
 
 
 function menuNav (urlNav) {
