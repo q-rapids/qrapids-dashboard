@@ -7,7 +7,6 @@ import DTOs.EvaluationDTO;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.upc.gessi.qrapids.app.domain.models.Feedback;
-import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
@@ -196,7 +195,7 @@ public class QMAStrategicIndicators {
                 } else if (hasEstimation) throw new CategoriesException();
                 //calculate "fake" value if the SI has estimation
                 if (hasEstimation) {
-                    Float value = util.getValueFromCategories(categories);
+                    Float value = util.getValueAndLabelFromCategories(categories).getFirst();
                     DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
                             element.getName(),
                             element.getDescription(),
