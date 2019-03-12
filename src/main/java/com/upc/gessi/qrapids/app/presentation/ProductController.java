@@ -168,12 +168,12 @@ public class ProductController {
 		return evaluations;
     }
 	
-	@RequestMapping("/Products/evaluation")
+	@RequestMapping("/Products/Evaluation")
     public String ProductEvaluation(){
 		return "Product/ProductEvaluation";
     }
 	
-	@RequestMapping("/Products/detailedEvaluation")
+	@RequestMapping("/Products/DetailedEvaluation")
     public String ProductDetailedEvaluation(){
 		return "Product/detailedProductEvaluation";
     }

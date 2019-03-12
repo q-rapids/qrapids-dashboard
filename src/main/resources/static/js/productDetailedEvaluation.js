@@ -13,6 +13,7 @@ var products = document.getElementById("productSelector");
 
 products.addEventListener("change", function() {
 	currentProduct = products.options[products.selectedIndex].value;
+    sessionStorage.setItem("currentProduct", currentProduct);
     getData();
 });
 
@@ -31,7 +32,11 @@ function buildSelector() {
         	    option.text = data[i].name;
         	    productSelector.appendChild(option);
             }
-        	currentProduct = data[0].id;
+            if (!(currentProduct = sessionStorage.getItem("currentProduct"))) {
+                currentProduct = data[0].id;
+                sessionStorage.setItem("currentProduct", currentProduct);
+            }
+            productSelector.value = currentProduct;
         	getData();
         }
     });

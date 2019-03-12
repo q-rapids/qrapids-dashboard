@@ -13,8 +13,8 @@ var currentProduct;
 var products = document.getElementById("productSelector");
 
 products.addEventListener("change", function() {
-	console.log(products.options[products.selectedIndex].value);
     currentProduct = products.options[products.selectedIndex].value;
+    sessionStorage.setItem("currentProduct", currentProduct);
     getData(200, 200, true, true);
 });
 
@@ -33,7 +33,11 @@ function buildSelector() {
         	    option.text = data[i].name;
         	    productSelector.appendChild(option);
             }
-        	currentProduct = data[0].id;
+            if (!(currentProduct = sessionStorage.getItem("currentProduct"))) {
+                currentProduct = data[0].id;
+                sessionStorage.setItem("currentProduct", currentProduct);
+            }
+            productSelector.value = currentProduct;
         	console.log(currentProduct);
         	getData(200, 200, true, true);
         }
@@ -139,23 +143,6 @@ function drawChart(container, width, height, showButtons, chartHyperlinked) {
             .attr("fill", "#000000")
             .style("font-size", "14px")
             .text(data[i].value_description);
-
-        // Buttons just bellow the Chart
-        if (showButtons && data[i].dbId != null) {
-            var div = document.getElementById(container.substring(1));
-
-            var editBtn = document.createElement("button");
-            editBtn.id = data[i].dbId;
-            editBtn.classList.add('btn');
-            editBtn.classList.add('btn-default');
-            editBtn.style.marginRight = "5px";
-            editBtn.onclick = function () {
-                location.href = "../EditStrategicIndicators/" + this.id;
-            };
-            editBtn.appendChild(document.createTextNode("Edit"));
-            div.appendChild(editBtn);
-
-        }
     }
 }
 

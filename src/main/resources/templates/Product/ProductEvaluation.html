@@ -9,12 +9,15 @@
     <div th:replace="Fragments/Template :: logo"></div>
 	<br/>
 	<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
-	<div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
-    <br/>
-    <div style="display: flex;flex-direction: row;">
-    	<p style="margin-left:30px;  font-size: 18px;">Product: </p>
-    	<select id="productSelector" style="margin-left:12px;"></select>
+	<div th:replace="Fragments/TemplateDashboard :: navSubBarProductsDashboard"></div>
+    <div class="col-xs-2" style="margin-top: 1em;">
+        <h4 style="display: inline">Product: </h4>
+        <div style="display: inline-grid">
+            <select id="productSelector" class="form-control"></select>
+        </div>
     </div>
+    <br/>
+    <br/>
     <br/>
     <div id="gaugeChart" class="container" style="text-align:center;"></div>
     <br/>

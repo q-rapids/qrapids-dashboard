@@ -534,6 +534,7 @@ function deleteProduct() {
             },
             success: function() {
             	buildFirstPartOfTree();
+            	checkProducts();
             	document.getElementById('productInfo').innerHTML = "";
             }
         });
@@ -753,6 +754,7 @@ function saveNewProduct() {
                 },
                 success: function() {
                 	buildFirstPartOfTree();
+                	checkProducts();
                 	document.getElementById('productInfo').innerHTML = "";
                 }
             });
