@@ -10,11 +10,12 @@
     <div th:replace="Fragments/Template :: logo"></div>
     <br/>
     <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+    <br/>
     <br/>
     <h1 align="center">Strategic Indicator Feedback</h1>
     <br/>
     <div id="radarChart" style="text-align:center;"></div>
-
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
 <script type="text/javascript" src="../../static/js/feedback.js" th:src="@{/js/feedback.js}"></script>
