@@ -1,5 +1,22 @@
 var currentURL = window.location.href;
-var viewMode, time, assessment, prediction;
+var viewMode, time, assessment, prediction, products;
+
+function checkProducts () {
+    jQuery.ajax({
+        dataType: "json",
+        url: "../api/products",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            if (data.length > 0)
+                $("#Products").show();
+            else
+                $("#Products").hide();
+        }
+    });
+}
+checkProducts();
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -34,6 +51,9 @@ if (!(assessment = sessionStorage.getItem("assessment"))) {
 }
 if (!(prediction = sessionStorage.getItem("prediction"))) {
     prediction = "StrategicIndicators";
+}
+if (!(products = sessionStorage.getItem("products"))) {
+    products = "Evaluation";
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -101,6 +121,14 @@ if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Edi
     id = "QualityModel";
     highlightAndSaveCurrentAssessment(id);
     disableViewModeAndTimeOption();
+} else if (currentURL.search("/Products/Evaluation") !== -1) {
+    id = "Evaluation";
+    highlightandSaveCurrentProducts(id);
+} else if (currentURL.search("/Products/DetailedEvaluation") !== -1) {
+    id = "DetailedEvaluation";
+    highlightandSaveCurrentProducts(id);
+} else if (currentURL.search("/Products") !== -1) {
+    highlight("Configuration");
 }
 
 function highlightAndSaveCurrentAssessment (id) {
@@ -119,6 +147,15 @@ function highlightAndSaveCurrentPrediction (id) {
     highlight(id+"Prediction");
     sessionStorage.setItem("prediction", id);
     prediction = id;
+}
+
+function highlightandSaveCurrentProducts (id) {
+    var productsButton = $("#Products");
+    productsButton.css("background-color", "#eeeeee");
+    productsButton.css("color", "black");
+    highlight("Products" + id);
+    sessionStorage.setItem("products", id);
+    products = id;
 }
 
 function highlight (id) {
@@ -168,6 +205,13 @@ $("#QualityAlerts").attr("href", serverUrl + "/QualityAlerts");
 
 $("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel");
 
+$("#Configuration").attr("href", serverUrl + "/Products");
+
+$("#Products").attr("href", serverUrl + "/Products/" + products);
+
+$("#ProductsEvaluation").attr("href", serverUrl+"/Products/Evaluation");
+
+$("#ProductsDetailedEvaluation").attr("href", serverUrl+"/Products/DetailedEvaluation");
 
 function menuNav (urlNav) {
     var parameters = false;
