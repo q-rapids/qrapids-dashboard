@@ -41,9 +41,15 @@ public class QMAMetrics {
             else
                 evals = Factor.getMetricsEvaluations(prj, id).getMetrics();
             //Connection.closeConnection();
-            result = MetricEvaluationDTOtoDTOMetric(evals);
+            result = MetricEvaluationDTOListToDTOMetricList(evals);
         }
         return result;
+    }
+
+    public DTOMetric SingleCurrentEvaluation(String metricId, String prj) throws IOException {
+        qmacon.initConnexion();
+        MetricEvaluationDTO metricEvaluationDTO = Metric.getSingleEvaluation(prj, metricId);
+        return MetricEvaluationDTOToDTOMetric(metricEvaluationDTO, metricEvaluationDTO.getEvaluations().get(0));
     }
 
     public List<DTOMetric> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
@@ -61,30 +67,32 @@ public class QMAMetrics {
             else
                 evals = Factor.getMetricsEvaluations(prj, id, from, to).getMetrics();
             //Connection.closeConnection();
-            result = MetricEvaluationDTOtoDTOMetric(evals);
+            result = MetricEvaluationDTOListToDTOMetricList(evals);
 
         }
         return result;
     }
 
-    public static List<DTOMetric> MetricEvaluationDTOtoDTOMetric(List<MetricEvaluationDTO> evals) {
+    public static List<DTOMetric> MetricEvaluationDTOListToDTOMetricList(List<MetricEvaluationDTO> evals) {
         List<DTOMetric> m = new ArrayList<>();
-
         for (Iterator<MetricEvaluationDTO> iterMetrics = evals.iterator(); iterMetrics.hasNext(); ) {
-
             MetricEvaluationDTO metric = iterMetrics.next();
             for (Iterator<EvaluationDTO> iterEvals = metric.getEvaluations().iterator(); iterEvals.hasNext(); ) {
                 EvaluationDTO evaluation = iterEvals.next();
-                m.add(new DTOMetric(metric.getID(),
-                        metric.getName(),
-                        metric.getDescription(),
-                        evaluation.getDatasource(),
-                        evaluation.getRationale(),
-                        evaluation.getEvaluationDate(),
-                        evaluation.getValue()));
+                m.add(MetricEvaluationDTOToDTOMetric(metric, evaluation));
             }
         }
         return m;
+    }
+
+    public static DTOMetric MetricEvaluationDTOToDTOMetric (MetricEvaluationDTO metric, EvaluationDTO evaluation) {
+        return new DTOMetric(metric.getID(),
+                metric.getName(),
+                metric.getDescription(),
+                evaluation.getDatasource(),
+                evaluation.getRationale(),
+                evaluation.getEvaluationDate(),
+                evaluation.getValue());
     }
 
 }

@@ -95,7 +95,7 @@ public class Forecast {
                 .queryParam("user", connection.getUsername())
                 .queryParam("pwd", connection.getPassword())
                 .queryParam("index", prefix + index + "." + prj)
-                .queryParam("elements", elements.toArray(new String[0]))
+                .queryParam("elements", (Object[]) elements.toArray(new String[0]))
                 .queryParam("frequency", freq);
 
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
@@ -481,7 +481,7 @@ public class Forecast {
                     FileOutputStream fos = new FileOutputStream(tempFile);
                     fos.write(si.getNetwork());
                     List<DTOSIAssesment> assessment = AssesSI.AssesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
-                    float value = util.getValueFromCategories(assessment);
+                    float value = util.getValueAndLabelFromCategories(assessment).getFirst();
                     result.add(new DTOStrategicIndicatorEvaluation(dsi.getId(),
                             si.getName(),
                             si.getDescription(),

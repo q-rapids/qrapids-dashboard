@@ -7,7 +7,6 @@ import DTOs.EvaluationDTO;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.upc.gessi.qrapids.app.domain.models.Feedback;
-import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
@@ -61,9 +60,17 @@ public class QMAStrategicIndicators {
             qmacon.initConnexion();
             List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj);
             //Connection.closeConnection();
-            result = StrategicIndicatorEvaluationDTOtoDTOStrategicIndicatorEvaluation(evals);
+            result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
         }
         return result;
+    }
+
+    public DTOStrategicIndicatorEvaluation SingleCurrentEvaluation(String prj, String strategicIndicatorId) throws IOException, CategoriesException {
+        qmacon.initConnexion();
+        StrategicIndicatorEvaluationDTO strategicIndicatorEvaluationDTO = StrategicIndicator.getSingleEvaluation(prj, strategicIndicatorId);
+        List<StrategicIndicatorEvaluationDTO> strategicIndicatorEvaluationDTOList = new ArrayList<>();
+        strategicIndicatorEvaluationDTOList.add(strategicIndicatorEvaluationDTO);
+        return StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(strategicIndicatorEvaluationDTOList).get(0);
     }
 
     public List<DTOStrategicIndicatorEvaluation> HistoricalData(LocalDate from, LocalDate to, String prj) throws IOException, CategoriesException  {
@@ -77,7 +84,7 @@ public class QMAStrategicIndicators {
             //using dates from 1/1/2015 to now at the moment
             List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj, from, to);
             //Connection.closeConnection();
-            result = StrategicIndicatorEvaluationDTOtoDTOStrategicIndicatorEvaluation(evals);
+            result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
         }
         return result;
     }
@@ -142,7 +149,7 @@ public class QMAStrategicIndicators {
         return status.equals(RestStatus.OK) || status.equals(RestStatus.CREATED);
     }
 
-    private List<DTOStrategicIndicatorEvaluation> StrategicIndicatorEvaluationDTOtoDTOStrategicIndicatorEvaluation(List<StrategicIndicatorEvaluationDTO> evals) throws CategoriesException {
+    private List<DTOStrategicIndicatorEvaluation> StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(List<StrategicIndicatorEvaluationDTO> evals) throws CategoriesException {
         List<DTOStrategicIndicatorEvaluation> si = new ArrayList<>();
         // si contains the list of evaluations for strategic indicators
         for (Iterator<StrategicIndicatorEvaluationDTO> iterSI = evals.iterator(); iterSI.hasNext(); ) {
@@ -196,7 +203,7 @@ public class QMAStrategicIndicators {
                 } else if (hasEstimation) throw new CategoriesException();
                 //calculate "fake" value if the SI has estimation
                 if (hasEstimation) {
-                    Float value = util.getValueFromCategories(categories);
+                    Float value = util.getValueAndLabelFromCategories(categories).getFirst();
                     DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
                             element.getName(),
                             element.getDescription(),

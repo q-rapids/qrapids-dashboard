@@ -67,7 +67,7 @@ public class DTOSIAssesment {
     public String toString(){
         String description, threshold_label;
         description = label;
-        if (upperThreshold!= null & !upperThreshold.isNaN()) {
+        if (upperThreshold != null && !upperThreshold.isNaN()) {
             threshold_label = String.format("%.2f",upperThreshold);
             description = description + " (" + threshold_label + ')';
         }

@@ -80,13 +80,12 @@ if (currentURL.search("/HistoricTable") !== -1) {
 sessionStorage.setItem("viewMode", viewMode);
 sessionStorage.setItem("time", time);
 
-
-// 2.- Highlighting the enabled options depending on the View Mode and Time options selected
+// Highlighting the enabled options depending on the View Mode and Time options selected
 $("#" + viewMode).css("background-color", "#ffc380");
 $("#" + time).css("background-color", "#ffc380");
 
 
-// 3.- Checking the enabled options depending on the selected option on the main menu
+// Checking the enabled options depending on the selected option on the main menu
 var id;
 if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/EditStrategicIndicators/") !== -1) {
     id = "StrategicIndicators";
@@ -118,6 +117,10 @@ if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Edi
 } else if (currentURL.search("/QualityAlerts") !== -1) {
     id = "QualityAlerts";
     highlight(id);
+} else if (currentURL.search("/QualityModel") !== -1) {
+    id = "QualityModel";
+    highlightAndSaveCurrentAssessment(id);
+    disableViewModeAndTimeOption();
 } else if (currentURL.search("/Products/Evaluation") !== -1) {
     id = "Evaluation";
     highlightandSaveCurrentProducts(id);
@@ -161,6 +164,13 @@ function highlight (id) {
     menuOption.css("color", "black");
 }
 
+function disableViewModeAndTimeOption () {
+    $("#Chart").prop("disabled", true);
+    $("#Table").prop("disabled", true);
+    $("#Current").prop("disabled", true);
+    $("#Historic").prop("disabled", true);
+}
+
 
 ///////////////////////////////////////////////////////////////////
 // Defining URLs for the navigation menu from Dashboard Template
@@ -168,7 +178,8 @@ function highlight (id) {
 //         --> time and viewMode variables filled
 ///////////////////////////////////////////////////////////////////
 
-$("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
+if (assessment === "QualityModel") $("#Assessment").attr("href", serverUrl + "/" + assessment);
+else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
 
@@ -191,6 +202,8 @@ $("#MetricsPrediction").attr("href", serverUrl + "/Metrics/PredictionChart");
 $("#Simulation").attr("href", serverUrl + "/Simulation");
 
 $("#QualityAlerts").attr("href", serverUrl + "/QualityAlerts");
+
+$("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel");
 
 $("#Configuration").attr("href", serverUrl + "/Products");
 

@@ -5,6 +5,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
 import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import evaluation.StrategicIndicator;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,10 +19,10 @@ import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryReposi
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
-import org.springframework.data.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.util.Pair;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,6 +59,9 @@ public class Util {
 
     @Autowired
     private QMAProjects qmaPrj;
+
+    @Autowired
+    private QMARelations qmaRelations;
 
     @Autowired
     private StrategicIndicatorRepository siRep;
@@ -292,7 +296,7 @@ public class Util {
     }
 
     private boolean AssessDateProjectStrategicIndicators(String project, LocalDate evaluationDate) throws IOException, CategoriesException {
-        Factors factors_qma= new Factors();
+        Factors factors_qma= new Factors(); //factors list, each of them includes list of SI in which is involved
         List<DTOFactor> list_of_factors;
 
         // If we receive an evaluationData is because we are recomputing historical data. We need the factors for an
@@ -376,6 +380,7 @@ public class Util {
         // List of factor impacting in ONE strategic indicator
         List<String> si_factors;
         DTOFactor factor;
+        List<DTOFactor> factorList = new ArrayList<>();
         List<String> missing_factors = new ArrayList<>(); //List of factors without assessment ---> SI assessment incomplete
         int index;
         boolean factor_found;
@@ -399,7 +404,7 @@ public class Util {
                 factor = factorsQMA.getFactors().get(index++);
                 if (factor.getId().equals(qfId)) {
                     factor_found = true;
-
+                    factorList.add(factor);
                     listFactors_assessment_values.add(factor.getValue());
                     mapSIFactors.put(factor.getId(), getQFLabelFromValue(factor.getValue()));
                     factor.addStrategicIndicator(StrategicIndicator.getHardID(project, strategicIndicator.getExternalId(), evaluationDate));
@@ -415,28 +420,37 @@ public class Util {
                 missing_factors.add(qfId);
         }
 
+        String assessmentValueOrLabel = "";
         // The computations depends on having a BN or not
         if (strategicIndicator.getNetwork() != null && strategicIndicator.getNetwork().length > 10) {
             File tempFile = File.createTempFile("network", ".dne", null);
             FileOutputStream fos = new FileOutputStream(tempFile);
             fos.write(strategicIndicator.getNetwork());
             List<DTOSIAssesment> assessment = AssesSI.AssesSI(strategicIndicator.getExternalId(), mapSIFactors, tempFile);
-            // saving the SI's assessment
-            if (!qmasi.setStrategicIndicatorValue(
-                    project,
-                    strategicIndicator.getExternalId(),
-                    strategicIndicator.getName(),
-                    strategicIndicator.getDescription(),
-                    getValueFromCategories(assessment),
-                    evaluationDate,
-                    assessment,
-                    missing_factors,
-                    factors_mismatch))
+            Pair<Float, String> valueAndLabel = getValueAndLabelFromCategories(assessment);
+            if (!valueAndLabel.getFirst().isNaN()) {
+                assessmentValueOrLabel = valueAndLabel.getSecond();
+                // saving the SI's assessment
+                if (!qmasi.setStrategicIndicatorValue(
+                        project,
+                        strategicIndicator.getExternalId(),
+                        strategicIndicator.getName(),
+                        strategicIndicator.getDescription(),
+                        valueAndLabel.getFirst(),
+                        evaluationDate,
+                        assessment,
+                        missing_factors,
+                        factors_mismatch))
+                    correct = false;
+            }
+            else {
                 correct = false;
+            }
         }
         else {
             if (listFactors_assessment_values.size()>0) {
                 float value = AssesSI.AssesSI(listFactors_assessment_values, si_factors.size());
+                assessmentValueOrLabel = String.valueOf(value);
                 // saving the SI's assessment
                 if (!qmasi.setStrategicIndicatorValue(
                         project,
@@ -453,7 +467,29 @@ public class Util {
             }
         }
 
+        // Save relations of factor -> SI
+        if (correct) {
+            List<String> factorIds = new ArrayList<>();
+            List<Float> weights = new ArrayList<>();
+            List<Float> values = new ArrayList<>();
+            List<String> labels = new ArrayList<>();
+            for (DTOFactor dtoFactor : factorList) {
+                factorIds.add(dtoFactor.getId());
+                Float weight = 0f;
+                if (strategicIndicator.getNetwork() == null)
+                    weight = 1f;
+                weights.add(weight);
+                values.add(dtoFactor.getValue());
+                labels.add(getQFLabelFromValue(dtoFactor.getValue()));
+            }
+            correct = saveFactorSIRelation(project, factorIds, strategicIndicator.getExternalId(), evaluationDate, weights, values, labels, assessmentValueOrLabel);
+        }
+
         return correct;
+    }
+
+    private boolean saveFactorSIRelation (String prj, List<String> factorIds, String si, LocalDate evaluationDate, List<Float> weights, List<Float> factorValues, List<String> factorLabels, String siValueOrLabel) throws IOException {
+        return qmaRelations.setStrategicIndicatorFactorRelation(prj, factorIds, si, evaluationDate, weights, factorValues, factorLabels, siValueOrLabel);
     }
 
     @RequestMapping("/api/Simulate")
@@ -493,7 +529,7 @@ public class Util {
                     FileOutputStream fos = new FileOutputStream(tempFile);
                     fos.write(si.getNetwork());
                     List<DTOSIAssesment> assessment = AssesSI.AssesSI(si.getName().replaceAll("\\s+","").toLowerCase(), mapSIFactors, tempFile);
-                    float value = getValueFromCategories(assessment);
+                    float value = getValueAndLabelFromCategories(assessment).getFirst();
                     result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+","").toLowerCase(),
                             si.getName(),
                             si.getDescription(),
@@ -578,34 +614,33 @@ public class Util {
         return result;
     }
 
-    public Float getValueFromCategories(final List<DTOSIAssesment> assessments) {
-        List<DTOSIAssesment> orderedAssessments = orderAssessmentsFromMinToMaxCategory(assessments);
+    public Pair<Float,String> getValueAndLabelFromCategories(final List<DTOSIAssesment> assessments) {
         Float max = -1.0f;
         Float maxIndex = -1.f;
-        Float index = 0.f;
-        for (DTOSIAssesment c : orderedAssessments) {
-            if (max < c.getValue()) {
-                max = c.getValue();
-                maxIndex = index;
+        for (Float i = 0.f; i < assessments.size(); i++) {
+            DTOSIAssesment assesment = assessments.get(i.intValue());
+            if (max < assesment.getValue()) {
+                max = assesment.getValue();
+                maxIndex = i;
             }
-            ++index;
         }
-        return (maxIndex/orderedAssessments.size() + (maxIndex+1)/orderedAssessments.size())/2.0f;
+        if (maxIndex > -1.f) {
+            String label = assessments.get(maxIndex.intValue()).getLabel();
+            Float value = getValueFromLabel(label);
+            return Pair.of(value, label);
+        }
+        else return Pair.of(Float.NaN,"");
     }
 
-    private List<DTOSIAssesment> orderAssessmentsFromMinToMaxCategory(List<DTOSIAssesment> assesments) {
+    public Float getValueFromLabel (String label) {
         List<SICategory> categories = SICatRep.findAll();
-        List<DTOSIAssesment> orderedAssessments = new ArrayList<>();
-        for (SICategory category : categories) {
-            String name = category.getName();
-            for (DTOSIAssesment assesment : assesments) {
-                if (assesment.getLabel().equals(name)) {
-                    orderedAssessments.add(0, assesment);
-                    break;
-                }
-            }
+        Collections.reverse(categories);
+        Float index = -1.f;
+        for (Float i = 0.f; i < categories.size(); i++) {
+            if (categories.get(i.intValue()).getName().equals(label))
+                index = i;
         }
-        return orderedAssessments;
+        return (index/categories.size() + (index+1)/categories.size())/2.0f;
     }
 
     public String getQFLabelFromValue(Float f) {
@@ -632,6 +667,31 @@ public class Util {
         return result;
     }
 
+    public static String buildDescriptiveLabelAndValue (Pair<Float, String> value) {
+        String labelAndValue;
+
+        String numeric_value;
+        if (value.getFirst()==null)
+            numeric_value="";
+        else
+            numeric_value = String.format("%.2f", value.getFirst());
+
+        if (value.getSecond().isEmpty())
+            labelAndValue = numeric_value;
+        else{
+            labelAndValue = value.getSecond();
+            if (!numeric_value.isEmpty())
+                labelAndValue += " (" + numeric_value + ')';
+        }
+
+        return labelAndValue;
+    }
+
+    public String getColorFromLabel (String label) {
+        SICategory category = SICatRep.findByName(label);
+        return category.getColor();
+    }
+
     @RequestMapping("/api/addToBacklog")
     public String addToBacklogUrl() {
         return "{\"issue_url\":\"https://essi.upc.edu/jira/issue/999\"," +
@@ -642,5 +702,13 @@ public class Util {
     @RequestMapping("/api/ForecastTechniques")
     public List<String> getForecastTechniques() {
         return forecast.getForecastTechniques();
+    }
+
+    @GetMapping("/api/qualityModel")
+    public List<DTORelationsSI> getQualityModel(@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) throws IOException {
+        if (date == null)
+            return qmaRelations.getRelations(prj, null);
+        else
+            return qmaRelations.getRelations(prj, LocalDate.parse(date));
     }
 }
