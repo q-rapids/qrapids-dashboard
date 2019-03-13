@@ -24,10 +24,17 @@ public class Metrics {
     public List<DTOMetric> getMetricsEvaluations(@RequestParam(value = "prj", required=false) String prj) throws IOException {
         return qmam.CurrentEvaluation(null, prj);
     }
+
+    @RequestMapping("/api/Metrics/{id}/CurrentEvaluation")
+    public DTOMetric getSingleMetricEvaluation(@RequestParam("prj") String prj, @PathVariable String id) throws IOException {
+        return qmam.SingleCurrentEvaluation(id, prj);
+    }
+
     @RequestMapping("/api/Metrics/CurrentEvaluation/{id}")
     public List<DTOMetric> getMetricsEvaluation(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id) throws IOException {
         return qmam.CurrentEvaluation(id, prj);
     }
+
     @RequestMapping("/api/Metrics/HistoricalData")
     public @ResponseBody
     List<DTOMetric> getMetricsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) throws IOException {

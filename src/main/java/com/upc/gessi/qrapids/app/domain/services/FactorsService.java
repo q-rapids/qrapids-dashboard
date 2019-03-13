@@ -25,6 +25,11 @@ public class FactorsService {
         return qmaqf.CurrentEvaluation(null, prj);
     }
 
+    @RequestMapping("/api/QualityFactors/{id}/CurrentEvaluation")
+    public DTOFactor getSingleFactorEvaluation (@RequestParam("prj") String prj, @PathVariable String id) throws IOException {
+        return qmaqf.SingleCurrentEvaluation(id, prj);
+    }
+
     @RequestMapping("/api/QualityFactors/CurrentEvaluation/{id}")
     public List<DTOQualityFactor> getQualityFactorsEvaluations(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id) throws IOException {
         return qmaqf.CurrentEvaluation(id, prj);

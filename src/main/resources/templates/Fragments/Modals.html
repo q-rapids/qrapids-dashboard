@@ -119,5 +119,37 @@
             </div>
         </div>
     </th:block>
+
+    <th:block th:fragment="qualityModelElementModal">
+        <div class="modal fade" id="qualityModelElementModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 id="qualityModelElementModalTitle" class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr">Value</span>
+                            <label for="qualityModelElementValue"></label><input id="qualityModelElementValue" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr">Description</span>
+                            <label for="qualityModelElementDescription"></label><input id="qualityModelElementDescription" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group" id="qualityModelElementRationaleDiv">
+                            <span class="input-group-addon input-group-addon-qr">Rationale</span>
+                            <label for="qualityModelElementRationale"></label><textarea id="qualityModelElementRationale" type="text" class="form-control" readonly="true" style="resize: vertical"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="qualityModelElementModalOKButton" type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
 </body>
 </html>

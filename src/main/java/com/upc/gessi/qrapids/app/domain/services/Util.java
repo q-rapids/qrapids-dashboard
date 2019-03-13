@@ -427,19 +427,25 @@ public class Util {
             FileOutputStream fos = new FileOutputStream(tempFile);
             fos.write(strategicIndicator.getNetwork());
             List<DTOSIAssesment> assessment = AssesSI.AssesSI(strategicIndicator.getExternalId(), mapSIFactors, tempFile);
-            assessmentValueOrLabel = getValueAndLabelFromCategories(assessment).getSecond();
-            // saving the SI's assessment
-            if (!qmasi.setStrategicIndicatorValue(
-                    project,
-                    strategicIndicator.getExternalId(),
-                    strategicIndicator.getName(),
-                    strategicIndicator.getDescription(),
-                    getValueAndLabelFromCategories(assessment).getFirst(),
-                    evaluationDate,
-                    assessment,
-                    missing_factors,
-                    factors_mismatch))
+            Pair<Float, String> valueAndLabel = getValueAndLabelFromCategories(assessment);
+            if (!valueAndLabel.getFirst().isNaN()) {
+                assessmentValueOrLabel = valueAndLabel.getSecond();
+                // saving the SI's assessment
+                if (!qmasi.setStrategicIndicatorValue(
+                        project,
+                        strategicIndicator.getExternalId(),
+                        strategicIndicator.getName(),
+                        strategicIndicator.getDescription(),
+                        valueAndLabel.getFirst(),
+                        evaluationDate,
+                        assessment,
+                        missing_factors,
+                        factors_mismatch))
+                    correct = false;
+            }
+            else {
                 correct = false;
+            }
         }
         else {
             if (listFactors_assessment_values.size()>0) {
@@ -462,20 +468,22 @@ public class Util {
         }
 
         // Save relations of factor -> SI
-        List<String> factorIds = new ArrayList<>();
-        List<Float> weights = new ArrayList<>();
-        List<Float> values = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
-        for (DTOFactor dtoFactor : factorList) {
-            factorIds.add(dtoFactor.getId());
-            Float weight = 0f;
-            if (strategicIndicator.getNetwork() == null)
-                weight = (1f / factorList.size());
-            weights.add(weight);
-            values.add(dtoFactor.getValue());
-            labels.add(getQFLabelFromValue(dtoFactor.getValue()));
+        if (correct) {
+            List<String> factorIds = new ArrayList<>();
+            List<Float> weights = new ArrayList<>();
+            List<Float> values = new ArrayList<>();
+            List<String> labels = new ArrayList<>();
+            for (DTOFactor dtoFactor : factorList) {
+                factorIds.add(dtoFactor.getId());
+                Float weight = 0f;
+                if (strategicIndicator.getNetwork() == null)
+                    weight = 1f;
+                weights.add(weight);
+                values.add(dtoFactor.getValue());
+                labels.add(getQFLabelFromValue(dtoFactor.getValue()));
+            }
+            correct = saveFactorSIRelation(project, factorIds, strategicIndicator.getExternalId(), evaluationDate, weights, values, labels, assessmentValueOrLabel);
         }
-        correct = correct && saveFactorSIRelation(project, factorIds, strategicIndicator.getExternalId(), evaluationDate, weights, values, labels, assessmentValueOrLabel);
 
         return correct;
     }
@@ -607,35 +615,32 @@ public class Util {
     }
 
     public Pair<Float,String> getValueAndLabelFromCategories(final List<DTOSIAssesment> assessments) {
-        List<DTOSIAssesment> orderedAssessments = orderAssessmentsFromMinToMaxCategory(assessments);
         Float max = -1.0f;
-        int maxIndex = -1;
-        int index = 0;
-        for (DTOSIAssesment c : orderedAssessments) {
-            if (max < c.getValue()) {
-                max = c.getValue();
-                maxIndex = index;
+        Float maxIndex = -1.f;
+        for (Float i = 0.f; i < assessments.size(); i++) {
+            DTOSIAssesment assesment = assessments.get(i.intValue());
+            if (max < assesment.getValue()) {
+                max = assesment.getValue();
+                maxIndex = i;
             }
-            ++index;
         }
-        Float value = (maxIndex/orderedAssessments.size() + (maxIndex+1)/orderedAssessments.size())/2.0f;
-        String label = assessments.get(maxIndex).getLabel();
-        return Pair.of(value, label);
+        if (maxIndex > -1.f) {
+            String label = assessments.get(maxIndex.intValue()).getLabel();
+            Float value = getValueFromLabel(label);
+            return Pair.of(value, label);
+        }
+        else return Pair.of(Float.NaN,"");
     }
 
-    private List<DTOSIAssesment> orderAssessmentsFromMinToMaxCategory(List<DTOSIAssesment> assesments) {
+    public Float getValueFromLabel (String label) {
         List<SICategory> categories = SICatRep.findAll();
-        List<DTOSIAssesment> orderedAssessments = new ArrayList<>();
-        for (SICategory category : categories) {
-            String name = category.getName();
-            for (DTOSIAssesment assesment : assesments) {
-                if (assesment.getLabel().equals(name)) {
-                    orderedAssessments.add(0, assesment);
-                    break;
-                }
-            }
+        Collections.reverse(categories);
+        Float index = -1.f;
+        for (Float i = 0.f; i < categories.size(); i++) {
+            if (categories.get(i.intValue()).getName().equals(label))
+                index = i;
         }
-        return orderedAssessments;
+        return (index/categories.size() + (index+1)/categories.size())/2.0f;
     }
 
     public String getQFLabelFromValue(Float f) {
@@ -660,6 +665,31 @@ public class Util {
         }
         if (nFactors > 0) result /= nFactors;
         return result;
+    }
+
+    public static String buildDescriptiveLabelAndValue (Pair<Float, String> value) {
+        String labelAndValue;
+
+        String numeric_value;
+        if (value.getFirst()==null)
+            numeric_value="";
+        else
+            numeric_value = String.format("%.2f", value.getFirst());
+
+        if (value.getSecond().isEmpty())
+            labelAndValue = numeric_value;
+        else{
+            labelAndValue = value.getSecond();
+            if (!numeric_value.isEmpty())
+                labelAndValue += " (" + numeric_value + ')';
+        }
+
+        return labelAndValue;
+    }
+
+    public String getColorFromLabel (String label) {
+        SICategory category = SICatRep.findByName(label);
+        return category.getColor();
     }
 
     @RequestMapping("/api/addToBacklog")

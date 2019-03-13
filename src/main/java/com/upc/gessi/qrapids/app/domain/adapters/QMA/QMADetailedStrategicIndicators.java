@@ -81,13 +81,13 @@ public class QMADetailedStrategicIndicators {
             //Create Detailed Strategic Indicator with name, id and null factors
             DTODetailedStrategicIndicator d = new DTODetailedStrategicIndicator(element.getID(), element.getName(), null);
             //set Factors to Detailed Strategic Indicator
-            d.setFactors(FactorEvaluationDTOtoDTOFactor(element.getFactors()));
+            d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors()));
             dsi.add(d);
         }
         return dsi;
     }
 
-    public static List<DTOFactor> FactorEvaluationDTOtoDTOFactor (List<FactorEvaluationDTO> factors) {
+    public static List<DTOFactor> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors) {
         List<DTOFactor> listFact = new ArrayList<>();
         //for each factor in the Detailed Strategic Indicator
         for (Iterator<FactorEvaluationDTO> iterFactor = factors.iterator(); iterFactor.hasNext(); ) {
@@ -95,16 +95,20 @@ public class QMADetailedStrategicIndicators {
             //for each evaluation create new factor with factor name and id, and evaluation date and value
             for (Iterator<EvaluationDTO> iterFactEval = factor.getEvaluations().iterator(); iterFactEval.hasNext(); ) {
                 EvaluationDTO evaluation = iterFactEval.next();
-                listFact.add(new DTOFactor(
-                        factor.getID(),
-                        factor.getName(),
-                        factor.getDescription(),
-                        evaluation.getValue(), evaluation.getEvaluationDate(),
-                        evaluation.getDatasource(),evaluation.getRationale(),
-                        factor.getStrategicIndicators()));
+                listFact.add(FactorEvaluationDTOToDTOFactor(factor, evaluation));
             }
         }
         return listFact;
+    }
+
+    public static DTOFactor FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
+        return new DTOFactor(
+                factor.getID(),
+                factor.getName(),
+                factor.getDescription(),
+                evaluation.getValue(), evaluation.getEvaluationDate(),
+                evaluation.getDatasource(),evaluation.getRationale(),
+                factor.getStrategicIndicators());
     }
 
 

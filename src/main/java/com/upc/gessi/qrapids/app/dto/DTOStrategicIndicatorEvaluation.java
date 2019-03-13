@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.dto;
 
+import com.upc.gessi.qrapids.app.domain.services.Util;
 import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
@@ -105,21 +106,7 @@ public class DTOStrategicIndicatorEvaluation {
     public String getValue_description() { return value_description;}
 
     private void setValue_description(Pair<Float, String> value) {
-
-        String numeric_value;
-
-        if (value.getFirst()==null)
-            numeric_value="";
-        else
-            numeric_value = String.format("%.2f", value.getFirst());
-
-        if (value.getSecond().isEmpty())
-            this.value_description = numeric_value;
-        else{
-            this.value_description = value.getSecond();
-            if (!numeric_value.isEmpty())
-                this.value_description += " (" + numeric_value + ')';
-        }
+        this.value_description = Util.buildDescriptiveLabelAndValue(value);
     }
 
     public void setValue(Pair<Float, String> value) {

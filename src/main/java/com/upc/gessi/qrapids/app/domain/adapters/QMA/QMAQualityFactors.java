@@ -47,9 +47,15 @@ public class QMAQualityFactors {
                 evals = StrategicIndicator.getMetricsEvaluations(prj, id);
             }
 //            Connection.closeConnection();
-            return FactorMetricEvaluationDTOtoDTOFactor(evals);
+            return FactorMetricEvaluationDTOListToDTOQualityFactorList(evals);
         }
         return qf;
+    }
+
+    public DTOFactor SingleCurrentEvaluation(String factorId, String prj) throws IOException {
+        qmacon.initConnexion();
+        FactorEvaluationDTO factorEvaluationDTO = Factor.getSingleEvaluation(prj, factorId);
+        return QMADetailedStrategicIndicators.FactorEvaluationDTOToDTOFactor(factorEvaluationDTO, factorEvaluationDTO.getEvaluations().get(0));
     }
 
     public List<DTOQualityFactor> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
@@ -66,7 +72,7 @@ public class QMAQualityFactors {
                 evals = StrategicIndicator.getMetricsEvaluations(prj, id, from, to);
             }
 //        Connection.closeConnection();
-            qf = FactorMetricEvaluationDTOtoDTOFactor(evals);
+            qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(evals);
         }
         return qf;
     }
@@ -96,12 +102,12 @@ public class QMAQualityFactors {
 
     public List<DTOFactor> getAllFactors(String prj) throws IOException {
         qmacon.initConnexion();
-        return QMADetailedStrategicIndicators.FactorEvaluationDTOtoDTOFactor(Factor.getEvaluations(prj));
+        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj));
     }
 
     public List<DTOFactor> getAllFactorsHistoricalData(String prj, LocalDate from, LocalDate to) throws IOException {
         qmacon.initConnexion();
-        return QMADetailedStrategicIndicators.FactorEvaluationDTOtoDTOFactor(Factor.getEvaluations(prj, from, to));
+        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj, from, to));
     }
 
     public void setFactorStrategicIndicatorRelation(List<DTOFactor> factors, String prj) throws IOException {
@@ -140,7 +146,7 @@ public class QMAQualityFactors {
         return qf;
 
     }
-    private static List<DTOQualityFactor> FactorMetricEvaluationDTOtoDTOFactor(List<FactorMetricEvaluationDTO> evals) {
+    private static List<DTOQualityFactor> FactorMetricEvaluationDTOListToDTOQualityFactorList(List<FactorMetricEvaluationDTO> evals) {
         List<DTOQualityFactor> qf = new ArrayList<>();
 
         // The evaluations (eval param) has the following structure:
@@ -149,7 +155,7 @@ public class QMAQualityFactors {
         {
             // For each factor, we have the factor inforamtion + the list of metrics evaluations
             FactorMetricEvaluationDTO qualityFactor = iterFactors.next();
-            qf.add(new DTOQualityFactor(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOtoDTOMetric(qualityFactor.getMetrics())));
+            qf.add(new DTOQualityFactor(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(qualityFactor.getMetrics())));
         }
         return qf;
     }

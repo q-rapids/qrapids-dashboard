@@ -59,6 +59,21 @@ public class StrategicIndicators {
         }
     }
 
+    @RequestMapping("/api/StrategicIndicators/{id}/CurrentEvaluation")
+    public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorEvaluation(@RequestParam("prj") String prj, @PathVariable String id, HttpServletResponse response) {
+        try {
+            return qmasi.SingleCurrentEvaluation(prj, id);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        } catch (CategoriesException e) {
+            System.err.println(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            return null;
+        }
+    }
+
     @RequestMapping("/api/StrategicIndicators/HistoricalData")
     public @ResponseBody
     List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to, HttpServletResponse response) {

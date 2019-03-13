@@ -4,11 +4,13 @@ import DTOs.Relations.RelationDTO;
 import DTOs.Relations.SourceRelationDTO;
 import DTOs.Relations.TargetRelationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
+import com.upc.gessi.qrapids.app.domain.services.Util;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import evaluation.Relations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -23,6 +25,9 @@ public class QMARelations {
 
     @Autowired
     private QMAConnection qmacon;
+
+    @Autowired
+    private Util util;
 
     private static final String SI_TYPE = "strategic_indicators";
     private static final String FACTORS_TYPE = "factors";
@@ -105,6 +110,20 @@ public class QMARelations {
                     strategicIndicatorsMap.put(target.getID(), strategicIndicator);
                 }
                 strategicIndicator.setValue(target.getValue());
+                try {
+                    Float value = Float.parseFloat(strategicIndicator.getValue());
+                    String label = util.getLabel(value);
+                    String valueDescription = Util.buildDescriptiveLabelAndValue(Pair.of(value, label));
+                    strategicIndicator.setValueDescription(valueDescription);
+                    strategicIndicator.setColor(util.getColorFromLabel(label));
+                }
+                catch (NumberFormatException nfe) {
+                    String label = strategicIndicator.getValue();
+                    Float value = util.getValueFromLabel(label);
+                    String valueDescription = Util.buildDescriptiveLabelAndValue(Pair.of(value, label));
+                    strategicIndicator.setValueDescription(valueDescription);
+                    strategicIndicator.setColor(util.getColorFromLabel(label));
+                }
 
                 DTORelationsFactor factor;
                 if (factorsMap.containsKey(source.getID())) {
