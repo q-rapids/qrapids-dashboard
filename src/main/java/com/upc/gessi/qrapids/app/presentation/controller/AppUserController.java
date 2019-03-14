@@ -105,13 +105,13 @@ public class AppUserController {
 
         System.out.println(user.toString());
         // Number of groups
-        long groups = this.userGroupRepository.count();
-
-        if ( groups >= 1 && user.getUserGroup() != null ){
-            user.setAdmin( false );
-        } else {
-            user.setAdmin( true );
-        }
+        //long groups = this.userGroupRepository.count();
+        //if ( groups >= 1 && user.getUserGroup() != null ){
+        //    user.setAdmin( false );
+        //} else {
+        //    user.setAdmin( true );
+        //}
+        user.setAdmin(true);
 
         try{
 

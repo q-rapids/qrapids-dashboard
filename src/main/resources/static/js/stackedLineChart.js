@@ -81,7 +81,9 @@ function drawChart() {
                 fill: false,
                 data: value[i][j]
             });
-            c.data.errors.push(errors[i][j]);
+            if (typeof errors !== 'undefined') {
+                c.data.errors.push(errors[i][j]);
+            }
         }
         config.push(c);
     }

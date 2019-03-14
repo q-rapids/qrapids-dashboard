@@ -3,12 +3,15 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackValues;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
 import com.upc.gessi.qrapids.app.database.repositories.Feedback.FeedFactorRepositoryImpl;
+import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,13 +38,21 @@ public class Feedback {
     @Autowired
     private FeedFactorRepositoryImpl ffRep;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @RequestMapping(value="/api/feedback", method= RequestMethod.POST)
-    public void newSI(HttpServletRequest request, HttpServletResponse response) throws UnknownHostException {
+    public void newSI(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws UnknownHostException {
         try {
             Long id = Long.parseLong(request.getParameter("id"));
             java.util.Date dateAux = new java.util.Date();
             Date date = new Date(dateAux.getTime());
-            String author = "-1"; //TODO: Remove when user authentiacation enabled
+            String author = "-1";
+            AppUser user = null;
+            if (authentication != null) {
+                author = authentication.getName();
+                user = userRepository.findByUsername(author);
+            }
             float value = Float.parseFloat(request.getParameter("newvalue"));
             float oldvalue = Float.parseFloat(request.getParameter("oldvalue"));
             Type stringListType = new TypeToken<List<String>>() {}.getType();
@@ -52,7 +63,7 @@ public class Feedback {
             List<String> factorEvaluationDates = new Gson().fromJson(request.getParameter("factorEvaluationDates"), stringListType);
 
             if (!id.equals("")) {
-                com.upc.gessi.qrapids.app.domain.models.Feedback feed = new com.upc.gessi.qrapids.app.domain.models.Feedback(id, date, author, value, oldvalue);
+                com.upc.gessi.qrapids.app.domain.models.Feedback feed = new com.upc.gessi.qrapids.app.domain.models.Feedback(id, date, author, user, value, oldvalue);
                 fRep.save(feed);
                 for (int i = 0; i < factorIds.size(); i++) {
                     java.util.Date evaluationDateAux = new SimpleDateFormat("yyyy-MM-dd").parse(factorEvaluationDates.get(i));

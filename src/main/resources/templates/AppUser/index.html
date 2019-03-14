@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="Fragments/Template :: header">
+<head th:replace="Fragments/TemplateDashboard :: basicHeader">
 </head>
 
 <link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
@@ -15,13 +15,14 @@
 <br/>
 
 <!-- NAvegation -->
-<div th:replace="Fragments/Template :: navbar"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
 
 <div th:replace="Fragments/Template :: alerts"></div>
 
 <section id="admin-control">
 
-    <div class="row" style="padding:0em 3em;">
+    <div class="row" style="padding:1em 3em;">
 
         <!-- Container -->
         <div class="col-xs-12 col-sm-12 col-lg-12 full-height container">
@@ -54,8 +55,8 @@
                                 <th>id</th>
                                 <th>Username</th>
                                 <th>Email</th>
-                                <th>Admin</th>
-                                <th>User Group</th>
+                                <!--th>Admin</th-->
+                                <!--th>User Group</th-->
                                 <th scope="1">Actions</th>
                             </tr>
                             </thead>
@@ -68,11 +69,11 @@
                                 <td th:text="${user.getId()}"></td>
                                 <td th:text="${user.getUsername()}"></td>
                                 <td th:text="${user.getEmail()}"></td>
-                                <td>
+                                <!--td>
                                     <span th:if="${user.getAdmin()}" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                                     <span th:if="${ ! user.getAdmin()}" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                </td>
-                                <td th:text="${user.getUserGroup()?.getName()}"></td>
+                                </td-->
+                                <!--td th:text="${user.getUserGroup()?.getName()}"></td-->
                                 <td>
                                     <a th:href="@{/users/{id}/update(id=${user.getId()})}"> Edit </a>
                                 </td>
@@ -110,13 +111,13 @@
                                 <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" />
                             </div>
 
-                            <div class="checkbox">
+                            <!--div class="checkbox">
                                 <label>
                                     <input type="checkbox" th:name="admin" th:id="admin" th:field="*{admin}" /> Admin
                                 </label>
-                            </div>
+                            </div-->
 
-                            <div id="group_option" class="form-group">
+                            <!--div id="group_option" class="form-group">
                                 <label for="user_group">User group</label>
                                 <select class="selectpicker" th:name="userGroup" data-width="50%">
 
@@ -125,7 +126,7 @@
                                             th:text="${userGroup.getName()}"></option>
 
                                 </select>
-                            </div>
+                            </div-->
 
 
                             <button type="submit" class="btn btn-border-black">Submit</button>
@@ -187,6 +188,8 @@
     })
 
 </script>
+
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
 
 </body>
 </html>

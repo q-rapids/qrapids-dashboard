@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="Fragments/Template :: header">
+<head th:replace="Fragments/TemplateDashboard :: basicHeader">
 </head>
 <link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
 <script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
@@ -15,12 +15,13 @@
 <br/>
 
 <!-- Navegation -->
-<div th:replace="Fragments/Template :: navbar"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
 
 <!-- Alert's system -->
 <div th:replace="Fragments/Template :: alerts"></div>
 
-<div class="row" style="padding:0em 3em;">
+<div class="row" style="padding:1em 3em;">
     <!-- Container -->
     <div class="col-xs-12 col-sm-12 col-lg-12 full-height">
 
@@ -237,6 +238,8 @@
     })
 
 </script>
+
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
 
 </body>
 </html>

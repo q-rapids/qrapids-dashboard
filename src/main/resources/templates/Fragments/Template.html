@@ -47,15 +47,6 @@
             </a>
         </div>
     </div>
-    <div class="row">
-        <div th:if="${@environment.getProperty('security.enable')}"
-                class="col-xs-1 pull-right" style="margin-top: 1.5em; text-decoration: none">
-            <span>
-                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                <a th:href="@{/profile}">My profile</a>
-            </span>
-        </div>
-    </div>
     <div th:replace="Fragments/Modals :: projectModal"></div>
 </div>
 
