@@ -23,6 +23,7 @@ public class DTOMetric {
     private String rationale;
     private Pair<Float, Float> confidence80;
     private Pair<Float, Float> confidence95;
+    private String forecastingError;
 
     /**
      * Constructor of the DTO of Metrics
@@ -68,6 +69,12 @@ public class DTOMetric {
         setRationale(rationale);
         setConfidence80(confidence80);
         setConfidence95(confidence95);
+    }
+
+    public DTOMetric(String id, String name, String forecastingError) {
+        this.id = id;
+        this.name = name;
+        this.forecastingError = forecastingError;
     }
 
     /**
@@ -153,5 +160,13 @@ public class DTOMetric {
     public void setRationale(String rationale) {
         if (rationale!=null)
             this.rationale = rationale;
+    }
+
+    public String getForecastingError() {
+        return forecastingError;
+    }
+
+    public void setForecastingError(String forecastingError) {
+        this.forecastingError = forecastingError;
     }
 }

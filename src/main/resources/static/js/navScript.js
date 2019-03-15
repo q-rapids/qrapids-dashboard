@@ -1,5 +1,5 @@
 var currentURL = window.location.href;
-var viewMode, time, assessment, prediction;
+var viewMode, time, assessment, prediction, products, configuration, userName;
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -21,6 +21,44 @@ else {
     checkAlertsPending();
 }
 
+function getUserName () {
+    jQuery.ajax({
+        dataType: "json",
+        url: serverUrl + "/api/me",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            sessionStorage.setItem("userName", data.userName);
+            $("#MyProfile").text(data.userName);
+        },
+        error: function () {
+            sessionStorage.setItem("userName", "undefined");
+        }
+    });
+}
+if (!(userName = sessionStorage.getItem("userName")))
+    getUserName();
+else if (userName !== "undefined")
+    $("#MyProfile").text(userName);
+
+function checkProducts () {
+    jQuery.ajax({
+        dataType: "json",
+        url: serverUrl + "/api/products",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            if (data.length > 0)
+                $("#Products").show();
+            else
+                $("#Products").hide();
+        }
+    });
+}
+checkProducts();
+
 // Load state from sessionStorage
 // If missing, set default values
 if (!(viewMode = sessionStorage.getItem("viewMode"))) {
@@ -34,6 +72,12 @@ if (!(assessment = sessionStorage.getItem("assessment"))) {
 }
 if (!(prediction = sessionStorage.getItem("prediction"))) {
     prediction = "StrategicIndicators";
+}
+if (!(products = sessionStorage.getItem("products"))) {
+    products = "Evaluation";
+}
+if (!(configuration = sessionStorage.getItem("configuration"))) {
+    configuration = "Products";
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -60,13 +104,12 @@ if (currentURL.search("/HistoricTable") !== -1) {
 sessionStorage.setItem("viewMode", viewMode);
 sessionStorage.setItem("time", time);
 
-
-// 2.- Highlighting the enabled options depending on the View Mode and Time options selected
+// Highlighting the enabled options depending on the View Mode and Time options selected
 $("#" + viewMode).css("background-color", "#ffc380");
 $("#" + time).css("background-color", "#ffc380");
 
 
-// 3.- Checking the enabled options depending on the selected option on the main menu
+// Checking the enabled options depending on the selected option on the main menu
 var id;
 if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/EditStrategicIndicators/") !== -1) {
     id = "StrategicIndicators";
@@ -98,6 +141,26 @@ if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Edi
 } else if (currentURL.search("/QualityAlerts") !== -1) {
     id = "QualityAlerts";
     highlight(id);
+} else if (currentURL.search("/QualityModel") !== -1) {
+    id = "QualityModel";
+    highlightAndSaveCurrentAssessment(id);
+    disableViewModeAndTimeOption();
+} else if (currentURL.search("/Products/Evaluation") !== -1) {
+    id = "Evaluation";
+    highlightandSaveCurrentProducts(id);
+} else if (currentURL.search("/Products/DetailedEvaluation") !== -1) {
+    id = "DetailedEvaluation";
+    highlightandSaveCurrentProducts(id);
+} else {
+    if (currentURL.match("/Products"))
+        id = "Products";
+    else if (currentURL.match("/profile"))
+        id = "profile";
+    else if (currentURL.match("/users"))
+        id = "users";
+    else if (currentURL.match("/usergroups"))
+        id = "usergroups";
+    highlightAndSaveCurrentConfiguration(id);
 }
 
 function highlightAndSaveCurrentAssessment (id) {
@@ -118,10 +181,35 @@ function highlightAndSaveCurrentPrediction (id) {
     prediction = id;
 }
 
+function highlightandSaveCurrentProducts (id) {
+    var productsButton = $("#Products");
+    productsButton.css("background-color", "#eeeeee");
+    productsButton.css("color", "black");
+    highlight("Products" + id);
+    sessionStorage.setItem("products", id);
+    products = id;
+}
+
+function highlightAndSaveCurrentConfiguration (id) {
+    var profileButton = $("#Configuration");
+    profileButton.css("background-color", "#eeeeee");
+    profileButton.css("color", "black");
+    highlight(id + "Config");
+    sessionStorage.setItem("configuration", id);
+    configuration = id;
+}
+
 function highlight (id) {
     var menuOption = $("#" + id);
     menuOption.css("background-color", "#eeeeee");
     menuOption.css("color", "black");
+}
+
+function disableViewModeAndTimeOption () {
+    $("#Chart").prop("disabled", true);
+    $("#Table").prop("disabled", true);
+    $("#Current").prop("disabled", true);
+    $("#Historic").prop("disabled", true);
 }
 
 
@@ -131,7 +219,8 @@ function highlight (id) {
 //         --> time and viewMode variables filled
 ///////////////////////////////////////////////////////////////////
 
-$("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
+if (assessment === "QualityModel") $("#Assessment").attr("href", serverUrl + "/" + assessment);
+else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
 
@@ -154,6 +243,29 @@ $("#MetricsPrediction").attr("href", serverUrl + "/Metrics/PredictionChart");
 $("#Simulation").attr("href", serverUrl + "/Simulation");
 
 $("#QualityAlerts").attr("href", serverUrl + "/QualityAlerts");
+
+$("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel");
+
+$("#Products").attr("href", serverUrl + "/Products/" + products);
+
+$("#ProductsEvaluation").attr("href", serverUrl+"/Products/Evaluation");
+
+$("#ProductsDetailedEvaluation").attr("href", serverUrl+"/Products/DetailedEvaluation");
+
+$("#Configuration").attr("href", serverUrl + "/" + configuration);
+
+$("#ProductsConfig").attr("href", serverUrl + "/Products");
+
+$("#profileConfig").attr("href", serverUrl + "/profile");
+
+$("#usersConfig").attr("href", serverUrl + "/users");
+
+$("#usergroupsConfig").attr("href", serverUrl + "/usergroups");
+
+$("#LogoutProfileConfig").attr("href", serverUrl + "/logout_user");
+$("#LogoutProfileConfig").click(function () {
+    sessionStorage.removeItem("userName");
+});
 
 
 function menuNav (urlNav) {

@@ -1,0 +1,76 @@
+@CHARSET "UTF-8";
+
+
+#productView {
+	display: flex;
+	flex-direction: row;
+}
+
+#productTree {
+	margin: 1%;
+	width: 21%;
+}
+
+#productInfo {
+	margin: 1%;
+	width: 75%;
+	display: flex;
+	flex-direction: row;
+}
+
+#productForm {
+	margin: 1%;
+	display: flex;
+	flex-direction: column;
+	width: 81%;
+}
+
+#projectForm {
+	margin: 1%;
+	display: flex;
+	flex-direction: column;
+	width: 81%;
+}
+
+.productInfoRow {
+	margin: 1%;
+	margin-bottom: 3%;
+	width: 90%;
+	display: flex;
+	flex-direction: row;
+}
+
+.selectionColumn {
+	margin: 1%;
+	display: flex;
+	flex-direction: column;
+}
+
+.logoContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height:150px;
+	width:150px;
+	border: 2px solid #efeff8;
+	border-radius: 6px;
+}
+
+.logoColumn {
+	display: flex;
+	flex-direction: column;
+	align-items: top;
+	justify-content: top;
+	width:150px;
+	margin-top: 24px;
+	
+}
+
+.list-group-item:hover {
+    background-color: #efeff8;
+}
+
+p {
+	margin: 0;
+}

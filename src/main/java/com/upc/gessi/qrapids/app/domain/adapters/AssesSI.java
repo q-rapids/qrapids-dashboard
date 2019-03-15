@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.adapters;
 
 import com.google.gson.Gson;
+import com.upc.gessi.qrapids.app.domain.services.Util;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
@@ -24,6 +25,9 @@ public class AssesSI {
 
     @Autowired
     private SICategoryRepository SICatRep;
+
+    @Autowired
+    private Util util;
 
     @Value("${assessSI.url}")
     private String url;
@@ -96,17 +100,16 @@ public class AssesSI {
     }
 
     public List<DTOSIAssesment> DTOAssessmentSItoDTOSIAssesment(ArrayList<DTOCategorySI> catsEstimation) {
-        List<SICategory> QFCats = SICatRep.findAll();
-        List<DTOSIAssesment> result = new ArrayList<>();
-        if (catsEstimation.size() == QFCats.size()) {
+        List<DTOSIAssesment> categories = util.getCategories();
+        if (catsEstimation.size() == categories.size()) {
             int i = 0;
-            for (SICategory qfc : QFCats) {
-                if (qfc.getName().equals(catsEstimation.get(catsEstimation.size() - 1 - i).getIdSICategory())) {
-                    result.add(new DTOSIAssesment(qfc.getId(), qfc.getName(), catsEstimation.get(catsEstimation.size() - 1 - i).getProbSICategory(), qfc.getColor(), null));
+            for (DTOSIAssesment assesment : categories) {
+                if (assesment.getLabel().equals(catsEstimation.get(catsEstimation.size() - 1 - i).getIdSICategory())) {
+                    assesment.setValue(catsEstimation.get(catsEstimation.size() - 1 - i).getProbSICategory());
                 }
                 ++i;
             }
         }
-        return result;
+        return categories;
     }
 }

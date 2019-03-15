@@ -24,10 +24,17 @@ public class Metrics {
     public List<DTOMetric> getMetricsEvaluations(@RequestParam(value = "prj", required=false) String prj) throws IOException {
         return qmam.CurrentEvaluation(null, prj);
     }
+
+    @RequestMapping("/api/Metrics/{id}/CurrentEvaluation")
+    public DTOMetric getSingleMetricEvaluation(@RequestParam("prj") String prj, @PathVariable String id) throws IOException {
+        return qmam.SingleCurrentEvaluation(id, prj);
+    }
+
     @RequestMapping("/api/Metrics/CurrentEvaluation/{id}")
     public List<DTOMetric> getMetricsEvaluation(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id) throws IOException {
         return qmam.CurrentEvaluation(id, prj);
     }
+
     @RequestMapping("/api/Metrics/HistoricalData")
     public @ResponseBody
     List<DTOMetric> getMetricsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) throws IOException {
@@ -42,14 +49,14 @@ public class Metrics {
 
     @RequestMapping("/api/Metrics/PredictionData/{id}")
     public @ResponseBody
-    List<DTOMetric> getMetricsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
-        return qmaf.ForecastMetric(qmam.CurrentEvaluation(id,prj), "7", horizon, prj);
+    List<DTOMetric> getMetricsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
+        return qmaf.ForecastMetric(qmam.CurrentEvaluation(id,prj), technique, "7", horizon, prj);
     }
 
     @RequestMapping("/api/Metrics/PredictionData")
     public @ResponseBody
-    List<DTOMetric> getMetricsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon) throws IOException {
-        return qmaf.ForecastMetric(qmam.CurrentEvaluation(null, prj), "7", horizon, prj);
+    List<DTOMetric> getMetricsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String techinique, @RequestParam("horizon") String horizon) throws IOException {
+        return qmaf.ForecastMetric(qmam.CurrentEvaluation(null, prj), techinique, "7", horizon, prj);
     }
 
 }

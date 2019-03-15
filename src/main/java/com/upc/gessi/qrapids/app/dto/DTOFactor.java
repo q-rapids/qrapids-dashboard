@@ -24,6 +24,7 @@ public class DTOFactor {
     private String datasource;
     private String rationale;
     private List<String> strategic_indicators;
+    private String forecastingError;
 
     /**
      * Constructor of the DTO of Factors
@@ -46,6 +47,12 @@ public class DTOFactor {
         setDatasource(datasource);
         setRationale(rationale);
         setStrategicIndicators(strategicIndicators);
+    }
+
+    public DTOFactor(String id, String name, String forecastingError) {
+        this.id = id;
+        this.name = name;
+        this.forecastingError = forecastingError;
     }
 
     /**
@@ -133,4 +140,11 @@ public class DTOFactor {
         return strategic_indicators;
     }
 
+    public String getForecastingError() {
+        return forecastingError;
+    }
+
+    public void setForecastingError(String forecastingError) {
+        this.forecastingError = forecastingError;
+    }
 }

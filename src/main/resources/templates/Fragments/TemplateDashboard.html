@@ -42,10 +42,16 @@
 </head>
 <body>
     <div class="topnav" id="myTopnav" th:fragment="navBarDashboard">
+        <a id="Products" style="display: none;">Products</a>
         <a id="Assessment">Assessment</a>
         <a id="Prediction">Prediction</a>
         <a id="Simulation">Simulation</a>
         <a id="QualityAlerts">Alerts</a>
+        <a id="Configuration" ><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
+        <a th:if="${@environment.getProperty('security.enable')}"
+           class="col-xs-1 pull-right"
+           th:href="@{/profile}">
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span id="MyProfile">My profile</span></a>
     </div>
     <div class="subnav" id="submenuAssessment" th:fragment="navSubBarAssessmentDashboard">
         <a id="StrategicIndicatorsAssessment">Strategic Indicators</a>
@@ -54,6 +60,7 @@
         <a id="MetricsAssessment">Metrics</a>
         <a id="RawDataAssessment" th:unless="${@environment.getProperty('rawdata.dashboard') == null}"
            th:href="@{${@environment.getProperty('rawdata.dashboard')}}" target="_tab">Raw Data</a>
+        <a id="QualityModelAssessment">Quality Model</a>
         <span class="pull-right">
             <div class="panel-body" style="color: #3F403F">
                 View mode:
@@ -86,6 +93,16 @@
         <a id="QualityFactorsPrediction">Factors</a>
         <a id="MetricsPrediction">Metrics</a>
     </div>
+    <div class="subnav" id="submenuProjects" th:fragment="navSubBarProductsDashboard">
+        <a id="ProductsEvaluation">Products</a>
+        <a id="ProductsDetailedEvaluation">Projects</a>
+    </div>
+    <div class="subnav" id="submenuConfiguration" th:fragment="navSubBarConfiguration">
+        <a id="ProductsConfig">Products</a>
+        <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
+        <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
+        <a th:if="${@environment.getProperty('security.enable')}" id="LogoutProfileConfig">Logout</a>
+    </div>
     <p th:fragment="navLinkMetrics" style="margin-left: 20px; font-size: medium; font-family: Arial ">
         <a id="originSI" onclick="navBack(true)"></a>
         <span id = "arrow"></span>
@@ -95,6 +112,14 @@
         <br/>
         <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
             <form class="form-inline well" style="float: right">
+                <div class="form-group dropdown" id="techniqueDropdownDiv">
+                    <label class="control-label">Technique: </label>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span id="selectedTechnique" th:text="${@environment.getProperty('forecast.technique')}"></span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul id="techniqueDropdown" class="dropdown-menu dropdown-menu-right"></ul>
+                </div>
                 <div class="form-group" id="fromDiv">
                     <label class="control-label">From: </label>
                     <input id="datepickerFrom" width="250" class="form-control"/>
@@ -113,6 +138,20 @@
         <br/>
         <div class="container" style="text-align:center;" id="chartContainer"></div>
         <br/>
+    </th:block>
+    <th:block th:fragment="ProjectSelector">
+        <div class="col-xs-2" style="margin-top: 1em;">
+            <h4 style="display: inline">Project: </h4>
+            <div class="dropdown" style="display: inline-grid">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <span id = "projectsDropdownText" class="text">Projects</span>
+                    <span class="caret"></span>
+                </button>
+                <ul id="projectsDropdownItems" class="dropdown-menu dropdown-menu-left">
+                </ul>
+            </div>
+        </div>
+        <script type="text/javascript" th:src="@{/js/projectsSelector.js}"></script>
     </th:block>
 </body>
 <th:block th:fragment="scriptsHistoric">

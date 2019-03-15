@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <script type="text/javascript" src="../../static/js/lib/d3.v4.min.js" th:src="@{/js/lib/d3.v4.min.js}"></script>
+    <script type="text/javascript" src="../../static/js/dagre.js" th:src="@{/js/dagre.js}"></script>
+    <script type="text/javascript" src="../../static/js/cytoscape.js" th:src="@{/js/cytoscape.js}"></script>
+    <script type="text/javascript" src="../../static/js/cytoscape-dagre.js" th:src="@{/js/cytoscape-dagre.js}"></script>
+
+    <style>
+        #cy {
+            width: 100%;
+            height: 700px;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="Fragments/Template :: logo"></div>
+    <br/>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+    <br/>
+    <br/>
+    <br/>
+    <div id="cy"></div>
+    <div th:replace="Fragments/Modals :: qualityModelElementModal"></div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" src="../../static/js/loadQualityModel.js" th:src="@{/js/loadQualityModel.js}"></script>
+</html>

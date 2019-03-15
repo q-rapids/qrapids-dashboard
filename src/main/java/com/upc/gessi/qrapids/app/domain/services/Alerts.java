@@ -1,12 +1,14 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
+import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
 import com.upc.gessi.qrapids.app.dto.DTOAlertDecision;
 import com.upc.gessi.qrapids.app.dto.DTONewAlerts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import qr.QRGenerator;
 import qr.models.QualityRequirementPattern;
@@ -33,6 +35,9 @@ public class Alerts {
 
     @Autowired
     private QRRepository qrRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private SimpMessagingTemplate smt;
@@ -123,11 +128,16 @@ public class Alerts {
 
     @PostMapping("/api/alerts/{id}/qr")
     public @ResponseBody
-    void newQR(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
+    void newQR(@PathVariable String id, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         try {
             String rationale = request.getParameter("rationale");
             String patternId = request.getParameter("patternId");
-            Decision decisionAux = new Decision(DecisionType.ADD, new Date(), null, rationale, Integer.valueOf(patternId));
+            AppUser user = null;
+            if (authentication != null) {
+                String author = authentication.getName();
+                user = userRepository.findByUsername(author);
+            }
+            Decision decisionAux = new Decision(DecisionType.ADD, new Date(), user, rationale, Integer.valueOf(patternId));
             Decision decision = decisionRepository.save(decisionAux);
 
             String requirement = request.getParameter("requirement");

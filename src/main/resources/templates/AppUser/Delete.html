@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="Fragments/Template :: header">
+<head th:replace="Fragments/TemplateDashboard :: basicHeader">
 </head>
 
 <body>
@@ -11,7 +11,8 @@
 <br/>
 
 <!-- NAvegation -->
-<div th:replace="Fragments/Template :: navbar"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
 
 <section class="container main">
     <div class="row justify-content-sm-center justify-content-md-center ">
@@ -46,5 +47,6 @@
     </div>
 </section>
 
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
 </body>
 </html>

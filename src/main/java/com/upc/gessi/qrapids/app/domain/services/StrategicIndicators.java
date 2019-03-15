@@ -59,6 +59,21 @@ public class StrategicIndicators {
         }
     }
 
+    @RequestMapping("/api/StrategicIndicators/{id}/CurrentEvaluation")
+    public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorEvaluation(@RequestParam("prj") String prj, @PathVariable String id, HttpServletResponse response) {
+        try {
+            return qmasi.SingleCurrentEvaluation(prj, id);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        } catch (CategoriesException e) {
+            System.err.println(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            return null;
+        }
+    }
+
     @RequestMapping("/api/StrategicIndicators/HistoricalData")
     public @ResponseBody
     List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to, HttpServletResponse response) {
@@ -127,19 +142,19 @@ public class StrategicIndicators {
 
     @RequestMapping("/api/DetailedStrategicIndicators/PredictionData/{id}")
     public @ResponseBody
-    List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
-        return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(id, prj), "7", horizon, prj);
+    List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
+        return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(id, prj), technique, "7", horizon, prj);
     }
 
     @RequestMapping("/api/DetailedStrategicIndicators/PredictionData")
     public @ResponseBody
-    List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon) throws IOException {
-        return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(null, prj), "7", horizon, prj);
+    List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
+        return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(null, prj), technique,"7", horizon, prj);
     }
 
     @RequestMapping("/api/StrategicIndicators/PredictionData")
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("horizon") String horizon) throws IOException {
-        return qmaf.ForecastSI("7", horizon, prj);
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
+        return qmaf.ForecastSI(technique,"7", horizon, prj);
     }
 
     /*private List<DTOStrategicIndicatorEvaluation> mergeData(List<DTOStrategicIndicatorEvaluation> apiEval, List<Strategic_Indicator> dbEval) {
