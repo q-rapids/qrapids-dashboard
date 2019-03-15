@@ -263,6 +263,9 @@ $("#usersConfig").attr("href", serverUrl + "/users");
 $("#usergroupsConfig").attr("href", serverUrl + "/usergroups");
 
 $("#LogoutProfileConfig").attr("href", serverUrl + "/logout_user");
+$("#LogoutProfileConfig").click(function () {
+    sessionStorage.removeItem("userName");
+});
 
 
 function menuNav (urlNav) {
