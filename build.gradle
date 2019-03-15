@@ -17,7 +17,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 
 group = 'com.upc.gessi.qrapids'
-version = '0.3.0'
+version = '0.3.1'
 sourceCompatibility = 1.8
 
 war {
@@ -69,7 +69,7 @@ dependencies {
 	compile files('libs/qrapids-qma-elastic-0.11.jar')
 
 	//API QR Generator
-	compile files('libs/QRgenerator-0.1.jar')
+	compile files('libs/qrapids-qr_generator-0.1.jar')
 
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
