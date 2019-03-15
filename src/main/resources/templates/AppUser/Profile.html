@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="Fragments/Template :: header">
+<head th:replace="Fragments/TemplateDashboard :: basicHeader">
 </head>
 <link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
 <script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
@@ -14,8 +14,9 @@
 <br/>
 
 
-<!-- Navegation -->
-<div th:replace="Fragments/Template :: navbar"></div>
+<!-- Navigation -->
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
 
 <div id="msg_success"
     class="alert alert-success"
@@ -34,7 +35,7 @@
 </div>
 
 <div class="row">
-    <article class="text-frame col-lg-4" style="padding-top:1em;margin-rigth:1em;">
+    <article class="text-frame col-lg-4" style="padding-left: 2em; padding-top: 1em; padding-right: 1em;">
 
         <h3>My profile </h3>
 
@@ -61,7 +62,7 @@
         </form>
 
     </article>
-    <article class="text-frame col-lg-4" style="padding-top:1em;margin-rigth:1em;">
+    <article class="text-frame col-lg-4" style="padding-left: 1em; padding-top: 1em; padding-right: 1em;">
 
         <h3>My Security Question </h3>
 
@@ -85,7 +86,8 @@
 
             <div class="form-group">
                 <label for="appuser_question">Security Question *</label>
-                <select class="selectpicker" th:name="appuser_question" data-width="50%">
+                <br/>
+                <select class="selectpicker" th:name="appuser_question" data-width="100%">
 
                     <option th:each="question : ${ questions }"
                             th:value="${question.getId()}"
@@ -104,7 +106,7 @@
         </form>
 
     </article>
-    <article class="text-frame col-lg-4" style="padding-top:1em;margin-rigth:1em;">
+    <article class="text-frame col-lg-4" style="padding-left: 1em; padding-top: 1em; padding-right: 2em;">
 
         <h3>My password </h3>
 
@@ -151,7 +153,6 @@
 
 </select>
 
-
 <script>
 
     var _$ = [];
@@ -181,6 +182,8 @@
 
 
 </script>
+
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
 
 </body>
 </html>

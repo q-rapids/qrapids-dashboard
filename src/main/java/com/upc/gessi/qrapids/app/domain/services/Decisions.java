@@ -22,7 +22,7 @@ public class Decisions {
         List<DTODecision> DTODecisions = new ArrayList<>();
         Iterable<Decision> decisions = decisionRepository.findAll();
         for (Decision decision : decisions) {
-            DTODecision dtoDecision = new DTODecision(decision.getId(), decision.getType(), new Date(decision.getDate().getTime()), decision.getAuthor(), decision.getRationale());
+            DTODecision dtoDecision = new DTODecision(decision.getId(), decision.getType(), new Date(decision.getDate().getTime()), decision.getAuthor().getUsername(), decision.getRationale());
             DTODecisions.add(dtoDecision);
         }
         return DTODecisions;

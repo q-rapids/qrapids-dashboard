@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -710,5 +711,16 @@ public class Util {
             return qmaRelations.getRelations(prj, null);
         else
             return qmaRelations.getRelations(prj, LocalDate.parse(date));
+    }
+
+    @RequestMapping("api/me")
+    public String getUserName (HttpServletResponse response, Authentication authentication) {
+        if (authentication == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "{}";
+        } else {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return "{\"userName\":\"" + authentication.getName() + "\"}";
+        }
     }
 }

@@ -174,7 +174,7 @@ public class AuthController {
 
         if ( update.getAppuser_question().getId().equals( user.getAppuser_question().getId() ) ){
 
-            if (bCryptPasswordEncoder.matches( user.getQuestion(), update.getPassword() )){
+            if (bCryptPasswordEncoder.matches( user.getQuestion(), update.getQuestion() )){
 
                 update.setPassword( bCryptPasswordEncoder.encode( update.getEmail() ) );
                 this.userRepository.save( update );

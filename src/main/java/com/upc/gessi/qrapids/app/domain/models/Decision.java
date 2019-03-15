@@ -16,8 +16,9 @@ public class Decision implements Serializable {
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
-    @Column(name = "author")
-    private String author;
+    @ManyToOne
+    @JoinColumn(name="appuserId", referencedColumnName = "id")
+    private AppUser author;
     @Column(name = "rationale")
     private String rationale;
     @Column(name = "patternId")
@@ -27,7 +28,7 @@ public class Decision implements Serializable {
 
     }
 
-    public Decision(DecisionType type, Date date, String author, String rationale, int patternId) {
+    public Decision(DecisionType type, Date date, AppUser author, String rationale, int patternId) {
         this.type = type;
         this.date = date;
         this.author = author;
@@ -59,11 +60,11 @@ public class Decision implements Serializable {
         this.date = date;
     }
 
-    public String getAuthor() {
+    public AppUser getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(AppUser author) {
         this.author = author;
     }
 

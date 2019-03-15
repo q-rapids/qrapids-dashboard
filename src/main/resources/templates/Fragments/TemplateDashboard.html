@@ -47,7 +47,11 @@
         <a id="Prediction">Prediction</a>
         <a id="Simulation">Simulation</a>
         <a id="QualityAlerts">Alerts</a>
-        <a id="Configuration">Configuration</a>
+        <a id="Configuration" ><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
+        <a th:if="${@environment.getProperty('security.enable')}"
+           class="col-xs-1 pull-right"
+           th:href="@{/profile}">
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span id="MyProfile">My profile</span></a>
     </div>
     <div class="subnav" id="submenuAssessment" th:fragment="navSubBarAssessmentDashboard">
         <a id="StrategicIndicatorsAssessment">Strategic Indicators</a>
@@ -92,6 +96,12 @@
     <div class="subnav" id="submenuProjects" th:fragment="navSubBarProductsDashboard">
         <a id="ProductsEvaluation">Products</a>
         <a id="ProductsDetailedEvaluation">Projects</a>
+    </div>
+    <div class="subnav" id="submenuConfiguration" th:fragment="navSubBarConfiguration">
+        <a id="ProductsConfig">Products</a>
+        <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
+        <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
+        <a th:if="${@environment.getProperty('security.enable')}" id="LogoutProfileConfig">Logout</a>
     </div>
     <p th:fragment="navLinkMetrics" style="margin-left: 20px; font-size: medium; font-family: Arial ">
         <a id="originSI" onclick="navBack(true)"></a>

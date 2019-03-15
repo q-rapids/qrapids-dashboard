@@ -79,9 +79,9 @@ public class DTOFactor {
         return date;
     }
 
-    /*public String getFormattedDate () {
+    public String getFormattedDate () {
         return getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    }*/
+    }
 
     public String getDatasource() {
         return datasource;

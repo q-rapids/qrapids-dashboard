@@ -1,22 +1,5 @@
 var currentURL = window.location.href;
-var viewMode, time, assessment, prediction, products;
-
-function checkProducts () {
-    jQuery.ajax({
-        dataType: "json",
-        url: "../api/products",
-        cache: false,
-        type: "GET",
-        async: true,
-        success: function (data) {
-            if (data.length > 0)
-                $("#Products").show();
-            else
-                $("#Products").hide();
-        }
-    });
-}
-checkProducts();
+var viewMode, time, assessment, prediction, products, configuration, userName;
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -38,6 +21,44 @@ else {
     checkAlertsPending();
 }
 
+function getUserName () {
+    jQuery.ajax({
+        dataType: "json",
+        url: serverUrl + "/api/me",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            sessionStorage.setItem("userName", data.userName);
+            $("#MyProfile").text(data.userName);
+        },
+        error: function () {
+            sessionStorage.setItem("userName", "undefined");
+        }
+    });
+}
+if (!(userName = sessionStorage.getItem("userName")))
+    getUserName();
+else if (userName !== "undefined")
+    $("#MyProfile").text(userName);
+
+function checkProducts () {
+    jQuery.ajax({
+        dataType: "json",
+        url: serverUrl + "/api/products",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            if (data.length > 0)
+                $("#Products").show();
+            else
+                $("#Products").hide();
+        }
+    });
+}
+checkProducts();
+
 // Load state from sessionStorage
 // If missing, set default values
 if (!(viewMode = sessionStorage.getItem("viewMode"))) {
@@ -54,6 +75,9 @@ if (!(prediction = sessionStorage.getItem("prediction"))) {
 }
 if (!(products = sessionStorage.getItem("products"))) {
     products = "Evaluation";
+}
+if (!(configuration = sessionStorage.getItem("configuration"))) {
+    configuration = "Products";
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -127,8 +151,16 @@ if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Edi
 } else if (currentURL.search("/Products/DetailedEvaluation") !== -1) {
     id = "DetailedEvaluation";
     highlightandSaveCurrentProducts(id);
-} else if (currentURL.search("/Products") !== -1) {
-    highlight("Configuration");
+} else {
+    if (currentURL.match("/Products"))
+        id = "Products";
+    else if (currentURL.match("/profile"))
+        id = "profile";
+    else if (currentURL.match("/users"))
+        id = "users";
+    else if (currentURL.match("/usergroups"))
+        id = "usergroups";
+    highlightAndSaveCurrentConfiguration(id);
 }
 
 function highlightAndSaveCurrentAssessment (id) {
@@ -156,6 +188,15 @@ function highlightandSaveCurrentProducts (id) {
     highlight("Products" + id);
     sessionStorage.setItem("products", id);
     products = id;
+}
+
+function highlightAndSaveCurrentConfiguration (id) {
+    var profileButton = $("#Configuration");
+    profileButton.css("background-color", "#eeeeee");
+    profileButton.css("color", "black");
+    highlight(id + "Config");
+    sessionStorage.setItem("configuration", id);
+    configuration = id;
 }
 
 function highlight (id) {
@@ -205,13 +246,27 @@ $("#QualityAlerts").attr("href", serverUrl + "/QualityAlerts");
 
 $("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel");
 
-$("#Configuration").attr("href", serverUrl + "/Products");
-
 $("#Products").attr("href", serverUrl + "/Products/" + products);
 
 $("#ProductsEvaluation").attr("href", serverUrl+"/Products/Evaluation");
 
 $("#ProductsDetailedEvaluation").attr("href", serverUrl+"/Products/DetailedEvaluation");
+
+$("#Configuration").attr("href", serverUrl + "/" + configuration);
+
+$("#ProductsConfig").attr("href", serverUrl + "/Products");
+
+$("#profileConfig").attr("href", serverUrl + "/profile");
+
+$("#usersConfig").attr("href", serverUrl + "/users");
+
+$("#usergroupsConfig").attr("href", serverUrl + "/usergroups");
+
+$("#LogoutProfileConfig").attr("href", serverUrl + "/logout_user");
+$("#LogoutProfileConfig").click(function () {
+    sessionStorage.removeItem("userName");
+});
+
 
 function menuNav (urlNav) {
     var parameters = false;
