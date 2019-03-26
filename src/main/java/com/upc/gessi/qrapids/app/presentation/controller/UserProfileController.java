@@ -46,7 +46,7 @@ public class UserProfileController {
         AuthTools authTools = new AuthTools();
         String userName = authTools.getUserToken( token );
 
-        ModelAndView view = new ModelAndView("/AppUser/profile");
+        ModelAndView view = new ModelAndView("/AppUser/Profile");
 
         try{
 

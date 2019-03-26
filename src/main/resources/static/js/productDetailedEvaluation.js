@@ -1,4 +1,8 @@
-var url = parseURLSimple("../api/products/detailedCurrentEvaluation/");
+var serverUrl = sessionStorage.getItem("serverUrl");
+var url = "/api/products/detailedCurrentEvaluation/";
+if (serverUrl) {
+    url = serverUrl + url;
+}
 
 var isdsi = true;
 
@@ -18,9 +22,13 @@ products.addEventListener("change", function() {
 });
 
 function buildSelector() {
+    var urlProducts = "/api/products";
+    if (serverUrl) {
+        urlProducts = serverUrl + urlProducts;
+    }
 	jQuery.ajax({
         dataType: "json",
-        url: "../api/products",
+        url: urlProducts,
         cache: false,
         type: "GET",
         async: true,

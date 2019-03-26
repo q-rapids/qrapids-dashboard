@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
+import com.upc.gessi.qrapids.QrapidsApplication;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Product.ProductRepository;
@@ -17,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 @RestController
@@ -51,11 +53,13 @@ public class Projects {
 		for (int i=0; i<projectsES.size(); ++i) {
 			Project p = projectRep.findByExternalId(projectsES.get(i));
 			if (p == null) {
-				File f = new File("src/main/resources/static/icons/projectDefault.jpg");
-				BufferedImage img = ImageIO.read(f);
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ImageIO.write(img, "jpg", baos);
-				byte[] bytes = baos.toByteArray();
+                //URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
+				//File f = new File(projectImageUrl.getPath());
+				//BufferedImage img = ImageIO.read(f);
+				//ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				//ImageIO.write(img, "jpg", baos);
+				//byte[] bytes = baos.toByteArray();
+                byte[] bytes = null;
 				p = new Project(projectsES.get(i), projectsES.get(i), "No description specified", bytes, true);
 				projectRep.save(p);
 			}

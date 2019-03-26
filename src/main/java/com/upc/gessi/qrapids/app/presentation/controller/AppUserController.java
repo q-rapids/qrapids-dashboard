@@ -134,7 +134,7 @@ public class AppUserController {
     @RequestMapping(value = "/{id}/update", method = RequestMethod.GET)
     public ModelAndView showUpdateView(@PathVariable("id") Long id) {
 
-        ModelAndView view = new ModelAndView("/AppUser/update");
+        ModelAndView view = new ModelAndView("/AppUser/Update");
 
         AppUser user = this.userRepository.findOne( id );
         List<UserGroup> userGroups = this.userGroupRepository.findAll();
@@ -194,7 +194,7 @@ public class AppUserController {
     @GetMapping("/{id}/delete")
     public ModelAndView showDeleteView(@PathVariable("id") Long id) {
 
-        ModelAndView view = new ModelAndView("/AppUser/delete");
+        ModelAndView view = new ModelAndView("/AppUser/Delete");
 
         try {
 

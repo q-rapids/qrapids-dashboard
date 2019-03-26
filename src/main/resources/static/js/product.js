@@ -5,12 +5,17 @@ var previousSelectionId;
 var currentSelectionId;
 var projects;
 var areProducts = false;
+var serverUrl = sessionStorage.getItem("serverUrl");
 
 
 function buildFirstPartOfTree() {
+	var url = "/api/projects";
+	if (serverUrl) {
+		url = serverUrl + url;
+	}
     jQuery.ajax({
         dataType: "json",
-        url: "../api/projects",
+        url: url,
         cache: false,
         type: "GET",
         async: true,
@@ -48,9 +53,13 @@ function buildFirstPartOfTree() {
 };
 
 function buildSecondPartOfTree() {
+	var url = "/api/products";
+	if (serverUrl) {
+		url = serverUrl + url;
+	}
     jQuery.ajax({
         dataType: "json",
-        url: "../api/products",
+        url: url,
         cache: false,
         type: "GET",
         async: true,
@@ -81,20 +90,13 @@ function buildSecondPartOfTree() {
             	productList.appendChild(product);      
             	productList.appendChild(projectList);
             }
-        	document.getElementById('productTree').appendChild(productList); 
-        	if (data.length == 0) {
-        		document.getElementById('evalBtn').disabled = true;
-        		document.getElementById('detEvalBtn').disabled = true;
-        	} else {
-        		document.getElementById('evalBtn').disabled = false;
-        		document.getElementById('detEvalBtn').disabled = false;
-        	}
+        	document.getElementById('productTree').appendChild(productList);
         }
     });
 };
 
 function clickOnTree(e){
-	console.log(currentSelectionId)
+	console.log(currentSelectionId);
 	if (e.target.classList.contains("Project")) {
 		currentSelection = "Project";
 		previousSelectionId = currentSelectionId;
@@ -119,9 +121,13 @@ function clickOnTree(e){
 }
 
 function getChosenProject(currentProjectId) {
+	var url = "/api/products/project/" + currentProjectId;
+	if (serverUrl) {
+		url = serverUrl + url;
+	}
     jQuery.ajax({
         dataType: "json",
-        url: "../api/products/project/" + currentProjectId,
+        url: url,
         cache: false,
         type: "GET",
         async: true,
@@ -209,7 +215,8 @@ function getChosenProject(currentProjectId) {
     		logoColumn.classList.add("logoColumn");
     		var logoP = document.createElement('img');
     		logoP.setAttribute("id", "logoP");
-    		logoP.setAttribute('src', "data:image/png;base64," + data.logo);
+    		if (data.logo != null)
+    			logoP.setAttribute('src', "data:image/png;base64," + data.logo);
     		logoP.setAttribute('style', 'max-width:96%; max-height:96%;');
     		logoColumn.appendChild(logoP);
     		
@@ -233,9 +240,14 @@ function saveProject() {
 	        formData.append("name", $('#projectName').val());
 	        formData.append("description", $('#projectDescription').val());
 	        formData.append("logo", $('#projectLogo')[0].files[0]);
+
+	        var url = "/api/updateProject";
+			if (serverUrl) {
+				url = serverUrl + url;
+			}
 	
 	        $.ajax({
-	            url: "../api/updateProject",
+	            url: url,
 	            data: formData,
 	            type: "POST",
 	            contentType: false,
@@ -251,7 +263,7 @@ function saveProject() {
 	            success: function() {
 	            	/*buildFirstPartOfTree();
 	            	getChosenProject(currentProjectId);*/
-	            	location.href = "../Products";
+	            	location.href = serverUrl + "/Products";
 	            	
 	            }
 	        });
@@ -262,9 +274,13 @@ function saveProject() {
 };
 
 function getChosenProduct(currentProductId) {
+	var url = "/api/products/" + currentProductId;
+	if (serverUrl) {
+		url = serverUrl + url;
+	}
     jQuery.ajax({
         dataType: "json",
-        url: "../api/products/" + currentProductId,
+        url: url,
         cache: false,
         type: "GET",
         async: true,
@@ -444,7 +460,8 @@ function getChosenProduct(currentProductId) {
     		logoContainer.classList.add("logoContainer");
     		var logoP = document.createElement('img');
     		logoP.setAttribute("id", "logoP");
-    		logoP.setAttribute('src', "data:image/png;base64," + data.logo);
+    		if (data.logo != null)
+    			logoP.setAttribute('src', "data:image/png;base64," + data.logo);
     		logoP.setAttribute('style', 'max-width:96%; max-height:96%;');
     		logoContainer.appendChild(logoP);
     		logoColumn.appendChild(logoContainer);
@@ -492,9 +509,14 @@ function saveProduct() {
             formData.append("description", $('#productDescription').val());
             formData.append("logo", $('#productLogo')[0].files[0]);
             formData.append("projects", selectedProjects);
+
+            var url = "/api/updateProduct";
+			if (serverUrl) {
+				url = serverUrl + url;
+			}
             
             $.ajax({
-                url: "../api/updateProduct",
+                url: url,
                 data: formData,
                 type: "POST",
                 contentType: false,
@@ -504,7 +526,7 @@ function saveProduct() {
                         alert("This Product name is already in use");
                     else {
                         alert("Error in the ElasticSearch: contact to the system administrator");
-                        location.href = "../Products";
+                        location.href = serverUrl + "/Products";
                     }
                 },
                 success: function() {
@@ -522,15 +544,20 @@ function deleteProduct() {
 	if (confirm("Are you sure you want to delete this product?")) {
 		var formData = new FormData();
         formData.append("id", currentProduct);
+
+        var url = "/api/deleteProduct";
+		if (serverUrl) {
+			url = serverUrl + url;
+		}
         $.ajax({
-            url: "../api/deleteProduct",
+            url: url,
             data: formData,
             type: "POST",
             contentType: false,
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
                 alert("Error in the ElasticSearch: contact to the system administrator");
-                location.href = "../Products";
+                location.href = serverUrl + "/Products";
             },
             success: function() {
             	buildFirstPartOfTree();
@@ -737,9 +764,14 @@ function saveNewProduct() {
             formData.append("description", $('#productDescription').val());
             formData.append("logo", $('#newProductLogo')[0].files[0]);
             formData.append("projects", selectedProjects);
-            
+
+			var url = "/api/newProduct";
+			if (serverUrl) {
+				url = serverUrl + url;
+			}
+
             $.ajax({
-                url: "../api/newProduct",
+                url: url,
                 data: formData,
                 type: "POST",
                 contentType: false,
@@ -749,7 +781,7 @@ function saveNewProduct() {
                         alert("This Product name is already in use");
                     else {
                         alert("Error in the ElasticSearch: contact to the system administrator");
-                        location.href = "../Products";
+                        location.href = serverUrl + "/Products";
                     }
                 },
                 success: function() {
@@ -765,11 +797,11 @@ function saveNewProduct() {
 };
 
 function goToDetailedEvaluation() {
-	location.href = "../Products/detailedEvaluation";
+	location.href = serverUrl + "/Products/detailedEvaluation";
 }
 
 function goToEvaluation() {
-	location.href = "../Products/evaluation";
+	location.href = serverUrl + "/Products/evaluation";
 }
 
 window.onload = function() {

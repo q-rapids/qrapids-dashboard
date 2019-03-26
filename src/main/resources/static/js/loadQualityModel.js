@@ -1,4 +1,8 @@
-var url = parseURLSimple("../api/qualityModel");
+var url = "/api/qualityModel";
+var serverUrl = sessionStorage.getItem("serverUrl");
+if (serverUrl) {
+    url = serverUrl + url;
+}
 
 var prj = "test";
 //var prj = sessionStorage.getItem("prj");
@@ -139,16 +143,26 @@ function displayData(qmnodes, qmedges) {
 }
 
 function showNodeDetails(node) {
+    var serverUrl = sessionStorage.getItem("serverUrl");
     if (node.color === siColor) {
-        var urlSI = parseURLSimple("../api/StrategicIndicators/"+ node.id + "/CurrentEvaluation");
+        var urlSI = "/api/StrategicIndicators/"+ node.id + "/CurrentEvaluation";
+        if (serverUrl) {
+            urlSI = serverUrl + urlSI;
+        }
         getAndShowElement(urlSI);
     }
     else if (node.color === factorColor) {
-        var urlFactor = parseURLSimple("../api/QualityFactors/"+ node.id + "/CurrentEvaluation");
+        var urlFactor = "/api/QualityFactors/"+ node.id + "/CurrentEvaluation";
+        if (serverUrl) {
+            urlFactor = serverUrl + urlFactor;
+        }
         getAndShowElement(urlFactor);
     }
     else {
-        var urlMetric = parseURLSimple("../api/Metrics/"+ node.id + "/CurrentEvaluation");
+        var urlMetric = "/api/Metrics/"+ node.id + "/CurrentEvaluation";
+        if (serverUrl) {
+            urlMetric = serverUrl + urlMetric;
+        }
         getAndShowElement(urlMetric);
     }
 }

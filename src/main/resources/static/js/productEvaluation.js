@@ -12,6 +12,8 @@ var urlLink;
 var currentProduct;
 var products = document.getElementById("productSelector");
 
+var serverUrl = sessionStorage.getItem("serverUrl");
+
 products.addEventListener("change", function() {
     currentProduct = products.options[products.selectedIndex].value;
     sessionStorage.setItem("currentProduct", currentProduct);
@@ -19,9 +21,13 @@ products.addEventListener("change", function() {
 });
 
 function buildSelector() {
+    var url = "/api/products";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
 	jQuery.ajax({
         dataType: "json",
-        url: "../api/products",
+        url: url,
         cache: false,
         type: "GET",
         async: true,
@@ -45,7 +51,6 @@ function buildSelector() {
 }
 
 function getData(width, height, showButtons, chartHyperlinked) {
-    var serverUrl = sessionStorage.getItem("serverUrl");
     var url = "/api/products/currentEvaluation/" + currentProduct;
     if (serverUrl) {
         url = serverUrl + url;

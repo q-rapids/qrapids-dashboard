@@ -119,7 +119,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             res.addCookie( qrapids_token_client );
 
-			res.sendRedirect("/StrategicIndicators/CurrentChart");
+			res.sendRedirect("StrategicIndicators/CurrentChart");
 
 		} else {
 			// API send header with token auth

@@ -3,12 +3,15 @@ package com.upc.gessi.qrapids.app.presentation;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.upc.gessi.qrapids.QrapidsApplication;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -115,11 +118,13 @@ public class ProductController {
             byte[] logo = IOUtils.toByteArray(request.getPart("logo").getInputStream());
             List<String> projectIds = Arrays.asList(request.getParameter("projects").split(","));
             if (logo.length < 10) {
-            	File f = new File("src/main/resources/static/icons/projectDefault.jpg");
-				BufferedImage img = ImageIO.read(f);
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ImageIO.write(img, "jpg", baos);
-				logo = baos.toByteArray();
+                //URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
+                //File f = new File(projectImageUrl.getPath());
+				//BufferedImage img = ImageIO.read(f);
+				//ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				//ImageIO.write(img, "jpg", baos);
+				//logo = baos.toByteArray();
+                logo = null;
             }
             if (productCont.checkNewProductByName(name)) {
             	productCont.newProduct(name, description, logo, projectIds);
@@ -175,7 +180,7 @@ public class ProductController {
 	
 	@RequestMapping("/Products/DetailedEvaluation")
     public String ProductDetailedEvaluation(){
-		return "Product/detailedProductEvaluation";
+		return "Product/DetailedProductEvaluation";
     }
 
 }
