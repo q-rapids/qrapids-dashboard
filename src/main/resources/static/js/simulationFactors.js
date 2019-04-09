@@ -4,18 +4,48 @@ var currentColor = "#696969";
 var strategicIndicators = [];
 var detailedCharts = [];
 
-function getAllQualityFactors(){
-    var url = "api/QualityFactors/getAll?prj="+sessionStorage.getItem("prj");
+function getAllQualityFactors () {
+    var url = "../api/QualityFactors/getAll";
     $.ajax({
         url : url,
         type: "GET",
         success: function (response) {
-            showQualityFactorSliders(response);
+            getQualityFactorsCategories(response);
         }
     });
 }
 
-function showQualityFactorSliders (qualityFactors) {
+function getQualityFactorsCategories (qualityFactors) {
+    var url = "../api/QualityFactors/categories";
+    $.ajax({
+        url : url,
+        type: "GET",
+        success: function (response) {
+            showQualityFactorSliders(qualityFactors, response);
+        }
+    });
+}
+
+function showQualityFactorSliders (qualityFactors, categories) {
+    // Factor categories
+    var rangeHighlights = [];
+    var start = 0;
+    categories.sort(function (a, b) {
+        return a.upperThreshold - b.upperThreshold;
+    });
+    for (var i = 0; i < categories.length; i++) {
+        var end = 1/categories.length * (i+1);
+        var offset = 0;
+        if (end < 1) offset = 0.02;
+        var range = {
+            start: start,
+            end: end + offset,
+            class: categories[i].name
+        };
+        rangeHighlights.push(range);
+        start = end;
+    }
+
     var qualityFactorsDiv = $("#qualityFactors");
     qualityFactors.forEach(function (qualityFactor) {
         var div = document.createElement('div');
@@ -25,13 +55,14 @@ function showQualityFactorSliders (qualityFactors) {
         var label = document.createElement('label');
         label.id = qualityFactor.id;
         label.textContent = qualityFactor.name;
+        label.title = qualityFactor.description;
         div.appendChild(label);
 
         div.appendChild(document.createElement('br'));
 
         var slider = document.createElement("input");
         slider.id = "sliderValue" + qualityFactor.id;
-        slider.style.width = "80%";
+        slider.style.width = "70%";
         var sliderConfig = {
             id: "slider" + qualityFactor.id,
             min: 0,
@@ -39,6 +70,9 @@ function showQualityFactorSliders (qualityFactors) {
             step: 0.01,
             value: qualityFactor.value
         };
+        sliderConfig.rangeHighlights = [];
+        Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
+        console.log(sliderConfig.rangeHighlights);
         // Add original value
         var start, end;
         if (qualityFactor.value === 0) {
@@ -53,15 +87,19 @@ function showQualityFactorSliders (qualityFactors) {
             start = qualityFactor.value - 0.015;
             end = qualityFactor.value + 0.015;
         }
-        sliderConfig.rangeHighlights = [{
+        sliderConfig.rangeHighlights.push({
             start: start,
             end: end
-        }];
+        });
         div.appendChild(slider);
         qualityFactorsDiv.append(div);
         $("#"+slider.id).slider(sliderConfig);
-        $(".slider-rangeHighlight").css("background", currentColor);
     });
+    $(".slider-rangeHighlight").css("background", currentColor);
+    for (var i = 0; i < categories.length; i++) {
+        $(".slider-rangeHighlight." + categories[i].name).css("background", categories[i].color)
+    }
+    console.log(rangeHighlights);
 }
 
 function getDetailedStrategicIndicators () {
@@ -198,7 +236,6 @@ $('#apply').click(function () {
             var newFactor = qualityFactors.find(function (element) {
                 return element.id === factor.id;
             });
-            console.log(newFactor);
             dataset.data.push(newFactor.value);
         }
 
@@ -213,7 +250,7 @@ $('#apply').click(function () {
     formData.append("factors", JSON.stringify(qualityFactors));
 
     $.ajax({
-        url: 'api/Simulate?prj='+sessionStorage.getItem("prj"),
+        url: "../api/Simulate",
         data: formData,
         type: "POST",
         contentType: false,

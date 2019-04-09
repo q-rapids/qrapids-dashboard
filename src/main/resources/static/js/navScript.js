@@ -1,5 +1,5 @@
 var currentURL = window.location.href;
-var viewMode, time, assessment, prediction, products, configuration, userName;
+var viewMode, time, assessment, prediction, products, simulation, configuration, userName;
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -79,6 +79,9 @@ if (!(products = sessionStorage.getItem("products"))) {
 if (!(configuration = sessionStorage.getItem("configuration"))) {
     configuration = "Products";
 }
+if (!(simulation = sessionStorage.getItem("simulation"))) {
+    simulation = "Factors";
+}
 
 ///////////////////////////////////////////////////////////////////
 ///// Customising View Mode options ///////////////////////////////
@@ -135,9 +138,12 @@ if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Edi
         highlightAndSaveCurrentPrediction(id);
     else
         highlightAndSaveCurrentAssessment(id);
-} else if (currentURL.search("/Simulation") !== -1) {
-    id = "Simulation";
-    highlight(id);
+} else if (currentURL.search("/Simulation/Factors") !== -1) {
+    id = "Factors";
+    highlightAndSaveCurrentSimulation(id);
+} else if (currentURL.search("/Simulation/Metrics") !== -1) {
+    id = "Metrics";
+    highlightAndSaveCurrentSimulation(id);
 } else if (currentURL.search("/QualityAlerts") !== -1) {
     id = "QualityAlerts";
     highlight(id);
@@ -199,6 +205,15 @@ function highlightAndSaveCurrentConfiguration (id) {
     configuration = id;
 }
 
+function highlightAndSaveCurrentSimulation (id) {
+    var simulationButton = $("#Simulation");
+    simulationButton.css("background-color", "#eeeeee");
+    simulationButton.css("color", "black");
+    highlight(id+"Simulation");
+    sessionStorage.setItem("simulation", id);
+    simulation = id;
+}
+
 function highlight (id) {
     var menuOption = $("#" + id);
     menuOption.css("background-color", "#eeeeee");
@@ -240,7 +255,11 @@ $("#MetricsAssessment").attr("href", serverUrl + "/Metrics/" + time + viewMode);
 
 $("#MetricsPrediction").attr("href", serverUrl + "/Metrics/PredictionChart");
 
-$("#Simulation").attr("href", serverUrl + "/Simulation");
+$("#Simulation").attr("href", serverUrl + "/Simulation/" + simulation);
+
+$("#FactorsSimulation").attr("href", serverUrl + "/Simulation/Factors");
+
+$("#MetricsSimulation").attr("href", serverUrl + "/Simulation/Metrics");
 
 $("#QualityAlerts").attr("href", serverUrl + "/QualityAlerts");
 

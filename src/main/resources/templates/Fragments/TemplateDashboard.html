@@ -103,6 +103,10 @@
         <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="LogoutProfileConfig">Logout</a>
     </div>
+    <div class="subnav" id="submenuSimulation" th:fragment="navSubBarSimulationDashboard">
+        <a id="FactorsSimulation">Factors</a>
+        <a id="MetricsSimulation">Metrics</a>
+    </div>
     <p th:fragment="navLinkMetrics" style="margin-left: 20px; font-size: medium; font-family: Arial ">
         <a id="originSI" onclick="navBack(true)"></a>
         <span id = "arrow"></span>
