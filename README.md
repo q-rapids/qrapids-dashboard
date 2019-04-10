@@ -12,7 +12,7 @@ The main functionalities of the current version of Q-Rapids Dashboard are: provi
 | Type of component    | Web Application                 |
 | Build                | .war                            |
 | Programming language | Java                            |
-| DBMS                 | PostreSQL                       |
+| DBMS                 | PostgreSQL                       |
 | Frameworks           | Spring Boot, AngularJS, Gradle  |
 | External libraries   | Chart.js, ElasticSearch java API|
 
