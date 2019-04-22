@@ -55,7 +55,8 @@ public class Alerts {
             dtoAlerts.add(dtoAlert);
             alertIds.add(a.getId());
         }
-        ari.setViewedStatusFor(alertIds);
+        if (!alertIds.isEmpty())
+            ari.setViewedStatusFor(alertIds);
         return dtoAlerts;
     }
 
