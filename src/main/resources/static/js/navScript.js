@@ -144,6 +144,9 @@ if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Edi
 } else if (currentURL.search("/Simulation/Metrics") !== -1) {
     id = "Metrics";
     highlightAndSaveCurrentSimulation(id);
+} else if (currentURL.search("/Simulation/QR") !== -1) {
+    id = "QR";
+    highlightAndSaveCurrentSimulation(id);
 } else if (currentURL.search("/QualityAlerts") !== -1) {
     id = "QualityAlerts";
     highlight(id);
@@ -260,6 +263,8 @@ $("#Simulation").attr("href", serverUrl + "/Simulation/" + simulation);
 $("#FactorsSimulation").attr("href", serverUrl + "/Simulation/Factors");
 
 $("#MetricsSimulation").attr("href", serverUrl + "/Simulation/Metrics");
+
+$("#QRSimulation").attr("href", serverUrl + "/Simulation/QR");
 
 $("#QualityAlerts").attr("href", serverUrl + "/QualityAlerts");
 

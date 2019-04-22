@@ -15,4 +15,9 @@ public class SimulationController {
         return "Simulation/SimulationMetrics";
     }
 
+    @RequestMapping("Simulation/QR")
+    public String simulationQR() {
+        return "Simulation/SimulationQR";
+    }
+
 }
