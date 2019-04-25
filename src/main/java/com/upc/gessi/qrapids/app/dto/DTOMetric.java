@@ -77,6 +77,9 @@ public class DTOMetric {
         this.forecastingError = forecastingError;
     }
 
+    public DTOMetric() {
+    }
+
     /**
      * All the getters from the class DTOMetric that returns the value of the attribute defined
      * in the header of the getter

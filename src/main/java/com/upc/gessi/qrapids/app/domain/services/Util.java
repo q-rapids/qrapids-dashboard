@@ -508,8 +508,8 @@ public class Util {
                         factor.setValue(simFactors.get(i).getAsJsonObject().getAsJsonPrimitive("value").getAsFloat());
                         simFactors.remove(i);
                         found = true;
-                        ++i;
                     }
+                    ++i;
                 }
             }
             List<Strategic_Indicator> listSI = siRep.findAll();

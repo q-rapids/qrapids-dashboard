@@ -220,6 +220,12 @@ app.controller('TablesCtrl', function($scope, $http) {
             });
         };
 
+        var simulateQR = function () {
+            location.href = "../Simulation/QR?alert="+alertId+"&pattern="+QRCandidate.id;
+        };
+        var simulateButton = $("#simulateButton");
+        simulateButton.click(simulateQR);
+
         var decisionTypeButton = $("#decisionTypeButton");
         decisionTypeButton.prop("disabled", false);
         var decisionTypeText = $("#decisionType");
