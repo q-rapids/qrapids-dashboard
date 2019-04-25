@@ -1,29 +1,32 @@
 package com.upc.gessi.qrapids.app.dto;
 
 import com.upc.gessi.qrapids.app.domain.models.DecisionType;
-import java.sql.Date;
+
+import java.util.Date;
 
 public class DTODecision {
 
-    private Long id;
+    private long id;
     private DecisionType type;
-    private Date date;
+    private java.sql.Date date;
     private String author;
     private String rationale;
+    private int patternId;
 
-    public DTODecision(Long id, DecisionType type, Date date, String author, String rationale) {
+    public DTODecision(long id, DecisionType type, Date date, String author, String rationale, int patternId) {
         this.id = id;
         this.type = type;
-        this.date = date;
+        this.date = new java.sql.Date(date.getTime());
         this.author = author;
         this.rationale = rationale;
+        this.patternId = patternId;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -40,7 +43,7 @@ public class DTODecision {
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.date = new java.sql.Date(date.getTime());
     }
 
     public String getAuthor() {
@@ -57,5 +60,13 @@ public class DTODecision {
 
     public void setRationale(String rationale) {
         this.rationale = rationale;
+    }
+
+    public int getPatternId() {
+        return patternId;
+    }
+
+    public void setPatternId(int patternId) {
+        this.patternId = patternId;
     }
 }

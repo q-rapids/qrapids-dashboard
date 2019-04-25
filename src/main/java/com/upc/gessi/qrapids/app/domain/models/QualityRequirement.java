@@ -1,5 +1,8 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
