@@ -319,19 +319,18 @@ $('#apply').click(function () {
             newMetrics.push(metricsSlider[i]);
     }
 
-    // var year = metrics[0].date.year;
-    // var month = "";
-    // if (metrics[0].date.monthValue < 10)
-    //     month = "0" + metrics[0].date.monthValue;
-    // else
-    //     month = metrics[0].date.monthValue;
-    // var day = "";
-    // if (metrics[0].date.dayOfMonth < 10)
-    //     day = "0" + metrics[0].date.dayOfMonth;
-    // else
-    //     day = metrics[0].date.dayOfMonth;
-    // var date = year + "-" + month + "-" + day;
-    var date = "2019-01-14";
+    var year = metrics[0].date.year;
+    var month = "";
+    if (metrics[0].date.monthValue < 10)
+        month = "0" + metrics[0].date.monthValue;
+    else
+        month = metrics[0].date.monthValue;
+    var day = "";
+    if (metrics[0].date.dayOfMonth < 10)
+        day = "0" + metrics[0].date.dayOfMonth;
+    else
+        day = metrics[0].date.dayOfMonth;
+    var date = year + "-" + month + "-" + day;
 
     $.ajax({
         url: "../api/QualityFactors/Simulate?date="+date,
