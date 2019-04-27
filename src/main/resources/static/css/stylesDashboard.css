@@ -4,13 +4,13 @@ html,body
     height: 100%;
     margin: 0px;
     padding: 0px;
-    overflow-x: hidden;
 }
 
 .topnav {
     background-color: #0579A8;
-    overflow: hidden;
+    overflow: visible;
     vertical-align: middle;
+    height: 58px;
 }
 
 .subnav {
