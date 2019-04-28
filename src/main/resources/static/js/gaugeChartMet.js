@@ -97,12 +97,19 @@ function drawChart(container, width, height) {
             .attr("d", arc3);
 
         //add text under the gauge
+        var name;
+        if (data[i].name.length > 23) name = data[i].name.slice(0, 20) + "...";
+        else name = data[i].name
         svg.append("text")
+            .attr("id", "name" + i)
             .attr("x", 0)
             .attr("y", 50*width/250)
             .attr("text-anchor", "middle")
+            .attr("title", data[i].name)
             .style("font-size", 11+8*width/250+"px")
-            .text(data[i].name);
+            .text(name);
+
+        d3.select("#name"+i).append("title").text(data[i].name);
 
         //add label under the text
         svg.append("text")

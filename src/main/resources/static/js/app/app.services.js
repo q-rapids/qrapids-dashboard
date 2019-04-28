@@ -67,7 +67,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.getQR = function(alertId){
-        var url =  "api/alerts/" + alertId + "/qr";
+        var url =  "api/alerts/" + alertId + "/qrPatterns";
         $http({
             method : "GET",
             url : url
@@ -239,6 +239,12 @@ app.controller('TablesCtrl', function($scope, $http) {
                 $scope.getAlerts();
             });
         };
+
+        var simulateQR = function () {
+            location.href = "../Simulation/QR?alert="+alertId+"&pattern="+QRCandidate.id;
+        };
+        var simulateButton = $("#simulateButton");
+        simulateButton.click(simulateQR);
 
         var decisionTypeButton = $("#decisionTypeButton");
         decisionTypeButton.prop("disabled", false);
