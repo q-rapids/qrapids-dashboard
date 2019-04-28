@@ -150,6 +150,12 @@ if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Edi
 } else if (currentURL.search("/QualityAlerts") !== -1) {
     id = "QualityAlerts";
     highlight(id);
+} else if (currentURL.search("/QualityRequirements") !== -1) {
+    id = "QualityRequirements";
+    highlight(id);
+} else if (currentURL.search("/Decisions") !== -1) {
+    id = "Decisions";
+    highlight(id);
 } else if (currentURL.search("/QualityModel") !== -1) {
     id = "QualityModel";
     highlightAndSaveCurrentAssessment(id);
@@ -267,6 +273,10 @@ $("#MetricsSimulation").attr("href", serverUrl + "/Simulation/Metrics");
 $("#QRSimulation").attr("href", serverUrl + "/Simulation/QR");
 
 $("#QualityAlerts").attr("href", serverUrl + "/QualityAlerts");
+
+$("#QualityRequirements").attr("href", serverUrl + "/QualityRequirements");
+
+$("#Decisions").attr("href", serverUrl + "/Decisions");
 
 $("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel");
 

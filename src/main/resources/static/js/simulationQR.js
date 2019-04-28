@@ -220,7 +220,7 @@ function showFactors (titles, ids, labels, values) {
 function loadQRPattern (patternId, alertId) {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/alerts/" + alertId + "/qr",
+        url: "../api/alerts/" + alertId + "/qrPatterns",
         cache: false,
         type: "GET",
         async: true,
@@ -241,7 +241,7 @@ function loadQRPattern (patternId, alertId) {
 function getAllQRPatterns () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/qr",
+        url: "../api/qrPatterns",
         cache: false,
         type: "GET",
         async: true,
@@ -277,7 +277,7 @@ function getAllMetricsAndShowMetricForPattern (patternId){
 
 function getAndShowMetricsForPattern (patternId) {
     $.ajax({
-        url: "../api/qr/"+patternId+"/metrics",
+        url: "../api/qrPatterns/"+patternId+"/metrics",
         type: "GET",
         success: function (metricsForPattern) {
             metrics.forEach(function (metric) {

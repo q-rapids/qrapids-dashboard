@@ -8,32 +8,28 @@
 <br/>
 <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
 <br/>
-<div class="container" id="tableCurrent" ng-init="getQRCost()">
+<div class="container" id="tableCurrent" ng-init="getAllQRs()">
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Comments</th>
+            <th>Requirement</th>
             <th>Description</th>
-            <th>goal</th>
-            <th>Cost Function</th>
+            <th>Goal</th>
+            <th>Backlog ID</th>
+            <th>Backlog URL</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-repeat="d in data">
-            <td id="name" >{{d.name}}</td>
-            <td id="comments">{{d.comments}}</td>
+            <td id="requirement" >{{d.requirement}}</td>
             <td id="description" >{{d.description}}</td>
             <td id="goal">{{d.goal}}</td>
-            <td id="costFunction">{{d.costFunction}}</td>
-            <td><button type="button" onclick="giveQR(d.name, d.comments, d.description, 'NewQR')"> New QR </button></td>
-            <td><button type="button" onclick="giveQR(d.name, d.comments, d.description, 'IgnoreQR')"> Ignore QR </button></td>
-            <td><button type="button"> Cancel </button></td>
+            <td id="backlogId"><text ng-if="d.backlogId != 'undefined'">{{d.backlogId}}</text></td>
+            <td id="backlogUrl"><a ng-if="d.backlogId != 'undefined'" href="{{d.backlogUrl}}" target="_tab">{{d.backlogUrl}}</a></td>
         </tr>
         </tbody>
     </table>
 </div>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
-<script type="text/javascript" src="../../static/js/feedback.js" th:src="@{/js/feedback.js}"></script>
 </html>

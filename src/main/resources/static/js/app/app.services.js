@@ -35,6 +35,26 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
+    $scope.getAllQRs = function () {
+        var url =  "api/qr";
+        $http({
+            method : "GET",
+            url : url
+        }).then(function mySuccess(response) {
+            $scope.data = response.data;
+        })
+    };
+
+    $scope.getAllDecisions = function () {
+        var url = "api/decisions?qrs=true";
+        $http({
+            method : "GET",
+            url : url
+        }).then(function mySuccess(response) {
+            $scope.data = response.data;
+        })
+    };
+
     $scope.getAlerts = function(){
         var url =  "api/alerts";
         $http({
@@ -47,7 +67,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.getQR = function(alertId){
-        var url =  "api/alerts/" + alertId + "/qr";
+        var url =  "api/alerts/" + alertId + "/qrPatterns";
         $http({
             method : "GET",
             url : url

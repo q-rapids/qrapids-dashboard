@@ -5,14 +5,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller("/QualityRequirements")
 public class QualityRequirementsController {
-    @RequestMapping("/QualityRequirements/QualityRequirementCost")
-    public String QualityRequirementCost(){
-        return "QualityRequirements/QualityRequirementCost";
+
+    @RequestMapping("/QualityRequirements")
+    public String QualityRequirement(){
+        return "QualityRequirements/QualityRequirements";
     }
 
-    @RequestMapping("/QualityRequirements/QualityRequirement")
-    public String QualityRequirement(){
-        return "QualityRequirements/QualityRequirement";
+    @RequestMapping("/Decisions")
+    public String Decisions() {
+        return "Decisions/Decisions";
     }
 
 }

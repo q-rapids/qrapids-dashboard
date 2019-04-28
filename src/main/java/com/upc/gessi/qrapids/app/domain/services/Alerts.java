@@ -6,6 +6,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository
 import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
 import com.upc.gessi.qrapids.app.dto.DTOAlertDecision;
 import com.upc.gessi.qrapids.app.dto.DTONewAlerts;
+import com.upc.gessi.qrapids.app.dto.DTOQualityRequirement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
@@ -67,7 +68,7 @@ public class Alerts {
         return new DTONewAlerts(newAlerts, newAlertsWithQR);
     }
 
-    @GetMapping("/api/alerts/{id}/qr")
+    @GetMapping("/api/alerts/{id}/qrPatterns")
     public List<QualityRequirementPattern> getQR(@PathVariable String id) throws Exception {
         Alert alert = ari.findAlertById(Long.parseLong(id));
         qr.models.Alert alertModel = new qr.models.Alert(alert.getId_element(), alert.getName(), Type.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), null);
@@ -206,6 +207,23 @@ public class Alerts {
         qrRepository.save(newQualityRequirement);
     }
 
+    @GetMapping("/api/qr")
+    public List<DTOQualityRequirement> getQRs() {
+        List<DTOQualityRequirement> dtoQualityRequirements = new ArrayList<>();
+        List<QualityRequirement> qualityRequirements = qrRepository.findAll();
+        for (QualityRequirement qualityRequirement : qualityRequirements) {
+            dtoQualityRequirements.add(new DTOQualityRequirement(
+                    qualityRequirement.getId(),
+                    qualityRequirement.getRequirement(),
+                    qualityRequirement.getDescription(),
+                    qualityRequirement.getGoal(),
+                    qualityRequirement.getBacklogId(),
+                    qualityRequirement.getBacklogUrl()));
+        }
+        return dtoQualityRequirements;
+    }
+
+
     @RequestMapping(value="/api/notifyAlert", method = RequestMethod.POST)
     public void notify(@RequestBody Map<String, Map<String, String>> requestBody) throws Exception {
         Map<String, String> element = requestBody.get("element");
@@ -228,19 +246,19 @@ public class Alerts {
         );
     }
 
-    @GetMapping("/api/qr")
+    @GetMapping("/api/qrPatterns")
     public List<QualityRequirementPattern> getAllQRPatterns () {
         QRGenerator gen = new QRGenerator(pabreUrl);
         return gen.getAllQRPatterns();
     }
 
-    @GetMapping("/api/qr/{id}")
+    @GetMapping("/api/qrPatterns/{id}")
     public QualityRequirementPattern getQRPattern (@PathVariable String id) {
         QRGenerator gen = new QRGenerator(pabreUrl);
         return gen.getQRPattern(Long.parseLong(id));
     }
 
-    @GetMapping("/api/qr/{id}/metrics")
+    @GetMapping("/api/qrPatterns/{id}/metrics")
     public List<String> getMetricsForQRPattern (@PathVariable String id) {
         QRGenerator gen = new QRGenerator(pabreUrl);
         return gen.getMetricsForPattern(Integer.parseInt(id));
