@@ -50,10 +50,27 @@
         <a id="QualityRequirements">Quality Requirements</a>
         <a id="Decisions">Decisions</a>
         <a id="Configuration" ><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
-        <a th:if="${@environment.getProperty('security.enable')}"
-           class="col-xs-1 pull-right"
+        <div id="helpDropdown" class="dropdown pull-right" style="margin-top: 1em; margin-right: 1em; margin-left: 1em;">
+            <button id="helpDropdownButton" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                <span id = "HelpDropdownText" class="text">Help</span>
+                <span class="caret"></span>
+            </button>
+            <ul id="helpDropdownItems" class="dropdown-menu dropdown-menu-right">
+                <li>
+                    <a th:href="@{${@environment.getProperty('help.process')}}" target="_tab">Q-Rapids Process</a>
+                </li>
+                <li>
+                    <a th:href="@{${@environment.getProperty('help.userguide')}}" target="_tab">User guide</a>
+                </li>
+                <li>
+                    <a th:href="@{${@environment.getProperty('help.support')}}" target="_tab">Support</a>
+                </li>
+            </ul>
+        </div>
+        <a th:if="${@environment.getProperty('security.enable')}" class="pull-right"
            th:href="@{/profile}">
-            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span id="MyProfile">My profile</span></a>
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span id="MyProfile">My profile</span>
+        </a>
     </div>
     <div class="subnav" id="submenuAssessment" th:fragment="navSubBarAssessmentDashboard">
         <a id="StrategicIndicatorsAssessment">Strategic Indicators</a>
