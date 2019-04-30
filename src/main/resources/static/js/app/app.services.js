@@ -36,7 +36,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.getAllQRs = function () {
-        var url =  "api/qr";
+        var url =  "api/qr?prj=" + sessionStorage.getItem("prj");
         $http({
             method : "GET",
             url : url
@@ -46,7 +46,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.getAllDecisions = function () {
-        var url = "api/decisions?qrs=true";
+        var url = "api/decisions?qrs=true&prj=" + sessionStorage.getItem("prj");
         $http({
             method : "GET",
             url : url
@@ -56,7 +56,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.getAlerts = function(){
-        var url =  "api/alerts";
+        var url =  "api/alerts?prj=" + sessionStorage.getItem("prj");
         $http({
             method : "GET",
             url : url
@@ -131,7 +131,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             var requirement = $("#QRRequirement").val();
             var description = $("#QRDescription").val();
             var rationale = $("#QRDecisionRationale").val();
-            var addQRUrl = "api/alerts/"+alertId+"/qr";
+            var addQRUrl = "api/alerts/"+alertId+"/qr?prj=" + sessionStorage.getItem("prj");
             $http({
                 method : "GET",
                 url : "api/backlogUrl"
@@ -145,7 +145,9 @@ app.controller('TablesCtrl', function($scope, $http) {
                         data: {
                             issue_summary: requirement,
                             issue_description: description,
-                            issue_type: "Story"
+                            issue_type: "Story",
+                            project_id: sessionStorage.getItem("prj"),
+                            decision_rationale: rationale
                         }
                     }).then(function (response) {
                         // add QR to database
@@ -223,7 +225,7 @@ app.controller('TablesCtrl', function($scope, $http) {
 
         var ignoreQR = function () {
             var rationale = $("#QRDecisionRationale").val();
-            var ignoreQRUrl = "api/alerts/"+alertId+"/ignore";
+            var ignoreQRUrl = "api/alerts/"+alertId+"/ignore?prj=" + sessionStorage.getItem("prj");
             var body = new URLSearchParams();
             body.set('rationale', rationale);
             body.set('patternId', QRCandidate.id);
@@ -241,7 +243,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         };
 
         var simulateQR = function () {
-            location.href = "../Simulation/QR?alert="+alertId+"&pattern="+QRCandidate.id;
+            location.href = "Simulation/QR?alert="+alertId+"&pattern="+QRCandidate.id;
         };
         var simulateButton = $("#simulateButton");
         simulateButton.click(simulateQR);
@@ -328,12 +330,34 @@ app.controller('TablesCtrl', function($scope, $http) {
             url: url,
             data: {
                 element : {
-                    id: "bugsratiojira",
-                    name: "Ratio of open/in progress bugs",
+                    id: "duplication",
+                    name: "Duplication Density",
                     type: "METRIC",
                     value: "0.4",
                     threshold: "0.5",
-                    category: "bugsratiojira"
+                    category: "duplication",
+                    project_id: sessionStorage.getItem("prj")
+                }
+            }
+        }).then(function () {
+            //location.href = "QualityAlerts";
+        });
+    };
+
+    $scope.newAlertFactor = function () {
+        var url = "api/notifyAlert";
+        $http({
+            method: "POST",
+            url: url,
+            data: {
+                element : {
+                    id: "testingperformance",
+                    name: "Performance of the tests",
+                    type: "FACTOR",
+                    value: "0.4",
+                    threshold: "0.5",
+                    category: "testingperformance",
+                    project_id: sessionStorage.getItem("prj")
                 }
             }
         }).then(function () {

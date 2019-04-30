@@ -556,7 +556,9 @@ $('#decision').click(function () {
                     data: {
                         issue_summary: requirement,
                         issue_description: description,
-                        issue_type: "Story"
+                        issue_type: "Story",
+                        project_id: sessionStorage.getItem("prj"),
+                        decision_rationale: rationale
                     },
                     dataType: "json"
                 }).then(function (response) {

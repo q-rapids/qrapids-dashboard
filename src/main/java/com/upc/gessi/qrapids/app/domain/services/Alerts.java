@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
 import com.upc.gessi.qrapids.app.dto.DTOAlertDecision;
 import com.upc.gessi.qrapids.app.dto.DTONewAlerts;
@@ -41,14 +42,18 @@ public class Alerts {
     private UserRepository userRepository;
 
     @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
     private SimpMessagingTemplate smt;
 
     @Value("${pabre.url}")
     String pabreUrl;
 
-    @RequestMapping("/api/alerts")
-    public List<DTOAlert> getAlerts() throws Exception {
-        List<Alert> alerts = ari.findAllByOrderByDateDesc();
+    @GetMapping("/api/alerts")
+    public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj) throws Exception {
+        Project project = projectRepository.findByExternalId(prj);
+        List<Alert> alerts = ari.findByProject_IdOrderByDateDesc(project.getId());
         List<Long> alertIds = new ArrayList<>();
         List<DTOAlert> dtoAlerts = new ArrayList<>();
         for (Alert a : alerts) {
@@ -62,9 +67,10 @@ public class Alerts {
     }
 
     @GetMapping("/api/alerts/new")
-    public DTONewAlerts countNewAlerts() throws Exception {
-        long newAlerts = ari.countByStatus(AlertStatus.NEW);
-        long newAlertsWithQR = ari.countByReqAssociatIsTrueAndStatusEquals(AlertStatus.NEW);
+    public DTONewAlerts countNewAlerts(@RequestParam(value = "prj") String prj) throws Exception {
+        Project project = projectRepository.findByExternalId(prj);
+        long newAlerts = ari.countByProject_IdAndStatus(project.getId(), AlertStatus.NEW);
+        long newAlertsWithQR = ari.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(project.getId(), AlertStatus.NEW);
         return new DTONewAlerts(newAlerts, newAlertsWithQR);
     }
 
@@ -116,21 +122,22 @@ public class Alerts {
     }
 
     @PostMapping("/api/alerts/{id}/ignore")
-    public void ignoreAlert(@PathVariable String id, HttpServletRequest request) throws Exception {
+    public void ignoreAlert(@PathVariable String id, @RequestParam(value = "prj") String prj, HttpServletRequest request) throws Exception {
         String rationale = request.getParameter("rationale");
         String patternId = request.getParameter("patternId");
-        ignoreQR(rationale, patternId, id);
+        ignoreQR(rationale, patternId, id, prj);
     }
 
     @PostMapping("/api/qr/ignore")
-    public void ignoreQR (HttpServletRequest request) {
+    public void ignoreQR (@RequestParam(value = "prj") String prj, HttpServletRequest request) {
         String rationale = request.getParameter("rationale");
         String patternId = request.getParameter("patternId");
-        ignoreQR(rationale, patternId, null);
+        ignoreQR(rationale, patternId, null, prj);
     }
 
-    private void ignoreQR (String rationale, String patternId, String alertId) {
-        Decision decisionAux = new Decision(DecisionType.IGNORE, new Date(), null, rationale, Integer.valueOf(patternId));
+    private void ignoreQR (String rationale, String patternId, String alertId, String prj) {
+        Project project = projectRepository.findByExternalId(prj);
+        Decision decisionAux = new Decision(DecisionType.IGNORE, new Date(), null, rationale, Integer.valueOf(patternId), project);
         Decision decision = decisionRepository.save(decisionAux);
 
         if (alertId != null) {
@@ -143,7 +150,7 @@ public class Alerts {
 
     @PostMapping("/api/alerts/{id}/qr")
     public @ResponseBody
-    void newQRFromAlert(@PathVariable String id, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    void newQRFromAlert(@PathVariable String id, @RequestParam(value = "prj") String prj, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         try {
             String rationale = request.getParameter("rationale");
             String patternId = request.getParameter("patternId");
@@ -159,7 +166,7 @@ public class Alerts {
             String backlogId = request.getParameter("backlogId");
             String backlogUrl = request.getParameter("backlogUrl");
 
-            addQR(requirement, description, goal, backlogId, backlogUrl, rationale, patternId, id, user);
+            addQR(requirement, description, goal, backlogId, backlogUrl, rationale, patternId, id, user, prj);
 
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
 
@@ -169,7 +176,7 @@ public class Alerts {
     }
 
     @PostMapping("/api/qr")
-    public void newQR (HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public void newQR (@RequestParam(value = "prj") String prj, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         try {
             String rationale = request.getParameter("rationale");
             String patternId = request.getParameter("patternId");
@@ -185,14 +192,15 @@ public class Alerts {
             String backlogId = request.getParameter("backlogId");
             String backlogUrl = request.getParameter("backlogUrl");
 
-            addQR(requirement, description, goal, backlogId, backlogUrl, rationale, patternId, null, user);
+            addQR(requirement, description, goal, backlogId, backlogUrl, rationale, patternId, null, user, prj);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
     }
 
-    private void addQR (String requirement, String description, String goal, String backlogId, String backlogUrl, String rationale, String patternId, String alertId, AppUser user) {
-        Decision decisionAux = new Decision(DecisionType.ADD, new Date(), user, rationale, Integer.valueOf(patternId));
+    private void addQR (String requirement, String description, String goal, String backlogId, String backlogUrl, String rationale, String patternId, String alertId, AppUser user, String prj) {
+        Project project = projectRepository.findByExternalId(prj);
+        Decision decisionAux = new Decision(DecisionType.ADD, new Date(), user, rationale, Integer.valueOf(patternId), project);
         Decision decision = decisionRepository.save(decisionAux);
 
         Alert alert = null;
@@ -203,14 +211,15 @@ public class Alerts {
             ari.save(alert);
         }
 
-        QualityRequirement newQualityRequirement = new QualityRequirement(requirement, description, goal, backlogId, backlogUrl, alert, decision);
+        QualityRequirement newQualityRequirement = new QualityRequirement(requirement, description, goal, backlogId, backlogUrl, alert, decision, project);
         qrRepository.save(newQualityRequirement);
     }
 
     @GetMapping("/api/qr")
-    public List<DTOQualityRequirement> getQRs() {
+    public List<DTOQualityRequirement> getQRs(@RequestParam(value = "prj") String prj) {
+        Project project = projectRepository.findByExternalId(prj);
         List<DTOQualityRequirement> dtoQualityRequirements = new ArrayList<>();
-        List<QualityRequirement> qualityRequirements = qrRepository.findAll();
+        List<QualityRequirement> qualityRequirements = qrRepository.findByProjectIdOrderByDecision_DateDesc(project.getId());
         for (QualityRequirement qualityRequirement : qualityRequirements) {
             dtoQualityRequirements.add(new DTOQualityRequirement(
                     qualityRequirement.getId(),
@@ -234,11 +243,13 @@ public class Alerts {
         float value = Float.parseFloat(element.get("value"));
         float threshold = Float.parseFloat(element.get("threshold"));
         String category = element.get("category");
+        String prj = element.get("project_id");
         qr.models.Alert alert = new qr.models.Alert(id, name, Type.valueOf(type), value, threshold, category, null);
 
         QRGenerator qrGenerator = new QRGenerator(pabreUrl);
         boolean existsQR = qrGenerator.existsQRPattern(alert);
-        Alert al = new Alert(alert.getId_element(), alert.getName(), AlertType.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), new Date(), AlertStatus.NEW, existsQR);
+        Project project = projectRepository.findByExternalId(prj);
+        Alert al = new Alert(alert.getId_element(), alert.getName(), AlertType.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), new Date(), AlertStatus.NEW, existsQR, project);
         ari.save(al);
         smt.convertAndSend(
                 "/queue/notify",

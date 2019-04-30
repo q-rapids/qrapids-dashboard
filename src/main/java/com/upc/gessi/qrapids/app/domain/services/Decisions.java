@@ -1,7 +1,9 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.models.Decision;
+import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
 import com.upc.gessi.qrapids.app.dto.DTODecision;
 import com.upc.gessi.qrapids.app.dto.DTODecisionQualityRequirement;
@@ -29,11 +31,15 @@ public class Decisions {
     @Autowired
     QRRepository qrRepository;
 
+    @Autowired
+    ProjectRepository projectRepository;
+
     @Value("${pabre.url}")
     String pabreUrl;
 
     @GetMapping("/api/decisions")
-    public List<DTODecision> getDecisions (@RequestParam(required = false, defaultValue = "false") boolean qrs) throws Exception {
+    public List<DTODecision> getDecisions (@RequestParam(value = "prj") String prj, @RequestParam(required = false, defaultValue = "false") boolean qrs) throws Exception {
+        Project project = projectRepository.findByExternalId(prj);
         List<DTODecision> DTODecisions = new ArrayList<>();
         if (qrs) {
             QRGenerator qrGenerator = new QRGenerator(pabreUrl);
@@ -42,7 +48,7 @@ public class Decisions {
             for (QualityRequirementPattern qualityRequirementPattern : qualityRequirementPatterns) {
                 qualityRequirementPatternMap.put(qualityRequirementPattern.getId(), qualityRequirementPattern);
             }
-            List<DTODecisionQualityRequirement> dtoDecisionQualityRequirements = qrRepository.getAllDecisionsAndQRs();
+            List<DTODecisionQualityRequirement> dtoDecisionQualityRequirements = qrRepository.getAllDecisionsAndQRsByProject_Id(project.getId());
             for (DTODecisionQualityRequirement dtoDecisionQualityRequirement : dtoDecisionQualityRequirements) {
                 if (dtoDecisionQualityRequirement.getRequirement() != null) {
                     DTODecisions.add(dtoDecisionQualityRequirement);
@@ -55,7 +61,7 @@ public class Decisions {
                 }
             }
         } else {
-            Iterable<Decision> decisions = decisionRepository.findAll();
+            Iterable<Decision> decisions = decisionRepository.findByProject_Id(project.getId());
             for (Decision decision : decisions) {
                 String username = "";
                 if (decision.getAuthor() != null)
