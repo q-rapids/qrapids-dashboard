@@ -583,11 +583,6 @@ public class Util {
         }
     }
 
-    @RequestMapping("/api/backlogUrl")
-    public String backlogUrl() {
-        return "{\"backlogUrl\":\""+backlogUrl+"\"}";
-    }
-
     @RequestMapping("/api/serverUrl")
     public String serverUrl() {
         return "{\"serverUrl\":\""+serverUrl+"\"}";
@@ -697,7 +692,6 @@ public class Util {
     public String addToBacklogUrl() {
         return "{\"issue_url\":\"https://essi.upc.edu/jira/issue/999\"," +
                 "\"issue_id\":\"ID-999\"}";
-
     }
 
     @RequestMapping("/api/ForecastTechniques")

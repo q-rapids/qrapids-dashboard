@@ -184,6 +184,23 @@ function getChosenProject(currentProjectId) {
     		inputDescription.setAttribute('rows', '3');
     		descriptionRow.appendChild(inputDescription);
     		projectForm.appendChild(descriptionRow);
+
+			var backlogIdRow = document.createElement('div');
+			backlogIdRow.classList.add("productInfoRow");
+			var backlogIdP = document.createElement('p');
+			backlogIdP.appendChild(document.createTextNode("Backlog Id: "));
+			backlogIdP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
+			backlogIdRow.appendChild(backlogIdP);
+			var inputBacklogId = document.createElement("input");
+			inputBacklogId.setAttribute('id', 'projectBacklogId');
+			inputBacklogId.setAttribute('type', 'text');
+			var backlogId = "";
+			if (data.backlogId)
+				backlogId = data.backlogId;
+			inputBacklogId.setAttribute('value', backlogId);
+			inputBacklogId.setAttribute('style', 'width: 100%;');
+			backlogIdRow.appendChild(inputBacklogId);
+			projectForm.appendChild(backlogIdRow);
     		
     		var changeLogoRow = document.createElement('div');
     		changeLogoRow.classList.add("productInfoRow");
@@ -240,6 +257,7 @@ function saveProject() {
 	        formData.append("name", $('#projectName').val());
 	        formData.append("description", $('#projectDescription').val());
 	        formData.append("logo", $('#projectLogo')[0].files[0]);
+	        formData.append("backlogId", $("#projectBacklogId").val());
 
 	        var url = "/api/updateProject";
 			if (serverUrl) {

@@ -35,12 +35,10 @@ public class QualityRequirement implements Serializable {
 
     public QualityRequirement () {}
 
-    public QualityRequirement(String requirement, String description, String goal, String backlogId, String backlogUrl, Alert alert, Decision decision, Project project) {
+    public QualityRequirement(String requirement, String description, String goal, Alert alert, Decision decision, Project project) {
         this.requirement = requirement;
         this.description = description;
         this.goal = goal;
-        this.backlogId = backlogId;
-        this.backlogUrl = backlogUrl;
         this.alert = alert;
         this.decision = decision;
         this.project = project;

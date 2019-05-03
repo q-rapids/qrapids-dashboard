@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
+import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import qr.QRGenerator;
 import qr.models.QualityRequirementPattern;
 import com.upc.gessi.qrapids.app.dto.DTOAlert;
@@ -46,6 +48,9 @@ public class Alerts {
 
     @Autowired
     private SimpMessagingTemplate smt;
+
+    @Autowired
+    private Backlog backlog;
 
     @Value("${pabre.url}")
     String pabreUrl;
@@ -150,7 +155,7 @@ public class Alerts {
 
     @PostMapping("/api/alerts/{id}/qr")
     public @ResponseBody
-    void newQRFromAlert(@PathVariable String id, @RequestParam(value = "prj") String prj, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    DTOQualityRequirement newQRFromAlert(@PathVariable String id, @RequestParam(value = "prj") String prj, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         try {
             String rationale = request.getParameter("rationale");
             String patternId = request.getParameter("patternId");
@@ -163,20 +168,26 @@ public class Alerts {
             String requirement = request.getParameter("requirement");
             String description = request.getParameter("description");
             String goal = request.getParameter("goal");
-            String backlogId = request.getParameter("backlogId");
-            String backlogUrl = request.getParameter("backlogUrl");
 
-            addQR(requirement, description, goal, backlogId, backlogUrl, rationale, patternId, id, user, prj);
-
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-
-        } catch (Exception e) {
+            QualityRequirement qualityRequirement = addQR(requirement, description, goal, rationale, patternId, id, user, prj);
+            DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
+                    qualityRequirement.getId(),
+                    qualityRequirement.getRequirement(),
+                    qualityRequirement.getDescription(),
+                    qualityRequirement.getGoal(),
+                    qualityRequirement.getBacklogId(),
+                    qualityRequirement.getBacklogUrl());
+            return dtoQualityRequirement;
+        } catch (HttpClientErrorException e1) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (Exception e2) {
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
+        return null;
     }
 
     @PostMapping("/api/qr")
-    public void newQR (@RequestParam(value = "prj") String prj, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public DTOQualityRequirement newQR (@RequestParam(value = "prj") String prj, HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         try {
             String rationale = request.getParameter("rationale");
             String patternId = request.getParameter("patternId");
@@ -189,16 +200,25 @@ public class Alerts {
             String requirement = request.getParameter("requirement");
             String description = request.getParameter("description");
             String goal = request.getParameter("goal");
-            String backlogId = request.getParameter("backlogId");
-            String backlogUrl = request.getParameter("backlogUrl");
 
-            addQR(requirement, description, goal, backlogId, backlogUrl, rationale, patternId, null, user, prj);
+            QualityRequirement qualityRequirement = addQR(requirement, description, goal, rationale, patternId, null, user, prj);
+            DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
+                    qualityRequirement.getId(),
+                    qualityRequirement.getRequirement(),
+                    qualityRequirement.getDescription(),
+                    qualityRequirement.getGoal(),
+                    qualityRequirement.getBacklogId(),
+                    qualityRequirement.getBacklogUrl());
+            return dtoQualityRequirement;
+        } catch (HttpClientErrorException e1) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
+        return null;
     }
 
-    private void addQR (String requirement, String description, String goal, String backlogId, String backlogUrl, String rationale, String patternId, String alertId, AppUser user, String prj) {
+    private QualityRequirement addQR (String requirement, String description, String goal, String rationale, String patternId, String alertId, AppUser user, String prj) {
         Project project = projectRepository.findByExternalId(prj);
         Decision decisionAux = new Decision(DecisionType.ADD, new Date(), user, rationale, Integer.valueOf(patternId), project);
         Decision decision = decisionRepository.save(decisionAux);
@@ -211,8 +231,13 @@ public class Alerts {
             ari.save(alert);
         }
 
-        QualityRequirement newQualityRequirement = new QualityRequirement(requirement, description, goal, backlogId, backlogUrl, alert, decision, project);
+        QualityRequirement newQualityRequirement = new QualityRequirement(requirement, description, goal, alert, decision, project);
         qrRepository.save(newQualityRequirement);
+
+        newQualityRequirement = backlog.postNewQualityRequirement(newQualityRequirement);
+        qrRepository.save(newQualityRequirement);
+
+        return newQualityRequirement;
     }
 
     @GetMapping("/api/qr")
@@ -234,27 +259,42 @@ public class Alerts {
 
 
     @RequestMapping(value="/api/notifyAlert", method = RequestMethod.POST)
-    public void notify(@RequestBody Map<String, Map<String, String>> requestBody) throws Exception {
+    public void notify(@RequestBody Map<String, Map<String, String>> requestBody, HttpServletResponse response) throws Exception {
         Map<String, String> element = requestBody.get("element");
 
         String id = element.get("id");
         String name = element.get("name");
-        String type = element.get("type");
-        float value = Float.parseFloat(element.get("value"));
-        float threshold = Float.parseFloat(element.get("threshold"));
+        String typeString = element.get("type");
+        String valueString = element.get("value");
+        String thresholdString = element.get("threshold");
         String category = element.get("category");
         String prj = element.get("project_id");
-        qr.models.Alert alert = new qr.models.Alert(id, name, Type.valueOf(type), value, threshold, category, null);
 
-        QRGenerator qrGenerator = new QRGenerator(pabreUrl);
-        boolean existsQR = qrGenerator.existsQRPattern(alert);
-        Project project = projectRepository.findByExternalId(prj);
-        Alert al = new Alert(alert.getId_element(), alert.getName(), AlertType.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), new Date(), AlertStatus.NEW, existsQR, project);
-        ari.save(al);
-        smt.convertAndSend(
-                "/queue/notify",
-                new Notification("New Alert")
-        );
+        if (id != null && name != null && typeString != null && valueString != null && thresholdString != null && category != null && prj != null) {
+            try {
+                Type type = Type.valueOf(typeString);
+                float value = Float.parseFloat(valueString);
+                float threshold = Float.parseFloat(thresholdString);
+
+                qr.models.Alert alert = new qr.models.Alert(id, name, type, value, threshold, category, null);
+
+                QRGenerator qrGenerator = new QRGenerator(pabreUrl);
+                boolean existsQR = qrGenerator.existsQRPattern(alert);
+                Project project = projectRepository.findByExternalId(prj);
+                Alert al = new Alert(alert.getId_element(), alert.getName(), AlertType.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), new Date(), AlertStatus.NEW, existsQR, project);
+                ari.save(al);
+                smt.convertAndSend(
+                        "/queue/notify",
+                        new Notification("New Alert")
+                );
+            }
+            catch (IllegalArgumentException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            }
+        }
+        else {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing attributes in body");
+        }
     }
 
     @GetMapping("/api/qrPatterns")
