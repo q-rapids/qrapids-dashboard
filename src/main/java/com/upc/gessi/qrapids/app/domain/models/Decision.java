@@ -27,17 +27,21 @@ public class Decision implements Serializable {
     private String rationale;
     @Column(name = "patternId")
     private int patternId;
+    @ManyToOne
+    @JoinColumn(name="projectId", referencedColumnName = "id")
+    private Project project;
 
     public Decision () {
 
     }
 
-    public Decision(DecisionType type, Date date, AppUser author, String rationale, int patternId) {
+    public Decision(DecisionType type, Date date, AppUser author, String rationale, int patternId, Project project) {
         this.type = type;
         this.date = date;
         this.author = author;
         this.rationale = rationale;
         this.patternId = patternId;
+        this.project = project;
     }
 
     public Long getId() {
@@ -86,5 +90,13 @@ public class Decision implements Serializable {
 
     public void setPatternId(int patternId) {
         this.patternId = patternId;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

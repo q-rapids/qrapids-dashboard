@@ -29,17 +29,19 @@ public class QualityRequirement implements Serializable {
     @ManyToOne
     @JoinColumn(name="decisionId", referencedColumnName = "id")
     private Decision decision;
+    @ManyToOne
+    @JoinColumn(name="projectId", referencedColumnName = "id")
+    private Project project;
 
     public QualityRequirement () {}
 
-    public QualityRequirement(String requirement, String description, String goal, String backlogId, String backlogUrl, Alert alert, Decision decision) {
+    public QualityRequirement(String requirement, String description, String goal, Alert alert, Decision decision, Project project) {
         this.requirement = requirement;
         this.description = description;
         this.goal = goal;
-        this.backlogId = backlogId;
-        this.backlogUrl = backlogUrl;
         this.alert = alert;
         this.decision = decision;
+        this.project = project;
     }
 
     public Long getId() {
@@ -104,5 +106,13 @@ public class QualityRequirement implements Serializable {
 
     public void setDecision(Decision decision) {
         this.decision = decision;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

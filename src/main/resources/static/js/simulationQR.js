@@ -542,98 +542,48 @@ $('#decision').click(function () {
         var addQRUrl;
         if (alertId) addQRUrl = "../api/alerts/"+alertId+"/qr";
         else addQRUrl = "../api/qr";
+        var body = new URLSearchParams();
+        body.set('requirement', requirement);
+        body.set('description', description);
+        body.set('goal', goal);
+        body.set('rationale', rationale);
+        body.set('patternId', patternId);
         $.ajax({
-            method : "GET",
-            url : "../api/backlogUrl",
-            dataType: "json"
-        }).then(function (response) {
-            // add QR to backlog
-            var backlogUrl = "../"+response.backlogUrl;
-            if (backlogUrl !== "") {
-                $.ajax({
-                    method: "POST",
-                    url: backlogUrl,
-                    data: {
-                        issue_summary: requirement,
-                        issue_description: description,
-                        issue_type: "Story"
-                    },
-                    dataType: "json"
-                }).then(function (response) {
-                    // add QR to database
-                    var issue = response;
-                    var body = new URLSearchParams();
-                    body.set('requirement', requirement);
-                    body.set('description', description);
-                    body.set('goal', goal);
-                    body.set('rationale', rationale);
-                    body.set('backlogId', issue.issue_id);
-                    body.set('backlogUrl', issue.issue_url);
-                    body.set('patternId', patternId);
-                    $.ajax({
-                        method: "POST",
-                        url: addQRUrl,
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        data: body.toString()
-                    }).then(function () {
-                        // show QR info
-                        $("#QRModal").modal('hide');
-                        $("#messageModalTitle").text("The Quality Requirement has been added to the backlog successfully");
-                        $("#messageModalContent").html("<b>Issue id: </b>" + issue.issue_id + "</br>" +
-                            "<b>Issue url: </b><a href='" + issue.issue_url + "' target='_blank'>" + issue.issue_url + "</a>");
-                        $("#messageModal").modal();
-                        $("#acceptButton").on('click', function () {
-                            if (patternId && alertId)
-                                location.href = "../QualityAlerts";
-                        });
-                    });
-                }, function () {
-                    // In case of error, add QR to database with null backlog values
-                    var body = new URLSearchParams();
-                    body.set('requirement', requirement);
-                    body.set('description', description);
-                    body.set('goal', goal);
-                    body.set('rationale', rationale);
-                    body.set('backlogId', "");
-                    body.set('backlogUrl', "");
-                    body.set('patternId', patternId);
-                    $.ajax({
-                        method: "POST",
-                        url: addQRUrl,
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        data: body.toString()
-                    }).then(function () {
-                        $("#QRModal").modal('hide');
+            method: "POST",
+            url: addQRUrl,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            data: body.toString(),
+            success: function (qualityRequirement) {
+                // show QR info
+                $("#QRModal").modal('hide');
+                if (qualityRequirement.backlogId && qualityRequirement.backlogUrl) {
+                    $("#messageModalTitle").text("The Quality Requirement has been added to the backlog successfully");
+                    $("#messageModalContent").html("<b>Issue id: </b>" + qualityRequirement.backlogId + "</br>" +
+                        "<b>Issue url: </b><a href='" + qualityRequirement.backlogUrl + "' target='_blank'>" + qualityRequirement.backlogUrl + "</a>");
+                    $("#messageModal").modal();
+                    $("#acceptButton").on('click', function () {
                         if (patternId && alertId)
                             location.href = "../QualityAlerts";
                     });
-                });
-            } else {
-                // add QR to database
-                var body = new URLSearchParams();
-                body.set('requirement', requirement);
-                body.set('description', description);
-                body.set('goal', goal);
-                body.set('rationale', rationale);
-                body.set('backlogId', "");
-                body.set('backlogUrl', "");
-                body.set('patternId', patternId);
-                $.ajax({
-                    method: "POST",
-                    url: addQRUrl,
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    data: body.toString()
-                }).then(function () {
+                } else if (patternId && alertId) {
+                    location.href = "../QualityAlerts";
+                }
+            },
+            error: function (error) {
+                if (error.status === 500) {
                     $("#QRModal").modal('hide');
                     if (patternId && alertId)
                         location.href = "../QualityAlerts";
-                });
+                    alert("Error on saving the quality requirement to the backlog")
+                }
+                else {
+                    $("#QRModal").modal('hide');
+                    if (patternId && alertId)
+                        location.href = "../QualityAlerts";
+                    alert("Error on saving the quality requirement")
+                }
             }
         });
     };

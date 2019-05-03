@@ -9,16 +9,18 @@ public class DTOProject {
     private String description;
     private byte[] logo;
     private boolean active;
+    private String backlogId;
     
     public DTOProject(){}
     
-    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active) {
+    public DTOProject(Long id, String externalId, String name, String description, byte[] logo, boolean active, String backlogId) {
     	this.id = id;
     	this.externalId = externalId;
     	this.name = name;
     	this.description = description;
     	this.logo = logo;
     	this.active = active;
+    	this.backlogId = backlogId;
     }
     
     public Long getId() {
@@ -67,5 +69,13 @@ public class DTOProject {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getBacklogId() {
+        return backlogId;
+    }
+
+    public void setBacklogId(String backlogId) {
+        this.backlogId = backlogId;
     }
 }

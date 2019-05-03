@@ -34,12 +34,15 @@ public class Alert implements Serializable {
     @ManyToOne
     @JoinColumn(name="decisionId", referencedColumnName = "id")
     private Decision decision;
+    @ManyToOne
+    @JoinColumn(name="projectId", referencedColumnName = "id")
+    private Project project;
 
     public Alert(){
 
     }
 
-    public Alert(String id_element, String name, AlertType type, float value, float threshold, String category, Date date, AlertStatus status, boolean reqAssociat) {
+    public Alert(String id_element, String name, AlertType type, float value, float threshold, String category, Date date, AlertStatus status, boolean reqAssociat, Project project) {
         this.id_element = id_element;
         this.name = name;
         this.type = type;
@@ -49,6 +52,7 @@ public class Alert implements Serializable {
         this.date = date;
         this.status = status;
         this.reqAssociat = reqAssociat;
+        this.project = project;
     }
 
     public Long getId() {
@@ -137,5 +141,13 @@ public class Alert implements Serializable {
 
     public void setDecision(Decision decision) {
         this.decision = decision;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

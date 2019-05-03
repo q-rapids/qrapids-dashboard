@@ -34,6 +34,9 @@ function drawChart() {
         document.getElementById("radarChart").appendChild(div).appendChild(ctx);
         div.appendChild(p).appendChild(a);
         ctx.getContext("2d");
+        if (labels[i].length === 2) {
+            labels[i].push(null);
+        }
         window.myLine = new Chart(ctx, {    //draw chart with the following config
             type: 'radar',
             data: {
