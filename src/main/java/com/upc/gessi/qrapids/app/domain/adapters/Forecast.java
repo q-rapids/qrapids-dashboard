@@ -55,7 +55,13 @@ public class Forecast {
 
     public List<String> getForecastTechniques () {
         RestTemplate restTemplate = new RestTemplate();
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/api/ForecastTechniques");
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/api/ForecastTechniques")
+                .queryParam("host", connection.getIp())
+                .queryParam("port", String.valueOf(connection.getPort()))
+                .queryParam("path", path)
+                .queryParam("user", connection.getUsername())
+                .queryParam("pwd", connection.getPassword());
+
 
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
 
@@ -69,23 +75,23 @@ public class Forecast {
         return techniques;
     }
 
-    public void trainMetricForecast(List<DTOMetric> metrics, String freq, String prj) {
+    public void trainMetricForecast(List<DTOMetric> metrics, String freq, String prj, String technique) {
         List<String> elements = new ArrayList<>();
         for (DTOMetric metric : metrics) {
             elements.add(metric.getId());
         }
-        trainForecastRequest(elements, Constants.INDEX_METRICS, freq, prj);
+        trainForecastRequest(elements, Constants.INDEX_METRICS, freq, prj, technique);
     }
 
-    public void trainFactorForecast(List<DTOQualityFactor> factors, String freq, String prj) {
+    public void trainFactorForecast(List<DTOQualityFactor> factors, String freq, String prj, String technique) {
         List<String> elements = new ArrayList<>();
         for (DTOQualityFactor factor : factors) {
             elements.add(factor.getId());
         }
-        trainForecastRequest(elements, Constants.INDEX_FACTORS, freq, prj);
+        trainForecastRequest(elements, Constants.INDEX_FACTORS, freq, prj, technique);
     }
 
-    private void trainForecastRequest(List<String> elements, String index, String freq, String prj) {
+    private void trainForecastRequest(List<String> elements, String index, String freq, String prj, String technique) {
         if (prefix == null) prefix = "";
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/api/Train")
@@ -97,6 +103,10 @@ public class Forecast {
                 .queryParam("index", prefix + index + "." + prj)
                 .queryParam("elements", (Object[]) elements.toArray(new String[0]))
                 .queryParam("frequency", freq);
+
+        if (technique != null) {
+            builder.queryParam("technique", technique);
+        }
 
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
 

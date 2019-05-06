@@ -88,6 +88,9 @@ public class Util {
     @Value("${server.url}")
     private String serverUrl;
 
+    @Value("${forecast.technique}")
+    private String forecastTechnique;
+
     @Autowired
     private AlertRepository ari;
 
@@ -222,10 +225,15 @@ public class Util {
         }
     }
 
+    private enum TrainType {
+        NONE, ONE, ALL
+    }
+
     @RequestMapping("/api/assessStrategicIndicators")
     public @ResponseBody
     void assesStrategicIndicators(@RequestParam(value = "prj", required=false) String prj,
                                   @RequestParam(value = "from", required=false) String from,
+                                  @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType,
                                   HttpServletRequest request, HttpServletResponse response) {
         boolean correct = true;
 
@@ -243,10 +251,16 @@ public class Util {
                 correct = AssessDateStrategicIndicators(prj, null);
 
             // Train forecast models
-            if (prj == null)
-                trainForecastModelsAllProjects();
-            else
-                trainForecastModelsSingleProject(prj);
+            if (trainType != TrainType.NONE) {
+                String technique = null;
+                if (trainType == TrainType.ONE) {
+                    technique = forecastTechnique;
+                }
+                if (prj == null)
+                    trainForecastModelsAllProjects(technique);
+                else
+                    trainForecastModelsSingleProject(prj, technique);
+            }
 
             if (correct)
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -261,19 +275,19 @@ public class Util {
         }
     }
 
-    private void trainForecastModelsAllProjects() throws IOException, CategoriesException{
+    private void trainForecastModelsAllProjects(String technique) throws IOException, CategoriesException{
         List<String> projects = qmaPrj.getAssessedProjects();
         for (String prj: projects) {
-            trainForecastModelsSingleProject(prj);
+            trainForecastModelsSingleProject(prj, technique);
         }
     }
 
-    private void trainForecastModelsSingleProject(String project) throws IOException {
+    private void trainForecastModelsSingleProject(String project, String technique) throws IOException {
         List<DTOMetric> metrics = qmam.CurrentEvaluation(null, project);
-        forecast.trainMetricForecast(metrics, "7", project);
+        forecast.trainMetricForecast(metrics, "7", project, technique);
 
         List<DTOQualityFactor> factors = qmaqf.CurrentEvaluation(null, project);
-        forecast.trainFactorForecast(factors, "7", project);
+        forecast.trainFactorForecast(factors, "7", project, technique);
     }
 
 
