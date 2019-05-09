@@ -56,7 +56,7 @@
                 <span class="caret"></span>
             </button>
             <ul id="helpDropdownItems" class="dropdown-menu dropdown-menu-right">
-                <li>
+                <li th:if="${@environment.getProperty('help.process') != ''}">
                     <a th:href="@{${@environment.getProperty('help.process')}}" target="_tab">Q-Rapids Process</a>
                 </li>
                 <li>
