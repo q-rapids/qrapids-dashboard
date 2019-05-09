@@ -105,8 +105,11 @@ function drawChart() {
                 fill: false
             });
         }
-        else {
+        else if (typeof errors !== "undefined"){
             config.data.error = errors[i];
+        }
+        else {
+            config.data.error = "No data to display";
         }
 
         //draw chart
