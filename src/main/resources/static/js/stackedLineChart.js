@@ -84,6 +84,9 @@ function drawChart() {
             if (typeof errors !== 'undefined') {
                 c.data.errors.push(errors[i][j]);
             }
+            else {
+                c.data.errors.push("No data to display");
+            }
         }
         config.push(c);
     }

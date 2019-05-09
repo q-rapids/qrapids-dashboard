@@ -112,12 +112,17 @@ function drawChart(container, width, height) {
         d3.select("#name"+i).append("title").text(data[i].name);
 
         //add label under the text
+        var text;
+        console.log(data[i].value);
+        if (isNaN(data[i].value))
+            text = data[i].value;
+        else text = data[i].value.toFixed(2);
         svg.append("text")
             .attr("x", 0)
             .attr("y", 50*width/250 + 30)
             .attr("text-anchor", "middle")
             .style("font-size", 11+6*width/250+"px")
-            .text(data[i].value.toFixed(2));
+            .text(text);
 
     }
 }
