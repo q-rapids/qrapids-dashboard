@@ -34,6 +34,9 @@ function drawChart() {
         document.getElementById("radarChart").appendChild(div).appendChild(ctx);
         div.appendChild(p).appendChild(a);
         ctx.getContext("2d");
+        if (labels[i].length === 2) {
+            labels[i].push(null);
+        }
         window.myLine = new Chart(ctx, {    //draw chart with the following config
             type: 'radar',
             data: {
@@ -42,6 +45,8 @@ function drawChart() {
                     label: titles[i],
                     backgroundColor: 'rgba(1, 119, 166, 0.2)',
                     borderColor: 'rgb(1, 119, 166)',
+                    pointBackgroundColor: 'rgb(1, 119, 166)',
+                    pointBorderColor: 'rgb(1, 119, 166)',
                     data: values[i],
                     fill: true
                 }]

@@ -59,6 +59,10 @@ function drawChart(strategicIndicators) {
 
         document.getElementById("radarChart").appendChild(div).appendChild(canvas);
 
+        if (strategicIndicators[i].factorNames.length === 2) {
+            strategicIndicators[i].factorNames.push(null);
+        }
+
         // Draw chart
         window.myLine = new Chart(canvas, {
             type: 'radar',
@@ -68,6 +72,8 @@ function drawChart(strategicIndicators) {
                     label: strategicIndicators[i].name,
                     backgroundColor: 'rgba(1, 119, 166, 0.2)',
                     borderColor: 'rgb(1, 119, 166)',
+                    pointBackgroundColor: 'rgb(1, 119, 166)',
+                    pointBorderColor: 'rgb(1, 119, 166)',
                     data: strategicIndicators[i].factorValues,
                     fill: true
                 }]

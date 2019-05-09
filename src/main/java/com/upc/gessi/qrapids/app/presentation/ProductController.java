@@ -67,13 +67,14 @@ public class ProductController {
         	String externalId = request.getParameter("externalId");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
+            String backlogId = request.getParameter("backlogId");
             byte[] logo = IOUtils.toByteArray(request.getPart("logo").getInputStream());
             if (logo.length < 10) {
             	DTOProject p = productCont.getProjectById(Long.toString(id));
             	logo = p.getLogo();
             }
             if (productCont.checkProjectByName(id, name)) {
-            	DTOProject p = new DTOProject(id, externalId, name, description, logo, true);
+            	DTOProject p = new DTOProject(id, externalId, name, description, logo, true, backlogId);
             	productCont.updateProject(p);
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
             } else {

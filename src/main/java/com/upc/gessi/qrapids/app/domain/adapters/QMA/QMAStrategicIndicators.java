@@ -190,8 +190,7 @@ public class QMAStrategicIndicators {
                     int changed = 0;
                     int i = 0;
                     for (DTOSIAssesment d : categories) {
-                        //TODO: maybe check label instead of id
-                        if (d.getId() == (long)estimation.getEstimation().get(i).getFirst()) {
+                        if (d.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
                             d.setValue(estimation.getEstimation().get(i).getThird());
                             d.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
                             ++changed;

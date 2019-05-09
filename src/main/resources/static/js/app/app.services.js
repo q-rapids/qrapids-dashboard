@@ -35,8 +35,28 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
+    $scope.getAllQRs = function () {
+        var url =  "api/qr?prj=" + sessionStorage.getItem("prj");
+        $http({
+            method : "GET",
+            url : url
+        }).then(function mySuccess(response) {
+            $scope.data = response.data;
+        })
+    };
+
+    $scope.getAllDecisions = function () {
+        var url = "api/decisions?qrs=true&prj=" + sessionStorage.getItem("prj");
+        $http({
+            method : "GET",
+            url : url
+        }).then(function mySuccess(response) {
+            $scope.data = response.data;
+        })
+    };
+
     $scope.getAlerts = function(){
-        var url =  "api/alerts";
+        var url =  "api/alerts?prj=" + sessionStorage.getItem("prj");
         $http({
             method : "GET",
             url : url
@@ -47,7 +67,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.getQR = function(alertId){
-        var url =  "api/alerts/" + alertId + "/qr";
+        var url =  "api/alerts/" + alertId + "/qrPatterns";
         $http({
             method : "GET",
             url : url
@@ -111,99 +131,48 @@ app.controller('TablesCtrl', function($scope, $http) {
             var requirement = $("#QRRequirement").val();
             var description = $("#QRDescription").val();
             var rationale = $("#QRDecisionRationale").val();
-            var addQRUrl = "api/alerts/"+alertId+"/qr";
+            var addQRUrl = "api/alerts/"+alertId+"/qr?prj=" + sessionStorage.getItem("prj");
+            var body = new URLSearchParams();
+            body.set('requirement', requirement);
+            body.set('description', description);
+            body.set('goal', QRCandidate.goal);
+            body.set('rationale', rationale);
+            body.set('patternId', QRCandidate.id);
             $http({
-                method : "GET",
-                url : "api/backlogUrl"
+                method: "POST",
+                url: addQRUrl,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                data: body.toString()
             }).then(function (response) {
-                // add QR to backlog
-                var backlogUrl = response.data.backlogUrl;
-                if (backlogUrl !== "") {
-                    $http({
-                        method: "POST",
-                        url: backlogUrl,
-                        data: {
-                            issue_summary: requirement,
-                            issue_description: description,
-                            issue_type: "Story"
-                        }
-                    }).then(function (response) {
-                        // add QR to database
-                        var issue = response.data;
-                        var body = new URLSearchParams();
-                        body.set('requirement', requirement);
-                        body.set('description', description);
-                        body.set('goal', QRCandidate.goal);
-                        body.set('rationale', rationale);
-                        body.set('backlogId', issue.issue_id);
-                        body.set('backlogUrl', issue.issue_url);
-                        body.set('patternId', QRCandidate.id);
-                        $http({
-                            method: "POST",
-                            url: addQRUrl,
-                            headers: {
-                                "Content-Type": "application/x-www-form-urlencoded"
-                            },
-                            data: body.toString()
-                        }).then(function () {
-                            // show QR info
-                            $("#QRModal").modal('hide');
-                            $("#messageModalTitle").text("The Quality Requirement has been added to the backlog successfully");
-                            $("#messageModalContent").html("<b>Issue id: </b>" + issue.issue_id + "</br>" +
-                                "<b>Issue url: </b><a href='" + issue.issue_url + "' target='_blank'>" + issue.issue_url + "</a>");
-                            $("#messageModal").modal();
-                            $scope.getAlerts();
-                        });
-                    }, function () {
-                        // In case of error, add QR to database with null backlog values
-                        var body = new URLSearchParams();
-                        body.set('requirement', requirement);
-                        body.set('description', description);
-                        body.set('goal', QRCandidate.goal);
-                        body.set('rationale', rationale);
-                        body.set('backlogId', "");
-                        body.set('backlogUrl', "");
-                        body.set('patternId', QRCandidate.id);
-                        $http({
-                            method: "POST",
-                            url: addQRUrl,
-                            headers: {
-                                "Content-Type": "application/x-www-form-urlencoded"
-                            },
-                            data: body.toString()
-                        }).then(function () {
-                            $("#QRModal").modal('hide');
-                            $scope.getAlerts();
-                        });
-                    });
-                } else {
-                    // add QR to database
-                    var body = new URLSearchParams();
-                    body.set('requirement', requirement);
-                    body.set('description', description);
-                    body.set('goal', QRCandidate.goal);
-                    body.set('rationale', rationale);
-                    body.set('backlogId', "");
-                    body.set('backlogUrl', "");
-                    body.set('patternId', QRCandidate.id);
-                    $http({
-                        method: "POST",
-                        url: addQRUrl,
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        data: body.toString()
-                    }).then(function () {
-                        $("#QRModal").modal('hide');
-                        $scope.getAlerts();
-                    });
+                var qualityRequirement = response.data;
+                // show QR info
+                $("#QRModal").modal('hide');
+                if (qualityRequirement.backlogId && qualityRequirement.backlogUrl) {
+                    $("#messageModalTitle").text("The Quality Requirement has been added to the backlog successfully");
+                    $("#messageModalContent").html("<b>Issue id: </b>" + qualityRequirement.backlogId + "</br>" +
+                        "<b>Issue url: </b><a href='" + qualityRequirement.backlogUrl + "' target='_blank'>" + qualityRequirement.backlogUrl + "</a>");
+                    $("#messageModal").modal();
+                }
+                $scope.getAlerts();
+            }).catch(function (response) {
+                if (response.status === 500) {
+                    $("#QRModal").modal('hide');
+                    $scope.getAlerts();
+                    alert("Error on saving the quality requirement to the backlog")
+                }
+                else {
+                    $("#QRModal").modal('hide');
+                    $scope.getAlerts();
+                    alert("Error on saving the quality requirement")
                 }
             });
         };
 
         var ignoreQR = function () {
             var rationale = $("#QRDecisionRationale").val();
-            var ignoreQRUrl = "api/alerts/"+alertId+"/ignore";
+            var ignoreQRUrl = "api/alerts/"+alertId+"/ignore?prj=" + sessionStorage.getItem("prj");
             var body = new URLSearchParams();
             body.set('rationale', rationale);
             body.set('patternId', QRCandidate.id);
@@ -219,6 +188,12 @@ app.controller('TablesCtrl', function($scope, $http) {
                 $scope.getAlerts();
             });
         };
+
+        var simulateQR = function () {
+            location.href = "Simulation/QR?alert="+alertId+"&pattern="+QRCandidate.id;
+        };
+        var simulateButton = $("#simulateButton");
+        simulateButton.click(simulateQR);
 
         var decisionTypeButton = $("#decisionTypeButton");
         decisionTypeButton.prop("disabled", false);
@@ -302,12 +277,34 @@ app.controller('TablesCtrl', function($scope, $http) {
             url: url,
             data: {
                 element : {
-                    id: "bugsratiojira",
-                    name: "Ratio of open/in progress bugs",
+                    id: "duplication",
+                    name: "Duplication Density",
                     type: "METRIC",
                     value: "0.4",
                     threshold: "0.5",
-                    category: "bugsratiojira"
+                    category: "duplication",
+                    project_id: sessionStorage.getItem("prj")
+                }
+            }
+        }).then(function () {
+            //location.href = "QualityAlerts";
+        });
+    };
+
+    $scope.newAlertFactor = function () {
+        var url = "api/notifyAlert";
+        $http({
+            method: "POST",
+            url: url,
+            data: {
+                element : {
+                    id: "testingperformance",
+                    name: "Performance of the tests",
+                    type: "FACTOR",
+                    value: "0.4",
+                    threshold: "0.5",
+                    category: "testingperformance",
+                    project_id: sessionStorage.getItem("prj")
                 }
             }
         }).then(function () {

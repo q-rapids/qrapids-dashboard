@@ -8,10 +8,12 @@
     <div th:replace="Fragments/Template :: logo"></div>
     <br/>
     <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
     <br/>
-    <!--div style="text-align: right; padding-right: 2em;">
-        <button type="button" class="btn btn-primary" ng-click="newAlert()">New Alert</button>
-    </div-->
+    <div style="text-align: right; padding-right: 2em;">
+        <button type="button" class="btn btn-primary" ng-click="newAlert()">New Metric Alert</button>
+        <button type="button" class="btn btn-primary" ng-click="newAlertFactor()">New Factor Alert</button>
+    </div>
     <div class="container" id="tableCurrent" ng-init="getAlerts()">
         <table class="table table-hover">
             <thead>
@@ -38,7 +40,7 @@
                 <td id="status" ng-class="{'color-red': (d.status == 'NEW')}">{{d.status}}</td>
                 <td>
                     <button ng-if="d.status == 'RESOLVED'" type="button" class="btn btn-default" ng-click="getDecision(d.id)"> Decision </button>
-                    <button ng-if="d.reqAssociat &amp;&amp; d.status != 'RESOLVED'" type="button" class="btn btn-default" ng-click="getQR(d.id)"> QR </button>
+                    <button ng-if="d.reqAssociat &amp;&amp; d.status != 'RESOLVED'" type="button" class="btn btn-default" ng-click="getQR(d.id)"> Quality Requirement </button>
                 </td>
             </tr>
             </tbody>

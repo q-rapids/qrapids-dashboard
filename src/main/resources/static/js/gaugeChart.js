@@ -9,7 +9,7 @@ var target;
 var tau = Math.PI / 2;
 var urlLink;
 
-function getData(width, height, showButtons, chartHyperlinked) {
+function getData(width, height, showButtons, chartHyperlinked, color) {
     var serverUrl = sessionStorage.getItem("serverUrl");
     var url = "/api/StrategicIndicators/CurrentEvaluation";
     if (serverUrl) {
@@ -23,7 +23,7 @@ function getData(width, height, showButtons, chartHyperlinked) {
         async: true,
         success: function (callData) {
             data = callData;
-            drawChart("gaugeChart", width, height, showButtons, chartHyperlinked);
+            drawChart("gaugeChart", width, height, showButtons, chartHyperlinked, color);
         },
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
@@ -56,8 +56,11 @@ function seeFeedback(i){
     console.log(data);
 }
 
-function drawChart(container, width, height, showButtons, chartHyperlinked) {
+function drawChart(container, width, height, showButtons, chartHyperlinked, color) {
     sortDataAlphabetically();
+    if (color == null) {
+        color = "#000";
+    }
     var someSIhasBN = false;
     for (i = 0; i < data.length; ++i) {
         var div = document.createElement('div');
@@ -77,6 +80,7 @@ function drawChart(container, width, height, showButtons, chartHyperlinked) {
             .outerRadius(110*width/250)
             .startAngle(-tau);
 
+        var textColor;
         //create chart svg with hyperlink inide the "container"
         if (chartHyperlinked){
             urlLink = "../DetailedStrategicIndicators/CurrentChart?id="
@@ -104,6 +108,7 @@ function drawChart(container, width, height, showButtons, chartHyperlinked) {
                 .attr("transform",
                     "translate(" + width / 2 + "," + height / 2 + ")");
 
+            textColor = "#0177a6";
         }
         else {
             var svg = d3.select('#'+div.id).append("svg")
@@ -115,6 +120,7 @@ function drawChart(container, width, height, showButtons, chartHyperlinked) {
                 .attr("transform",
                     "translate(" + width / 2 + "," + height / 2 + ")");
 
+            textColor = "#000"
         }
 
         for (j = data[i].probabilities.length - 1; j > -1; --j) {
@@ -132,9 +138,9 @@ function drawChart(container, width, height, showButtons, chartHyperlinked) {
             .startAngle(-0.05)
             .endAngle(0.05);
 
-        //draw the black needle in correct position depending on it's angle
+        //draw the needle in correct position depending on it's angle
         svg.append("path")
-            .style("fill", "#000")
+            .style("fill", color)
             .attr("d", arc2)
             .attr("transform", "translate(" + -100*width/250 * Math.cos((angle - 90) / 180 * Math.PI) + "," + -100*width/250 * Math.sin((angle - 90) / 180 * Math.PI) + ") rotate(" + angle + ")");
 
@@ -145,9 +151,9 @@ function drawChart(container, width, height, showButtons, chartHyperlinked) {
             .startAngle(0)
             .endAngle(Math.PI * 2);
 
-        //draw the black needle base
+        //draw the needle base
         svg.append("path")
-            .style("fill", "#000")
+            .style("fill", color)
             .attr("d", arc3);
 
         //add text under the gauge with the name of the element (strategic indicator)
@@ -156,19 +162,23 @@ function drawChart(container, width, height, showButtons, chartHyperlinked) {
             .attr("y", 50*width/250)
             .attr("text-anchor", "middle")
             .attr("font-family", "sans-serif")
-            .attr("fill", "#0177a6")
+            .attr("fill", textColor)
             .style("font-size", "16px")
             .text(data[i].name);
 
 //    .style("font-size", 11+8*width/250+"px")
 
         //add label under the name with the value description
+        var valueDescriptionColor;
+        if (chartHyperlinked) valueDescriptionColor = textColor;
+        else valueDescriptionColor = color;
+
         svg.append("text")
             .attr("x", 0)
-            .attr("y", 50*width/250 + 30)
+            .attr("y", 50*width/250 + 25)
             .attr("text-anchor", "middle")
             .attr("font-family", "sans-serif")
-            .attr("fill", "#0177a6")
+            .attr("fill", valueDescriptionColor)
             .style("font-size", "14px")
             .text(data[i].value_description);
 
@@ -213,6 +223,56 @@ function drawChart(container, width, height, showButtons, chartHyperlinked) {
     }
 
     if (!someSIhasBN) $("#feedbackButton").hide();
+}
+
+function drawSimulationNeedle (container, width, height, color) {
+    d3.selectAll('.simulation').remove();
+    sortDataAlphabetically();
+    for (i = 0; i < data.length; ++i) {
+        var divId = container + "DivChart" + i;
+        var svg = d3.select('#'+divId).select("svg");
+
+        angle = data[i].value.first * 180 + 90;
+
+        //create needle
+        var arc2 = d3.arc()
+            .innerRadius(0)
+            .outerRadius(100*width/250)
+            .startAngle(-0.05)
+            .endAngle(0.05);
+
+        //draw the black needle in correct position depending on it's angle
+        svg.append("path")
+            .style("fill", color)
+            .attr("class", "simulation")
+            .attr("d", arc2)
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ") translate(" + -100*width/250 * Math.cos((angle - 90) / 180 * Math.PI) + "," + -100*width/250 * Math.sin((angle - 90) / 180 * Math.PI) + ") rotate(" + angle + ")");
+
+        //create small circle at needle base
+        var arc3 = d3.arc()
+            .innerRadius(0)
+            .outerRadius(10*width/250)
+            .startAngle(0)
+            .endAngle(Math.PI * 2);
+
+        //draw the black needle base
+        svg.append("path")
+            .style("fill", color)
+            .attr("class", "simulation")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+            .attr("d", arc3);
+
+        svg.append("text")
+            .attr("class", "simulation")
+            .attr("x", 0)
+            .attr("y", 50*width/250 + 50)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "sans-serif")
+            .attr("fill", color)
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+            .style("font-size", "16px")
+            .text(data[i].value_description);
+    }
 }
 
 function sortDataAlphabetically () {

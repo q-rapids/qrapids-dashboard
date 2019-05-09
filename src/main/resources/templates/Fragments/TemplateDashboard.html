@@ -47,11 +47,30 @@
         <a id="Prediction">Prediction</a>
         <a id="Simulation">Simulation</a>
         <a id="QualityAlerts">Alerts</a>
+        <a id="QualityRequirements">Quality Requirements</a>
+        <a id="Decisions">Decisions</a>
         <a id="Configuration" ><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
-        <a th:if="${@environment.getProperty('security.enable')}"
-           class="col-xs-1 pull-right"
+        <div id="helpDropdown" class="dropdown pull-right" style="margin-top: 1em; margin-right: 1em; margin-left: 1em;">
+            <button id="helpDropdownButton" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                <span id = "HelpDropdownText" class="text">Help</span>
+                <span class="caret"></span>
+            </button>
+            <ul id="helpDropdownItems" class="dropdown-menu dropdown-menu-right">
+                <li>
+                    <a th:href="@{${@environment.getProperty('help.process')}}" target="_tab">Q-Rapids Process</a>
+                </li>
+                <li>
+                    <a th:href="@{${@environment.getProperty('help.userguide')}}" target="_tab">User guide</a>
+                </li>
+                <li>
+                    <a th:href="@{${@environment.getProperty('help.support')}}" target="_tab">Support</a>
+                </li>
+            </ul>
+        </div>
+        <a th:if="${@environment.getProperty('security.enable')}" class="pull-right"
            th:href="@{/profile}">
-            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span id="MyProfile">My profile</span></a>
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span id="MyProfile">My profile</span>
+        </a>
     </div>
     <div class="subnav" id="submenuAssessment" th:fragment="navSubBarAssessmentDashboard">
         <a id="StrategicIndicatorsAssessment">Strategic Indicators</a>
@@ -102,6 +121,11 @@
         <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="LogoutProfileConfig">Logout</a>
+    </div>
+    <div class="subnav" id="submenuSimulation" th:fragment="navSubBarSimulationDashboard">
+        <a id="FactorsSimulation">Factors</a>
+        <a id="MetricsSimulation">Metrics</a>
+        <a id="QRSimulation">Quality Requirements</a>
     </div>
     <p th:fragment="navLinkMetrics" style="margin-left: 20px; font-size: medium; font-family: Arial ">
         <a id="originSI" onclick="navBack(true)"></a>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+</head>
+<body ng-app="TablesApp" ng-controller="TablesCtrl">
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+<br/>
+<div class="container" id="tableCurrent" ng-init="getAllDecisions()">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Comments</th>
+            <th>Requirement</th>
+            <th>Description</th>
+            <th>Goal</th>
+            <th>Backlog ID</th>
+            <th>Backlog URL</th>
+            <th>Author</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="d in data">
+            <td id="date">{{d.date}}</td>
+            <td id="type">{{d.type}}</td>
+            <td id="comments">{{d.rationale}}</td>
+            <td id="requirement" >{{d.requirement}}</td>
+            <td id="description" >{{d.description}}</td>
+            <td id="goal">{{d.goal}}</td>
+            <td id="backlogId"><text ng-if="d.backlogId != 'undefined'">{{d.backlogId}}</text></td>
+            <td id="backlogUrl"><a ng-if="d.backlogId != 'undefined'" href="{{d.backlogUrl}}" target="_tab">{{d.backlogUrl}}</a></td>
+            <td id="author">{{d.author}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+</html>

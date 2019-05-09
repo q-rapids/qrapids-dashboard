@@ -24,7 +24,7 @@ function loadData() {
 
 function buildTree(strategicIndicators) {
     var qmnodes = new Map();
-    var qmedges = [];
+    var qmedges = new Map();
     for (var i = 0; i < strategicIndicators.length; i++) {
         var strategicIndicator = strategicIndicators[i];
         var node = createNode(strategicIndicator, siColor, strategicIndicator.color);
@@ -36,20 +36,20 @@ function buildTree(strategicIndicators) {
             var node = createNode(factor, factorColor, factorColor);
             if (!qmnodes.has(factor.id))
                 qmnodes.set(factor.id, node);
-            var edge = createEdge(factor, strategicIndicator);
-            qmedges.push( edge );
+            if (!qmedges.has(factor.id+"-"+strategicIndicator.id))
+                qmedges.set(factor.id+"-"+strategicIndicator.id, createEdge(factor, strategicIndicator));
 
             for (var k = 0; k < factor.metrics.length; k++) {
                 var metric = factor.metrics[k];
                 var node = createNode(metric, metricColor, metricColor);
                 if (!qmnodes.has(metric.id))
                     qmnodes.set(metric.id, node);
-                var edge = createEdge(metric, factor);
-                qmedges.push( edge );
+                if (!qmedges.has(metric.id+"-"+factor.id))
+                    qmedges.set(metric.id+"-"+factor.id, createEdge(metric, factor));
             }
         }
     }
-    displayData(Array.from(qmnodes.values()), qmedges);
+    displayData(Array.from(qmnodes.values()), Array.from(qmedges.values()));
 }
 
 function createNode (element, color, colorBorder) {

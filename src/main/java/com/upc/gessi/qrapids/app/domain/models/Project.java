@@ -24,6 +24,8 @@ public class Project {
     private byte[] logo;
     @Column(name = "active")
     private boolean active;
+    @Column(name = "backlogId")
+    private String backlogId;
     
     public Project(){}
     
@@ -81,5 +83,13 @@ public class Project {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getBacklogId() {
+        return backlogId;
+    }
+
+    public void setBacklogId(String backlogId) {
+        this.backlogId = backlogId;
     }
 }

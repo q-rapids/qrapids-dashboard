@@ -34,7 +34,7 @@ public class ProductsController {
 		List<DTOProject> projects = new Vector<DTOProject>();
 		List<Project> projectsBD = projectRep.findAll();
 		for (Project p : projectsBD) {
-			DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive());
+			DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
 			projects.add(project);
 		}
 		Collections.sort(projects, new Comparator<DTOProject>() {
@@ -52,7 +52,7 @@ public class ProductsController {
 		for (Product p : productsBD) {
 			List<DTOProject> relatedProjects = new Vector<DTOProject>();
 			for (Project proj : p.getProjects()) {
-				DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive());
+				DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId());
 				relatedProjects.add(project);
 			}
 			Collections.sort(relatedProjects, new Comparator<DTOProject>() {
@@ -77,7 +77,7 @@ public class ProductsController {
 		Product p = productRep.findOne(Long.parseLong(id));
 		List<DTOProject> relatedProjects = new Vector<DTOProject>();
 		for (Project proj : p.getProjects()) {
-			DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive());
+			DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId());
 			relatedProjects.add(project);
 		}
 		Collections.sort(relatedProjects, new Comparator<DTOProject>() {
@@ -92,13 +92,13 @@ public class ProductsController {
 	
 	public DTOProject getProjectById(String id) throws Exception {
 		Project p = projectRep.findOne(Long.parseLong(id));
-		DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive());
+		DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
         return project;
     }
 	
 	public DTOProject getProjectByExternalId(String externalId) throws Exception {
 		Project p = projectRep.findByExternalId(externalId);
-		DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive());
+		DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
         return project;
     }
 	
@@ -110,6 +110,7 @@ public class ProductsController {
 	public void updateProject(DTOProject p) {
 		Project project = new Project(p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive());
 		project.setId(p.getId());
+		project.setBacklogId(p.getBacklogId());
 		projectRep.save(project);
 	}
 	

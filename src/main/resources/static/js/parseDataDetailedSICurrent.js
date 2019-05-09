@@ -41,8 +41,4 @@ function getData() {
             drawChart();
         }
     });
-
-    console.log(titles);
-    console.log(labels);
-    console.log(values);
 }
