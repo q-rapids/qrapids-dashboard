@@ -368,6 +368,7 @@ $("#patternListButton").click(function () {
             var position = $('.active').index();
             var pattern = patterns[position];
             patternId = pattern.id;
+            removeSimulation();
             showQRPattern(pattern);
             $('#metricsSliders').empty();
             $("#QRListModal").modal('hide');
@@ -481,7 +482,8 @@ $('#apply').click(function () {
                     var newFactor = qualityFactors.find(function (element) {
                         return element.id === factor.id;
                     });
-                    dataset.data.push(newFactor.value);
+                    if (newFactor)
+                        dataset.data.push(newFactor.value);
                 }
 
                 if (detailedCharts[i].data.datasets.length > 1)

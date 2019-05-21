@@ -37,12 +37,15 @@ function showMetricsSliders (metrics) {
         var slider = document.createElement("input");
         slider.id = "sliderValue" + metric.id;
         slider.style.width = "80%";
+        var value = 0;
+        if (metric.value !== 'NaN')
+            value = metric.value;
         var sliderConfig = {
             id: "slider" + metric.id,
             min: 0,
             max: 1,
             step: 0.01,
-            value: metric.value
+            value: value
         };
         // Add original value
         var start, end;
@@ -78,8 +81,8 @@ function getDetailedStrategicIndicators () {
         async: true,
         success: function (data) {
             function compare (a, b) {
-                if (a.name < b.name) return -1;
-                else if (a.name > b.name) return 1;
+                if (a.id < b.id) return -1;
+                else if (a.id > b.id) return 1;
                 else return 0;
             }
             data.sort(compare);
@@ -315,7 +318,7 @@ $('#apply').click(function () {
         var previousMetric = metrics.find(function (element) {
             return element.id === metricsSlider[i].id
         });
-        if (parseFloat(metricsSlider[i].value) !== parseFloat(previousMetric.value.toFixed(2)))
+        if (previousMetric.value !== 'NaN' && parseFloat(metricsSlider[i].value) !== parseFloat(previousMetric.value.toFixed(2)))
             newMetrics.push(metricsSlider[i]);
     }
 
@@ -354,7 +357,8 @@ $('#apply').click(function () {
                     var newFactor = qualityFactors.find(function (element) {
                         return element.id === factor.id;
                     });
-                    dataset.data.push(newFactor.value);
+                    if (newFactor)
+                        dataset.data.push(newFactor.value);
                 }
 
                 if (detailedCharts[i].data.datasets.length > 1)
