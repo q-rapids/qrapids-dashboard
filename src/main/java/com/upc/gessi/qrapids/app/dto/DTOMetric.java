@@ -92,7 +92,7 @@ public class DTOMetric {
     }
 
     public String getName() {
-        return name;
+        return this.name.isEmpty() ? this.id : this.name;
     }
 
     public String getDescription() { return description;}

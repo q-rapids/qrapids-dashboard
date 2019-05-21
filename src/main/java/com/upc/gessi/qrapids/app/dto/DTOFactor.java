@@ -66,7 +66,7 @@ public class DTOFactor {
     }
 
     public String getName() {
-        return name;
+        return this.name.isEmpty() ? this.id : this.name;
     }
 
     public Float getValue() {
