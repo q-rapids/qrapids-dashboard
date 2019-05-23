@@ -21,8 +21,8 @@ function getDetailedStrategicIndicators () {
         async: true,
         success: function (data) {
             function compare (a, b) {
-                if (a.name < b.name) return -1;
-                else if (a.name > b.name) return 1;
+                if (a.id < b.id) return -1;
+                else if (a.id > b.id) return 1;
                 else return 0;
             }
             data.sort(compare);
@@ -75,7 +75,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
         document.getElementById("radarDetailed").appendChild(div).appendChild(ctx);
         div.appendChild(p)
         ctx.getContext("2d");
-        if (labels[i].length < 3) {
+        if (labels[i].length === 2) {
             labels[i].push(null);
             //values[i].push(null);
         }
@@ -155,6 +155,30 @@ function getFactors () {
                 }
             }
             showFactors(titles, ids, labels, values);
+            checkMetricsSliders();
+        }
+    });
+}
+
+function checkMetricsSliders() {
+    metrics.forEach(function (metric) {
+        var present = false;
+        qualityFactors.forEach(function (qualityFactor) {
+            qualityFactor.metrics.forEach(function (factorMetric) {
+                if (metric.id === factorMetric.id)
+                    present = true;
+            });
+        });
+        if (!present) {
+            var warning = document.createElement("span");
+            warning.setAttribute("class", "glyphicon glyphicon-alert");
+            warning.title = "This metric is not related to any factor"
+            warning.style.paddingLeft = "1em";
+            warning.style.fontSize = "15px";
+            warning.style.color = "yellow";
+            warning.style.textShadow = "-2px 0 2px black, 0 2px 2px black, 2px 0 2px black, 0 -2px 2px black";
+            var divMetric = $("#div"+metric.id);
+            divMetric.append(warning);
         }
     });
 }
@@ -257,9 +281,11 @@ function showQRPattern (pattern) {
     var QRRequirement = $("#QRRequirementSimulation");
     var QRDescription = $("#QRDescriptionSimulation");
     var QRGoal = $("#QRGoalSimulation");
+    var decisionButton = $("#decision");
     QRRequirement.val(pattern.forms[0].fixedPart.formText);
     QRDescription.val(pattern.forms[0].description);
     QRGoal.val(pattern.goal);
+    decisionButton.attr("disabled", false);
     getAllMetricsAndShowMetricForPattern(pattern.id);
 }
 
@@ -280,12 +306,23 @@ function getAndShowMetricsForPattern (patternId) {
         url: "../api/qrPatterns/"+patternId+"/metrics",
         type: "GET",
         success: function (metricsForPattern) {
+            $("#apply").attr("disabled", true);
+            $("#restore").attr("disabled", true);
+            var found = false;
             metrics.forEach(function (metric) {
                 metricsForPattern.forEach(function (metricForPattern) {
-                    if (metric.id === metricForPattern)
+                    if (metric.id === metricForPattern) {
+                        found = true;
                         showMetricSlider(metric);
+                    }
                 })
             });
+            if (found) {
+                $("#apply").attr("disabled", false);
+                $("#restore").attr("disabled", false);
+            }
+            if (qualityFactors.length > 0)
+                checkMetricsSliders();
         }
     });
 }
@@ -293,6 +330,7 @@ function getAndShowMetricsForPattern (patternId) {
 function showMetricSlider (metric) {
     var metricsDiv = $("#metricsSliders");
     var div = document.createElement('div');
+    div.id = "div" + metric.id;
     div.style.marginTop = "1em";
     div.style.marginBottom = "1em";
 
@@ -493,6 +531,9 @@ $('#apply').click(function () {
                 detailedCharts[i].update();
             }
             simulateSI(qualityFactors);
+        },
+        error: function () {
+            alert("Metric simulation failed");
         }
     });
 });
@@ -620,14 +661,14 @@ $('#decision').click(function () {
     saveButton.prop("disabled", true);
 
     $("#addQR").on('click', function () {
-        decisionTypeText.text("Add QR");
+        decisionTypeText.text("Add Quality Requirement");
         saveButton.prop("disabled", false);
         saveButton.unbind();
         saveButton.click(addQR);
     });
 
     $("#ignoreQR").on('click', function () {
-        decisionTypeText.text("Ignore QR");
+        decisionTypeText.text("Ignore Quality Requirement");
         saveButton.prop("disabled", false);
         saveButton.unbind();
         saveButton.click(ignoreQR);
@@ -653,4 +694,8 @@ window.onload = function () {
     } else {
         getAllQRPatterns();
     }
+
+    $("#apply").attr("disabled", true);
+    $("#restore").attr("disabled", true);
+    $("#decision").attr("disabled", true);
 };

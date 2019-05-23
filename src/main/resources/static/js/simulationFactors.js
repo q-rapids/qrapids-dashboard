@@ -1,7 +1,9 @@
 var simulationColor = "#0579A8";
 var currentColor = "#696969";
 
+var qualityFactors = [];
 var strategicIndicators = [];
+var categories = [];
 var detailedCharts = [];
 
 function getAllQualityFactors () {
@@ -10,23 +12,25 @@ function getAllQualityFactors () {
         url : url,
         type: "GET",
         success: function (response) {
-            getQualityFactorsCategories(response);
+            qualityFactors = response;
+            getQualityFactorsCategories();
         }
     });
 }
 
-function getQualityFactorsCategories (qualityFactors) {
+function getQualityFactorsCategories () {
     var url = "../api/QualityFactors/categories";
     $.ajax({
         url : url,
         type: "GET",
         success: function (response) {
-            showQualityFactorSliders(qualityFactors, response);
+            categories = response;
+            showQualityFactorSliders();
         }
     });
 }
 
-function showQualityFactorSliders (qualityFactors, categories) {
+function showQualityFactorSliders () {
     // Factor categories
     var rangeHighlights = [];
     var start = 0;
@@ -49,6 +53,7 @@ function showQualityFactorSliders (qualityFactors, categories) {
     var qualityFactorsDiv = $("#qualityFactors");
     qualityFactors.forEach(function (qualityFactor) {
         var div = document.createElement('div');
+        div.id = "div" + qualityFactor.id;
         div.style.marginTop = "1em";
         div.style.marginBottom = "1em";
 
@@ -99,7 +104,8 @@ function showQualityFactorSliders (qualityFactors, categories) {
     for (var i = 0; i < categories.length; i++) {
         $(".slider-rangeHighlight." + categories[i].name).css("background", categories[i].color)
     }
-    console.log(rangeHighlights);
+    if (strategicIndicators.length > 0)
+        checkFactorsSliders();
 }
 
 function getDetailedStrategicIndicators () {
@@ -144,7 +150,31 @@ function getDetailedStrategicIndicators () {
                     });
                 }
             }
+            checkFactorsSliders();
             showDetailedStrategicIndicators(titles, ids, labels, values);
+        }
+    });
+}
+
+function checkFactorsSliders() {
+    qualityFactors.forEach(function (qualityFactor) {
+        var present = false;
+        strategicIndicators.forEach(function (strategicIndicator) {
+            strategicIndicator.factors.forEach(function (siFactor) {
+                if (qualityFactor.id === siFactor.id)
+                    present = true;
+            });
+        });
+        if (!present) {
+            var warning = document.createElement("span");
+            warning.setAttribute("class", "glyphicon glyphicon-alert");
+            warning.title = "This quality factor is not related to any strategic indicator"
+            warning.style.paddingLeft = "1em";
+            warning.style.fontSize = "15px";
+            warning.style.color = "yellow";
+            warning.style.textShadow = "-2px 0 2px black, 0 2px 2px black, 2px 0 2px black, 0 -2px 2px black";
+            var divFactor = $("#div"+qualityFactor.id);
+            divFactor.append(warning);
         }
     });
 }
@@ -165,7 +195,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
         document.getElementById("radarChart").appendChild(div).appendChild(ctx);
         div.appendChild(p)
         ctx.getContext("2d");
-        if (labels[i].length < 3) {
+        if (labels[i].length === 2) {
             labels[i].push(null);
             //values[i].push(null);
         }

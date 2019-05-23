@@ -203,14 +203,14 @@ app.controller('TablesCtrl', function($scope, $http) {
         saveButton.prop("disabled", true);
 
         $("#addQR").on('click', function () {
-            decisionTypeText.text("Add QR");
+            decisionTypeText.text("Add Quality Requirement");
             saveButton.prop("disabled", false);
             saveButton.unbind();
             saveButton.click(addQR);
         });
 
         $("#ignoreQR").on('click', function () {
-            decisionTypeText.text("Ignore QR");
+            decisionTypeText.text("Ignore Quality Requirement");
             saveButton.prop("disabled", false);
             saveButton.unbind();
             saveButton.click(ignoreQR);
@@ -257,12 +257,12 @@ app.controller('TablesCtrl', function($scope, $http) {
         if (decision.decisionType === "ADD") {
             QRBacklogUrlDiv.show();
             QRType.text("Quality Requirement Added");
-            decisionTypeText.text("Add QR");
+            decisionTypeText.text("Add Quality Requirement");
         }
         else {
             QRBacklogUrlDiv.hide();
             QRType.text("Quality Requirement Ignored");
-            decisionTypeText.text("Ignore QR");
+            decisionTypeText.text("Ignore Quality Requirement");
         }
         decisionTypeButton.prop("disabled", true);
 
