@@ -82,7 +82,7 @@ public class DTOStrategicIndicatorEvaluation {
     }
 
     public String getName() {
-        return name;
+        return this.name.isEmpty() ? this.id : this.name;
     }
 
     public void setName(String name) {

@@ -23,6 +23,7 @@ function showMetricsSliders (metrics) {
     var metricsDiv = $("#metricsSliders");
     metrics.forEach(function (metric) {
         var div = document.createElement('div');
+        div.id = "div" + metric.id;
         div.style.marginTop = "1em";
         div.style.marginBottom = "1em";
 
@@ -37,12 +38,15 @@ function showMetricsSliders (metrics) {
         var slider = document.createElement("input");
         slider.id = "sliderValue" + metric.id;
         slider.style.width = "80%";
+        var value = 0;
+        if (metric.value !== 'NaN')
+            value = metric.value;
         var sliderConfig = {
             id: "slider" + metric.id,
             min: 0,
             max: 1,
             step: 0.01,
-            value: metric.value
+            value: value
         };
         // Add original value
         var start, end;
@@ -67,6 +71,8 @@ function showMetricsSliders (metrics) {
         $("#"+slider.id).slider(sliderConfig);
         $(".slider-rangeHighlight").css("background", currentColor);
     });
+    if (qualityFactors.length > 0)
+        checkMetricsSliders();
 }
 
 function getDetailedStrategicIndicators () {
@@ -78,8 +84,8 @@ function getDetailedStrategicIndicators () {
         async: true,
         success: function (data) {
             function compare (a, b) {
-                if (a.name < b.name) return -1;
-                else if (a.name > b.name) return 1;
+                if (a.id < b.id) return -1;
+                else if (a.id > b.id) return 1;
                 else return 0;
             }
             data.sort(compare);
@@ -210,7 +216,31 @@ function getFactors () {
                     });
                 }
             }
+            checkMetricsSliders();
             showFactors(titles, ids, labels, values);
+        }
+    });
+}
+
+function checkMetricsSliders() {
+    metrics.forEach(function (metric) {
+        var present = false;
+        qualityFactors.forEach(function (qualityFactor) {
+            qualityFactor.metrics.forEach(function (factorMetric) {
+                if (metric.id === factorMetric.id)
+                    present = true;
+            });
+        });
+        if (!present) {
+            var warning = document.createElement("span");
+            warning.setAttribute("class", "glyphicon glyphicon-alert");
+            warning.title = "This metric is not related to any factor"
+            warning.style.paddingLeft = "1em";
+            warning.style.fontSize = "15px";
+            warning.style.color = "yellow";
+            warning.style.textShadow = "-2px 0 2px black, 0 2px 2px black, 2px 0 2px black, 0 -2px 2px black";
+            var divMetric = $("#div"+metric.id);
+            divMetric.append(warning);
         }
     });
 }
@@ -315,7 +345,7 @@ $('#apply').click(function () {
         var previousMetric = metrics.find(function (element) {
             return element.id === metricsSlider[i].id
         });
-        if (parseFloat(metricsSlider[i].value) !== parseFloat(previousMetric.value.toFixed(2)))
+        if (previousMetric.value !== 'NaN' && parseFloat(metricsSlider[i].value) !== parseFloat(previousMetric.value.toFixed(2)))
             newMetrics.push(metricsSlider[i]);
     }
 
@@ -354,7 +384,8 @@ $('#apply').click(function () {
                     var newFactor = qualityFactors.find(function (element) {
                         return element.id === factor.id;
                     });
-                    dataset.data.push(newFactor.value);
+                    if (newFactor)
+                        dataset.data.push(newFactor.value);
                 }
 
                 if (detailedCharts[i].data.datasets.length > 1)
@@ -364,6 +395,9 @@ $('#apply').click(function () {
                 detailedCharts[i].update();
             }
             simulateSI(qualityFactors);
+        },
+        error: function() {
+            alert("Metrics simulation failed");
         }
     });
 });

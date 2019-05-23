@@ -40,7 +40,7 @@ public class DTOQualityFactor {
     }
 
     public String getName() {
-        return name;
+        return this.name.isEmpty() ? this.id : this.name;
     }
 
     public List<DTOMetric> getMetrics() {
