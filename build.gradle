@@ -69,7 +69,7 @@ dependencies {
 	compile files('libs/qrapids-qma-elastic-0.13.jar')
 
 	//API QR Generator
-	compile files('libs/qrapids-qr_generator-0.1.jar')
+	compile files('libs/qrapids-qr_generator-0.2.jar')
 
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')

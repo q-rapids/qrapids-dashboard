@@ -12,6 +12,7 @@ public class DTODecision {
     private String author;
     private String rationale;
     private int patternId;
+    private String elementId;
 
     public DTODecision(long id, DecisionType type, Date date, String author, String rationale, int patternId) {
         this.id = id;
@@ -68,5 +69,13 @@ public class DTODecision {
 
     public void setPatternId(int patternId) {
         this.patternId = patternId;
+    }
+
+    public String getElementId() {
+        return elementId;
+    }
+
+    public void setElementId(String elementId) {
+        this.elementId = elementId;
     }
 }
