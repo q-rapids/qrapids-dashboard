@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
 import com.upc.gessi.qrapids.app.dto.DTODecision;
 import com.upc.gessi.qrapids.app.dto.DTODecisionQualityRequirement;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +17,11 @@ import qr.QRGenerator;
 import qr.models.QualityRequirementPattern;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 public class Decisions {
@@ -38,18 +39,33 @@ public class Decisions {
     String pabreUrl;
 
     @GetMapping("/api/decisions")
-    public List<DTODecision> getDecisions (@RequestParam(value = "prj") String prj, @RequestParam(required = false, defaultValue = "false") boolean qrs) throws Exception {
+    public List<DTODecision> getDecisions (@RequestParam(value = "prj") String prj, @RequestParam(required = false, defaultValue = "false") boolean qrs, @RequestParam(required = false) String from, @RequestParam(required = false) String to) throws Exception {
+        LocalDate fromDate = LocalDate.ofEpochDay(0);
+        if (from != null) {
+            fromDate = LocalDate.parse(from);
+        }
+        LocalDate toDate = LocalDate.now();
+        if (to != null) {
+            toDate = LocalDate.parse(to);
+        }
+        toDate = toDate.plusDays(1);
+
         Project project = projectRepository.findByExternalId(prj);
         List<DTODecision> DTODecisions = new ArrayList<>();
+        QRGenerator qrGenerator = new QRGenerator(pabreUrl);
         if (qrs) {
-            QRGenerator qrGenerator = new QRGenerator(pabreUrl);
             List<QualityRequirementPattern> qualityRequirementPatterns = qrGenerator.getAllQRPatterns();
             Map<Integer, QualityRequirementPattern> qualityRequirementPatternMap = new HashMap<>();
             for (QualityRequirementPattern qualityRequirementPattern : qualityRequirementPatterns) {
                 qualityRequirementPatternMap.put(qualityRequirementPattern.getId(), qualityRequirementPattern);
             }
-            List<DTODecisionQualityRequirement> dtoDecisionQualityRequirements = qrRepository.getAllDecisionsAndQRsByProject_Id(project.getId());
+            List<Integer> patternIds = new ArrayList<>();
+            patternIds.addAll(qualityRequirementPatternMap.keySet());
+            Map<Integer, String> metricForPatternMap = qrGenerator.getMetricsForPatterns(patternIds);
+
+            List<DTODecisionQualityRequirement> dtoDecisionQualityRequirements = qrRepository.getAllDecisionsAndQRsByProject_Id(project.getId(), Date.valueOf(fromDate), Date.valueOf(toDate));
             for (DTODecisionQualityRequirement dtoDecisionQualityRequirement : dtoDecisionQualityRequirements) {
+                dtoDecisionQualityRequirement.setElementId(metricForPatternMap.get(dtoDecisionQualityRequirement.getPatternId()));
                 if (dtoDecisionQualityRequirement.getRequirement() != null) {
                     DTODecisions.add(dtoDecisionQualityRequirement);
                 } else {

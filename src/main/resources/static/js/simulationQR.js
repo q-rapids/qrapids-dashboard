@@ -303,19 +303,17 @@ function getAllMetricsAndShowMetricForPattern (patternId){
 
 function getAndShowMetricsForPattern (patternId) {
     $.ajax({
-        url: "../api/qrPatterns/"+patternId+"/metrics",
+        url: "../api/qrPatterns/"+patternId+"/metric",
         type: "GET",
-        success: function (metricsForPattern) {
+        success: function (metricForPattern) {
             $("#apply").attr("disabled", true);
             $("#restore").attr("disabled", true);
             var found = false;
             metrics.forEach(function (metric) {
-                metricsForPattern.forEach(function (metricForPattern) {
-                    if (metric.id === metricForPattern) {
-                        found = true;
-                        showMetricSlider(metric);
-                    }
-                })
+                if (metric.id === metricForPattern) {
+                    found = true;
+                    showMetricSlider(metric);
+                }
             });
             if (found) {
                 $("#apply").attr("disabled", false);

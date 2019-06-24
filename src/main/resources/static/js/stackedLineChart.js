@@ -2,10 +2,11 @@ var timeFormat = 'YYYY-MM-DD';
 var config = [];
 
 var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)', 'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
+var decisionIgnoreColor = 'rgb(189,0,0)';
+var decisionAddColor = 'rgb(62,208,62)';
 
 Chart.plugins.register({
     afterDraw: function(chart) {
-        console.log(chart);
         var allEmpty = true;
         for (var i = 0; i < chart.data.datasets.length; i++) {
             if (chart.data.datasets[i].data.length > 0) allEmpty = false;
@@ -43,12 +44,44 @@ function drawChart() {
                     text: texts[i]
                 },
                 responsive: false,
+                legend: {
+                    display: true,
+                    labels: {
+                        boxWidth: 13,
+                        generateLabels: function (chart) {
+                            var data = chart.data;
+                            var maxLength = Math.round(70/data.datasets.length);
+
+                            return data.datasets.map(function (dataset, i) {
+                                var label = dataset.label;
+                                if (label.length > maxLength + 3) {
+                                    label = label.substring(0, maxLength) + "...";
+                                }
+
+                                return {
+                                    text: label,
+                                    fillStyle: dataset.backgroundColor,
+                                    strokeStyle: dataset.borderColor,
+                                    lineWidth: dataset.borderWidth,
+                                    hidden: dataset.hidden,
+                                    index: i
+                                }
+                            })
+                        }
+                    },
+                    onClick: function(e, legendItem) {
+                        var index = legendItem.index;
+                        var chart = this.chart;
+                        chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                        chart.update();
+                    }
+                },
                 scales: {
                     xAxes: [{
                         type: "time",
                         time: {
                             unit: 'day',
-                            format: timeFormat,
+                            parser: timeFormat,
                             tooltipFormat: 'll'
                         },
                         scaleLabel: {
@@ -62,25 +95,137 @@ function drawChart() {
                             labelString: 'value'
                         },
                         ticks: {
-                            max: 1,
+                            max: 1.2,
                             min: 0
                         }
                     }]
+                },
+                tooltips: {
+                    enabled: false,
+                    custom: function(tooltipModel) {
+                        // Tooltip Element
+                        var tooltipEl = document.getElementById('chartjs-tooltip');
+
+                        // Create element on first render
+                        if (!tooltipEl) {
+                            tooltipEl = document.createElement('div');
+                            tooltipEl.id = 'chartjs-tooltip';
+                            tooltipEl.innerHTML = '<table></table>';
+                            document.body.appendChild(tooltipEl);
+                        }
+
+                        // Hide if no tooltip
+                        if (tooltipModel.opacity === 0) {
+                            tooltipEl.style.opacity = 0;
+                            return;
+                        }
+
+                        // Set caret Position
+                        tooltipEl.classList.remove('above', 'below', 'no-transform');
+                        if (tooltipModel.yAlign) {
+                            tooltipEl.classList.add(tooltipModel.yAlign);
+                        } else {
+                            tooltipEl.classList.add('no-transform');
+                        }
+
+                        function getBody(bodyItem) {
+                            return bodyItem.lines;
+                        }
+
+                        // Set Text
+                        if (tooltipModel.body) {
+                            var titleLines = tooltipModel.title || [];
+                            var bodyLines = tooltipModel.body.map(getBody);
+
+                            var innerHtml = '<thead>';
+
+                            titleLines.forEach(function(title) {
+                                innerHtml += '<tr><th>' + title + '</th></tr>';
+                            });
+                            innerHtml += '</thead><tbody>';
+
+                            bodyLines.forEach(function(body, i) {
+                                var colors = tooltipModel.labelColors[i];
+                                var style = 'background:' + colors.backgroundColor;
+                                style += '; border-color:' + colors.borderColor;
+                                style += '; border-width: 2px';
+                                var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
+                                if (body[0].indexOf("<b>") === 0)
+                                    innerHtml += '<tr><td>' + body + '</td></tr>';
+                                else
+                                    innerHtml += '<tr><td>' + span + body + '</td></tr>';
+                            });
+                            innerHtml += '</tbody>';
+
+                            var tableRoot = tooltipEl.querySelector('table');
+                            tableRoot.innerHTML = innerHtml;
+                        }
+
+                        // `this` will be the overall tooltip
+                        var position = this._chart.canvas.getBoundingClientRect();
+
+                        // Display, position, and set styles for font
+                        tooltipEl.style.opacity = 1;
+                        tooltipEl.style.position = 'absolute';
+                        tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+                        tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                        tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
+                        tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px';
+                        tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
+                        tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
+                        tooltipEl.style.pointerEvents = 'none';
+                    }
                 }
             }
         };
 
         for (j = 0; j < value[i].length; ++j) {
-            var hidden = false;
             if (value[i][j].length === 0) hidden = true;
+            var showLine = true;
+            var pointStyle = 'circle';
+            var pointRadius = 3;
+            var borderWidth = 1;
+            var color = colors[j % colors.length];
+            if (value[i][j][0] && value[i][j][0].y >= 1.1) {
+                showLine = false;
+                pointRadius = 5;
+                borderWidth = 2;
+                if (value[i][j][0].y === 1.1) {
+                    color = decisionAddColor;
+                    pointStyle = 'cross';
+                }
+                if (value[i][j][0].y === 1.2) {
+                    color = decisionIgnoreColor;
+                    pointStyle = 'crossRot';
+                }
+            }
+
             c.data.datasets.push({
                 label: labels[i][j],
-                hidden: hidden,
-                backgroundColor: colors[j % colors.length],
-                borderColor: colors[j % colors.length],
+                hidden: false,
+                backgroundColor: color,
+                borderColor: color,
                 fill: false,
-                data: value[i][j]
+                data: value[i][j],
+                showLine: showLine,
+                pointStyle: pointStyle,
+                radius: pointRadius,
+                borderWidth: borderWidth
             });
+
+            if (!showLine) {
+                c.options.tooltips.callbacks = {
+                    label: function (tooltipItems, data) {
+                        var posY = data.datasets[tooltipItems.datasetIndex].data[0].y;
+                        if (posY === 1.1 || posY === 1.2) {
+                            return "<b>Requirement: </b>" + data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index].requirement + "<br/>" +
+                                "<b>Comments: </b>" + data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index].comments;
+                        } else
+                            return data.datasets[tooltipItems.datasetIndex].label + ': ' + tooltipItems.yLabel;
+                    }
+                };
+            }
+
             if (typeof errors !== 'undefined') {
                 c.data.errors.push(errors[i][j]);
             }
@@ -97,7 +242,7 @@ function drawChart() {
         if (isdsi)  //if it is a Stacked Line Chart for Detailed Strategic Indicators
             if (currentURL.match("/PredictionChart")) urlLink = "../QualityFactors/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
             else urlLink = "../QualityFactors/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
-        else { //if it is a Stacked Line Chart for Quality Factors
+        else if (isqf) { //if it is a Stacked Line Chart for Quality Factors
             var name = getParameterByName('name');
             var id = getParameterByName('id');
             if (name.length != 0) {//if we know from which Detailed Strategic Indicator we are coming
@@ -109,15 +254,18 @@ function drawChart() {
                 else urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             }
         }
-        var from = getParameterByName('from');
-        var to = getParameterByName('to');
-        if ($('#datepickerFrom').length || (from.length != 0 && to.length != 0)) {
-            if ($('#datepickerFrom').length)
-                urlLink = urlLink + "&from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val();
-            else
-                urlLink = urlLink + "&from=" + from + "&to=" + to;
+
+        if (isdsi || isqf) {
+            var from = getParameterByName('from');
+            var to = getParameterByName('to');
+            if ($('#datepickerFrom').length || (from.length != 0 && to.length != 0)) {
+                if ($('#datepickerFrom').length)
+                    urlLink = urlLink + "&from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val();
+                else
+                    urlLink = urlLink + "&from=" + from + "&to=" + to;
+            }
+            a.setAttribute("href", urlLink);
         }
-        a.setAttribute("href", urlLink);
         a.innerHTML = texts[i];
         a.style.fontSize = "16px";
         var div = document.createElement('div');

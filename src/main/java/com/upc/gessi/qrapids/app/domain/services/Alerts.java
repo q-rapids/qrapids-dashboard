@@ -309,10 +309,13 @@ public class Alerts {
         return gen.getQRPattern(Long.parseLong(id));
     }
 
-    @GetMapping("/api/qrPatterns/{id}/metrics")
-    public List<String> getMetricsForQRPattern (@PathVariable String id) {
+    @GetMapping("/api/qrPatterns/{id}/metric")
+    public String getMetricsForQRPattern (@PathVariable String id) {
         QRGenerator gen = new QRGenerator(pabreUrl);
-        return gen.getMetricsForPattern(Integer.parseInt(id));
+        List<Integer> ids = new ArrayList<>();
+        Integer patternId = Integer.parseInt(id);
+        ids.add(patternId);
+        return gen.getMetricsForPatterns(ids).get(patternId);
     }
 
 }
