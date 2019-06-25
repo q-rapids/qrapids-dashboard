@@ -8,6 +8,8 @@ public class DTOQualityRequirement {
     private String goal;
     private String backlogId;
     private String backlogUrl;
+    private String backlogProjectId;
+    private DTOAlert alert;
 
     public DTOQualityRequirement(Long id, String requirement, String description, String goal, String backlogId, String backlogUrl) {
         this.id = id;
@@ -64,5 +66,21 @@ public class DTOQualityRequirement {
 
     public void setBacklogUrl(String backlogUrl) {
         this.backlogUrl = backlogUrl;
+    }
+
+    public String getBacklogProjectId() {
+        return backlogProjectId;
+    }
+
+    public void setBacklogProjectId(String backlogProjectId) {
+        this.backlogProjectId = backlogProjectId;
+    }
+
+    public void setAlert(DTOAlert alert) {
+        this.alert = alert;
+    }
+
+    public DTOAlert getAlert() {
+        return alert;
     }
 }

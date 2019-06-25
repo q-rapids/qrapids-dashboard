@@ -246,13 +246,34 @@ public class Alerts {
         List<DTOQualityRequirement> dtoQualityRequirements = new ArrayList<>();
         List<QualityRequirement> qualityRequirements = qrRepository.findByProjectIdOrderByDecision_DateDesc(project.getId());
         for (QualityRequirement qualityRequirement : qualityRequirements) {
-            dtoQualityRequirements.add(new DTOQualityRequirement(
+            DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
                     qualityRequirement.getId(),
                     qualityRequirement.getRequirement(),
                     qualityRequirement.getDescription(),
                     qualityRequirement.getGoal(),
                     qualityRequirement.getBacklogId(),
-                    qualityRequirement.getBacklogUrl()));
+                    qualityRequirement.getBacklogUrl());
+
+            Alert alert = qualityRequirement.getAlert();
+            if (alert != null) {
+                DTOAlert dtoAlert = new DTOAlert(
+                        alert.getId(),
+                        alert.getId_element(),
+                        alert.getName(),
+                        alert.getType(),
+                        alert.getValue(),
+                        alert.getThreshold(),
+                        alert.getCategory(),
+                        new java.sql.Date(alert.getDate().getTime()),
+                        alert.getStatus(),
+                        alert.isReqAssociat(),
+                        null);
+                dtoQualityRequirement.setAlert(dtoAlert);
+            }
+
+            dtoQualityRequirement.setBacklogProjectId(project.getBacklogId());
+
+            dtoQualityRequirements.add(dtoQualityRequirement);
         }
         return dtoQualityRequirements;
     }
