@@ -361,6 +361,12 @@ function parseURLMetrics(url) {
         }
         $('h1#title').text('Metrics for ' + name + ' Factor');
     }
+
+    var metricId = getParameterByName('metricId');
+    if (metricId != null) {
+        url = '../api/Metrics/'+metricId+"/HistoricalData";
+    }
+
     return url;
 }
 
