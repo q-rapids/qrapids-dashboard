@@ -45,6 +45,21 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
+    $scope.showAlertForQR = function (alert) {
+        $("#alertModal").modal();
+        $("#alertType").val(alert.type);
+        $("#alertName").val(alert.name);
+        $("#alertDate").val(alert.date);
+        $("#alertThreshold").val(alert.threshold);
+        $("#alertValue").val(alert.value);
+    };
+
+    $scope.substractOneWeek = function (dateCurrent) {
+        var date = new Date(dateCurrent);
+        date.setDate(date.getDate() - 7);
+        return date.toISOString().slice(0,10);
+    };
+
     $scope.getAllDecisions = function () {
         var url = "api/decisions?qrs=true&prj=" + sessionStorage.getItem("prj");
         $http({

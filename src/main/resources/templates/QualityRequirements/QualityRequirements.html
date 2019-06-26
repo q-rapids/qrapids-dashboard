@@ -27,10 +27,14 @@
             <td id="goal">{{d.goal}}</td>
             <td id="backlogId"><text ng-if="d.backlogId != 'undefined'">{{d.backlogId}}</text></td>
             <td id="backlogUrl"><a ng-if="d.backlogId != 'undefined'" href="{{d.backlogUrl}}" target="_tab">{{d.backlogUrl}}</a></td>
+            <td>
+                <button ng-if="d.alert != null" type="button" class="btn btn-default" ng-click="showAlertForQR(d.alert)"> Alert </button>
+            </td>
         </tr>
         </tbody>
     </table>
 </div>
+<div th:replace="Fragments/Modals :: alertModal"></div>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
 </html>
