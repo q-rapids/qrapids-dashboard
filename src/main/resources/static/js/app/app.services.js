@@ -457,6 +457,19 @@ app.controller('TablesCtrl', function($scope, $http) {
     $scope.gotoQR = function(id){
       alert(id);
     };
+
+    $scope.sortType = 'date';
+    $scope.sortReverse = true;
+
+    $scope.sortBy = function(keyName){
+        if($scope.sortType === keyName) {
+            $scope.sortReverse = !$scope.sortReverse;
+        } else {
+            $scope.sortReverse = false;
+        }
+        $scope.sortType = keyName;
+        console.log('Type', $scope.sortType, 'Reverse', $scope.sortReverse);
+    };
 });
 
 
