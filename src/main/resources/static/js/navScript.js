@@ -363,7 +363,7 @@ function parseURLMetrics(url) {
     }
 
     var metricId = getParameterByName('metricId');
-    if (metricId != null) {
+    if (metricId.length > 0) {
         url = '../api/Metrics/'+metricId+"/HistoricalData";
     }
 

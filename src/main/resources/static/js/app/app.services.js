@@ -76,10 +76,80 @@ app.controller('TablesCtrl', function($scope, $http) {
             method : "GET",
             url : url
         }).then(function mySuccess(response) {
+            getQualityModel();
+            console.log(qualityModelRelations);
             $scope.data = response.data;
+            $scope.data.forEach(function (alert) {
+                var relations = qualityModelRelations.get(alert.id_element);
+
+                var strategicIndicators = relations.strategicIndicators;
+                var strategicIndicatorsText = [];
+                strategicIndicators.forEach(function (strategicIndicator) {
+                    strategicIndicatorsText.push(strategicIndicator.id);
+                });
+                alert.strategicIndicators = strategicIndicatorsText.join(", ");
+
+                var factors = relations.factors;
+                var factorsText = [];
+                factors.forEach(function (factor) {
+                    factorsText.push(factor.id);
+                });
+                alert.factors = factorsText.join(", ");
+            });
             clearAlertsPendingBanner();
         })
     };
+
+    var qualityModelRelations = new Map();
+
+    function getQualityModel () {
+        jQuery.ajax({
+            dataType: "json",
+            type: "GET",
+            url : "../api/qualityModel",
+            async: false,
+            success: function (data) {
+                data.forEach(function (strategicIndicator) {
+                    strategicIndicator.factors.forEach(function (factor) {
+                        if (qualityModelRelations.has(factor.id)) {
+                            var elements = qualityModelRelations.get(factor.id);
+                            elements.strategicIndicators.push({
+                                id: strategicIndicator.id
+                            });
+                        } else {
+                            qualityModelRelations.set(factor.id, {
+                                factors: [],
+                                strategicIndicators: [{
+                                    id: strategicIndicator.id
+                                }]
+                            });
+                        }
+
+                        factor.metrics.forEach(function (metric) {
+                            if (qualityModelRelations.has(metric.id)) {
+                                var elements = qualityModelRelations.get(metric.id);
+                                elements.factors.push({
+                                    id: factor.id
+                                });
+                                elements.strategicIndicators.push({
+                                    id: strategicIndicator.id
+                                });
+                            } else {
+                                qualityModelRelations.set(metric.id, {
+                                    factors: [{
+                                        id: factor.id
+                                    }],
+                                    strategicIndicators: [{
+                                        id: strategicIndicator.id
+                                    }]
+                                });
+                            }
+                        })
+                    });
+                });
+            }
+        });
+    }
 
     $scope.getQR = function(alertId){
         var url =  "api/alerts/" + alertId + "/qrPatterns";
