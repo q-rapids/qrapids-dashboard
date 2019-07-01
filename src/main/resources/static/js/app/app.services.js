@@ -47,9 +47,11 @@ app.controller('TablesCtrl', function($scope, $http) {
 
     $scope.showAlertForQR = function (alert) {
         $("#alertModal").modal();
-        $("#alertType").val(alert.type);
-        $("#alertName").val(alert.name);
+        $("#alertId").val(alert.id_element);
         $("#alertDate").val(alert.date);
+        $("#alertType").val(alert.type);
+        $("#alertElementId").val(alert.category);
+        $("#alertName").val(alert.name);
         $("#alertThreshold").val(alert.threshold);
         $("#alertValue").val(alert.value);
     };
