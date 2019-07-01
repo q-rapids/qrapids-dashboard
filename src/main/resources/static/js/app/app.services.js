@@ -77,7 +77,6 @@ app.controller('TablesCtrl', function($scope, $http) {
             url : url
         }).then(function mySuccess(response) {
             getQualityModel();
-            console.log(qualityModelRelations);
             $scope.data = response.data;
             $scope.data.forEach(function (alert) {
                 var relations = qualityModelRelations.get(alert.id_element);
@@ -85,14 +84,14 @@ app.controller('TablesCtrl', function($scope, $http) {
                 var strategicIndicators = relations.strategicIndicators;
                 var strategicIndicatorsText = [];
                 strategicIndicators.forEach(function (strategicIndicator) {
-                    strategicIndicatorsText.push(strategicIndicator.id);
+                    strategicIndicatorsText.push(strategicIndicator.name);
                 });
                 alert.strategicIndicators = strategicIndicatorsText.join(", ");
 
                 var factors = relations.factors;
                 var factorsText = [];
                 factors.forEach(function (factor) {
-                    factorsText.push(factor.id);
+                    factorsText.push(factor.name);
                 });
                 alert.factors = factorsText.join(", ");
             });
@@ -101,8 +100,11 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     var qualityModelRelations = new Map();
+    var strategicIndicatorsMap = new Map();
+    var factorsMap = new Map();
 
     function getQualityModel () {
+        getSIsAndFactorsNames();
         jQuery.ajax({
             dataType: "json",
             type: "GET",
@@ -114,13 +116,15 @@ app.controller('TablesCtrl', function($scope, $http) {
                         if (qualityModelRelations.has(factor.id)) {
                             var elements = qualityModelRelations.get(factor.id);
                             elements.strategicIndicators.push({
-                                id: strategicIndicator.id
+                                id: strategicIndicator.id,
+                                name: strategicIndicatorsMap.get(strategicIndicator.id)
                             });
                         } else {
                             qualityModelRelations.set(factor.id, {
                                 factors: [],
                                 strategicIndicators: [{
-                                    id: strategicIndicator.id
+                                    id: strategicIndicator.id,
+                                    name: strategicIndicatorsMap.get(strategicIndicator.id)
                                 }]
                             });
                         }
@@ -129,24 +133,45 @@ app.controller('TablesCtrl', function($scope, $http) {
                             if (qualityModelRelations.has(metric.id)) {
                                 var elements = qualityModelRelations.get(metric.id);
                                 elements.factors.push({
-                                    id: factor.id
+                                    id: factor.id,
+                                    name: factorsMap.get(factor.id)
                                 });
                                 elements.strategicIndicators.push({
-                                    id: strategicIndicator.id
+                                    id: strategicIndicator.id,
+                                    name: strategicIndicatorsMap.get(strategicIndicator.id)
                                 });
                             } else {
                                 qualityModelRelations.set(metric.id, {
                                     factors: [{
-                                        id: factor.id
+                                        id: factor.id,
+                                        name: factorsMap.get(factor.id)
                                     }],
                                     strategicIndicators: [{
-                                        id: strategicIndicator.id
+                                        id: strategicIndicator.id,
+                                        name: strategicIndicatorsMap.get(strategicIndicator.id)
                                     }]
                                 });
                             }
                         })
                     });
                 });
+            }
+        });
+    }
+
+    function getSIsAndFactorsNames () {
+        jQuery.ajax({
+            dataType: "json",
+            type: "GET",
+            url: "../api/DetailedStrategicIndicators/CurrentEvaluation",
+            async: false,
+            success: function (strategicIndicators) {
+                strategicIndicators.forEach(function (strategicIndicator) {
+                    strategicIndicatorsMap.set(strategicIndicator.id, strategicIndicator.name);
+                    strategicIndicator.factors.forEach(function (factor) {
+                        factorsMap.set(factor.id, factor.name);
+                    })
+                })
             }
         });
     }
