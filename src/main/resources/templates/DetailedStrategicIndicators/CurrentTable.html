@@ -15,25 +15,52 @@
     <p style="margin-left: 20px; font-size: medium; font-family: Arial "><a id="originSIQF" href="../StrategicIndicators/CurrentTable"></a></p>
     <br/>
     <div class="container" id="tableCurrent" ng-init="getKPIFactor()">
+        <br/>
+        <span><b>Search:</b></span> <input ng-model="f"></input>
+        <br/>
+        <br/>
         <table class="table table-hover">
             <thead>
-            <tr>
-                <th>Strategic Indicator</th>
-                <th>Factor</th>
-                <th>Description</th>
-                <th>Current Value</th>
-                <th>Rationale</th>
+            <tr style="white-space: nowrap">
+                <th ng-click="sortBy('strategicIndicatorName')">Strategic Indicator
+                    <span ng-show="sortType == 'strategicIndicatorName' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'strategicIndicatorName' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('factorName')">Factor
+                    <span ng-show="sortType == 'factorName' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'factorName' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('description')">Description
+                    <span ng-show="sortType == 'description' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'description' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('value')">Current Value
+                    <span ng-show="sortType == 'value' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'value' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('rationale')">Rationale
+                    <span ng-show="sortType == 'rationale' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'rationale' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat-start="d in data"></tr>
-                <tr ng-repeat="factor in d.factors">
-                    <td ng-click="getURL(d.id, d.name, null, '../QualityFactor/CurrentTable', false)">{{d.name}}</td>
-                    <td>{{factor.name}}</td>
-                    <td>{{factor.description}}</td>
-                    <td>{{factor.value_description}}</td>
-                    <td>{{factor.rationale}}</td>
-                </tr>
+            <tr ng-repeat-start="d in data | filter:f | orderBy:sortType:sortReverse"></tr>
+                    <td ng-click="getURL(d.id, d.strategicIndicatorName, null, '../QualityFactors/CurrentTable', false)">{{d.strategicIndicatorName}}</td>
+                    <td>{{d.factorName}}</td>
+                    <td>{{d.description}}</td>
+                    <td>{{d.value}}</td>
+                    <td>{{d.rationale}}</td>
             <tr ng-repeat-end="d in data"></tr>
             </tbody>
         </table>

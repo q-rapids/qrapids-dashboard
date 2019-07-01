@@ -39,22 +39,50 @@
     </div>
     <br/>
     <div class="container" id="tableCurrent">
+        <span><b>Search:</b></span> <input ng-model="f"></input>
+        <br/>
+        <br/>
         <table class="table table-hover">
             <thead>
-            <tr>
-                <th>Date</th>
-                <th>Metric</th>
-                <th>Description</th>
-                <th>Current Value</th>
-                <th>Rationale</th>
+            <tr style="white-space: nowrap">
+                <th ng-click="sortBy('date')">Date
+                    <span ng-show="sortType == 'date' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'date' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('name')">Metric
+                    <span ng-show="sortType == 'name' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'name' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('description')">Description
+                    <span ng-show="sortType == 'description' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'description' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('value')">Current Value
+                    <span ng-show="sortType == 'value' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'value' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('rationale')">Rationale
+                    <span ng-show="sortType == 'rationale' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'rationale' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="d in data">
-                <td>{{d.date.year}}-{{d.date.monthValue}}-{{d.date.dayOfMonth}}</td>
+            <tr ng-repeat="d in data | filter:f | orderBy:sortType:sortReverse">
+                <td>{{d.date}}</td>
                 <td>{{d.name}}</td>
                 <td>{{d.description}}</td>
-                <td>{{d.value_description}}</td>
+                <td>{{d.value}}</td>
                 <td>{{d.rationale}}</td>
             </tr>
             </tbody>

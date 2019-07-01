@@ -153,5 +153,59 @@
             </div>
         </div>
     </th:block>
+
+    <th:block th:fragment="alertModal">
+        <div class="modal fade" id="alertModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Alert</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Alert Id</b></span>
+                            <label for="alertId"></label><input id="alertId" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Date</b></span>
+                            <label for="alertDate"></label><input id="alertDate" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Type</b></span>
+                            <label for="alertType"></label><input id="alertType" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Element Id</b></span>
+                            <label for="alertElementId"></label><input id="alertElementId" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Name</b></span>
+                            <label for="alertName"></label><input id="alertName" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Value</b></span>
+                            <label for="alertValue"></label><input id="alertValue" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Threshold</b></span>
+                            <label for="alertThreshold"></label><input id="alertThreshold" type="text" class="form-control" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="closeAlertButton" type="button" class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
 </body>
 </html>

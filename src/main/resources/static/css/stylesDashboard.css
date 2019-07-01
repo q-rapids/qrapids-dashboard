@@ -175,3 +175,7 @@ canvas {
     height: 10px;
     margin-right: 10px;
 }
+
+[ng-click] {
+    cursor: pointer;
+}

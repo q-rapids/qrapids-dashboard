@@ -1,4 +1,5 @@
 var isdsi = false;
+var isqf = true;
 
 var url = parseURLSimple("../api/QualityFactors/PredictionData");
 
