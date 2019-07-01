@@ -86,16 +86,16 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="d in data | filter:f | orderBy:sortType:sortReverse">
+            <tr ng-repeat="d in data | filter:f | orderBy:sortType:sortReverse:customComparator">
                 <td id="element_id" ng-class="{'color-red': (d.status == 'NEW')}">{{d.id_element}}</td>
                 <td id="date" ng-class="{'color-red': (d.status == 'NEW')}">{{d.date}}</td>
                 <td id="type" ng-class="{'color-red': (d.status == 'NEW')}">{{d.type}}</td>
                 <td id="category" ng-class="{'color-red': (d.status == 'NEW')}">{{d.category}}</td>
                 <td id="name" ng-class="{'color-red': (d.status == 'NEW')}">
-                    <a ng-if="d.type == 'FACTOR'" ng-href="../Metrics/HistoricChart?id={{d.id_element}}&amp;name={{d.name}}&amp;from={{substractOneWeek(d.date)}}">
+                    <a ng-if="d.type == 'FACTOR'" ng-href="Metrics/HistoricChart?id={{d.id_element}}&amp;name={{d.name}}&amp;from={{substractOneWeek(d.date)}}">
                         {{d.name}}
                     </a>
-                    <a ng-if="d.type == 'METRIC'" ng-href="../Metrics/HistoricChart?metricId={{d.id_element}}&amp;from={{substractOneWeek(d.date)}}">
+                    <a ng-if="d.type == 'METRIC'" ng-href="Metrics/HistoricChart?metricId={{d.id_element}}&amp;from={{substractOneWeek(d.date)}}">
                         {{d.name}}
                     </a>
                 </td>

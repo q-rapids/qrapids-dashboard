@@ -125,7 +125,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         jQuery.ajax({
             dataType: "json",
             type: "GET",
-            url : "../api/qualityModel",
+            url : "api/qualityModel?prj=" + sessionStorage.getItem("prj"),
             async: false,
             success: function (data) {
                 data.forEach(function (strategicIndicator) {
@@ -180,7 +180,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         jQuery.ajax({
             dataType: "json",
             type: "GET",
-            url: "../api/DetailedStrategicIndicators/CurrentEvaluation",
+            url: "api/DetailedStrategicIndicators/CurrentEvaluation?prj=" + sessionStorage.getItem("prj"),
             async: false,
             success: function (strategicIndicators) {
                 strategicIndicators.forEach(function (strategicIndicator) {
@@ -669,6 +669,13 @@ app.controller('TablesCtrl', function($scope, $http) {
         $scope.sortType = keyName;
         console.log('Type', $scope.sortType, 'Reverse', $scope.sortReverse);
     };
+
+    $scope.customComparator = function (v1, v2) {
+        if (v1.value <= v2.value)
+            return -1;
+        else if (v2.value < v1.value)
+            return 1;
+    }
 });
 
 
