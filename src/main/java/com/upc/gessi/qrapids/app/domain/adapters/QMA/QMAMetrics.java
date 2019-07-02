@@ -6,6 +6,7 @@ import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import evaluation.Factor;
 import evaluation.Metric;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -73,13 +74,24 @@ public class QMAMetrics {
         return result;
     }
 
+    public List<DTOMetric> SingleHistoricalData (String metricId, LocalDate from, LocalDate to, String prj) throws IOException {
+        qmacon.initConnexion();
+        MetricEvaluationDTO metricEvaluationDTO = Metric.getSingleEvaluation(prj, metricId, from, to);
+        List<MetricEvaluationDTO> metricEvaluationDTOList = new ArrayList<>();
+        metricEvaluationDTOList.add(metricEvaluationDTO);
+        return MetricEvaluationDTOListToDTOMetricList(metricEvaluationDTOList);
+    }
+
+
     public static List<DTOMetric> MetricEvaluationDTOListToDTOMetricList(List<MetricEvaluationDTO> evals) {
         List<DTOMetric> m = new ArrayList<>();
         for (Iterator<MetricEvaluationDTO> iterMetrics = evals.iterator(); iterMetrics.hasNext(); ) {
             MetricEvaluationDTO metric = iterMetrics.next();
-            for (Iterator<EvaluationDTO> iterEvals = metric.getEvaluations().iterator(); iterEvals.hasNext(); ) {
-                EvaluationDTO evaluation = iterEvals.next();
-                m.add(MetricEvaluationDTOToDTOMetric(metric, evaluation));
+            if (metric != null) {
+                for (Iterator<EvaluationDTO> iterEvals = metric.getEvaluations().iterator(); iterEvals.hasNext(); ) {
+                    EvaluationDTO evaluation = iterEvals.next();
+                    m.add(MetricEvaluationDTOToDTOMetric(metric, evaluation));
+                }
             }
         }
         return m;

@@ -17,7 +17,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 
 group = 'com.upc.gessi.qrapids'
-version = '0.3.4'
+version = '0.3.5'
 sourceCompatibility = 1.8
 
 war {
@@ -66,10 +66,10 @@ dependencies {
 	compile('org.elasticsearch.client:transport:5.6.3')
 	compile('org.elasticsearch:elasticsearch:5.6.3')
 	compile('org.elasticsearch.client:elasticsearch-rest-high-level-client:5.6.3')
-	compile files('libs/qrapids-qma-elastic-0.13.jar')
+	compile files('libs/qrapids-qma-elastic-0.14.jar')
 
 	//API QR Generator
-	compile files('libs/qrapids-qr_generator-0.1.jar')
+	compile files('libs/qrapids-qr_generator-0.2.jar')
 
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')

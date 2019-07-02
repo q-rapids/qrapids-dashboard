@@ -1,4 +1,5 @@
 var isdsi = false;
+var isqf = true;
 
 var url = parseURLSimple("../api/QualityFactors/HistoricalData");
 
@@ -8,7 +9,10 @@ var ids = [];
 var labels = [];
 var value = [];
 
+var decisions = new Map();
+
 function getData() {
+    getDecisions();
     texts = [];
     ids = [];
     labels = [];
@@ -35,9 +39,13 @@ function getData() {
                     last = data[i].metrics[0].id;
                     labels.push([data[i].metrics[0].name]);
                     k = 0;
+                    var decisionsAdd = [];
+                    var decisionsIgnore = [];
                     for (j = 0; j < data[i].metrics.length; ++j) {
                         //check if we are still on the same metric
-                        if (last != data[i].metrics[j].id) {
+                        if (last !== data[i].metrics[j].id) {
+                            buildDecisionVectors(decisionsAdd, decisionsIgnore, data[i].metrics[j-1].id);
+                            // New metric
                             labels[i].push(data[i].metrics[j].name);
                             last = data[i].metrics[j].id;
                             ++k;
@@ -54,6 +62,16 @@ function getData() {
                             );
                         }
                     }
+                    buildDecisionVectors(decisionsAdd, decisionsIgnore, data[i].metrics[data[i].metrics.length - 1].id);
+                    // Add decisions to chart
+                    if (decisionsAdd.length > 0) {
+                        value[i].push(decisionsAdd);
+                        labels[i].push("Added decisions");
+                    }
+                    if (decisionsIgnore.length > 0) {
+                        value[i].push(decisionsIgnore);
+                        labels[i].push("Ignored decisions");
+                    }
                 } else {
                     data.splice(i, 1);
                     --i;
@@ -63,9 +81,30 @@ function getData() {
             drawChart();
         }
     });
-    console.log(texts);
-    console.log(labels);
-    console.log(value);
+}
+
+function buildDecisionVectors (decisionsAdd, decisionsIgnore, metricId) {
+    if (decisions.has(metricId)) {
+        var metricDecisions = decisions.get(metricId);
+        for (var l = 0; l < metricDecisions.length; l++) {
+            if (metricDecisions[l].type === "ADD") {
+                decisionsAdd.push({
+                    x: metricDecisions[l].date,
+                    y: 1.1,
+                    requirement: metricDecisions[l].requirement,
+                    comments: metricDecisions[l].comments
+                });
+            }
+            else {
+                decisionsIgnore.push({
+                    x: metricDecisions[l].date,
+                    y: 1.2,
+                    requirement: metricDecisions[l].requirement,
+                    comments: metricDecisions[l].comments
+                });
+            }
+        }
+    }
 }
 
 window.onload = function() {

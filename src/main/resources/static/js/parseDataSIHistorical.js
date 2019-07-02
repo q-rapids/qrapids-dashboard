@@ -1,13 +1,21 @@
 var isSi = true;
+var isdsi = false;
+var isqf = false;
+
+var qualityModelSIMetrics = new Map();
 
 //initialize data vectors
-var text = [];
-var dades = [];
+var texts = [];
+var value = [];
+var labels = [];
 var ids = [];
 
 function getData() {
-    text = [];
-    dades = [];
+    getQualityModel();
+    getDecisions();
+    texts = [];
+    value = [];
+    labels = [];
     ids = [];
     //get data from API
     jQuery.ajax({
@@ -23,18 +31,38 @@ function getData() {
         success: function (data) {
             j = 0;
             var line = [];
+            var decisionsAdd = [];
+            var decisionsIgnore = [];
             if (data[j]) {
                 last = data[j].id;
-                text.push(data[j].name);
+                texts.push(data[j].name);
+                labels.push([data[j].name]);
                 ids.push(data[j].id);
             }
             while (data[j]) {
                 //check if we are still on the same Strategic Indicator
                 if (data[j].id != last) {
-                    dades.push(line);
+                    var val = [line];
+                    if (decisionsAdd.length > 0) {
+                        val.push(decisionsAdd);
+                    }
+                    if (decisionsIgnore.length > 0) {
+                        val.push(decisionsIgnore);
+                    }
+                    value.push(val);
                     line = [];
+                    decisionsAdd = [];
+                    decisionsIgnore = [];
                     last = data[j].id;
-                    text.push(data[j].name);
+                    texts.push(data[j].name);
+                    var labelsForOneChart = [];
+                    labelsForOneChart.push(data[j].name);
+                    buildDecisionVectors(decisionsAdd, decisionsIgnore, data[j].id);
+                    if (decisionsAdd.length > 0)
+                        labelsForOneChart.push("Added decisions");
+                    if (decisionsIgnore.length > 0)
+                        labelsForOneChart.push("Ignored decisions");
+                    labels.push(labelsForOneChart);
                     ids.push(data[j].id);
                 }
                 //push date and value to line vector
@@ -47,8 +75,14 @@ function getData() {
                 ++j;
             }
             //push line vector to values vector for the last metric
-            if (data[j - 1])
-                dades.push(line);
+            if (data[j - 1]) {
+                var val = [line];
+                if (decisionsAdd.length > 0)
+                    val.push(decisionsAdd);
+                if (decisionsIgnore.length > 0)
+                    val.push(decisionsIgnore);
+                value.push(val);
+            }
 
             drawChart();
         },
@@ -59,8 +93,55 @@ function getData() {
                 alert("Datasource connection failed.");
         }
     });
-    console.log(dades);
-    console.log(text);
+}
+
+function getQualityModel () {
+    jQuery.ajax({
+        dataType: "json",
+        type: "GET",
+        url : "../api/qualityModel",
+        async: false,
+        success: function (data) {
+            data.forEach(function (strategicIndicator) {
+                var metrics = [];
+                strategicIndicator.factors.forEach(function (factor) {
+                    factor.metrics.forEach(function (metric) {
+                        metrics.push(metric.id);
+                    })
+                });
+                qualityModelSIMetrics.set(strategicIndicator.id, metrics);
+            });
+        }
+    });
+}
+
+function buildDecisionVectors (decisionsAdd, decisionsIgnore, strategicIndicatorId) {
+    var metricsForStrategicIndicator = qualityModelSIMetrics.get(strategicIndicatorId);
+    if (metricsForStrategicIndicator) {
+        metricsForStrategicIndicator.forEach(function (metricId) {
+            if (decisions.has(metricId)) {
+                var metricDecisions = decisions.get(metricId);
+                for (var l = 0; l < metricDecisions.length; l++) {
+                    if (metricDecisions[l].type === "ADD") {
+                        decisionsAdd.push({
+                            x: metricDecisions[l].date,
+                            y: 1.1,
+                            requirement: metricDecisions[l].requirement,
+                            comments: metricDecisions[l].comments
+                        });
+                    }
+                    else {
+                        decisionsIgnore.push({
+                            x: metricDecisions[l].date,
+                            y: 1.2,
+                            requirement: metricDecisions[l].requirement,
+                            comments: metricDecisions[l].comments
+                        });
+                    }
+                }
+            }
+        });
+    }
 }
 
 window.onload = function() {

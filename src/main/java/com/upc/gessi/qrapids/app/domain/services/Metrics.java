@@ -47,6 +47,12 @@ public class Metrics {
         return qmam.HistoricalData(id, LocalDate.parse(from), LocalDate.parse(to), prj);
     }
 
+    @RequestMapping("/api/Metrics/{id}/HistoricalData")
+    public @ResponseBody
+    List<DTOMetric> getHistoricalDataForMetric(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) throws IOException {
+        return qmam.SingleHistoricalData(id, LocalDate.parse(from), LocalDate.parse(to), prj);
+    }
+
     @RequestMapping("/api/Metrics/PredictionData/{id}")
     public @ResponseBody
     List<DTOMetric> getMetricsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {

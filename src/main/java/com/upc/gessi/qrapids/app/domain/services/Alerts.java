@@ -172,6 +172,7 @@ public class Alerts {
             QualityRequirement qualityRequirement = addQR(requirement, description, goal, rationale, patternId, id, user, prj);
             DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
                     qualityRequirement.getId(),
+                    new java.sql.Date(qualityRequirement.getAlert().getDate().getTime()),
                     qualityRequirement.getRequirement(),
                     qualityRequirement.getDescription(),
                     qualityRequirement.getGoal(),
@@ -204,6 +205,7 @@ public class Alerts {
             QualityRequirement qualityRequirement = addQR(requirement, description, goal, rationale, patternId, null, user, prj);
             DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
                     qualityRequirement.getId(),
+                    new java.sql.Date(qualityRequirement.getAlert().getDate().getTime()),
                     qualityRequirement.getRequirement(),
                     qualityRequirement.getDescription(),
                     qualityRequirement.getGoal(),
@@ -246,13 +248,35 @@ public class Alerts {
         List<DTOQualityRequirement> dtoQualityRequirements = new ArrayList<>();
         List<QualityRequirement> qualityRequirements = qrRepository.findByProjectIdOrderByDecision_DateDesc(project.getId());
         for (QualityRequirement qualityRequirement : qualityRequirements) {
-            dtoQualityRequirements.add(new DTOQualityRequirement(
+            DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
                     qualityRequirement.getId(),
+                    new java.sql.Date(qualityRequirement.getAlert().getDate().getTime()),
                     qualityRequirement.getRequirement(),
                     qualityRequirement.getDescription(),
                     qualityRequirement.getGoal(),
                     qualityRequirement.getBacklogId(),
-                    qualityRequirement.getBacklogUrl()));
+                    qualityRequirement.getBacklogUrl());
+
+            Alert alert = qualityRequirement.getAlert();
+            if (alert != null) {
+                DTOAlert dtoAlert = new DTOAlert(
+                        alert.getId(),
+                        alert.getId_element(),
+                        alert.getName(),
+                        alert.getType(),
+                        alert.getValue(),
+                        alert.getThreshold(),
+                        alert.getCategory(),
+                        new java.sql.Date(alert.getDate().getTime()),
+                        alert.getStatus(),
+                        alert.isReqAssociat(),
+                        null);
+                dtoQualityRequirement.setAlert(dtoAlert);
+            }
+
+            dtoQualityRequirement.setBacklogProjectId(project.getBacklogId());
+
+            dtoQualityRequirements.add(dtoQualityRequirement);
         }
         return dtoQualityRequirements;
     }
@@ -309,10 +333,13 @@ public class Alerts {
         return gen.getQRPattern(Long.parseLong(id));
     }
 
-    @GetMapping("/api/qrPatterns/{id}/metrics")
-    public List<String> getMetricsForQRPattern (@PathVariable String id) {
+    @GetMapping("/api/qrPatterns/{id}/metric")
+    public String getMetricsForQRPattern (@PathVariable String id) {
         QRGenerator gen = new QRGenerator(pabreUrl);
-        return gen.getMetricsForPattern(Integer.parseInt(id));
+        List<Integer> ids = new ArrayList<>();
+        Integer patternId = Integer.parseInt(id);
+        ids.add(patternId);
+        return gen.getMetricsForPatterns(ids).get(patternId);
     }
 
 }

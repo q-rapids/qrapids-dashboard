@@ -10,6 +10,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             url : "../api/StrategicIndicators/CurrentEvaluation"
         }).then(function mySuccess(response) {
             $scope.data = response.data;
+            $scope.sortType = 'name';
+            $scope.sortReverse = false;
         })
     };
 
@@ -20,7 +22,20 @@ app.controller('TablesCtrl', function($scope, $http) {
             params: {from: $('#datepickerFrom').val(),
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {
-            $scope.data = response.data;
+            var data = [];
+            response.data.forEach(function (strategicIndicatorEval) {
+                data.push({
+                    id: strategicIndicatorEval.id,
+                    name: strategicIndicatorEval.name,
+                    date: strategicIndicatorEval.date.year+"-"+strategicIndicatorEval.date.monthValue+"-"+strategicIndicatorEval.date.dayOfMonth,
+                    description: strategicIndicatorEval.description,
+                    value: strategicIndicatorEval.value_description,
+                    categories: strategicIndicatorEval.categories_description
+                });
+            });
+            $scope.data = data;
+            $scope.sortType = 'name';
+            $scope.sortReverse = false;
         })
     };
 
@@ -45,6 +60,23 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
+    $scope.showAlertForQR = function (alert) {
+        $("#alertModal").modal();
+        $("#alertId").val(alert.id_element);
+        $("#alertDate").val(alert.date);
+        $("#alertType").val(alert.type);
+        $("#alertElementId").val(alert.category);
+        $("#alertName").val(alert.name);
+        $("#alertThreshold").val(alert.threshold);
+        $("#alertValue").val(alert.value);
+    };
+
+    $scope.substractOneWeek = function (dateCurrent) {
+        var date = new Date(dateCurrent);
+        date.setDate(date.getDate() - 7);
+        return date.toISOString().slice(0,10);
+    };
+
     $scope.getAllDecisions = function () {
         var url = "api/decisions?qrs=true&prj=" + sessionStorage.getItem("prj");
         $http({
@@ -61,10 +93,105 @@ app.controller('TablesCtrl', function($scope, $http) {
             method : "GET",
             url : url
         }).then(function mySuccess(response) {
+            getQualityModel();
             $scope.data = response.data;
+            $scope.data.forEach(function (alert) {
+                var relations = qualityModelRelations.get(alert.id_element);
+
+                var strategicIndicators = relations.strategicIndicators;
+                var strategicIndicatorsText = [];
+                strategicIndicators.forEach(function (strategicIndicator) {
+                    strategicIndicatorsText.push(strategicIndicator.name);
+                });
+                alert.strategicIndicators = strategicIndicatorsText.join(", ");
+
+                var factors = relations.factors;
+                var factorsText = [];
+                factors.forEach(function (factor) {
+                    factorsText.push(factor.name);
+                });
+                alert.factors = factorsText.join(", ");
+            });
             clearAlertsPendingBanner();
         })
     };
+
+    var qualityModelRelations = new Map();
+    var strategicIndicatorsMap = new Map();
+    var factorsMap = new Map();
+
+    function getQualityModel () {
+        getSIsAndFactorsNames();
+        jQuery.ajax({
+            dataType: "json",
+            type: "GET",
+            url : "api/qualityModel?prj=" + sessionStorage.getItem("prj"),
+            async: false,
+            success: function (data) {
+                data.forEach(function (strategicIndicator) {
+                    strategicIndicator.factors.forEach(function (factor) {
+                        if (qualityModelRelations.has(factor.id)) {
+                            var elements = qualityModelRelations.get(factor.id);
+                            elements.strategicIndicators.push({
+                                id: strategicIndicator.id,
+                                name: strategicIndicatorsMap.get(strategicIndicator.id)
+                            });
+                        } else {
+                            qualityModelRelations.set(factor.id, {
+                                factors: [],
+                                strategicIndicators: [{
+                                    id: strategicIndicator.id,
+                                    name: strategicIndicatorsMap.get(strategicIndicator.id)
+                                }]
+                            });
+                        }
+
+                        factor.metrics.forEach(function (metric) {
+                            if (qualityModelRelations.has(metric.id)) {
+                                var elements = qualityModelRelations.get(metric.id);
+                                elements.factors.push({
+                                    id: factor.id,
+                                    name: factorsMap.get(factor.id)
+                                });
+                                elements.strategicIndicators.push({
+                                    id: strategicIndicator.id,
+                                    name: strategicIndicatorsMap.get(strategicIndicator.id)
+                                });
+                            } else {
+                                qualityModelRelations.set(metric.id, {
+                                    factors: [{
+                                        id: factor.id,
+                                        name: factorsMap.get(factor.id)
+                                    }],
+                                    strategicIndicators: [{
+                                        id: strategicIndicator.id,
+                                        name: strategicIndicatorsMap.get(strategicIndicator.id)
+                                    }]
+                                });
+                            }
+                        })
+                    });
+                });
+            }
+        });
+    }
+
+    function getSIsAndFactorsNames () {
+        jQuery.ajax({
+            dataType: "json",
+            type: "GET",
+            url: "api/DetailedStrategicIndicators/CurrentEvaluation?prj=" + sessionStorage.getItem("prj"),
+            async: false,
+            success: function (strategicIndicators) {
+                strategicIndicators.forEach(function (strategicIndicator) {
+                    strategicIndicatorsMap.set(strategicIndicator.id, strategicIndicator.name);
+                    strategicIndicator.factors.forEach(function (factor) {
+                        factorsMap.set(factor.id, factor.name);
+                    })
+                })
+            }
+        });
+    }
 
     $scope.getQR = function(alertId){
         var url =  "api/alerts/" + alertId + "/qrPatterns";
@@ -324,7 +451,22 @@ app.controller('TablesCtrl', function($scope, $http) {
             method : "GET",
             url : url
         }).then(function mySuccess(response) {
-            $scope.data = response.data;
+            var data = [];
+            response.data.forEach(function (strategicIndicatorEval) {
+                strategicIndicatorEval.factors.forEach(function (factor) {
+                    data.push({
+                        id: strategicIndicatorEval.id,
+                        strategicIndicatorName: strategicIndicatorEval.name,
+                        factorName: factor.name,
+                        description: factor.description,
+                        value: factor.value_description,
+                        rationale: factor.rationale
+                    })
+                });
+            });
+            $scope.data = data;
+            $scope.sortType = 'strategicIndicatorName';
+            $scope.sortReverse = false;
         })
     };
 
@@ -342,7 +484,23 @@ app.controller('TablesCtrl', function($scope, $http) {
             params: {from: $('#datepickerFrom').val(),
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {
-            $scope.data = response.data;
+            var data = [];
+            response.data.forEach(function (strategicIndicatorEval) {
+                strategicIndicatorEval.factors.forEach(function (factor) {
+                    data.push({
+                        id: strategicIndicatorEval.id,
+                        date: factor.date.year+"-"+factor.date.monthValue+"-"+factor.date.dayOfMonth,
+                        strategicIndicatorName: strategicIndicatorEval.name,
+                        factorName: factor.name,
+                        description: factor.description,
+                        value: factor.value_description,
+                        rationale: factor.rationale
+                    })
+                });
+            });
+            $scope.data = data;
+            $scope.sortType = 'strategicIndicatorName';
+            $scope.sortReverse = false;
         })
     };
 
@@ -358,7 +516,22 @@ app.controller('TablesCtrl', function($scope, $http) {
             method : "GET",
             url : url
         }).then(function mySuccess(response) {
-            $scope.data = response.data;
+            var data = [];
+            response.data.forEach(function (factorEval) {
+                factorEval.metrics.forEach(function (metric) {
+                    data.push({
+                        id: factorEval.id,
+                        factorName: factorEval.name,
+                        metricName: metric.name,
+                        description: metric.description,
+                        value: metric.value_description,
+                        rationale: metric.rationale
+                    })
+                });
+            });
+            $scope.data = data;
+            $scope.sortType = 'factorName';
+            $scope.sortReverse = false;
         })
     };
 
@@ -376,7 +549,23 @@ app.controller('TablesCtrl', function($scope, $http) {
             params: {from: $('#datepickerFrom').val(),
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {
-            $scope.data = response.data;
+            var data = [];
+            response.data.forEach(function (factorEval) {
+                factorEval.metrics.forEach(function (metric) {
+                    data.push({
+                        id: factorEval.id,
+                        date: metric.date.year+"-"+metric.date.monthValue+"-"+metric.date.dayOfMonth,
+                        factorName: factorEval.name,
+                        metricName: metric.name,
+                        description: metric.description,
+                        value: metric.value_description,
+                        rationale: metric.rationale
+                    })
+                });
+            });
+            $scope.data = data;
+            $scope.sortType = 'factorName';
+            $scope.sortReverse = false;
         })
     };
 
@@ -393,7 +582,19 @@ app.controller('TablesCtrl', function($scope, $http) {
             method : "GET",
             url : url
         }).then(function mySuccess(response) {
-            $scope.data = response.data;
+            var data = [];
+            response.data.forEach(function (metricEval) {
+                data.push({
+                    id: metricEval.id,
+                    name: metricEval.name,
+                    description: metricEval.description,
+                    value: metricEval.value_description,
+                    rationale: metricEval.rationale
+                });
+            });
+            $scope.data = data;
+            $scope.sortType = 'name';
+            $scope.sortReverse = false;
         })
     };
 
@@ -412,7 +613,20 @@ app.controller('TablesCtrl', function($scope, $http) {
             params: {from: $('#datepickerFrom').val(),
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {
-            $scope.data = response.data;
+            var data = [];
+            response.data.forEach(function (metricEval) {
+                data.push({
+                    id: metricEval.id,
+                    date: metricEval.date.year+"-"+metricEval.date.monthValue+"-"+metricEval.date.dayOfMonth,
+                    name: metricEval.name,
+                    description: metricEval.description,
+                    value: metricEval.value_description,
+                    rationale: metricEval.rationale
+                });
+            });
+            $scope.data = data;
+            $scope.sortType = 'name';
+            $scope.sortReverse = false;
         })
     };
 
@@ -442,6 +656,26 @@ app.controller('TablesCtrl', function($scope, $http) {
     $scope.gotoQR = function(id){
       alert(id);
     };
+
+    $scope.sortType = 'date';
+    $scope.sortReverse = true;
+
+    $scope.sortBy = function(keyName){
+        if($scope.sortType === keyName) {
+            $scope.sortReverse = !$scope.sortReverse;
+        } else {
+            $scope.sortReverse = false;
+        }
+        $scope.sortType = keyName;
+        console.log('Type', $scope.sortType, 'Reverse', $scope.sortReverse);
+    };
+
+    $scope.customComparator = function (v1, v2) {
+        if (v1.value <= v2.value)
+            return -1;
+        else if (v2.value < v1.value)
+            return 1;
+    }
 });
 
 
