@@ -41,7 +41,7 @@ public class FeedFactorRepositoryImpl implements CustomFeedFactorRepository {
         List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
         List<com.upc.gessi.qrapids.app.domain.models.Feedback> feedbacks = fRep.getFeedback(id);
         for (int i = 0; i < feedbacks.size(); ++i) {
-            Strategic_Indicator si = siRep.findById(id);
+            Strategic_Indicator si = siRep.getOne(id);
             Long siId = si.getId();
             String siName = si.getName();
             String date = feedbacks.get(i).getDate().toString();

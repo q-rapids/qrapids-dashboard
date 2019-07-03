@@ -149,9 +149,9 @@ public class Util {
     @RequestMapping(value = "/api/EditStrategicIndicator/{id}", method = RequestMethod.GET)
     public @ResponseBody
     Strategic_Indicator getEditSI(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response) {
-        if (siRep.exists(id)) {
+        if (siRep.existsById(id)) {
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            return siRep.findOne(id);
+            return siRep.getOne(id);
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return null;
@@ -169,7 +169,7 @@ public class Util {
             byte[] file = IOUtils.toByteArray(request.getPart("network").getInputStream());
             List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
             if (name != "" && file != null && qualityFactors.size() > 0) {
-                Strategic_Indicator editSI = siRep.findOne(id);
+                Strategic_Indicator editSI = siRep.getOne(id);
                 //TOdo: the equals is not working
                 //boolean same_factors = editSI.getQuality_factors().equals(qualityFactors);
                 List<String> si_quality_factors=editSI.getQuality_factors();

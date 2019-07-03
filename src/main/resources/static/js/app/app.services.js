@@ -27,7 +27,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                 data.push({
                     id: strategicIndicatorEval.id,
                     name: strategicIndicatorEval.name,
-                    date: strategicIndicatorEval.date.year+"-"+strategicIndicatorEval.date.monthValue+"-"+strategicIndicatorEval.date.dayOfMonth,
+                    date: strategicIndicatorEval.date,
                     description: strategicIndicatorEval.description,
                     value: strategicIndicatorEval.value_description,
                     categories: strategicIndicatorEval.categories_description
@@ -489,7 +489,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                 strategicIndicatorEval.factors.forEach(function (factor) {
                     data.push({
                         id: strategicIndicatorEval.id,
-                        date: factor.date.year+"-"+factor.date.monthValue+"-"+factor.date.dayOfMonth,
+                        date: factor.date,
                         strategicIndicatorName: strategicIndicatorEval.name,
                         factorName: factor.name,
                         description: factor.description,
@@ -554,7 +554,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                 factorEval.metrics.forEach(function (metric) {
                     data.push({
                         id: factorEval.id,
-                        date: metric.date.year+"-"+metric.date.monthValue+"-"+metric.date.dayOfMonth,
+                        date: metric.date,
                         factorName: factorEval.name,
                         metricName: metric.name,
                         description: metric.description,
@@ -617,7 +617,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             response.data.forEach(function (metricEval) {
                 data.push({
                     id: metricEval.id,
-                    date: metricEval.date.year+"-"+metricEval.date.monthValue+"-"+metricEval.date.dayOfMonth,
+                    date: metricEval.date,
                     name: metricEval.name,
                     description: metricEval.description,
                     value: metricEval.value_description,

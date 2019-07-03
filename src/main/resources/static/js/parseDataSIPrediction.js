@@ -55,7 +55,7 @@ function getData() {
                     if (data[j].value !== null) {
                         if (!isNaN(data[j].value.first)) {
                             line.push({
-                                x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                                x: data[j].date,
                                 y: data[j].value.first
                             });
                         }

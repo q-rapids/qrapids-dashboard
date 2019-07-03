@@ -55,8 +55,7 @@ function getData() {
                         if (!isNaN(data[i].metrics[j].value)){
                             value[i][k].push(
                                 {
-                                    x: data[i].metrics[j].date.year + "-" + data[i].metrics[j].date.monthValue
-                                    + "-" + data[i].metrics[j].date.dayOfMonth,
+                                    x: data[i].metrics[j].date,
                                     y: data[i].metrics[j].value
                                 }
                             );

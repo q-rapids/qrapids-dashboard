@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Alert.CustomAlertRepository
 import com.upc.gessi.qrapids.app.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AlertArtefacts;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -12,6 +13,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("alertRepositoryImpl")
 public class AlertRepositoryImpl implements CustomAlertRepository {
 
     @PersistenceContext

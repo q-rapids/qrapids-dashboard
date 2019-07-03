@@ -68,7 +68,7 @@ function getData() {
                 //push date and value to line vector
                 if (!isNaN(data[j].value.first)) {
                     line.push({
-                        x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                        x: data[j].date,
                         y: data[j].value.first
                     });
                 }

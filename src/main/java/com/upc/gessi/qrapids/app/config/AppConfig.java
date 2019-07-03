@@ -1,6 +1,9 @@
 package com.upc.gessi.qrapids.app.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration;
+import org.springframework.boot.autoconfigure.elasticsearch.rest.RestClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -13,6 +16,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+@EnableAutoConfiguration(exclude={ElasticsearchAutoConfiguration.class, RestClientAutoConfiguration.class})
 public class AppConfig {
 
 	@Value("${spring.datasource.url}")

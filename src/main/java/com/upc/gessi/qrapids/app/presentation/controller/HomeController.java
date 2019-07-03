@@ -103,7 +103,7 @@ public class HomeController {
 
         try{
             // Fetch user from db
-            AppUser update = this.userRepository.findOne( user.getId() );
+            AppUser update = this.userRepository.getOne( user.getId() );
 
             update.setEmail( user.getEmail() );
             update.setAppuser_question( user.getAppuser_question() );
