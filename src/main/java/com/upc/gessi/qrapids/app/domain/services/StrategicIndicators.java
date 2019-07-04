@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAFakedata;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.database.repositories.Strategic_Indicator.Strategic_IndicatorRepositoryImpl;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -155,6 +157,22 @@ public class StrategicIndicators {
     @RequestMapping("/api/StrategicIndicators/PredictionData")
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
         return qmaf.ForecastSI(technique,"7", horizon, prj);
+    }
+
+    @RequestMapping("/api/StrategicIndicators")
+    public List<DTOSI> getAllStrategicIndicators () {
+        List<Strategic_Indicator> strategic_indicators = siRep.findAll();
+        List<DTOSI> dtosis = new ArrayList<>();
+        for (Strategic_Indicator strategic_indicator : strategic_indicators) {
+            DTOSI dtosi = new DTOSI(strategic_indicator.getId(),
+                    strategic_indicator.getExternalId(),
+                    strategic_indicator.getName(),
+                    strategic_indicator.getDescription(),
+                    strategic_indicator.getNetwork(),
+                    strategic_indicator.getQuality_factors());
+            dtosis.add(dtosi);
+        }
+        return dtosis;
     }
 
     /*private List<DTOStrategicIndicatorEvaluation> mergeData(List<DTOStrategicIndicatorEvaluation> apiEval, List<Strategic_Indicator> dbEval) {

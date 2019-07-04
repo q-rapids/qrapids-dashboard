@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <link rel="stylesheet" th:href="@{/css/products.css}" />
+</head>
+
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
+<br/>
+<div id="SIConfigView">
+    <div id="SITree">
+        <div style="display: flex; flex-direction: row; justify-content: center;">
+            <button onclick="newProduct()" class="btn btn-primary" style="font-size: 18px; margin-bottom: 12px">New Strategic Indicator</button>
+        </div>
+        <br/>
+        <ul id="SIList" class="list-group">
+        </ul>
+    </div>
+    <div id="SIInfo">
+
+    </div>
+</div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" th:src="@{/js/configSI.js}"></script>
+</html>

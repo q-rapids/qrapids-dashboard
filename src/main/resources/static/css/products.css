@@ -1,17 +1,17 @@
 @CHARSET "UTF-8";
 
 
-#productView {
+#productView, #SIConfigview {
 	display: flex;
 	flex-direction: row;
 }
 
-#productTree {
+#productTree, #SITree {
 	margin: 1%;
 	width: 21%;
 }
 
-#productInfo {
+#productInfo, #SIInfo {
 	margin: 1%;
 	width: 75%;
 	display: flex;

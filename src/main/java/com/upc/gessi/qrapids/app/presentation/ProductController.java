@@ -32,7 +32,7 @@ public class ProductController {
 	@Autowired
     private ProductsController productCont;
 	
-	@RequestMapping("/Products")
+	@RequestMapping("/Products/Configuration")
     public String Products(){
         return "Product/Products";
     }
