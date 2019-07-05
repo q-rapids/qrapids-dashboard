@@ -1,5 +1,21 @@
 var serverUrl = sessionStorage.getItem("serverUrl");
 
+function newSI() {
+    $("#SIInfo").show();
+    $.ajax({
+        url: "../api/QualityFactors/CurrentEvaluation",
+        type: "GET",
+        success: function(data) {
+            for(i = 0; i < data.length; ++i) {
+                $('#avFactorsBox').append($('<option>', {
+                    value: data[i].id,
+                    text: data[i].name
+                }));
+            }
+        }
+    });
+}
+
 function buildSIList() {
     var url = "/api/StrategicIndicators";
     if (serverUrl) {
@@ -29,29 +45,24 @@ function buildSIList() {
 };
 
 function clickOnTree(e){
-    console.log(currentSelectionId);
-    if (e.target.classList.contains("Project")) {
-        currentSelection = "Project";
-        previousSelectionId = currentSelectionId;
-        currentSelectionId = e.target.id;
-        if (previousSelectionId != null) {
-            document.getElementById(previousSelectionId).setAttribute('style', 'background-color: #ffffff;');
-        }
-        document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
-        var idString = e.target.id.split("-")[0];
-        console.log(idString.replace("project", ""));
-        getChosenProject(idString.replace("project", ""));
-    } else if (e.target.classList.contains("Product")) {
-        currentSelection = "Project";
-        previousSelectionId = currentSelectionId;
-        currentSelectionId = e.target.id;
-        if (previousSelectionId != null) {
-            document.getElementById(previousSelectionId).setAttribute('style', 'background-color: #ffffff;');
-        }
-        document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
-        getChosenProduct(e.target.id.replace("product", ""));
-    }
+
 }
+
+function moveItemsLeft() {
+    $('#selFactorsBox').find(':selected').appendTo('#avFactorsBox');
+};
+
+function moveAllItemsLeft() {
+    $('#selFactorsBox').children().appendTo('#avFactorsBox');
+};
+
+function moveItemsRight() {
+    $('#avFactorsBox').find(':selected').appendTo('#selFactorsBox');
+};
+
+function moveAllItemsRight() {
+    $('#avFactorsBox').children().appendTo('#selFactorsBox');
+};
 
 window.onload = function() {
     buildSIList();
