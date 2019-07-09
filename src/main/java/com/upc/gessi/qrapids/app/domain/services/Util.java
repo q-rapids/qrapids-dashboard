@@ -4,6 +4,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
@@ -102,6 +103,9 @@ public class Util {
     @Autowired
     private Forecast forecast;
 
+    @Autowired
+    private ProjectRepository projectRepository;
+
 
     @RequestMapping("/api/newCategories")
     public @ResponseBody
@@ -125,20 +129,21 @@ public class Util {
 
     @RequestMapping(value = "/api/newStrategicIndicator", method = RequestMethod.POST)
     public @ResponseBody
-    void newSI(HttpServletRequest request, HttpServletResponse response) {
+    void newSI(@RequestParam(value = "prj") String prj, HttpServletRequest request, HttpServletResponse response) {
         try {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             byte[] file = IOUtils.toByteArray(request.getPart("network").getInputStream());
             List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
             if (name != "" && file != null && qualityFactors.size() > 0) {
-                Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors);
+                Project project = projectRepository.findByExternalId(prj);
+                Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors, project);
                 siRep.save(newSI);
             }
-            if (AssessStrategicIndicator(name))
+            /*if (AssessStrategicIndicator(name))
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
             else
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);*/
 
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
         } catch (Exception e) {
@@ -186,11 +191,11 @@ public class Util {
                 editSI.setDescription(description);
                 editSI.setQuality_factors(qualityFactors);
                 siRep.flush();
-                if (!same_factors)
+                /*if (!same_factors)
                     if (AssessStrategicIndicator(name))
                         response.setStatus(HttpServletResponse.SC_ACCEPTED);
                     else
-                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);*/
             }
             else {
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -213,7 +218,7 @@ public class Util {
                     for (DTOFactor f : d.getFactors()) {
                         factors.add(f.getId());
                     }
-                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors);
+                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors, null);
                     siRep.save(newSI);
                 }
             } catch (IOException e) {

@@ -4,7 +4,9 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAFakedata;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.database.repositories.Strategic_Indicator.Strategic_IndicatorRepositoryImpl;
@@ -40,6 +42,9 @@ public class StrategicIndicators {
 
     @Autowired
     private Forecast qmaf;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @RequestMapping("/api/StrategicIndicators/CurrentEvaluation")
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsEvaluation(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request, HttpServletResponse response) {
@@ -160,8 +165,9 @@ public class StrategicIndicators {
     }
 
     @RequestMapping("/api/StrategicIndicators")
-    public List<DTOSI> getAllStrategicIndicators () {
-        List<Strategic_Indicator> strategic_indicators = siRep.findAll();
+    public List<DTOSI> getAllStrategicIndicators (@RequestParam(value = "prj") String prj) {
+        Project project = projectRepository.findByExternalId(prj);
+        List<Strategic_Indicator> strategic_indicators = siRep.findByProject_Id(project.getId());
         List<DTOSI> dtosis = new ArrayList<>();
         for (Strategic_Indicator strategic_indicator : strategic_indicators) {
             DTOSI dtosi = new DTOSI(strategic_indicator.getId(),

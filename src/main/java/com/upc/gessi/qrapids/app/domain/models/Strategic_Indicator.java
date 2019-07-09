@@ -41,15 +41,20 @@ public class Strategic_Indicator implements Serializable {
     @ElementCollection
     private List<String> quality_factors = new ArrayList<String>();
 
+    @ManyToOne
+    @JoinColumn(name="projectId", referencedColumnName = "id")
+    private Project project;
+
 
     public Strategic_Indicator() {
     }
 
-    public Strategic_Indicator(String name, String description, byte[] network, List<String> qualityFactors) {
+    public Strategic_Indicator(String name, String description, byte[] network, List<String> qualityFactors, Project project) {
         setName(name);
         setDescription(description);
         setNetwork(network);
         setQuality_factors(qualityFactors);
+        setProject(project);
     }
 
     public Long getId() {
@@ -104,5 +109,13 @@ public class Strategic_Indicator implements Serializable {
 
     public void setQuality_factors(List<String> quality_factors) {
         this.quality_factors = quality_factors;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

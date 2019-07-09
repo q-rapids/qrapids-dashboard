@@ -1,20 +1,8 @@
 var serverUrl = sessionStorage.getItem("serverUrl");
 
-function newSI() {
-    $("#SIInfo").show();
-    $.ajax({
-        url: "../api/QualityFactors/CurrentEvaluation",
-        type: "GET",
-        success: function(data) {
-            for(i = 0; i < data.length; ++i) {
-                $('#avFactorsBox').append($('<option>', {
-                    value: data[i].id,
-                    text: data[i].name
-                }));
-            }
-        }
-    });
-}
+var factors = [];
+
+var postUrl;
 
 function buildSIList() {
     var url = "/api/StrategicIndicators";
@@ -33,7 +21,7 @@ function buildSIList() {
                 var SI = document.createElement('li');
                 SI.classList.add("list-group-item");
                 SI.classList.add("Product");
-                SI.setAttribute("id", ("SI" + data[i].id));
+                SI.setAttribute("id", (data[i].id));
                 SI.appendChild(document.createTextNode(data[i].name));
                 SI.addEventListener("click", clickOnTree);
 
@@ -42,10 +30,77 @@ function buildSIList() {
             document.getElementById('SITree').appendChild(SIList);
         }
     });
-};
+}
 
 function clickOnTree(e){
+    postUrl = "/api/EditStrategicIndicator/" + e.target.id;
+    if (serverUrl) {
+        postUrl = serverUrl + postUrl;
+    }
+    jQuery.ajax({
+        dataType: "json",
+        url: postUrl,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (si) {
+            $("#SIInfo").show();
+            $("#SIInfoTitle").text("Strategic Indicator Information");
+            $("#SIName").val(si.name);
+            $("#SIDescription").val(si.description);
+            $("#SINetworkLabel").html("Assessment Model: <br/>(leave empty if unchanged)");
+            $("#SINetwork").val("");
+            $("#SICompositionTitle").text("Strategic Indicator Composition");
+            if (factors.length > 0) {
+                showFactors();
+                si.quality_factors.forEach(function (factor) {
+                    $('#avFactorsBox').find("option[value='" + factor + "']").appendTo('#selFactorsBox');
+                });
+            }
+        }
+    });
+}
 
+function newSI() {
+    $("#SIInfo").show();
+    $("#SIInfoTitle").text("1. Strategic Indicator Information");
+    $("#SIName").val("");
+    $("#SIDescription").val("");
+    $("#SINetworkLabel").html("Assessment Model: ");
+    $("#SINetwork").val("");
+    $("#SICompositionTitle").text("2. Strategic Indicator Composition");
+    if (factors.length > 0)
+        showFactors();
+    else {
+        loadFactors(true);
+    }
+    postUrl="/api/newStrategicIndicator";
+}
+
+function showFactors () {
+    $('#avFactorsBox').empty();
+    $('#selFactorsBox').empty();
+    factors.forEach(function (factor) {
+        $('#avFactorsBox').append($('<option>', {
+            value: factor.id,
+            text: factor.name
+        }));
+    });
+}
+
+function loadFactors (show) {
+    $.ajax({
+        url: "../api/QualityFactors/CurrentEvaluation",
+        type: "GET",
+        async: true,
+        success: function(data) {
+            data.forEach(function (factor) {
+                factors.push(factor);
+            });
+            if (show)
+                showFactors();
+        }
+    });
 }
 
 function moveItemsLeft() {
@@ -64,6 +119,44 @@ function moveAllItemsRight() {
     $('#avFactorsBox').children().appendTo('#selFactorsBox');
 };
 
+$("#saveSI").click(function () {
+    var qualityFactors = [];
+
+    $('#selFactorsBox').children().each (function (i, option) {
+        qualityFactors.push(option.value);
+    });
+
+    if ($('#SIName').val() !== "" && qualityFactors.length > 0) {
+
+        var formData = new FormData();
+        formData.append("name", $('#SIName').val());
+        formData.append("description", $('#SIDescription').val());
+        formData.append("network", $('#SINetwork')[0].files[0]);
+        formData.append("quality_factors", qualityFactors);
+
+        $.ajax({
+            url: postUrl,
+            data: formData,
+            type: "POST",
+            contentType: false,
+            processData: false,
+            //ToDo: the service produces more than one error, the current message does not fit all of them
+            error: function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status === 409)
+                    alert("This Strategic Indicator name is already in use");
+                else {
+                    alert("Error in the ElasticSearch: contact to the system administrator");
+                    location.href = "../StrategicIndicators/Configuration";
+                }
+            },
+            success: function() {
+                location.href = "../StrategicIndicators/Configuration";
+            }
+        });
+    } else alert("Make sure that you have completed all fields marked with an *");
+});
+
 window.onload = function() {
+    loadFactors(false);
     buildSIList();
 };
