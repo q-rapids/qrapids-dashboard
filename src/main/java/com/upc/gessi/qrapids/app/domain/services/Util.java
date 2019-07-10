@@ -210,23 +210,36 @@ public class Util {
     @RequestMapping("/api/fetchSIs")
     public @ResponseBody
     void fetchSIs(HttpServletResponse response) {
-        if (siRep.count() == 0) {
-            try {
-                List<DTODetailedStrategicIndicator> dsi = qmadsi.CurrentEvaluation(null, null);
-                for (DTODetailedStrategicIndicator d : dsi) {
+        try {
+            List<String> projects = qmaPrj.getAssessedProjects();
+            for(String projectName : projects) {
+                Project project = projectRepository.findByExternalId(projectName);
+                if (project == null) {
+                    byte[] bytes = null;
+                    project = new Project(projectName, projectName, "No description specified", bytes, true);
+                    projectRepository.save(project);
+                }
+                List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
+                try {
+                    dtoDetailedStrategicIndicators = qmadsi.CurrentEvaluation(null, projectName);
+                }
+                catch (Exception e) {
+
+                }
+                for (DTODetailedStrategicIndicator d : dtoDetailedStrategicIndicators) {
                     List<String> factors = new ArrayList<>();
                     for (DTOFactor f : d.getFactors()) {
                         factors.add(f.getId());
                     }
-                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors, null);
-                    siRep.save(newSI);
+                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors, project);
+                    if (!siRep.existsByExternalIdAndProject_Id(newSI.getExternalId(), project.getId())) {
+                        siRep.save(newSI);
+                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-            if (response != null) response.setStatus(HttpServletResponse.SC_ACCEPTED);
-        } else {
-            if (response != null) response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+        catch (CategoriesException | IOException e) {
+            e.printStackTrace();
         }
     }
 
