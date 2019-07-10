@@ -11,11 +11,16 @@ buildscript {
 	}
 }
 
+plugins {
+	id "org.sonarqube" version "2.7"
+}
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'jacoco'
 
 group = 'com.upc.gessi.qrapids'
 version = '0.3.5'
@@ -83,4 +88,15 @@ dependencies {
 	// comment this line to launch application from developing environment
 	// uncomment this line before generating .war file
 	//providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+}
+
+jacoco {
+	toolVersion = "0.8.2"
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled = true
+		html.enabled = false
+	}
 }
