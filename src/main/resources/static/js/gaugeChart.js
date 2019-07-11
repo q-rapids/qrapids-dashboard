@@ -190,20 +190,6 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
             var br = document.createElement("br");
             div.appendChild(br);
 
-            var editBtn = document.createElement("button");
-            editBtn.id = "buttonEdit"+data[i].dbId;
-            editBtn.dbId = data[i].dbId;
-            editBtn.classList.add('btn');
-            editBtn.classList.add('btn-default');
-            editBtn.style.marginRight = "5px";
-            editBtn.onclick = function () {
-                location.href = "../EditStrategicIndicators/" + this.dbId;
-            };
-            editBtn.appendChild(document.createTextNode("Edit"));
-            if (data[i].dbId == null) editBtn.disabled = true;
-            div.appendChild(editBtn);
-
-
             var feedbackBtn= document.createElement("button");
             feedbackBtn.id = "buttonFeedback"+data[i].dbId;
             feedbackBtn.dbId = data[i].dbId;
