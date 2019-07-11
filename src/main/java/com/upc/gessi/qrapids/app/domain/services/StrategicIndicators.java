@@ -181,6 +181,12 @@ public class StrategicIndicators {
         return dtosis;
     }
 
+    @DeleteMapping("/api/StrategicIndicators/{id}")
+    public @ResponseBody
+    void deleteSI (@PathVariable Long id) {
+        siRep.delete(id);
+    }
+
     /*private List<DTOStrategicIndicatorEvaluation> mergeData(List<DTOStrategicIndicatorEvaluation> apiEval, List<Strategic_Indicator> dbEval) {
         boolean found = false;
         String lastSIid = "";

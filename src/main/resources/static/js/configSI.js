@@ -3,6 +3,7 @@ var serverUrl = sessionStorage.getItem("serverUrl");
 var factors = [];
 
 var postUrl;
+var deleteUrl;
 
 function buildSIList() {
     var url = "/api/StrategicIndicators";
@@ -34,6 +35,7 @@ function buildSIList() {
 
 function clickOnTree(e){
     postUrl = "/api/EditStrategicIndicator/" + e.target.id;
+    deleteUrl = "/api/StrategicIndicators/" + e.target.id;
     if (serverUrl) {
         postUrl = serverUrl + postUrl;
     }
@@ -51,6 +53,7 @@ function clickOnTree(e){
             $("#SINetworkLabel").html("Assessment Model: <br/>(leave empty if unchanged)");
             $("#SINetwork").val("");
             $("#SICompositionTitle").text("Strategic Indicator Composition");
+            $("#deleteSI").show();
             if (factors.length > 0) {
                 showFactors();
                 si.quality_factors.forEach(function (factor) {
@@ -69,6 +72,7 @@ function newSI() {
     $("#SINetworkLabel").html("Assessment Model: ");
     $("#SINetwork").val("");
     $("#SICompositionTitle").text("2. Strategic Indicator Composition");
+    $("#deleteSI").hide();
     if (factors.length > 0)
         showFactors();
     else {
@@ -154,6 +158,20 @@ $("#saveSI").click(function () {
             }
         });
     } else alert("Make sure that you have completed all fields marked with an *");
+});
+
+$("#deleteSI").click(function () {
+    if (confirm("Are you sure you want to delete this Strategic Indicator?")) {
+        jQuery.ajax({
+            url: deleteUrl,
+            cache: false,
+            type: "DELETE",
+            async: true,
+            success: function () {
+                location.href = "../StrategicIndicators/Configuration";
+            }
+        });
+    }
 });
 
 window.onload = function() {
