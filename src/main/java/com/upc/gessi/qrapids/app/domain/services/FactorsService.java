@@ -92,9 +92,6 @@ public class FactorsService {
 
     @PostMapping("/api/QualityFactors/Simulate")
     public List<DTOFactor> simulate (@RequestParam("prj") String prj, @RequestParam("date") String date, @RequestBody List<DTOMetric> metrics) throws IOException {
-        //TODO: remove
-        if (prj.equals("test"))
-            prj = "modelio38";
         Map<String, Float> metricsMap = new HashMap<>();
         for (DTOMetric metric : metrics) {
             metricsMap.put(metric.getId(), metric.getValue());

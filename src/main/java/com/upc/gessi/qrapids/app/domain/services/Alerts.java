@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
+import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
@@ -55,6 +56,9 @@ public class Alerts {
     @Value("${pabre.url}")
     String pabreUrl;
 
+    @Autowired
+    QRGeneratorFactory qrGeneratorFactory;
+
     @GetMapping("/api/alerts")
     public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj) throws Exception {
         Project project = projectRepository.findByExternalId(prj);
@@ -83,7 +87,7 @@ public class Alerts {
     public List<QualityRequirementPattern> getQR(@PathVariable String id) throws Exception {
         Alert alert = ari.findAlertById(Long.parseLong(id));
         qr.models.Alert alertModel = new qr.models.Alert(alert.getId_element(), alert.getName(), Type.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), null);
-        QRGenerator gen = new QRGenerator(pabreUrl);
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.generateQRs(alertModel);
     }
 
@@ -103,7 +107,7 @@ public class Alerts {
                 alertDecision.setDecisionRationale(decision.getRationale());
                 break;
             case IGNORE:
-                QRGenerator qrGenerator = new QRGenerator(pabreUrl);
+                QRGenerator qrGenerator = qrGeneratorFactory.getQRGenerator();
                 qr.models.Alert alertModel = new qr.models.Alert(alert.getId_element(), alert.getName(), Type.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), null);
                 List<QualityRequirementPattern> qrPatternsList = qrGenerator.generateQRs(alertModel);
                 QualityRequirementPattern qrPatternIgnored = null;
@@ -205,7 +209,7 @@ public class Alerts {
             QualityRequirement qualityRequirement = addQR(requirement, description, goal, rationale, patternId, null, user, prj);
             DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
                     qualityRequirement.getId(),
-                    new java.sql.Date(qualityRequirement.getAlert().getDate().getTime()),
+                    new java.sql.Date(qualityRequirement.getDecision().getDate().getTime()),
                     qualityRequirement.getRequirement(),
                     qualityRequirement.getDescription(),
                     qualityRequirement.getGoal(),
@@ -250,7 +254,7 @@ public class Alerts {
         for (QualityRequirement qualityRequirement : qualityRequirements) {
             DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
                     qualityRequirement.getId(),
-                    new java.sql.Date(qualityRequirement.getAlert().getDate().getTime()),
+                    new java.sql.Date(qualityRequirement.getDecision().getDate().getTime()),
                     qualityRequirement.getRequirement(),
                     qualityRequirement.getDescription(),
                     qualityRequirement.getGoal(),
@@ -302,7 +306,7 @@ public class Alerts {
 
                 qr.models.Alert alert = new qr.models.Alert(id, name, type, value, threshold, category, null);
 
-                QRGenerator qrGenerator = new QRGenerator(pabreUrl);
+                QRGenerator qrGenerator = qrGeneratorFactory.getQRGenerator();
                 boolean existsQR = qrGenerator.existsQRPattern(alert);
                 Project project = projectRepository.findByExternalId(prj);
                 Alert al = new Alert(alert.getId_element(), alert.getName(), AlertType.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), new Date(), AlertStatus.NEW, existsQR, project);
@@ -323,19 +327,19 @@ public class Alerts {
 
     @GetMapping("/api/qrPatterns")
     public List<QualityRequirementPattern> getAllQRPatterns () {
-        QRGenerator gen = new QRGenerator(pabreUrl);
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getAllQRPatterns();
     }
 
     @GetMapping("/api/qrPatterns/{id}")
     public QualityRequirementPattern getQRPattern (@PathVariable String id) {
-        QRGenerator gen = new QRGenerator(pabreUrl);
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getQRPattern(Long.parseLong(id));
     }
 
     @GetMapping("/api/qrPatterns/{id}/metric")
     public String getMetricsForQRPattern (@PathVariable String id) {
-        QRGenerator gen = new QRGenerator(pabreUrl);
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         List<Integer> ids = new ArrayList<>();
         Integer patternId = Integer.parseInt(id);
         ids.add(patternId);

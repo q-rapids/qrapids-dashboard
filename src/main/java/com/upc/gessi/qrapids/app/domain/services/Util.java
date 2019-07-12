@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -125,11 +126,11 @@ public class Util {
 
     @RequestMapping(value = "/api/newStrategicIndicator", method = RequestMethod.POST)
     public @ResponseBody
-    void newSI(HttpServletRequest request, HttpServletResponse response) {
+    void newSI(HttpServletRequest request, HttpServletResponse response, @RequestParam("network") MultipartFile network) {
         try {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            byte[] file = IOUtils.toByteArray(request.getPart("network").getInputStream());
+            byte[] file = IOUtils.toByteArray(network.getInputStream());
             List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
             if (name != "" && file != null && qualityFactors.size() > 0) {
                 Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors);
@@ -140,7 +141,6 @@ public class Util {
             else
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }
@@ -162,11 +162,11 @@ public class Util {
 
     @RequestMapping(value = "/api/EditStrategicIndicator/{id}", method = RequestMethod.POST)
     public @ResponseBody
-    void editSI(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    void editSI(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response, @RequestParam("network") MultipartFile network) throws IOException {
         try {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            byte[] file = IOUtils.toByteArray(request.getPart("network").getInputStream());
+            byte[] file = IOUtils.toByteArray(network.getInputStream());
             List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
             if (name != "" && file != null && qualityFactors.size() > 0) {
                 Strategic_Indicator editSI = siRep.getOne(id);

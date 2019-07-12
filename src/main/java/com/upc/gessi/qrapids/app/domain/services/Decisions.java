@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
+import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
 import com.upc.gessi.qrapids.app.domain.models.Decision;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
@@ -35,8 +36,8 @@ public class Decisions {
     @Autowired
     ProjectRepository projectRepository;
 
-    @Value("${pabre.url}")
-    String pabreUrl;
+    @Autowired
+    QRGeneratorFactory qrGeneratorFactory;
 
     @GetMapping("/api/decisions")
     public List<DTODecision> getDecisions (@RequestParam(value = "prj") String prj, @RequestParam(required = false, defaultValue = "false") boolean qrs, @RequestParam(required = false) String from, @RequestParam(required = false) String to) throws Exception {
@@ -52,8 +53,8 @@ public class Decisions {
 
         Project project = projectRepository.findByExternalId(prj);
         List<DTODecision> DTODecisions = new ArrayList<>();
-        QRGenerator qrGenerator = new QRGenerator(pabreUrl);
         if (qrs) {
+            QRGenerator qrGenerator = qrGeneratorFactory.getQRGenerator();
             List<QualityRequirementPattern> qualityRequirementPatterns = qrGenerator.getAllQRPatterns();
             Map<Integer, QualityRequirementPattern> qualityRequirementPatternMap = new HashMap<>();
             for (QualityRequirementPattern qualityRequirementPattern : qualityRequirementPatterns) {

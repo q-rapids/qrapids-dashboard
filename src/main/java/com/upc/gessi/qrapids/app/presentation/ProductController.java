@@ -16,14 +16,12 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import com.upc.gessi.qrapids.app.domain.controllers.ProductsController;
 import com.upc.gessi.qrapids.app.dto.DTOProduct;
 import com.upc.gessi.qrapids.app.dto.DTOProject;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Controller("/Products")
@@ -61,20 +59,20 @@ public class ProductController {
     }
 	
 	@RequestMapping(value = "/api/updateProject", method = RequestMethod.POST)
-    public @ResponseBody void updateProject(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody void updateProject(HttpServletRequest request, HttpServletResponse response, @RequestParam("logo") MultipartFile logo) {
         try {
         	Long id = Long.parseLong(request.getParameter("id"));
         	String externalId = request.getParameter("externalId");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             String backlogId = request.getParameter("backlogId");
-            byte[] logo = IOUtils.toByteArray(request.getPart("logo").getInputStream());
-            if (logo.length < 10) {
+            byte[] logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            if (logoBytes.length < 10) {
             	DTOProject p = productCont.getProjectById(Long.toString(id));
-            	logo = p.getLogo();
+            	logoBytes = p.getLogo();
             }
             if (productCont.checkProjectByName(id, name)) {
-            	DTOProject p = new DTOProject(id, externalId, name, description, logo, true, backlogId);
+            	DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId);
             	productCont.updateProject(p);
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
             } else {
@@ -87,19 +85,19 @@ public class ProductController {
     }
 	
 	@RequestMapping(value = "/api/updateProduct", method = RequestMethod.POST)
-    public @ResponseBody void updateProduct(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody void updateProduct(HttpServletRequest request, HttpServletResponse response, @RequestParam("logo") MultipartFile logo) {
         try {
         	Long id = Long.parseLong(request.getParameter("id"));
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            byte[] logo = IOUtils.toByteArray(request.getPart("logo").getInputStream());
+            byte[] logoBytes = IOUtils.toByteArray(logo.getInputStream());
             List<String> projectIds = Arrays.asList(request.getParameter("projects").split(","));
-            if (logo.length < 10) {
+            if (logoBytes.length < 10) {
             	DTOProduct p = productCont.getProductById(Long.toString(id));
-            	logo = p.getLogo();
+            	logoBytes = p.getLogo();
             }
             if (productCont.checkProductByName(id, name)) {
-            	productCont.updateProduct(id, name, description, logo, projectIds);
+            	productCont.updateProduct(id, name, description, logoBytes, projectIds);
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
             } else {
                 response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -112,13 +110,13 @@ public class ProductController {
     }
 	
 	@RequestMapping(value = "/api/newProduct", method = RequestMethod.POST)
-    public @ResponseBody void newProduct(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody void newProduct(HttpServletRequest request, HttpServletResponse response, @RequestParam("logo") MultipartFile logo) {
         try {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            byte[] logo = IOUtils.toByteArray(request.getPart("logo").getInputStream());
+            byte[] logoBytes = IOUtils.toByteArray(logo.getInputStream());
             List<String> projectIds = Arrays.asList(request.getParameter("projects").split(","));
-            if (logo.length < 10) {
+            if (logoBytes.length < 10) {
                 //URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
                 //File f = new File(projectImageUrl.getPath());
 				//BufferedImage img = ImageIO.read(f);
@@ -128,7 +126,7 @@ public class ProductController {
                 logo = null;
             }
             if (productCont.checkNewProductByName(name)) {
-            	productCont.newProduct(name, description, logo, projectIds);
+            	productCont.newProduct(name, description, logoBytes, projectIds);
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
             } else {
                 response.setStatus(HttpServletResponse.SC_CONFLICT);
