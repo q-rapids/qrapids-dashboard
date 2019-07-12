@@ -1,24 +1,24 @@
 @CHARSET "UTF-8";
 
 
-#productView, #SIConfigView {
+#productView, #SIConfigView, #CategoriesConfigView {
 	display: flex;
 	flex-direction: row;
 }
 
-#productTree, #SITree {
+#productTree, #SITree, #CategoriesElementSelector {
 	margin: 1%;
 	width: 21%;
 }
 
-#productInfo, #SIInfo {
+#productInfo, #SIInfo, #Categories {
 	margin: 1%;
 	width: 75%;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 }
 
-#productForm, #SIForm {
+#productForm, #SIForm, #SICategories, #FactorsCategories {
 	margin: 1%;
 	display: flex;
 	flex-direction: column;

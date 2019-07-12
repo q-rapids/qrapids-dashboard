@@ -21,7 +21,7 @@ function buildSIList() {
             for (var i = 0; i < data.length; i++) {
                 var SI = document.createElement('li');
                 SI.classList.add("list-group-item");
-                SI.classList.add("Product");
+                SI.classList.add("SI");
                 SI.setAttribute("id", (data[i].id));
                 SI.appendChild(document.createTextNode(data[i].name));
                 SI.addEventListener("click", clickOnTree);
@@ -34,6 +34,12 @@ function buildSIList() {
 }
 
 function clickOnTree(e){
+    e.target.classList.add("active");
+    $(".SI").each(function () {
+        if (e.target.id !== $(this).attr('id'))
+            $(this).removeClass("active");
+    });
+
     postUrl = "/api/EditStrategicIndicator/" + e.target.id;
     deleteUrl = "/api/StrategicIndicators/" + e.target.id;
     if (serverUrl) {
