@@ -151,6 +151,14 @@ canvas {
     color: red;
 }
 
+.color-red-link:link {
+    color: red;
+}
+
+.color-red-link:hover {
+    color: #bd0000;
+}
+
 .input-group-addon-qr {
     min-width: 115px;
     text-align: left;
