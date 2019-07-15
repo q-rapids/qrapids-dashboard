@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <link rel="stylesheet" th:href="@{/css/products.css}" />
+</head>
+
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
+<br/>
+<div id="CategoriesConfigView">
+    <div id="CategoriesElementSelector">
+        <ul id="ElementList" class="list-group">
+            <li id="SICategoriesButton" class="list-group-item category-element active">Strategic Indicators</li>
+            <li id="FactorsCategoriesButton" class="list-group-item category-element">Factors</li>
+        </ul>
+    </div>
+    <div id="Categories">
+        <div id="SICategories">
+            <h3>Strategic Indicator Categories</h3>
+            <div id="tableSIdiv" class="table-editable">
+                <table id="tableSI" class="table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Color</th>
+                        <th></th>
+                        <th>
+                            <span class="table-addSI glyphicon glyphicon-plus"></span>
+                        </th>
+                    </tr>
+                </table>
+                <br/>
+            </div>
+            <div>
+                <button class="btn btn-primary pull-right" id="saveSICategories" style="width: 5em">Save</button>
+            </div>
+        </div>
+        <div id = "FactorsCategories" style="display: none">
+            <h3>Quality Factors Categories</h3>
+            <div id="tableQFdiv">
+                <table id="tableQF" class="table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Color</th>
+                        <th>Upper Threshold (%)</th>
+                        <th></th>
+                        <th>
+                            <span class="table-addQF glyphicon glyphicon-plus"></span>
+                        </th>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <button class="btn btn-primary pull-right" id="saveFactorCategories" style="width: 5em">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" th:src="@{/js/configCategories.js}"></script>
+</html>

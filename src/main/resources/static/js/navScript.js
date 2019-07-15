@@ -77,7 +77,7 @@ if (!(products = sessionStorage.getItem("products"))) {
     products = "Evaluation";
 }
 if (!(configuration = sessionStorage.getItem("configuration"))) {
-    configuration = "Products";
+    configuration = "StrategicIndicators";
 }
 if (!(simulation = sessionStorage.getItem("simulation"))) {
     simulation = "Factors";
@@ -114,7 +114,7 @@ $("#" + time).css("background-color", "#ffc380");
 
 // Checking the enabled options depending on the selected option on the main menu
 var id;
-if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/EditStrategicIndicators/") !== -1) {
+if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/EditStrategicIndicators/") !== -1) && !currentURL.match("Configuration")) {
     id = "StrategicIndicators";
     if (currentURL.search("/Prediction") !== -1)
         highlightAndSaveCurrentPrediction(id);
@@ -167,8 +167,12 @@ if (currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Edi
     id = "DetailedEvaluation";
     highlightandSaveCurrentProducts(id);
 } else {
-    if (currentURL.match("/Products"))
+    if (currentURL.match("/StrategicIndicators"))
+        id = "StrategicIndicators";
+    else if (currentURL.match("/Products"))
         id = "Products";
+    else if (currentURL.match("/Categories"))
+        id = "Categories";
     else if (currentURL.match("/profile"))
         id = "profile";
     else if (currentURL.match("/users"))
@@ -286,9 +290,13 @@ $("#ProductsEvaluation").attr("href", serverUrl+"/Products/Evaluation");
 
 $("#ProductsDetailedEvaluation").attr("href", serverUrl+"/Products/DetailedEvaluation");
 
-$("#Configuration").attr("href", serverUrl + "/" + configuration);
+$("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
 
-$("#ProductsConfig").attr("href", serverUrl + "/Products");
+$("#StrategicIndicatorsConfig").attr("href", serverUrl + "/StrategicIndicators/Configuration");
+
+$("#ProductsConfig").attr("href", serverUrl + "/Products/Configuration");
+
+$("#CategoriesConfig").attr("href", serverUrl + "/Categories/Configuration");
 
 $("#profileConfig").attr("href", serverUrl + "/profile");
 

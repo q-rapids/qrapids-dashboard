@@ -4,6 +4,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
@@ -102,6 +103,9 @@ public class Util {
     @Autowired
     private Forecast forecast;
 
+    @Autowired
+    private ProjectRepository projectRepository;
+
 
     @RequestMapping("/api/newCategories")
     public @ResponseBody
@@ -123,22 +127,79 @@ public class Util {
         }
     }
 
+    @GetMapping("/api/strategicIndicators/categories")
+    public List<DTOCategory> getSICategories () {
+        List<SICategory> siCategoryList = SICatRep.findAll();
+        List<DTOCategory> dtoCategoryList = new ArrayList<>();
+        for (SICategory siCategory : siCategoryList) {
+            dtoCategoryList.add(new DTOCategory(siCategory.getId(), siCategory.getName(), siCategory.getColor()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/strategicIndicators/categories")
+    @ResponseBody
+    public void newSICategories (HttpServletRequest request, HttpServletResponse response) {
+        JsonParser parser = new JsonParser();
+        JsonArray sic = parser.parse(request.getParameter("SICat")).getAsJsonArray();
+        try {
+            if (sic.size() > 1) {
+                qmasi.deleteAllCategories();
+                qmasi.newCategories(sic);
+                response.setStatus(HttpServletResponse.SC_CREATED);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/api/qualityFactors/categories")
+    public List<DTOCategoryThreshold> getFactorCategories () {
+        List<QFCategory> factorCategoryList = QFCatRep.findAll();
+        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+        for (QFCategory qfCategory : factorCategoryList) {
+            dtoCategoryList.add(new DTOCategoryThreshold(qfCategory.getId(), qfCategory.getName(), qfCategory.getColor(), qfCategory.getUpperThreshold()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/qualityFactors/categories")
+    @ResponseBody
+    public void newFactorCategories (HttpServletRequest request, HttpServletResponse response) {
+        JsonParser parser = new JsonParser();
+        JsonArray qfc = parser.parse(request.getParameter("QFCat")).getAsJsonArray();
+        try {
+            if (qfc.size() > 1) {
+                qmaqf.deleteAllCategories();
+                qmaqf.newCategories(qfc);
+                response.setStatus(HttpServletResponse.SC_CREATED);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(value = "/api/newStrategicIndicator", method = RequestMethod.POST)
     public @ResponseBody
-    void newSI(HttpServletRequest request, HttpServletResponse response) {
+    void newSI(@RequestParam(value = "prj") String prj, HttpServletRequest request, HttpServletResponse response) {
         try {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             byte[] file = IOUtils.toByteArray(request.getPart("network").getInputStream());
             List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
             if (name != "" && file != null && qualityFactors.size() > 0) {
-                Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors);
+                Project project = projectRepository.findByExternalId(prj);
+                Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors, project);
                 siRep.save(newSI);
             }
-            if (AssessStrategicIndicator(name))
+            /*if (AssessStrategicIndicator(name))
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
             else
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);*/
 
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
         } catch (Exception e) {
@@ -186,11 +247,11 @@ public class Util {
                 editSI.setDescription(description);
                 editSI.setQuality_factors(qualityFactors);
                 siRep.flush();
-                if (!same_factors)
+                /*if (!same_factors)
                     if (AssessStrategicIndicator(name))
                         response.setStatus(HttpServletResponse.SC_ACCEPTED);
                     else
-                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);*/
             }
             else {
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -205,23 +266,36 @@ public class Util {
     @RequestMapping("/api/fetchSIs")
     public @ResponseBody
     void fetchSIs(HttpServletResponse response) {
-        if (siRep.count() == 0) {
-            try {
-                List<DTODetailedStrategicIndicator> dsi = qmadsi.CurrentEvaluation(null, null);
-                for (DTODetailedStrategicIndicator d : dsi) {
+        try {
+            List<String> projects = qmaPrj.getAssessedProjects();
+            for(String projectName : projects) {
+                Project project = projectRepository.findByExternalId(projectName);
+                if (project == null) {
+                    byte[] bytes = null;
+                    project = new Project(projectName, projectName, "No description specified", bytes, true);
+                    projectRepository.save(project);
+                }
+                List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
+                try {
+                    dtoDetailedStrategicIndicators = qmadsi.CurrentEvaluation(null, projectName);
+                }
+                catch (Exception e) {
+
+                }
+                for (DTODetailedStrategicIndicator d : dtoDetailedStrategicIndicators) {
                     List<String> factors = new ArrayList<>();
                     for (DTOFactor f : d.getFactors()) {
                         factors.add(f.getId());
                     }
-                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors);
-                    siRep.save(newSI);
+                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors, project);
+                    if (!siRep.existsByExternalIdAndProject_Id(newSI.getExternalId(), project.getId())) {
+                        siRep.save(newSI);
+                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-            if (response != null) response.setStatus(HttpServletResponse.SC_ACCEPTED);
-        } else {
-            if (response != null) response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+        catch (CategoriesException | IOException e) {
+            e.printStackTrace();
         }
     }
 
