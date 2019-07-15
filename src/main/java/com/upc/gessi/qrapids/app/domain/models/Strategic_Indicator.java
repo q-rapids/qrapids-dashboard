@@ -15,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name="strategic_indicator",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"external_id", "projectId"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "projectId"}))
 public class Strategic_Indicator implements Serializable {
 
     // SerialVersion UID
