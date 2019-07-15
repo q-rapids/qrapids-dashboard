@@ -9,6 +9,20 @@ var target;
 var tau = Math.PI / 2;
 var urlLink;
 
+function checkCategories() {
+    $.ajax({
+        url: '../api/strategicIndicators/categories',
+        type: "GET",
+        success: function(categories) {
+            if (categories.length === 0) {
+                alert("You need to define Strategic Indicator categories in order to see the chart correctly. " +
+                    "Please, go to the Categories section of the Configuration menu and define them.");
+            }
+        }
+    });
+}
+checkCategories();
+
 function getData(width, height, showButtons, chartHyperlinked, color) {
     var serverUrl = sessionStorage.getItem("serverUrl");
     var url = "/api/StrategicIndicators/CurrentEvaluation";

@@ -5,18 +5,6 @@ var factors = [];
 var postUrl;
 var deleteUrl;
 
-function checkCategories() {
-    $.ajax({
-        url: '../api/strategicIndicators/categories',
-        type: "GET",
-        success: function(categories) {
-            if (categories.length === 0) {
-                location.href = "../Categories/Configuration";
-            }
-        }
-    });
-}
-
 function buildSIList() {
     var url = "/api/StrategicIndicators";
     if (serverUrl) {
@@ -194,6 +182,5 @@ $("#deleteSI").click(function () {
 
 window.onload = function() {
     loadFactors(false);
-    checkCategories();
     buildSIList();
 };
