@@ -21,8 +21,8 @@
     <div id="Categories">
         <div id="SICategories">
             <h3>Strategic Indicator Categories</h3>
-            <div id="tableSI" class="table-editable">
-                <table class="table">
+            <div id="tableSIdiv" class="table-editable">
+                <table id="tableSI" class="table">
                     <tr>
                         <th>Name</th>
                         <th>Color</th>
@@ -31,118 +31,30 @@
                             <span class="table-addSI glyphicon glyphicon-plus"></span>
                         </th>
                     </tr>
-                    <tr>
-                        <td contenteditable="true">Good</td>
-                        <td><input type="color"  value="#00ff00" /></td>
-                        <td>
-                            <span class="table-up glyphicon glyphicon-arrow-up"></span>
-                            <span class="table-down glyphicon glyphicon-arrow-down"></span>
-                        </td>
-                        <td>
-                            <span class="table-remove glyphicon glyphicon-remove"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">Neutral</td>
-                        <td><input type="color"  value="#ff8000" /></td>
-                        <td>
-                            <span class="table-up glyphicon glyphicon-arrow-up"></span>
-                            <span class="table-down glyphicon glyphicon-arrow-down"></span>
-                        </td>
-                        <td>
-                            <span class="table-remove glyphicon glyphicon-remove"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">Bad</td>
-                        <td><input type="color"  value="#ff0000" /></td>
-                        <td>
-                            <span class="table-up glyphicon glyphicon-arrow-up"></span>
-                            <span class="table-down glyphicon glyphicon-arrow-down"></span>
-                        </td>
-                        <td>
-                            <span class="table-remove glyphicon glyphicon-remove"></span>
-                        </td>
-                    </tr>
-                    <!-- This is our clonable table line -->
-                    <tr class="hide">
-                        <td contenteditable="true">Good</td>
-                        <td><input type="color"  value="#00ff00" /></td>
-                        <td>
-                            <span class="table-up glyphicon glyphicon-arrow-up"></span>
-                            <span class="table-down glyphicon glyphicon-arrow-down"></span>
-                        </td>
-                        <td>
-                            <span class="table-remove glyphicon glyphicon-remove"></span>
-                        </td>
-                    </tr>
                 </table>
                 <br/>
+            </div>
+            <div>
+                <button class="btn btn-primary pull-right" id="saveSICategories" style="width: 5em">Save</button>
             </div>
         </div>
         <div id = "FactorsCategories" style="display: none">
             <h3>Quality Factors Categories</h3>
-            <div id="tableQF">
-                <table class="table">
+            <div id="tableQFdiv">
+                <table id="tableQF" class="table">
                     <tr>
                         <th>Name</th>
                         <th>Color</th>
-                        <th></th>
                         <th>Upper Threshold (%)</th>
+                        <th></th>
                         <th>
                             <span class="table-addQF glyphicon glyphicon-plus"></span>
                         </th>
                     </tr>
-                    <tr>
-                        <td contenteditable="true">Good</td>
-                        <td><input type="color"  value="#00ff00" /></td>
-                        <td>
-                            <span class="table-up glyphicon glyphicon-arrow-up"></span>
-                            <span class="table-down glyphicon glyphicon-arrow-down"></span>
-                        </td>
-                        <td><input type="number" name="upperThres" min="1" max="100" /></td>
-                        <td>
-                            <span class="table-remove glyphicon glyphicon-remove"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">Neutral</td>
-                        <td><input type="color"  value="#ff8000" /></td>
-                        <td>
-                            <span class="table-up glyphicon glyphicon-arrow-up"></span>
-                            <span class="table-down glyphicon glyphicon-arrow-down"></span>
-                        </td>
-                        <td><input type="number" name="upperThres" min="1" max="100" /></td>
-                        <td>
-                            <span class="table-remove glyphicon glyphicon-remove"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td contenteditable="true">Bad</td>
-                        <td><input type="color"  value="#ff0000" /></td>
-                        <td>
-                            <span class="table-up glyphicon glyphicon-arrow-up"></span>
-                            <span class="table-down glyphicon glyphicon-arrow-down"></span>
-                        </td>
-                        <td><input type="number" name="upperThres" min="1" max="100" /></td>
-                        <td>
-                            <span class="table-remove glyphicon glyphicon-remove"></span>
-                        </td>
-                    </tr>
-                    <!-- This is our clonable table line -->
-                    <tr class="hide">
-                        <td contenteditable="true">Good</td>
-                        <td><input type="color"  value="#00ff00" /></td>
-                        <td>
-                            <span class="table-up glyphicon glyphicon-arrow-up"></span>
-                            <span class="table-down glyphicon glyphicon-arrow-down"></span>
-                        </td>
-                        <td><input class="hide" type="number" name="upperThres" min="1" max="100" value="0"/></td>
-                        <td>
-                            <span class="table-remove glyphicon glyphicon-remove"></span>
-                        </td>
-                    </tr>
                 </table>
+            </div>
+            <div>
+                <button class="btn btn-primary pull-right" id="saveFactorCategories" style="width: 5em">Save</button>
             </div>
         </div>
     </div>

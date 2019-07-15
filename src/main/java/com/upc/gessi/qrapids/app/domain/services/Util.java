@@ -127,6 +127,62 @@ public class Util {
         }
     }
 
+    @GetMapping("/api/strategicIndicators/categories")
+    public List<DTOCategory> getSICategories () {
+        List<SICategory> siCategoryList = SICatRep.findAll();
+        List<DTOCategory> dtoCategoryList = new ArrayList<>();
+        for (SICategory siCategory : siCategoryList) {
+            dtoCategoryList.add(new DTOCategory(siCategory.getId(), siCategory.getName(), siCategory.getColor()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/strategicIndicators/categories")
+    @ResponseBody
+    public void newSICategories (HttpServletRequest request, HttpServletResponse response) {
+        JsonParser parser = new JsonParser();
+        JsonArray sic = parser.parse(request.getParameter("SICat")).getAsJsonArray();
+        try {
+            if (sic.size() > 1) {
+                qmasi.deleteAllCategories();
+                qmasi.newCategories(sic);
+                response.setStatus(HttpServletResponse.SC_CREATED);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/api/qualityFactors/categories")
+    public List<DTOCategoryThreshold> getFactorCategories () {
+        List<QFCategory> factorCategoryList = QFCatRep.findAll();
+        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+        for (QFCategory qfCategory : factorCategoryList) {
+            dtoCategoryList.add(new DTOCategoryThreshold(qfCategory.getId(), qfCategory.getName(), qfCategory.getColor(), qfCategory.getUpperThreshold()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/qualityFactors/categories")
+    @ResponseBody
+    public void newFactorCategories (HttpServletRequest request, HttpServletResponse response) {
+        JsonParser parser = new JsonParser();
+        JsonArray qfc = parser.parse(request.getParameter("QFCat")).getAsJsonArray();
+        try {
+            if (qfc.size() > 1) {
+                qmaqf.deleteAllCategories();
+                qmaqf.newCategories(qfc);
+                response.setStatus(HttpServletResponse.SC_CREATED);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(value = "/api/newStrategicIndicator", method = RequestMethod.POST)
     public @ResponseBody
     void newSI(@RequestParam(value = "prj") String prj, HttpServletRequest request, HttpServletResponse response) {
