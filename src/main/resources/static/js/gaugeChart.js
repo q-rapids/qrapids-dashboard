@@ -9,6 +9,20 @@ var target;
 var tau = Math.PI / 2;
 var urlLink;
 
+function checkCategories() {
+    $.ajax({
+        url: '../api/strategicIndicators/categories',
+        type: "GET",
+        success: function(categories) {
+            if (categories.length === 0) {
+                alert("You need to define Strategic Indicator categories in order to see the chart correctly. " +
+                    "Please, go to the Categories section of the Configuration menu and define them.");
+            }
+        }
+    });
+}
+checkCategories();
+
 function getData(width, height, showButtons, chartHyperlinked, color) {
     var serverUrl = sessionStorage.getItem("serverUrl");
     var url = "/api/StrategicIndicators/CurrentEvaluation";
@@ -189,20 +203,6 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         if (showButtons) {
             var br = document.createElement("br");
             div.appendChild(br);
-
-            var editBtn = document.createElement("button");
-            editBtn.id = "buttonEdit"+data[i].dbId;
-            editBtn.dbId = data[i].dbId;
-            editBtn.classList.add('btn');
-            editBtn.classList.add('btn-default');
-            editBtn.style.marginRight = "5px";
-            editBtn.onclick = function () {
-                location.href = "../EditStrategicIndicators/" + this.dbId;
-            };
-            editBtn.appendChild(document.createTextNode("Edit"));
-            if (data[i].dbId == null) editBtn.disabled = true;
-            div.appendChild(editBtn);
-
 
             var feedbackBtn= document.createElement("button");
             feedbackBtn.id = "buttonFeedback"+data[i].dbId;

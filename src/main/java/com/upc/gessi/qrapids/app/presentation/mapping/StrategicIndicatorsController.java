@@ -66,4 +66,14 @@ public class StrategicIndicatorsController {
     public String FeedbackReport(){
         return "StrategicIndicators/AdditionalScreens/FeedbackReport";
     }
+
+    @RequestMapping("/StrategicIndicators/Configuration")
+    public String Config(){
+        return "StrategicIndicators/AdditionalScreens/StrategicIndicatorsConfig";
+    }
+
+    @RequestMapping("/Categories/Configuration")
+    public String CategoriesConfig () {
+        return "StrategicIndicators/AdditionalScreens/CategoriesConfig";
+    }
 }
