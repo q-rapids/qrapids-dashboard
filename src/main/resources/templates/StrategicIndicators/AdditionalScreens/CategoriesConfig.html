@@ -16,6 +16,7 @@
         <ul id="ElementList" class="list-group">
             <li id="SICategoriesButton" class="list-group-item category-element active">Strategic Indicators</li>
             <li id="FactorsCategoriesButton" class="list-group-item category-element">Factors</li>
+            <li id="MetricsCategoriesButton" class="list-group-item category-element">Metrics</li>
         </ul>
     </div>
     <div id="Categories">
@@ -55,6 +56,25 @@
             </div>
             <div>
                 <button class="btn btn-primary pull-right" id="saveFactorCategories" style="width: 5em">Save</button>
+            </div>
+        </div>
+        <div id = "MetricsCategories" style="display: none">
+            <h3>Quality Factors Categories</h3>
+            <div id="tableMetricsdiv">
+                <table id="tableMetrics" class="table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Color</th>
+                        <th>Upper Threshold (%)</th>
+                        <th></th>
+                        <th>
+                            <span class="table-addMetric glyphicon glyphicon-plus"></span>
+                        </th>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <button class="btn btn-primary pull-right" id="saveMetricCategories" style="width: 5em">Save</button>
             </div>
         </div>
     </div>

@@ -1,9 +1,11 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 
+import com.google.gson.JsonElement;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
@@ -106,6 +108,9 @@ public class Util {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
+    private MetricRepository metricRepository;
+
 
     @RequestMapping("/api/newCategories")
     public @ResponseBody
@@ -174,6 +179,40 @@ public class Util {
             if (qfc.size() > 1) {
                 qmaqf.deleteAllCategories();
                 qmaqf.newCategories(qfc);
+                response.setStatus(HttpServletResponse.SC_CREATED);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/api/metrics/categories")
+    public List<DTOCategoryThreshold> getMetricCategories () {
+        Iterable<MetricCategory> metricCategoryList = metricRepository.findAll();
+        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+        for (MetricCategory metricCategory : metricCategoryList) {
+            dtoCategoryList.add(new DTOCategoryThreshold(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/metrics/categories")
+    @ResponseBody
+    public void newMetricsCategories (HttpServletRequest request, HttpServletResponse response) {
+        JsonParser parser = new JsonParser();
+        JsonArray metricsCategories = parser.parse(request.getParameter("MCat")).getAsJsonArray();
+        try {
+            if (metricsCategories.size() > 1) {
+                metricRepository.deleteAll();
+                for (JsonElement c : metricsCategories) {
+                    MetricCategory metricCategory = new MetricCategory();
+                    metricCategory.setName(c.getAsJsonObject().getAsJsonPrimitive("name").getAsString());
+                    metricCategory.setColor(c.getAsJsonObject().getAsJsonPrimitive("color").getAsString());
+                    metricCategory.setUpperThreshold((float)c.getAsJsonObject().getAsJsonPrimitive("upperThreshold").getAsInt()/100f);
+                    metricRepository.save(metricCategory);
+                }
                 response.setStatus(HttpServletResponse.SC_CREATED);
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

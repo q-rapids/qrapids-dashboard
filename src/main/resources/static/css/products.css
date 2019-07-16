@@ -18,7 +18,7 @@
 	flex-direction: column;
 }
 
-#productForm, #SIForm, #SICategories, #FactorsCategories {
+#productForm, #SIForm, #SICategories, #FactorsCategories, #MetricsCategories {
 	margin: 1%;
 	display: flex;
 	flex-direction: column;
