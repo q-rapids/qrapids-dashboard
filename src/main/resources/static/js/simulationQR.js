@@ -8,6 +8,7 @@ var qualityFactors = [];
 var metrics = [];
 var detailedCharts = [];
 var factorsCharts = [];
+var categories = [];
 
 var alertId;
 var patternId;
@@ -296,6 +297,18 @@ function getAllMetricsAndShowMetricForPattern (patternId){
         type: "GET",
         success: function (response) {
             metrics = response;
+            getMetricsCategoriesAndShow(patternId);
+        }
+    });
+}
+
+function getMetricsCategoriesAndShow (patternId) {
+    var url = "../api/metrics/categories";
+    $.ajax({
+        url : url,
+        type: "GET",
+        success: function (response) {
+            categories = response;
             getAndShowMetricsForPattern(patternId);
         }
     });
@@ -326,6 +339,25 @@ function getAndShowMetricsForPattern (patternId) {
 }
 
 function showMetricSlider (metric) {
+    // Metrics categories
+    var rangeHighlights = [];
+    var start = 0;
+    categories.sort(function (a, b) {
+        return a.upperThreshold - b.upperThreshold;
+    });
+    for (var i = 0; i < categories.length; i++) {
+        var end = categories[i].upperThreshold;
+        var offset = 0;
+        if (end < 1) offset = 0.02;
+        var range = {
+            start: start,
+            end: end + offset,
+            class: categories[i].name
+        };
+        rangeHighlights.push(range);
+        start = end;
+    }
+
     var metricsDiv = $("#metricsSliders");
     var div = document.createElement('div');
     div.id = "div" + metric.id;
@@ -342,7 +374,7 @@ function showMetricSlider (metric) {
 
     var slider = document.createElement("input");
     slider.id = "sliderValue" + metric.id;
-    slider.style.width = "80%";
+    slider.style.width = "100%";
     var sliderConfig = {
         id: "slider" + metric.id,
         min: 0,
@@ -350,6 +382,8 @@ function showMetricSlider (metric) {
         step: 0.01,
         value: metric.value
     };
+    sliderConfig.rangeHighlights = [];
+    Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
     // Add original value
     var start, end;
     if (metric.value === 0) {
@@ -364,15 +398,17 @@ function showMetricSlider (metric) {
         start = metric.value - 0.015;
         end = metric.value + 0.015;
     }
-    sliderConfig.rangeHighlights = [{
+    sliderConfig.rangeHighlights.push({
         start: start,
         end: end
-    }];
+    });
     div.appendChild(slider);
     metricsDiv.append(div);
     $("#"+slider.id).slider(sliderConfig);
     $(".slider-rangeHighlight").css("background", currentColor);
-
+    for (var j = 0; j < categories.length; j++) {
+        $(".slider-rangeHighlight." + categories[j].name).css("background", categories[j].color)
+    }
     //Change QR value
     updateQRValueText(metric.value.toFixed(2));
 }
