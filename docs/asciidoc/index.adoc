@@ -1,0 +1,170 @@
+= Q-Rapids Dashboard API REST Documentation
+v0.3.5, {docdate}
+:toc: left
+
+:sectnums:
+
+== Introduction
+Q-Rapids dashboard RESTful services
+
+== Alerts
+
+
+=== Get all alerts
+
+operation::alerts/get-all[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+:numbered:
+
+
+=== Create alert
+
+operation::alerts/add-alert[snippets='request-fields,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response missing body parameter
+include::{snippets}/alerts/add-alert-missing-param/http-response.adoc[]
+
+==== HTTP response wrong element type
+include::{snippets}/alerts/add-alert-wrong-type/http-response.adoc[]
+
+:numbered:
+
+=== Notify alert (deprecated)
+
+operation::alerts/notify-alert[snippets='request-fields,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response missing body parameter
+include::{snippets}/alerts/notify-alert-missing-param/http-response.adoc[]
+
+==== HTTP response wrong element type
+include::{snippets}/alerts/notify-alert-wrong-type/http-response.adoc[]
+
+:numbered:
+
+
+=== Count new alerts
+
+operation::alerts/count-new[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/count-new-wrong-project/http-response.adoc[]
+
+:numbered:
+
+
+=== Get quality requirement patterns for alert
+
+operation::alerts/get-qr-patterns[snippets='path-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response alert not found
+include::{snippets}/alerts/get-qr-patterns-alert-not-found/http-response.adoc[]
+
+:numbered:
+
+
+=== Get alert decision
+
+operation::alerts/get-decision[snippets='path-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response alert not found
+include::{snippets}/alerts/get-decision-alert-not-found/http-response.adoc[]
+
+:numbered:
+
+
+=== Ignore quality requirement for alert
+
+operation::alerts/ignore-qr[snippets='path-parameters,request-parameters,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/ignore-qr-wrong-project/http-response.adoc[]
+
+==== HTTP response alert not found
+include::{snippets}/alerts/ignore-qr-alert-not-found/http-response.adoc[]
+
+:numbered:
+
+
+=== Add quality requirement for alert
+
+operation::alerts/add-qr-from-alert[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response alert not found
+include::{snippets}/alerts/add-qr-from-alert-not-found/http-response.adoc[]
+
+==== HTTP response error on backlog saving
+include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+
+:numbered:
+
+
+== Quality requirements
+
+=== Get all quality requirements
+
+operation::qrs/get-all-qrs[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/qrs/get-all-qrs-wrong-project/http-response.adoc[]
+
+:numbered:
+
+
+=== Add quality requirement
+
+operation::qrs/add-qr[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response error on backlog saving
+include::{snippets}/qrs/add-qr-backlog-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Ignore quality requirement
+
+operation::qrs/ignore-qr[snippets='request-parameters,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/qrs/ignore-qr-wrong-project/http-response.adoc[]
+
+:numbered:
+
+
+=== Get all quality requirement patterns
+
+operation::qrs/get-all-qr-patterns[snippets='curl-request,response-fields,http-response']
+
+
+=== Get single quality requirement pattern
+
+operation::qrs/get-single-qr-pattern[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== Get metric for quality requirement pattern
+
+operation::qrs/get-pattern-metric[snippets='path-parameters,curl-request,response-fields,http-response']

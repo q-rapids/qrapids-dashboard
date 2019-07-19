@@ -299,7 +299,7 @@ app.controller('TablesCtrl', function($scope, $http) {
 
         var ignoreQR = function () {
             var rationale = $("#QRDecisionRationale").val();
-            var ignoreQRUrl = "api/alerts/"+alertId+"/ignore?prj=" + sessionStorage.getItem("prj");
+            var ignoreQRUrl = "api/alerts/"+alertId+"/qr/ignore?prj=" + sessionStorage.getItem("prj");
             var body = new URLSearchParams();
             body.set('rationale', rationale);
             body.set('patternId', QRCandidate.id);
@@ -398,7 +398,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.newAlert = function () {
-        var url = "api/notifyAlert";
+        var url = "api/alerts";
         $http({
             method: "POST",
             url: url,
@@ -419,7 +419,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.newAlertFactor = function () {
-        var url = "api/notifyAlert";
+        var url = "api/alerts";
         $http({
             method: "POST",
             url: url,

@@ -621,7 +621,7 @@ $('#decision').click(function () {
     var ignoreQR = function () {
         var rationale = $("#QRDecisionRationale").val();
         var ignoreQRUrl;
-        if (alertId) ignoreQRUrl = "../api/alerts/"+alertId+"/ignore";
+        if (alertId) ignoreQRUrl = "../api/alerts/"+alertId+"/qr/ignore";
         else ignoreQRUrl = "../api/qr/ignore";
         var body = new URLSearchParams();
         body.set('rationale', rationale);
