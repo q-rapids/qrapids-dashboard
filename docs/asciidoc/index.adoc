@@ -168,3 +168,35 @@ operation::qrs/get-single-qr-pattern[snippets='path-parameters,curl-request,resp
 === Get metric for quality requirement pattern
 
 operation::qrs/get-pattern-metric[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+
+== Decisions
+
+=== Get all decisions
+
+operation::decisions/get-all[snippets='request-parameters,curl-request,response-fields,http-response']
+
+
+== Feedback
+
+=== Add new feedback
+
+operation::feedback/add-feedback[snippets='path-parameters,request-fields,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response missing body parameter
+include::{snippets}/feedback/add-feedback-missing-param/http-response.adoc[]
+
+:numbered:
+
+
+=== Get feedback for strategic indicator
+
+operation::feedback/get-feedback[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== Get feedback report for strategic indicator
+
+operation::feedback/get-feedback-report[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']

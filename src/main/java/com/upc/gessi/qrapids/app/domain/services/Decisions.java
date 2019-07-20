@@ -11,8 +11,10 @@ import com.upc.gessi.qrapids.app.dto.DTODecisionQualityRequirement;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import qr.QRGenerator;
 import qr.models.QualityRequirementPattern;
@@ -40,7 +42,8 @@ public class Decisions {
     QRGeneratorFactory qrGeneratorFactory;
 
     @GetMapping("/api/decisions")
-    public List<DTODecision> getDecisions (@RequestParam(value = "prj") String prj, @RequestParam(required = false, defaultValue = "false") boolean qrs, @RequestParam(required = false) String from, @RequestParam(required = false) String to) throws Exception {
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTODecision> getDecisions (@RequestParam(value = "prj") String prj, @RequestParam(required = false, defaultValue = "false") boolean qrs, @RequestParam(required = false) String from, @RequestParam(required = false) String to) {
         LocalDate fromDate = LocalDate.ofEpochDay(0);
         if (from != null) {
             fromDate = LocalDate.parse(from);

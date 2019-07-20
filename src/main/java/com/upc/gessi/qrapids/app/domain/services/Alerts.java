@@ -27,7 +27,6 @@ import qr.models.QualityRequirementPattern;
 import qr.models.enumerations.Type;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @RestController

@@ -41,7 +41,7 @@ app.controller('TablesCtrl', function($scope, $http) {
 
     $scope.getFeedback = function(){
         var id = getParameterByName('id');
-        var url =  "../api/Feedback_Factors/" + id;
+        var url =  "../api/strategicIndicators/" + id + "/feedbackReport";
         $http({
             method : "GET",
             url : url

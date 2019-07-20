@@ -8,11 +8,14 @@ import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
 import com.upc.gessi.qrapids.app.dto.DTODecisionQualityRequirement;
+import org.apache.tomcat.jni.Local;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -22,18 +25,31 @@ import qr.models.FixedPart;
 import qr.models.Form;
 import qr.models.QualityRequirementPattern;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DecisionsTest {
 
     private MockMvc mockMvc;
+
+    @Rule
+    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     @Mock
     private ProjectRepository projectRepository;
@@ -55,6 +71,7 @@ public class DecisionsTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(decisionsController)
+                .apply(documentationConfiguration(this.restDocumentation))
                 .build();
     }
 
@@ -105,7 +122,8 @@ public class DecisionsTest {
         Long decisionId = 2L;
         DecisionType decisionType = DecisionType.ADD;
         String rationale = "Not important";
-        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = format.parse("2019-07-15");
         String requirement = "The ratio of files without duplications should be at least 0.8";
         String description = "The ratio of files without duplications should be at least the given value";
         String goal = "Improve the quality of the source code";
@@ -121,7 +139,9 @@ public class DecisionsTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/decisions")
                 .param("prj", projectExternalId)
-                .param("qrs", "true");
+                .param("qrs", "true")
+                .param("from", "2019-07-07")
+                .param("to", "2019-07-31");
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -137,7 +157,49 @@ public class DecisionsTest {
                 .andExpect(jsonPath("$[0].description", is(description)))
                 .andExpect(jsonPath("$[0].goal", is(goal)))
                 .andExpect(jsonPath("$[0].backlogId", is(qrBacklogId)))
-                .andExpect(jsonPath("$[0].backlogUrl", is(qrBacklogUrl)));
+                .andExpect(jsonPath("$[0].backlogUrl", is(qrBacklogUrl)))
+                .andDo(document("decisions/get-all",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("qrs")
+                                        .optional()
+                                        .description("Indicates if the result must include the information about the quality requirements associated to the decisions"),
+                                parameterWithName("from")
+                                        .optional()
+                                        .description("Starting date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("to")
+                                        .optional()
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Decision identifier"),
+                                fieldWithPath("[].type")
+                                        .description("Decision type (ADD or IGNORE)"),
+                                fieldWithPath("[].date")
+                                        .description("Decision creation date"),
+                                fieldWithPath("[].author")
+                                        .description("Name of the decision creator"),
+                                fieldWithPath("[].rationale")
+                                        .description("User rationale behind the decision"),
+                                fieldWithPath("[].patternId")
+                                        .description("Identifier of the quality requirement pattern being added or ignored"),
+                                fieldWithPath("[].elementId")
+                                        .description("Identifier of the element impacted by the quality requirement"),
+                                fieldWithPath("[].requirement")
+                                        .description("Text of the added quality requirement"),
+                                fieldWithPath("[].description")
+                                        .description("Description of the added quality requirement"),
+                                fieldWithPath("[].goal")
+                                        .description("Goal of the added quality requirement"),
+                                fieldWithPath("[].backlogId")
+                                        .description("Quality requirement identifier inside the backlog"),
+                                fieldWithPath("[].backlogUrl")
+                                        .description("Link to the backlog issue containing the quality requirement")
+                        )
+                ));
 
         // Verify mock interactions
         verify(projectRepository, times(1)).findByExternalId(projectExternalId);

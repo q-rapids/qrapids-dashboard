@@ -7,28 +7,41 @@ import com.upc.gessi.qrapids.app.domain.models.FeedbackValues;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class FeedbackTest {
 
     private MockMvc mockMvc;
+
+    @Rule
+    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     @Mock
     FeedbackRepository feedbackRepository;
@@ -47,6 +60,7 @@ public class FeedbackTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(feedbackController)
+                .apply(documentationConfiguration(this.restDocumentation))
                 .build();
     }
 
@@ -94,18 +108,43 @@ public class FeedbackTest {
 
         // Perform request
         Gson gson = new Gson();
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/feedback")
-                .param("id", strategicIndicatorId.toString())
-                .param("newvalue", value.toString())
-                .param("oldvalue", oldValue.toString())
-                .param("factorIds", gson.toJson(factorIds))
-                .param("factorNames", gson.toJson(factorNames))
-                .param("factorValues", gson.toJson(factorValues))
-                .param("factorEvaluationDates", gson.toJson(factorEvaluationDates));
+        Map<String, String> feedback = new HashMap<>();
+        feedback.put("newvalue", value.toString());
+        feedback.put("oldvalue", oldValue.toString());
+        feedback.put("factorIds", gson.toJson(factorIds));
+        feedback.put("factorNames", gson.toJson(factorNames));
+        feedback.put("factorValues", gson.toJson(factorValues));
+        feedback.put("factorEvaluationDates", gson.toJson(factorEvaluationDates));
+
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .post("/api/strategicIndicators/{id}/feedback", strategicIndicatorId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(feedback));
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted());
+                .andExpect(status().isAccepted())
+                .andDo(document("feedback/add-feedback",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic indicator identifier")
+                        ),
+                        requestFields(
+                                fieldWithPath("newvalue")
+                                        .description("New strategic indicator value"),
+                                fieldWithPath("oldvalue")
+                                        .description("Old strategic indicator value"),
+                                fieldWithPath("factorIds")
+                                        .description("List of the factors identifiers"),
+                                fieldWithPath("factorNames")
+                                        .description("List of the factors names"),
+                                fieldWithPath("factorValues")
+                                        .description("List of the factors values"),
+                                fieldWithPath("factorEvaluationDates")
+                                        .description("List of the factors evaluation dates")
+                        )
+                ));
 
         // Verify mock interactions
         verify(feedbackRepository, times(1)).save(any(com.upc.gessi.qrapids.app.domain.models.Feedback.class));
@@ -117,12 +156,24 @@ public class FeedbackTest {
 
     @Test
     public void addNewFeedbackMissingParams() throws Exception {
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/feedback")
-                .param("id", "1");
+        Long strategicIndicatorId = 1L;
+        Float value = 0.75f;
+
+        Gson gson = new Gson();
+        Map<String, String> feedback = new HashMap<>();
+        feedback.put("newvalue", value.toString());
+
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .post("/api/strategicIndicators/{id}/feedback", strategicIndicatorId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(feedback));
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isMethodNotAllowed());
+                .andExpect(status().isBadRequest())
+                .andDo(document("feedback/add-feedback-missing-param",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -139,8 +190,8 @@ public class FeedbackTest {
         when(feedbackRepository.getFeedback(strategicIndicatorId)).thenReturn(feedbackList);
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/Feedback/" + strategicIndicatorId);
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/strategicIndicator/{id}/feedback", strategicIndicatorId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -150,7 +201,29 @@ public class FeedbackTest {
                 .andExpect(jsonPath("$[0].author", is(nullValue())))
                 .andExpect(jsonPath("$[0].appUser", is(nullValue())))
                 .andExpect(jsonPath("$[0].newvalue", is(newValue)))
-                .andExpect(jsonPath("$[0].oldvalue", is(oldValue)));
+                .andExpect(jsonPath("$[0].oldvalue", is(oldValue)))
+                .andDo(document("feedback/get-feedback",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic indicator identifier")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].siId")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].date")
+                                        .description("Feedback creation date"),
+                                fieldWithPath("[].author")
+                                        .description("Feedback creator name"),
+                                fieldWithPath("[].appUser")
+                                        .description("Feedback creator user"),
+                                fieldWithPath("[].newvalue")
+                                        .description("New strategic indicator value"),
+                                fieldWithPath("[].oldvalue")
+                                        .description("Old strategic indicator value")
+                        )
+                ));
 
         // Verify mock interactions
         verify(feedbackRepository, times(1)).getFeedback(strategicIndicatorId);
@@ -195,8 +268,8 @@ public class FeedbackTest {
         when(feedFactorRepository.getFeedbackReport(strategicIndicatorId, projectId)).thenReturn(feedbackFactorsList);
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/FeedbackReport/" + strategicIndicatorId)
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/strategicIndicator/{id}/feedbackReport", strategicIndicatorId)
                 .param("prj", projectId);
 
         this.mockMvc.perform(requestBuilder)
@@ -217,7 +290,45 @@ public class FeedbackTest {
                 .andExpect(jsonPath("$[0].oldCategoryColor", is(oldCategoryColor)))
                 .andExpect(jsonPath("$[0].newvalue", is(newValue)))
                 .andExpect(jsonPath("$[0].newCategory", is(newCategory)))
-                .andExpect(jsonPath("$[0].newCategoryColor", is(newCategoryColor)));
+                .andExpect(jsonPath("$[0].newCategoryColor", is(newCategoryColor)))
+                .andDo(document("feedback/get-feedback-report",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic indicator identifier")
+                        ),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].siId")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].siName")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].date")
+                                        .description("Feedback creation date"),
+                                fieldWithPath("[].fact")
+                                        .description("List with factor names"),
+                                fieldWithPath("[].factVal")
+                                        .description("List with factor values"),
+                                fieldWithPath("[].author")
+                                        .description("Feedback creator name"),
+                                fieldWithPath("[].oldvalue")
+                                        .description("Old strategic indicator value"),
+                                fieldWithPath("[].oldCategory")
+                                        .description("Old strategic indicator category name"),
+                                fieldWithPath("[].oldCategoryColor")
+                                        .description("Old strategic indicator category color"),
+                                fieldWithPath("[].newvalue")
+                                        .description("New strategic indicator value"),
+                                fieldWithPath("[].newCategory")
+                                        .description("New strategic indicator category name"),
+                                fieldWithPath("[].newCategoryColor")
+                                        .description("New strategic indicator category color")
+                        )
+                ));
 
         // Verify mock interactions
         verify(feedFactorRepository, times(1)).getFeedbackReport(strategicIndicatorId, projectId);
