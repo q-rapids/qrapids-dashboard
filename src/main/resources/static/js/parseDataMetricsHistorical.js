@@ -2,7 +2,7 @@ var isSi = false;
 var isdsi = false;
 var isqf = false;
 
-var url = parseURLMetrics("../api/Metrics/HistoricalData");
+var url = parseURLMetrics("../api/metrics/historical");
 
 //initialize data vectors
 var texts = [];

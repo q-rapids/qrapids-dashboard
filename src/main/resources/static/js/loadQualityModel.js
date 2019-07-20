@@ -152,14 +152,14 @@ function showNodeDetails(node) {
         getAndShowElement(urlSI);
     }
     else if (node.color === factorColor) {
-        var urlFactor = "/api/QualityFactors/"+ node.id + "/CurrentEvaluation";
+        var urlFactor = "/api/qualityFactors/"+ node.id + "/current";
         if (serverUrl) {
             urlFactor = serverUrl + urlFactor;
         }
         getAndShowElement(urlFactor);
     }
     else {
-        var urlMetric = "/api/Metrics/"+ node.id + "/CurrentEvaluation";
+        var urlMetric = "/api/metrics/"+ node.id + "/current";
         if (serverUrl) {
             urlMetric = serverUrl + urlMetric;
         }

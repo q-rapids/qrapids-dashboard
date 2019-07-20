@@ -508,9 +508,9 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextSimple();
-            var url = "../api/QualityFactors/CurrentEvaluation/" + id;
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/current";
         } else {
-            var url = "../api/QualityFactors/CurrentEvaluation";
+            var url = "../api/qualityFactors/current";
         }
         $http({
             method : "GET",
@@ -539,9 +539,9 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextSimple();
-            var url = "../api/QualityFactors/HistoricalData/" + id;
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/historical";
         } else {
-            var url = "../api/QualityFactors/HistoricalData";
+            var url = "../api/qualityFactors/historical";
         }
         $http({
             method : "GET",
@@ -573,10 +573,10 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextComplex();
-            var url = "../api/Metrics/CurrentEvaluation/" + id;
+            var url = "../api/qualityFactors/" + id + "/metrics/current"
         }
         else {
-            var url = "../api/Metrics/CurrentEvaluation";
+            var url = "../api/metrics/current";
         }
         $http({
             method : "GET",
@@ -602,10 +602,10 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextComplex();
-            var url = "../api/Metrics/HistoricalData/" + id;
+            var url = "../api/qualityFactors/" + id + "/metrics/historical";
         }
         else {
-            var url = "../api/Metrics/HistoricalData";
+            var url = "../api/metrics/historicalData";
         }
         $http({
             method : "GET",

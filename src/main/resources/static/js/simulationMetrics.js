@@ -8,7 +8,7 @@ var detailedCharts = [];
 var factorsCharts = [];
 
 function getAllMetrics(){
-    var url = "../api/Metrics/CurrentEvaluation";
+    var url = "../api/metrics/current";
     $.ajax({
         url : url,
         type: "GET",
@@ -183,7 +183,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
 function getFactors () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/QualityFactors/CurrentEvaluation",
+        url: "../api/qualityFactors/current",
         cache: false,
         type: "GET",
         async: true,
@@ -353,7 +353,7 @@ $('#apply').click(function () {
     var date = metrics[0].date;
 
     $.ajax({
-        url: "../api/QualityFactors/Simulate?date="+date,
+        url: "../api/qualityFactors/simulate?date="+date,
         data: JSON.stringify(newMetrics),
         type: "POST",
         contentType: 'application/json',

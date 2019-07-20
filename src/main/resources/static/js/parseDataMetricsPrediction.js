@@ -1,6 +1,6 @@
 var isSi = false;
 
-var url = parseURLMetrics("../api/Metrics/PredictionData");
+var url = parseURLMetrics("../api/metrics/prediction");
 
 //initialize data vectors
 var text = [];

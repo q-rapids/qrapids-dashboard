@@ -11,7 +11,7 @@ function moveFactors() {
 }
 
 $.ajax({
-    url: "../api/QualityFactors/CurrentEvaluation",
+    url: "../api/qualityFactors/current",
     type: "GET",
     success: function(data) {
         for(i = 0; i < data.length; ++i) {

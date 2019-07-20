@@ -7,7 +7,7 @@ var upperThresh;
 var angle;
 var target;
 var tau = Math.PI / 2;
-var url = parseURLMetrics('../api/Metrics/CurrentEvaluation');
+var url = parseURLMetrics('../api/metrics/current');
 var urlLink;
 
 function getData(width, height) {
