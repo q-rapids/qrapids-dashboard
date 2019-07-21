@@ -37,7 +37,7 @@ public class FactorsService {
     @Autowired
     private QFCategoryRepository qfCategoryRepository;
 
-    @GetMapping("/api/qualityFactors/current")
+    @GetMapping("/api/qualityFactors/metrics/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOQualityFactor> getQualityFactorsEvaluations(@RequestParam(value = "prj") String prj) {
         try {
@@ -61,7 +61,7 @@ public class FactorsService {
         }
     }
 
-    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/current")
+    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOQualityFactor> getQualityFactorsEvaluations(@RequestParam(value = "prj") String prj, @PathVariable String id) {
         try {
@@ -73,7 +73,7 @@ public class FactorsService {
         }
     }
 
-    @GetMapping("/api/qualityFactors/historical")
+    @GetMapping("/api/qualityFactors/metrics/historical")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
     List<DTOQualityFactor> getQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
@@ -86,7 +86,7 @@ public class FactorsService {
         }
     }
 
-    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/historical")
+    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/historical")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
     List<DTOQualityFactor> getQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
@@ -122,7 +122,7 @@ public class FactorsService {
         return dtoFactorCategories;
     }
 
-    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/prediction")
+    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
     List<DTOQualityFactor> getQualityFactorsPredicitionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
@@ -135,7 +135,7 @@ public class FactorsService {
         }
     }
 
-    @GetMapping("/api/qualityFactors/prediction")
+    @GetMapping("/api/qualityFactors/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
     List<DTOQualityFactor> getQualityFactorsPredicitionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {

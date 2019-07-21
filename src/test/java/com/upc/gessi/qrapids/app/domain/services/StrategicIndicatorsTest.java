@@ -9,13 +9,17 @@ import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.util.Pair;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -26,14 +30,25 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.upc.gessi.qrapids.app.testHelpers.HelperFunctions.getFloatAsDouble;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class StrategicIndicatorsTest {
 
     private MockMvc mockMvc;
+
+    @Rule
+    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     @Mock
     private QMAFakedata qmaFakedata;
@@ -59,15 +74,12 @@ public class StrategicIndicatorsTest {
     private DTODetailedStrategicIndicator dtoDetailedStrategicIndicator;
     private List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
 
-    private Double getFloatAsDouble(Float fValue) {
-        return Double.valueOf(fValue.toString());
-    }
-
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(strategicIndicatorsController)
+                .apply(documentationConfiguration(this.restDocumentation))
                 .build();
 
         projectExternalId = "test";
@@ -145,7 +157,7 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/StrategicIndicators/CurrentEvaluation")
+                .get("/api/strategicIndicators/current")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -181,7 +193,53 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].categories_description", is(dtoStrategicIndicatorEvaluation.getCategories_description())))
                 .andExpect(jsonPath("$[0].hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$[0].hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
-                .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())));
+                .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andDo(document("si/current",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].dbId")
+                                        .description("Strategic indicator database identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].probabilities")
+                                        .description("Strategic indicator categories list"),
+                                fieldWithPath("[].probabilities[].id")
+                                        .description("Strategic indicator category identifier"),
+                                fieldWithPath("[].probabilities[].label")
+                                        .description("Strategic indicator category label"),
+                                fieldWithPath("[].probabilities[].value")
+                                        .description("Strategic indicator category probability"),
+                                fieldWithPath("[].probabilities[].color")
+                                        .description("Strategic indicator category hexadecimal color"),
+                                fieldWithPath("[].probabilities[].upperThreshold")
+                                        .description("Strategic indicator category upper threshold"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].datasource")
+                                        .description("Strategic indicator source of data"),
+                                fieldWithPath("[].categories_description")
+                                        .description("Array with the strategic indicator categories and thresholds"),
+                                fieldWithPath("[].hasBN")
+                                        .description("Does the strategic indicator have a Bayesian Network?"),
+                                fieldWithPath("[].hasFeedback")
+                                        .description("Does the strategic indicator have any feedback"),
+                                fieldWithPath("[].forecastingError")
+                                        .description("Errors in the forecasting"))
+                ));
 
 
         // Verify mock interactions
@@ -196,11 +254,15 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/StrategicIndicators/CurrentEvaluation")
+                .get("/api/strategicIndicators/current")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andDo(document("si/current-conflict",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -210,11 +272,15 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/StrategicIndicators/CurrentEvaluation")
+                .get("/api/strategicIndicators/current")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/current-read-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -223,8 +289,8 @@ public class StrategicIndicatorsTest {
         when(qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, dtoStrategicIndicatorEvaluation.getId())).thenReturn(dtoStrategicIndicatorEvaluation);
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/StrategicIndicators/" + dtoStrategicIndicatorEvaluation.getId() + "/CurrentEvaluation")
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/strategicIndicators/{id}/current", dtoStrategicIndicatorEvaluation.getId())
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -259,7 +325,56 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$.categories_description", is(dtoStrategicIndicatorEvaluation.getCategories_description())))
                 .andExpect(jsonPath("$.hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$.hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
-                .andExpect(jsonPath("$.forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())));
+                .andExpect(jsonPath("$.forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andDo(document("si/single-current",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic Indicator identifier")),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier")),
+                        responseFields(
+                                fieldWithPath("id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("dbId")
+                                        .description("Strategic indicator database identifier"),
+                                fieldWithPath("name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("probabilities")
+                                        .description("Strategic indicator categories list"),
+                                fieldWithPath("probabilities[].id")
+                                        .description("Strategic indicator category identifier"),
+                                fieldWithPath("probabilities[].label")
+                                        .description("Strategic indicator category label"),
+                                fieldWithPath("probabilities[].value")
+                                        .description("Strategic indicator category probability"),
+                                fieldWithPath("probabilities[].color")
+                                        .description("Strategic indicator category hexadecimal color"),
+                                fieldWithPath("probabilities[].upperThreshold")
+                                        .description("Strategic indicator category upper threshold"),
+                                fieldWithPath("date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("datasource")
+                                        .description("Strategic indicator source of data"),
+                                fieldWithPath("categories_description")
+                                        .description("Array with the strategic indicator categories and thresholds"),
+                                fieldWithPath("hasBN")
+                                        .description("Does the strategic indicator have a Bayesian Network?"),
+                                fieldWithPath("hasFeedback")
+                                        .description("Does the strategic indicator have any feedback"),
+                                fieldWithPath("forecastingError")
+                                        .description("Errors in the forecasting"))
+                ));
 
 
         // Verify mock interactions
@@ -274,11 +389,15 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/StrategicIndicators/" + dtoStrategicIndicatorEvaluation.getId() + "/CurrentEvaluation")
+                .get("/api/strategicIndicators/{id}/current",dtoStrategicIndicatorEvaluation.getId())
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andDo(document("si/single-current-conflict",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -288,11 +407,15 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/StrategicIndicators/" + dtoStrategicIndicatorEvaluation.getId() + "/CurrentEvaluation")
+                .get("/api/strategicIndicators/{id}/current",dtoStrategicIndicatorEvaluation.getId())
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/single-current-read-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -306,7 +429,7 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/StrategicIndicators/HistoricalData")
+                .get("/api/strategicIndicators/historical")
                 .param("prj", projectExternalId)
                 .param("from", from)
                 .param("to", to);
@@ -344,7 +467,57 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].categories_description", is(dtoStrategicIndicatorEvaluation.getCategories_description())))
                 .andExpect(jsonPath("$[0].hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$[0].hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
-                .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())));
+                .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andDo(document("si/historical",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("from")
+                                        .description("Starting date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("to")
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].dbId")
+                                        .description("Strategic indicator database identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].probabilities")
+                                        .description("Strategic indicator categories list"),
+                                fieldWithPath("[].probabilities[].id")
+                                        .description("Strategic indicator category identifier"),
+                                fieldWithPath("[].probabilities[].label")
+                                        .description("Strategic indicator category label"),
+                                fieldWithPath("[].probabilities[].value")
+                                        .description("Strategic indicator category probability"),
+                                fieldWithPath("[].probabilities[].color")
+                                        .description("Strategic indicator category hexadecimal color"),
+                                fieldWithPath("[].probabilities[].upperThreshold")
+                                        .description("Strategic indicator category upper threshold"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].datasource")
+                                        .description("Strategic indicator source of data"),
+                                fieldWithPath("[].categories_description")
+                                        .description("Array with the strategic indicator categories and thresholds"),
+                                fieldWithPath("[].hasBN")
+                                        .description("Does the strategic indicator have a Bayesian Network?"),
+                                fieldWithPath("[].hasFeedback")
+                                        .description("Does the strategic indicator have any feedback"),
+                                fieldWithPath("[].forecastingError")
+                                        .description("Errors in the forecasting"))
+                ));
 
 
         // Verify mock interactions
@@ -363,13 +536,17 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/StrategicIndicators/HistoricalData")
+                .get("/api/strategicIndicators/historical")
                 .param("prj", projectExternalId)
                 .param("from", from)
                 .param("to", to);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andDo(document("si/historical-conflict",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -383,13 +560,17 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/StrategicIndicators/HistoricalData")
+                .get("/api/strategicIndicators/historical")
                 .param("prj", projectExternalId)
                 .param("from", from)
                 .param("to", to);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/historical-read-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -398,7 +579,7 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/DetailedStrategicIndicators/CurrentEvaluation")
+                .get("/api/strategicIndicators/qualityFactors/current")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -419,7 +600,43 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].rationale", is(dtoFactor.getRationale())))
                 .andExpect(jsonPath("$[0].factors[0].forecastingError", is(dtoFactor.getForecastingError())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactor.getStrategicIndicators().get(0))))
-                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())));
+                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())))
+                .andDo(document("si/detailed-current",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].factors")
+                                        .description("Quality factors that compose the strategic indicator"),
+                                fieldWithPath("[].factors[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].factors[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].factors[].description")
+                                        .description("Quality factor description"),
+                                fieldWithPath("[].factors[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].factors[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].factors[].datasource")
+                                        .description("Quality factor source of data"),
+                                fieldWithPath("[].factors[].rationale")
+                                        .description("Quality factor evaluation rationale"),
+                                fieldWithPath("[].factors[].forecastingError")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].factors[].strategicIndicators")
+                                        .description("List of the strategic indicators that use this quality factor"),
+                                fieldWithPath("[].factors[].formattedDate")
+                                        .description("Readable quality factor evaluation date"))
+                ));
 
         // Verify mock interactions
         verify(qmaDetailedStrategicIndicators, times(1)).CurrentEvaluation(null, projectExternalId);
@@ -432,11 +649,15 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/DetailedStrategicIndicators/CurrentEvaluation")
+                .get("/api/strategicIndicators/qualityFactors/current")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/detailed-current-read-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -444,8 +665,8 @@ public class StrategicIndicatorsTest {
         when(qmaDetailedStrategicIndicators.CurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/DetailedStrategicIndicators/CurrentEvaluation/" + dtoDetailedStrategicIndicator.getId())
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/strategicIndicators/{id}/qualityFactors/current", dtoDetailedStrategicIndicator.getId())
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -466,7 +687,46 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].rationale", is(dtoFactor.getRationale())))
                 .andExpect(jsonPath("$[0].factors[0].forecastingError", is(dtoFactor.getForecastingError())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactor.getStrategicIndicators().get(0))))
-                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())));
+                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())))
+                .andDo(document("si/detailed-single-current",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic indicator identifier")),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].factors")
+                                        .description("Quality factors that compose the strategic indicator"),
+                                fieldWithPath("[].factors[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].factors[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].factors[].description")
+                                        .description("Quality factor description"),
+                                fieldWithPath("[].factors[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].factors[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].factors[].datasource")
+                                        .description("Quality factor source of data"),
+                                fieldWithPath("[].factors[].rationale")
+                                        .description("Quality factor evaluation rationale"),
+                                fieldWithPath("[].factors[].forecastingError")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].factors[].strategicIndicators")
+                                        .description("List of the strategic indicators that use this quality factor"),
+                                fieldWithPath("[].factors[].formattedDate")
+                                        .description("Readable quality factor evaluation date"))
+                ));
 
         // Verify mock interactions
         verify(qmaDetailedStrategicIndicators, times(1)).CurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId);
@@ -479,11 +739,15 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/DetailedStrategicIndicators/CurrentEvaluation/" + dtoDetailedStrategicIndicator.getId())
+                .get("/api/strategicIndicators/{id}/qualityFactors/current", dtoDetailedStrategicIndicator.getId())
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/detailed-single-current-read-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -496,7 +760,7 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/DetailedStrategicIndicators/HistoricalData")
+                .get("/api/strategicIndicators/qualityFactors/historical")
                 .param("prj", projectExternalId)
                 .param("from", from)
                 .param("to", to);
@@ -519,7 +783,47 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].rationale", is(dtoFactor.getRationale())))
                 .andExpect(jsonPath("$[0].factors[0].forecastingError", is(dtoFactor.getForecastingError())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactor.getStrategicIndicators().get(0))))
-                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())));
+                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())))
+                .andDo(document("si/detailed-historical",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("from")
+                                        .description("Starting date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("to")
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].factors")
+                                        .description("Quality factors that compose the strategic indicator"),
+                                fieldWithPath("[].factors[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].factors[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].factors[].description")
+                                        .description("Quality factor description"),
+                                fieldWithPath("[].factors[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].factors[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].factors[].datasource")
+                                        .description("Quality factor source of data"),
+                                fieldWithPath("[].factors[].rationale")
+                                        .description("Quality factor evaluation rationale"),
+                                fieldWithPath("[].factors[].forecastingError")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].factors[].strategicIndicators")
+                                        .description("List of the strategic indicators that use this quality factor"),
+                                fieldWithPath("[].factors[].formattedDate")
+                                        .description("Readable quality factor evaluation date"))
+                ));
 
         // Verify mock interactions
         verify(qmaDetailedStrategicIndicators, times(1)).HistoricalData(null, fromDate, toDate, projectExternalId);
@@ -536,13 +840,17 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/DetailedStrategicIndicators/HistoricalData")
+                .get("/api/strategicIndicators/qualityFactors/historical")
                 .param("prj", projectExternalId)
                 .param("from", from)
                 .param("to", to);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/detailed-historical-read-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -554,8 +862,8 @@ public class StrategicIndicatorsTest {
         when(qmaDetailedStrategicIndicators.HistoricalData(dtoDetailedStrategicIndicator.getId(), fromDate, toDate, projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/DetailedStrategicIndicators/HistoricalData/" + dtoDetailedStrategicIndicator.getId())
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/strategicIndicators/{id}/qualityFactors/historical", dtoDetailedStrategicIndicator.getId())
                 .param("prj", projectExternalId)
                 .param("from", from)
                 .param("to", to);
@@ -578,7 +886,50 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].rationale", is(dtoFactor.getRationale())))
                 .andExpect(jsonPath("$[0].factors[0].forecastingError", is(dtoFactor.getForecastingError())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactor.getStrategicIndicators().get(0))))
-                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())));
+                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())))
+                .andDo(document("si/detailed-single-historical",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic indicator identifier")),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("from")
+                                        .description("Starting date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("to")
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].factors")
+                                        .description("Quality factors that compose the strategic indicator"),
+                                fieldWithPath("[].factors[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].factors[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].factors[].description")
+                                        .description("Quality factor description"),
+                                fieldWithPath("[].factors[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].factors[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].factors[].datasource")
+                                        .description("Quality factor source of data"),
+                                fieldWithPath("[].factors[].rationale")
+                                        .description("Quality factor evaluation rationale"),
+                                fieldWithPath("[].factors[].forecastingError")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].factors[].strategicIndicators")
+                                        .description("List of the strategic indicators that use this quality factor"),
+                                fieldWithPath("[].factors[].formattedDate")
+                                        .description("Readable quality factor evaluation date"))
+                ));
 
         // Verify mock interactions
         verify(qmaDetailedStrategicIndicators, times(1)).HistoricalData(dtoDetailedStrategicIndicator.getId(), fromDate, toDate, projectExternalId);
@@ -595,17 +946,21 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/DetailedStrategicIndicators/HistoricalData/" + dtoDetailedStrategicIndicator.getId())
+                .get("/api/strategicIndicators/{id}/qualityFactors/historical", dtoDetailedStrategicIndicator.getId())
                 .param("prj", projectExternalId)
                 .param("from", from)
                 .param("to", to);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/detailed-single-historical-read-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
-    public void getQualityFactorsPredicitionData() throws Exception {
+    public void getDetailedStrategicIndicatorPredicitionData() throws Exception {
         dtoFactor.setDatasource("Forecast");
         dtoFactor.setRationale("Forecast");
 
@@ -616,7 +971,7 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/DetailedStrategicIndicators/PredictionData")
+                .get("/api/strategicIndicators/qualityFactors/prediction")
                 .param("prj", projectExternalId)
                 .param("technique", technique)
                 .param("horizon", horizon);
@@ -639,7 +994,47 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].rationale", is(dtoFactor.getRationale())))
                 .andExpect(jsonPath("$[0].factors[0].forecastingError", is(dtoFactor.getForecastingError())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactor.getStrategicIndicators().get(0))))
-                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())));
+                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())))
+                .andDo(document("si/detailed-prediction",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("technique")
+                                        .description("Forecasting technique"),
+                                parameterWithName("horizon")
+                                        .description("Amount of days that the prediction will cover")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].factors")
+                                        .description("Quality factors that compose the strategic indicator"),
+                                fieldWithPath("[].factors[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].factors[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].factors[].description")
+                                        .description("Quality factor description"),
+                                fieldWithPath("[].factors[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].factors[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].factors[].datasource")
+                                        .description("Quality factor source of data"),
+                                fieldWithPath("[].factors[].rationale")
+                                        .description("Quality factor evaluation rationale"),
+                                fieldWithPath("[].factors[].forecastingError")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].factors[].strategicIndicators")
+                                        .description("List of the strategic indicators that use this quality factor"),
+                                fieldWithPath("[].factors[].formattedDate")
+                                        .description("Readable quality factor evaluation date"))
+                ));
 
         // Verify mock interactions
         verify(forecast, times(1)).ForecastDSI(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
@@ -647,7 +1042,7 @@ public class StrategicIndicatorsTest {
     }
 
     @Test
-    public void getQualityFactorsPredicitionData1() throws Exception {
+    public void getSingleDetailedStrategicIndicatorPredictionData() throws Exception {
         dtoFactor.setDatasource("Forecast");
         dtoFactor.setRationale("Forecast");
 
@@ -657,8 +1052,8 @@ public class StrategicIndicatorsTest {
         when(forecast.ForecastDSI(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId))).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/DetailedStrategicIndicators/PredictionData/" + dtoDetailedStrategicIndicator.getId())
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/strategicIndicators/{id}/qualityFactors/prediction", dtoDetailedStrategicIndicator.getId())
                 .param("prj", projectExternalId)
                 .param("technique", technique)
                 .param("horizon", horizon);
@@ -681,7 +1076,50 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].rationale", is(dtoFactor.getRationale())))
                 .andExpect(jsonPath("$[0].factors[0].forecastingError", is(dtoFactor.getForecastingError())))
                 .andExpect(jsonPath("$[0].factors[0].strategicIndicators[0]", is(dtoFactor.getStrategicIndicators().get(0))))
-                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())));
+                .andExpect(jsonPath("$[0].factors[0].formattedDate", is(dtoFactor.getDate().toString())))
+                .andDo(document("si/detailed-single-prediction",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic indicator identifier")),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("technique")
+                                        .description("Forecasting technique"),
+                                parameterWithName("horizon")
+                                        .description("Amount of days that the prediction will cover")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].factors")
+                                        .description("Quality factors that compose the strategic indicator"),
+                                fieldWithPath("[].factors[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].factors[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].factors[].description")
+                                        .description("Quality factor description"),
+                                fieldWithPath("[].factors[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].factors[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].factors[].datasource")
+                                        .description("Quality factor source of data"),
+                                fieldWithPath("[].factors[].rationale")
+                                        .description("Quality factor evaluation rationale"),
+                                fieldWithPath("[].factors[].forecastingError")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].factors[].strategicIndicators")
+                                        .description("List of the strategic indicators that use this quality factor"),
+                                fieldWithPath("[].factors[].formattedDate")
+                                        .description("Readable quality factor evaluation date"))
+                ));
 
         // Verify mock interactions
         verify(forecast, times(1)).ForecastDSI(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
@@ -701,7 +1139,7 @@ public class StrategicIndicatorsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/StrategicIndicators/PredictionData")
+                .get("/api/strategicIndicators/prediction")
                 .param("prj", projectExternalId)
                 .param("technique", technique)
                 .param("horizon", horizon);
@@ -739,7 +1177,57 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].categories_description", is(dtoStrategicIndicatorEvaluation.getCategories_description())))
                 .andExpect(jsonPath("$[0].hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$[0].hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
-                .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())));
+                .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andDo(document("si/prediction",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("technique")
+                                        .description("Forecasting technique"),
+                                parameterWithName("horizon")
+                                        .description("Amount of days that the prediction will cover")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].dbId")
+                                        .description("Strategic indicator database identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].probabilities")
+                                        .description("Strategic indicator categories list"),
+                                fieldWithPath("[].probabilities[].id")
+                                        .description("Strategic indicator category identifier"),
+                                fieldWithPath("[].probabilities[].label")
+                                        .description("Strategic indicator category label"),
+                                fieldWithPath("[].probabilities[].value")
+                                        .description("Strategic indicator category probability"),
+                                fieldWithPath("[].probabilities[].color")
+                                        .description("Strategic indicator category hexadecimal color"),
+                                fieldWithPath("[].probabilities[].upperThreshold")
+                                        .description("Strategic indicator category upper threshold"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].datasource")
+                                        .description("Strategic indicator source of data"),
+                                fieldWithPath("[].categories_description")
+                                        .description("Array with the strategic indicator categories and thresholds"),
+                                fieldWithPath("[].hasBN")
+                                        .description("Does the strategic indicator have a Bayesian Network?"),
+                                fieldWithPath("[].hasFeedback")
+                                        .description("Does the strategic indicator have any feedback"),
+                                fieldWithPath("[].forecastingError")
+                                        .description("Errors in the forecasting"))
+                ));
 
         // Verify mock interactions
         verify(forecast, times(1)).ForecastSI(technique, freq, horizon, projectExternalId);

@@ -1,7 +1,7 @@
 var isdsi = false;
 var isqf = true;
 
-var url = parseURLSimple("../api/qualityFactors/prediction");
+var url = parseURLSimple("../api/qualityFactors/metrics/prediction");
 
 //initialize data vectors
 var texts = [];

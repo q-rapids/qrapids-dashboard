@@ -145,7 +145,7 @@ function displayData(qmnodes, qmedges) {
 function showNodeDetails(node) {
     var serverUrl = sessionStorage.getItem("serverUrl");
     if (node.color === siColor) {
-        var urlSI = "/api/StrategicIndicators/"+ node.id + "/CurrentEvaluation";
+        var urlSI = "/api/strategicIndicators/"+ node.id + "/current";
         if (serverUrl) {
             urlSI = serverUrl + urlSI;
         }

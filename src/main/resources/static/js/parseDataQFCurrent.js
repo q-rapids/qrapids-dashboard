@@ -1,6 +1,6 @@
 var isdsi = false;
 
-var url = parseURLSimple("../api/qualityFactors/current");
+var url = parseURLSimple("/api/qualityFactors/metrics/current");
 
 //initialize data vectors
 var titles = [];

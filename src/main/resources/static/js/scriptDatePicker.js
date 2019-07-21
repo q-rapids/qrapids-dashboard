@@ -80,7 +80,7 @@ function getPreviousMonday() {
 function loadTechniques () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/ForecastTechniques",
+        url: "../api/forecastTechniques",
         cache: false,
         type: "GET",
         async: true,

@@ -1,8 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
 import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
@@ -20,13 +18,19 @@ import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.*;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.File;
@@ -41,12 +45,20 @@ import java.util.Map;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UtilTest {
 
     private MockMvc mockMvc;
+
+    @Rule
+    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     @Mock
     private QMAStrategicIndicators qmaStrategicIndicators;
@@ -86,6 +98,7 @@ public class UtilTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(utilController)
+                .apply(documentationConfiguration(this.restDocumentation))
                 .build();
     }
 
@@ -118,45 +131,77 @@ public class UtilTest {
         // Factor categories
         String factorGoodCategoryName = "Good";
         String factorGoodCategoryColor = "#00ff00";
+        Float factorGoodCategoryUpperThreshold = 1.0f;
         Map<String, String> factorGoodCategory = new HashMap<>();
         factorGoodCategory.put("name", factorGoodCategoryName);
         factorGoodCategory.put("color", factorGoodCategoryColor);
+        factorGoodCategory.put("upperThreshold", factorGoodCategoryUpperThreshold.toString());
 
         String factorNeutralCategoryName = "Neutral";
         String factorNeutralCategoryColor = "#ff8000";
+        Float factorNeutralCategoryUpperThreshold = 0.67f;
         Map<String, String> factorNeutralCategory = new HashMap<>();
         factorNeutralCategory.put("name", factorNeutralCategoryName);
         factorNeutralCategory.put("color", factorNeutralCategoryColor);
+        factorNeutralCategory.put("upperThreshold", factorNeutralCategoryUpperThreshold.toString());
 
         String factorBadCategoryName = "Bad";
         String factorBadCategoryColor = "#ff0000";
+        Float factorBadCategoryUpperThreshold = 0.33f;
         Map<String, String> factorBadCategory = new HashMap<>();
         factorBadCategory.put("name", factorBadCategoryName);
         factorBadCategory.put("color", factorBadCategoryColor);
+        factorBadCategory.put("upperThreshold", factorBadCategoryUpperThreshold.toString());
 
         List<Map<String, String>> factorCategoriesList = new ArrayList<>();
         factorCategoriesList.add(factorGoodCategory);
         factorCategoriesList.add(factorNeutralCategory);
         factorCategoriesList.add(factorBadCategory);
 
-        // Perform request
         Gson gson = new Gson();
+        Map<String, List<Map<String, String>>> categories = new HashMap<>();
+        categories.put("SICat", strategicIndicatorCategoriesList);
+        categories.put("QFCat", factorCategoriesList);
+
+        String json = gson.toJson(categories);
+        //ObjectMapper mapper = new ObjectMapper();
+        //mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        //ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+        //String bodyJson = objectWriter.writeValueAsString(categories);
+
+        // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/newCategories")
-                .param("SICat", gson.toJson(strategicIndicatorCategoriesList))
-                .param("QFCat", gson.toJson(factorCategoriesList));
+                .post("/api/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted());
+                .andExpect(status().isCreated())
+                .andDo(document("categories/new",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("SICat")
+                                        .description("List of all the strategic indicator categories"),
+                                fieldWithPath("SICat[].name")
+                                        .description("Strategic indicator category name"),
+                                fieldWithPath("SICat[].color")
+                                        .description("Strategic indicator category color"),
+                                fieldWithPath("QFCat")
+                                        .description("List of all the quality factor categories"),
+                                fieldWithPath("QFCat[].name")
+                                        .description("Quality factor category name"),
+                                fieldWithPath("QFCat[].color")
+                                        .description("Quality factor category color"),
+                                fieldWithPath("QFCat[].upperThreshold")
+                                        .description("Quality factor category upper threshold"))
+                ));
 
         // Verify mock interactions
-        JsonParser parser = new JsonParser();
-        JsonArray strategicIndicatorCategoriesArray = parser.parse(gson.toJson(strategicIndicatorCategoriesList)).getAsJsonArray();
-        verify(qmaStrategicIndicators, times(1)).newCategories(strategicIndicatorCategoriesArray);
+        verify(qmaStrategicIndicators, times(1)).newCategories(strategicIndicatorCategoriesList);
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
-        JsonArray factorCategoriesArray = parser.parse(gson.toJson(factorCategoriesList)).getAsJsonArray();
-        verify(qmaQualityFactors, times(1)).newCategories(factorCategoriesArray);
+        verify(qmaQualityFactors, times(1)).newCategories(factorCategoriesList);
         verifyNoMoreInteractions(qmaQualityFactors);
 
         verify(siCategoryRepository, times(1)).findAll();
@@ -165,10 +210,14 @@ public class UtilTest {
     @Test
     public void deleteCategories() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/deleteCategories");
+                .delete("/api/categories");
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("categories/delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         // Verify mock interactions
         verify(siCategoryRepository, times(1)).deleteAll();
@@ -341,14 +390,29 @@ public class UtilTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/newStrategicIndicator")
+                .multipart("/api/strategicIndicators")
                 .file(network)
                 .param("name", strategicIndicatorName)
                 .param("description", strategicIndicatorDescription)
                 .param("quality_factors", String.join(",", qualityFactors));
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted());
+                .andExpect(status().isCreated())
+                .andDo(document("si/new",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Product name"),
+                                parameterWithName("description")
+                                        .description("Product description"),
+                                parameterWithName("quality_factors")
+                                        .description("Comma separated values of the quality factors identifiers which belong to the strategic indicator")),
+                        requestParts(
+                                partWithName("network")
+                                        .description("Bayesian network file")
+                        )
+                ));
 
         // Verify mock interactions
         ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
@@ -526,14 +590,18 @@ public class UtilTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/newStrategicIndicator")
+                .multipart("/api/strategicIndicators")
                 .file(network)
                 .param("name", strategicIndicatorName)
                 .param("description", strategicIndicatorDescription)
                 .param("quality_factors", String.join(",", qualityFactors));
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/new-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         // Verify mock interactions
         ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
@@ -580,11 +648,11 @@ public class UtilTest {
         when(strategicIndicatorRepository.getOne(strategicIndicatorId)).thenReturn(strategicIndicator);
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/EditStrategicIndicator/" + strategicIndicatorId);
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/strategicIndicators/{id}", strategicIndicatorId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(strategicIndicatorId.intValue())))
                 .andExpect(jsonPath("$.externalId", is(strategicIndicatorExternalId)))
                 .andExpect(jsonPath("$.name", is(strategicIndicatorName)))
@@ -593,7 +661,28 @@ public class UtilTest {
                 .andExpect(jsonPath("$.quality_factors", hasSize(3)))
                 .andExpect(jsonPath("$.quality_factors[0]", is(factor1)))
                 .andExpect(jsonPath("$.quality_factors[1]", is(factor2)))
-                .andExpect(jsonPath("$.quality_factors[2]", is(factor3)));
+                .andExpect(jsonPath("$.quality_factors[2]", is(factor3)))
+                .andDo(document("si/get-one",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic indicator identifier")),
+                        responseFields(
+                                fieldWithPath("id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("externalId")
+                                        .description("Strategic indicator external identifier"),
+                                fieldWithPath("name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("network")
+                                        .description("Strategic indicator bayesian network"),
+                                fieldWithPath("quality_factors")
+                                        .description("Strategic indicator quality factors identifiers list")
+                        )
+                ));
 
         // Verify mock interactions
         verify(strategicIndicatorRepository, times(1)).existsById(strategicIndicatorId);
@@ -607,10 +696,14 @@ public class UtilTest {
         when(strategicIndicatorRepository.existsById(strategicIndicatorId)).thenReturn(false);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/EditStrategicIndicator/" + strategicIndicatorId);
+                .get("/api/strategicIndicators/{id}", strategicIndicatorId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound())
+                .andDo(document("si/get-one-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -634,14 +727,36 @@ public class UtilTest {
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/EditStrategicIndicator/" + strategicIndicatorId)
+                .multipart("/api/strategicIndicators/{id}", strategicIndicatorId)
                 .file(network)
                 .param("name", strategicIndicatorName)
                 .param("description", strategicIndicatorDescription)
-                .param("quality_factors", String.join(",", qualityFactors));
+                .param("quality_factors", String.join(",", qualityFactors))
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(document("si/update",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Product name"),
+                                parameterWithName("description")
+                                        .description("Product description"),
+                                parameterWithName("quality_factors")
+                                        .description("Comma separated values of the quality factors identifiers which belong to the strategic indicator")),
+                        requestParts(
+                                partWithName("network")
+                                        .description("Bayesian network file")
+                        )
+                ));
 
         // Verify mock interactions
         verify(strategicIndicatorRepository, times(1)).getOne(strategicIndicatorId);
@@ -821,14 +936,25 @@ public class UtilTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/EditStrategicIndicator/" + strategicIndicatorId)
+                .multipart("/api/strategicIndicators/{id}", strategicIndicatorId)
                 .file(network)
                 .param("name", strategicIndicatorName)
                 .param("description", strategicIndicatorDescription)
-                .param("quality_factors", String.join(",", newQualityFactors));
+                .param("quality_factors", String.join(",", newQualityFactors))
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted());
+                .andExpect(status().isOk())
+                .andDo(document("si/update-assessment",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         // Verify mock interactions
         verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(anyList(), eq(projectExternalId));
@@ -1010,14 +1136,25 @@ public class UtilTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/EditStrategicIndicator/" + strategicIndicatorId)
+                .multipart("/api/strategicIndicators/{id}", strategicIndicatorId)
                 .file(network)
                 .param("name", strategicIndicatorName)
                 .param("description", strategicIndicatorDescription)
-                .param("quality_factors", String.join(",", newQualityFactors));
+                .param("quality_factors", String.join(",", newQualityFactors))
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/update-assessment-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         // Verify mock interactions
         verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(anyList(), eq(projectExternalId));
@@ -1051,13 +1188,24 @@ public class UtilTest {
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/EditStrategicIndicator/" + strategicIndicatorId)
+                .multipart("/api/strategicIndicators/{id}", strategicIndicatorId)
                 .file(network)
                 .param("name", strategicIndicatorName)
-                .param("description", strategicIndicatorDescription);
+                .param("description", strategicIndicatorDescription)
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isMethodNotAllowed());
+                .andExpect(status().isBadRequest())
+                .andDo(document("si/update-missing-params",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -1083,14 +1231,25 @@ public class UtilTest {
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/EditStrategicIndicator/" + strategicIndicatorId)
+                .multipart("/api/strategicIndicators/{id}", strategicIndicatorId)
                 .file(network)
                 .param("name", strategicIndicatorName)
                 .param("description", strategicIndicatorDescription)
-                .param("quality_factors", String.join(",", qualityFactors));
+                .param("quality_factors", String.join(",", qualityFactors))
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andDo(document("si/update-data-integrity-violation",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         // Verify mock interactions
         verify(strategicIndicatorRepository, times(1)).getOne(strategicIndicatorId);
@@ -1125,10 +1284,14 @@ public class UtilTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/fetchSIs");
+                .get("/api/strategicIndicators/fetch");
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted());
+                .andExpect(status().isOk())
+                .andDo(document("si/fetch",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         // Verify mock interactions
         ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
@@ -1147,10 +1310,14 @@ public class UtilTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/fetchSIs");
+                .get("/api/strategicIndicators/fetch");
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(document("si/fetch-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -1261,12 +1428,21 @@ public class UtilTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/assessStrategicIndicators")
+                .get("/api/strategicIndicators/assess")
                 .param("prj", projectExternalId)
                 .param("train", "NONE");
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted());
+                .andExpect(status().isOk())
+                .andDo(document("si/assess",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("train").description("Indicates if the forecasting models should be trained: " +
+                                        "NONE for no training, ONE for one method training and ALL for all methods training"))
+                ));
 
         // Verify mock interactions
         verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(dtoFactorList, projectExternalId);
@@ -1386,12 +1562,16 @@ public class UtilTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/assessStrategicIndicators")
+                .get("/api/strategicIndicators/assess")
                 .param("prj", projectExternalId)
                 .param("train", "NONE");
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/assess-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         // Verify mock interactions
         verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(dtoFactorList, projectExternalId);
@@ -1419,13 +1599,17 @@ public class UtilTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/assessStrategicIndicators")
+                .get("/api/strategicIndicators/assess")
                 .param("prj", projectExternalId)
                 .param("train", "NONE")
                 .param("from", "2019-15-03");
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(document("si/assess-param-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -1499,12 +1683,12 @@ public class UtilTest {
 
         Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/Simulate")
+                .get("/api/strategicIndicators/simulate")
                 .param("prj", projectExternalId)
                 .param("factors", gson.toJson(factorSimulatedList));
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(strategicIndicatorExternalId)))
                 .andExpect(jsonPath("$[0].dbId", is(strategicIndicatorId.intValue())))
@@ -1534,7 +1718,55 @@ public class UtilTest {
                 .andExpect(jsonPath("$[0].categories_description", is("")))
                 .andExpect(jsonPath("$[0].hasBN", is(false)))
                 .andExpect(jsonPath("$[0].hasFeedback", is(false)))
-                .andExpect(jsonPath("$[0].forecastingError", is(nullValue())));
+                .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andDo(document("si/simulation",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("factors")
+                                        .description("List of the names and new values of the quality factors")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].dbId")
+                                        .description("Strategic indicator database identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].probabilities")
+                                        .description("Strategic indicator categories list"),
+                                fieldWithPath("[].probabilities[].id")
+                                        .description("Strategic indicator category identifier"),
+                                fieldWithPath("[].probabilities[].label")
+                                        .description("Strategic indicator category label"),
+                                fieldWithPath("[].probabilities[].value")
+                                        .description("Strategic indicator category probability"),
+                                fieldWithPath("[].probabilities[].color")
+                                        .description("Strategic indicator category hexadecimal color"),
+                                fieldWithPath("[].probabilities[].upperThreshold")
+                                        .description("Strategic indicator category upper threshold"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].datasource")
+                                        .description("Strategic indicator source of data"),
+                                fieldWithPath("[].categories_description")
+                                        .description("Array with the strategic indicator categories and thresholds"),
+                                fieldWithPath("[].hasBN")
+                                        .description("Does the strategic indicator have a Bayesian Network?"),
+                                fieldWithPath("[].hasFeedback")
+                                        .description("Does the strategic indicator have any feedback"),
+                                fieldWithPath("[].forecastingError")
+                                        .description("Errors in the forecasting"))
+                ));
 
         // Verify mock interactions
         verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
@@ -1554,11 +1786,15 @@ public class UtilTest {
         when(qmaQualityFactors.getAllFactors(projectExternalId)).thenThrow(new IOException());
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/Simulate")
+                .get("/api/strategicIndicators/simulate")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/simulation-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -1574,14 +1810,21 @@ public class UtilTest {
         when(forecast.getForecastTechniques()).thenReturn(forecastingTechniques);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/ForecastTechniques");
+                .get("/api/forecastTechniques");
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0]", is(technique1)))
                 .andExpect(jsonPath("$[1]", is(technique2)))
-                .andExpect(jsonPath("$[2]", is(technique3)));
+                .andExpect(jsonPath("$[2]", is(technique3)))
+                .andDo(document("forecast/techniques",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[]")
+                                        .description("Array with the forecasting techniques names"))
+                ));
 
         // Verify mock interactions
         verify(forecast, times(1)).getForecastTechniques();
@@ -1707,7 +1950,43 @@ public class UtilTest {
                 .andExpect(jsonPath("$[0].factors[0].metrics", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].id", is(metricId)))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(metricValue)))
-                .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(metricWeight)));
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(metricWeight)))
+                .andDo(document("si/quality-model",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("date")
+                                        .optional()
+                                        .description("Date (yyyy-mm-dd) of the quality model evaluation")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].value")
+                                        .description("Strategic indicator assessment value"),
+                                fieldWithPath("[].valueDescription")
+                                        .description("Strategic indicator assessment value and category"),
+                                fieldWithPath("[].color")
+                                        .description("Strategic indicator category color"),
+                                fieldWithPath("[].factors")
+                                        .description("List with all the quality factors composing the strategic indicator"),
+                                fieldWithPath("[].factors[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].factors[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].weight")
+                                        .description("Quality factor weight in the strategic indicator assessment"),
+                                fieldWithPath("[].factors[].metrics")
+                                        .description("List with all the metrics composing the quality factor"),
+                                fieldWithPath("[].factors[].metrics[].id")
+                                        .description("Metric identifier"),
+                                fieldWithPath("[].factors[].metrics[].value")
+                                        .description("Metric value"),
+                                fieldWithPath("[].factors[].metrics[].weight")
+                                        .description("Metric weight in the computation of the quality factor"))
+                ));
 
         // Verify mock interactions
         verify(qmaRelations, times(1)).getRelations(projectExternalId, LocalDate.parse(date));

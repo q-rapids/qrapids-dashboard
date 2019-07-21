@@ -101,7 +101,7 @@ public class FactorsServiceTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/qualityFactors/current")
+                .get("/api/qualityFactors/metrics/current")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -267,7 +267,7 @@ public class FactorsServiceTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/strategicIndicators/{id}/qualityFactors/current", strategicIndicatorId)
+                .get("/api/strategicIndicators/{id}/qualityFactors/metrics/current", strategicIndicatorId)
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -360,7 +360,7 @@ public class FactorsServiceTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/qualityFactors/historical")
+                .get("/api/qualityFactors/metrics/historical")
                 .param("prj", projectExternalId)
                 .param("from", from)
                 .param("to", to);
@@ -457,7 +457,7 @@ public class FactorsServiceTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/strategicIndicators/{id}/qualityFactors/historical", strategicIndicatorId)
+                .get("/api/strategicIndicators/{id}/qualityFactors/metrics/historical", strategicIndicatorId)
                 .param("prj", projectExternalId)
                 .param("from", from)
                 .param("to", to);
@@ -703,7 +703,7 @@ public class FactorsServiceTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/qualityFactors/prediction")
+                .get("/api/qualityFactors/metrics/prediction")
                 .param("prj", projectExternalId)
                 .param("technique", technique)
                 .param("horizon", horizon);
@@ -819,7 +819,7 @@ public class FactorsServiceTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/strategicIndicators/{id}/qualityFactors/prediction", strategicIndicatorId)
+                .get("/api/strategicIndicators/{id}/qualityFactors/metrics/prediction", strategicIndicatorId)
                 .param("prj", projectExternalId)
                 .param("technique", technique)
                 .param("horizon", horizon);

@@ -7,7 +7,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     $scope.getStratInd = function (){
         $http({
             method : "GET",
-            url : "../api/StrategicIndicators/CurrentEvaluation"
+            url : "../api/strategicIndicators/current"
         }).then(function mySuccess(response) {
             $scope.data = response.data;
             $scope.sortType = 'name';
@@ -18,7 +18,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     $scope.getKPIEval = function(){
         $http({
             method : "GET",
-            url : "../api/StrategicIndicators/HistoricalData",
+            url : "../api/strategicIndicators/historical",
             params: {from: $('#datepickerFrom').val(),
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {
@@ -180,7 +180,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         jQuery.ajax({
             dataType: "json",
             type: "GET",
-            url: "api/DetailedStrategicIndicators/CurrentEvaluation?prj=" + sessionStorage.getItem("prj"),
+            url: "api/strategicIndicators/qualityFactors/current?prj=" + sessionStorage.getItem("prj"),
             async: false,
             success: function (strategicIndicators) {
                 strategicIndicators.forEach(function (strategicIndicator) {
@@ -443,9 +443,9 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextSimple();
-            var url = "../api/DetailedStrategicIndicators/CurrentEvaluation/" + id;
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/current";
         } else {
-            var url = "../api/DetailedStrategicIndicators/CurrentEvaluation";
+            var url = "../api/strategicIndicators/qualityFactors/current";
         }
         $http({
             method : "GET",
@@ -474,13 +474,13 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextSimple();
-            var url = "../api/DetailedStrategicIndicators/HistoricalData/" + id;
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/historical";
         } else {
-            var url = "../api/DetailedStrategicIndicators/HistoricalData";
+            var url = "../api/strategicIndicators/qualityFactors/historical";
         }
         $http({
             method : "GET",
-            url : url,//"../api/DetailedStrategicIndicators/HistoricalData",
+            url : url,
             params: {from: $('#datepickerFrom').val(),
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {
@@ -508,9 +508,9 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextSimple();
-            var url = "../api/strategicIndicators/" + id + "/qualityFactors/current";
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/current";
         } else {
-            var url = "../api/qualityFactors/current";
+            var url = "../api/qualityFactors/metrics/current";
         }
         $http({
             method : "GET",
@@ -539,9 +539,9 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextSimple();
-            var url = "../api/strategicIndicators/" + id + "/qualityFactors/historical";
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/historical";
         } else {
-            var url = "../api/qualityFactors/historical";
+            var url = "../api/qualityFactors/metrics/historical";
         }
         $http({
             method : "GET",

@@ -1,6 +1,6 @@
 var isdsi = true;
 
-var url = parseURLSimple("../api/DetailedStrategicIndicators/HistoricalData");
+var url = parseURLSimple("../api/strategicIndicators/qualityFactors/historical");
 
 var qualityModelSIMetrics = new Map();
 

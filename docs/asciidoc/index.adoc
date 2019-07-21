@@ -7,199 +7,206 @@ v0.3.5, {docdate}
 == Introduction
 Q-Rapids dashboard RESTful services
 
-== Alerts
 
+== Strategic Indicators
 
-=== Get all alerts
+=== Get current evaluation
 
-operation::alerts/get-all[snippets='request-parameters,curl-request,response-fields,http-response']
+operation::si/current[snippets='request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
-
 ==== HTTP response wrong project
 include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
+==== HTTP response categories error
+include::{snippets}/si/current-conflict/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/si/current-read-error/http-response.adoc[]
 :numbered:
 
 
-=== Create alert
+=== Get one current evaluation
 
-operation::alerts/add-alert[snippets='request-fields,curl-request,http-response']
-
-:numbered!:
-
-==== HTTP response missing body parameter
-include::{snippets}/alerts/add-alert-missing-param/http-response.adoc[]
-
-==== HTTP response wrong element type
-include::{snippets}/alerts/add-alert-wrong-type/http-response.adoc[]
-
-:numbered:
-
-=== Notify alert (deprecated)
-
-operation::alerts/notify-alert[snippets='request-fields,curl-request,http-response']
+operation::si/single-current[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
-
-==== HTTP response missing body parameter
-include::{snippets}/alerts/notify-alert-missing-param/http-response.adoc[]
-
-==== HTTP response wrong element type
-include::{snippets}/alerts/notify-alert-wrong-type/http-response.adoc[]
-
-:numbered:
-
-
-=== Count new alerts
-
-operation::alerts/count-new[snippets='request-parameters,curl-request,response-fields,http-response']
-
-:numbered!:
-
 ==== HTTP response wrong project
-include::{snippets}/alerts/count-new-wrong-project/http-response.adoc[]
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
+==== HTTP response categories error
+include::{snippets}/si/single-current-conflict/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/si/single-current-read-error/http-response.adoc[]
 :numbered:
 
 
-=== Get quality requirement patterns for alert
+=== Get historical evaluation
 
-operation::alerts/get-qr-patterns[snippets='path-parameters,curl-request,response-fields,http-response']
-
-:numbered!:
-
-==== HTTP response alert not found
-include::{snippets}/alerts/get-qr-patterns-alert-not-found/http-response.adoc[]
-
-:numbered:
-
-
-=== Get alert decision
-
-operation::alerts/get-decision[snippets='path-parameters,curl-request,response-fields,http-response']
+operation::si/historical[snippets='request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
-
-==== HTTP response alert not found
-include::{snippets}/alerts/get-decision-alert-not-found/http-response.adoc[]
-
-:numbered:
-
-
-=== Ignore quality requirement for alert
-
-operation::alerts/ignore-qr[snippets='path-parameters,request-parameters,curl-request,http-response']
-
-:numbered!:
-
 ==== HTTP response wrong project
-include::{snippets}/alerts/ignore-qr-wrong-project/http-response.adoc[]
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response alert not found
-include::{snippets}/alerts/ignore-qr-alert-not-found/http-response.adoc[]
+==== HTTP response categories error
+include::{snippets}/si/historical-conflict/http-response.adoc[]
 
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/si/historical-read-error/http-response.adoc[]
 :numbered:
 
 
-=== Add quality requirement for alert
+=== Get prediction evaluation
 
-operation::alerts/add-qr-from-alert[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
-
-:numbered!:
-
-==== HTTP response alert not found
-include::{snippets}/alerts/add-qr-from-alert-not-found/http-response.adoc[]
-
-==== HTTP response error on backlog saving
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
-
-:numbered:
-
-
-== Quality requirements
-
-=== Get all quality requirements
-
-operation::qrs/get-all-qrs[snippets='request-parameters,curl-request,response-fields,http-response']
+operation::si/prediction[snippets='request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
-
 ==== HTTP response wrong project
-include::{snippets}/qrs/get-all-qrs-wrong-project/http-response.adoc[]
-
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 :numbered:
 
 
-=== Add quality requirement
+=== Get detailed current evaluation
 
-operation::qrs/add-qr[snippets='request-parameters,curl-request,response-fields,http-response']
-
-:numbered!:
-
-==== HTTP response error on backlog saving
-include::{snippets}/qrs/add-qr-backlog-error/http-response.adoc[]
-
-:numbered:
-
-
-=== Ignore quality requirement
-
-operation::qrs/ignore-qr[snippets='request-parameters,curl-request,http-response']
+operation::si/detailed-current[snippets='request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
-
 ==== HTTP response wrong project
-include::{snippets}/qrs/ignore-qr-wrong-project/http-response.adoc[]
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/si/detailed-current-read-error/http-response.adoc[]
 :numbered:
 
 
-=== Get all quality requirement patterns
+=== Get one detailed current evaluation
 
-operation::qrs/get-all-qr-patterns[snippets='curl-request,response-fields,http-response']
-
-
-=== Get single quality requirement pattern
-
-operation::qrs/get-single-qr-pattern[snippets='path-parameters,curl-request,response-fields,http-response']
-
-
-=== Get metric for quality requirement pattern
-
-operation::qrs/get-pattern-metric[snippets='path-parameters,curl-request,response-fields,http-response']
-
-
-
-== Decisions
-
-=== Get all decisions
-
-operation::decisions/get-all[snippets='request-parameters,curl-request,response-fields,http-response']
-
-
-== Feedback
-
-=== Add new feedback
-
-operation::feedback/add-feedback[snippets='path-parameters,request-fields,curl-request,http-response']
+operation::si/detailed-single-current[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 
-==== HTTP response missing body parameter
-include::{snippets}/feedback/add-feedback-missing-param/http-response.adoc[]
-
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/si/detailed-single-current-read-error/http-response.adoc[]
 :numbered:
 
 
-=== Get feedback for strategic indicator
+=== Get detailed historical evaluation
 
-operation::feedback/get-feedback[snippets='path-parameters,curl-request,response-fields,http-response']
+operation::si/detailed-historical[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/si/detailed-historical-read-error/http-response.adoc[]
+:numbered:
 
 
-=== Get feedback report for strategic indicator
+=== Get one detailed historical evaluation
 
-operation::feedback/get-feedback-report[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+operation::si/detailed-single-historical[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/si/detailed-single-historical-read-error/http-response.adoc[]
+:numbered:
+
+
+=== Get detailed prediction evaluation
+
+operation::si/detailed-prediction[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+:numbered:
+
+
+=== Get one detailed prediction evaluation
+
+operation::si/detailed-single-prediction[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+:numbered:
+
+
+=== Get one strategic indicator
+
+operation::si/get-one[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== Add strategic indicator
+
+operation::si/new[snippets='request-parameters,request-parts,curl-request,http-response']
+
+:numbered!:
+==== HTTP response assessment error
+include::{snippets}/si/new-error/http-response.adoc[]
+:numbered:
+
+
+=== Update strategic indicator
+
+operation::si/update[snippets='request-parameters,request-parts,curl-request,http-response']
+
+:numbered!:
+==== HTTP response missing parameter
+include::{snippets}/si/update-missing-params/http-response.adoc[]
+
+==== HTTP response data integrity violation
+include::{snippets}/si/update-data-integrity-violation/http-response.adoc[]
+
+==== HTTP response assessment error
+include::{snippets}/si/update-assessment-error/http-response.adoc[]
+:numbered:
+
+
+=== Fetch strategic indicators
+
+operation::si/fetch[snippets='curl-request,http-response']
+
+:numbered!:
+==== HTTP response strategic indicators already loaded
+include::{snippets}/si/fetch-error/http-response.adoc[]
+:numbered:
+
+
+=== Assess strategic indicators
+
+operation::si/assess[snippets='request-parameters,curl-request,http-response']
+
+:numbered!:
+==== HTTP response bad parameter
+include::{snippets}/si/assess-param-error/http-response.adoc[]
+
+==== HTTP response assessment error
+include::{snippets}/si/assess-error/http-response.adoc[]
+:numbered:
+
+
+=== Simulate strategic indicators assessment
+
+operation::si/simulation[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+==== HTTP response simulation error
+include::{snippets}/si/simulation-error/http-response.adoc[]
+:numbered:
+
+
+=== Get quality model
+
+operation::si/quality-model[snippets='request-parameters,curl-request,response-fields,http-response']
 
 
 
@@ -469,6 +476,201 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 
 
+== Alerts
+
+
+=== Get all alerts
+
+operation::alerts/get-all[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+:numbered:
+
+
+=== Create alert
+
+operation::alerts/add-alert[snippets='request-fields,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response missing body parameter
+include::{snippets}/alerts/add-alert-missing-param/http-response.adoc[]
+
+==== HTTP response wrong element type
+include::{snippets}/alerts/add-alert-wrong-type/http-response.adoc[]
+
+:numbered:
+
+=== Notify alert (deprecated)
+
+operation::alerts/notify-alert[snippets='request-fields,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response missing body parameter
+include::{snippets}/alerts/notify-alert-missing-param/http-response.adoc[]
+
+==== HTTP response wrong element type
+include::{snippets}/alerts/notify-alert-wrong-type/http-response.adoc[]
+
+:numbered:
+
+
+=== Count new alerts
+
+operation::alerts/count-new[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/count-new-wrong-project/http-response.adoc[]
+
+:numbered:
+
+
+=== Get quality requirement patterns for alert
+
+operation::alerts/get-qr-patterns[snippets='path-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response alert not found
+include::{snippets}/alerts/get-qr-patterns-alert-not-found/http-response.adoc[]
+
+:numbered:
+
+
+=== Get alert decision
+
+operation::alerts/get-decision[snippets='path-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response alert not found
+include::{snippets}/alerts/get-decision-alert-not-found/http-response.adoc[]
+
+:numbered:
+
+
+=== Ignore quality requirement for alert
+
+operation::alerts/ignore-qr[snippets='path-parameters,request-parameters,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/ignore-qr-wrong-project/http-response.adoc[]
+
+==== HTTP response alert not found
+include::{snippets}/alerts/ignore-qr-alert-not-found/http-response.adoc[]
+
+:numbered:
+
+
+=== Add quality requirement for alert
+
+operation::alerts/add-qr-from-alert[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response alert not found
+include::{snippets}/alerts/add-qr-from-alert-not-found/http-response.adoc[]
+
+==== HTTP response error on backlog saving
+include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+
+:numbered:
+
+
+== Quality requirements
+
+=== Get all quality requirements
+
+operation::qrs/get-all-qrs[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/qrs/get-all-qrs-wrong-project/http-response.adoc[]
+
+:numbered:
+
+
+=== Add quality requirement
+
+operation::qrs/add-qr[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response error on backlog saving
+include::{snippets}/qrs/add-qr-backlog-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Ignore quality requirement
+
+operation::qrs/ignore-qr[snippets='request-parameters,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/qrs/ignore-qr-wrong-project/http-response.adoc[]
+
+:numbered:
+
+
+=== Get all quality requirement patterns
+
+operation::qrs/get-all-qr-patterns[snippets='curl-request,response-fields,http-response']
+
+
+=== Get single quality requirement pattern
+
+operation::qrs/get-single-qr-pattern[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== Get metric for quality requirement pattern
+
+operation::qrs/get-pattern-metric[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+
+== Decisions
+
+=== Get all decisions
+
+operation::decisions/get-all[snippets='request-parameters,curl-request,response-fields,http-response']
+
+
+== Feedback
+
+=== Add new feedback
+
+operation::feedback/add-feedback[snippets='path-parameters,request-fields,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response missing body parameter
+include::{snippets}/feedback/add-feedback-missing-param/http-response.adoc[]
+
+:numbered:
+
+
+=== Get feedback for strategic indicator
+
+operation::feedback/get-feedback[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== Get feedback report for strategic indicator
+
+operation::feedback/get-feedback-report[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+
+
 == Projects
 
 === Import projects
@@ -566,3 +768,24 @@ operation::products/evaluation[snippets='path-parameters,curl-request,response-f
 === Get product detailed evaluation
 
 operation::products/evaluation-detailed[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+
+== Categories
+
+=== Add categories
+
+operation::categories/new[snippets='request-fields,curl-request,http-response']
+
+
+=== Delete categories
+
+operation::categories/delete[snippets='curl-request,http-response']
+
+
+
+== Others
+
+=== Get forecasting techniques
+
+operation::forecast/techniques[snippets='curl-request,response-fields,http-response']

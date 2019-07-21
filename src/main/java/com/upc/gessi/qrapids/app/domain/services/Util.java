@@ -6,7 +6,9 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
+import com.upc.gessi.qrapids.app.exceptions.AssessmentErrorException;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.exceptions.MissingParametersException;
 import evaluation.StrategicIndicator;
 import org.springframework.dao.DataIntegrityViolationException;
 import com.google.gson.JsonArray;
@@ -23,9 +25,11 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -104,29 +108,28 @@ public class Util {
     private Forecast forecast;
 
 
-    @RequestMapping("/api/newCategories")
-    public @ResponseBody
-    void newCategories(HttpServletRequest request, HttpServletResponse response) {
-        JsonParser parser = new JsonParser();
-        JsonArray sic = parser.parse(request.getParameter("SICat")).getAsJsonArray();
-        JsonArray qfc = parser.parse(request.getParameter("QFCat")).getAsJsonArray();
+    @PostMapping("/api/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newCategories(@RequestBody Map<String, List<Map<String, String>>> categories) {
+        List<Map<String, String>> SICat = categories.get("SICat");
+        List<Map<String, String>> QFCat = categories.get("QFCat");
+
         try {
-            if (sic.size() > 1 && qfc.size() > 1) {
-                qmasi.newCategories(sic);
-                qmaqf.newCategories(qfc);
+            if (SICat.size() > 1 && QFCat.size() > 1) {
+                qmasi.newCategories(SICat);
+                qmaqf.newCategories(QFCat);
             }
             allCats = SICatRep.findAll();
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
         } catch (Exception e) {
             qmasi.deleteAllCategories();
             qmaqf.deleteAllCategories();
-            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
-    @RequestMapping(value = "/api/newStrategicIndicator", method = RequestMethod.POST)
-    public @ResponseBody
-    void newSI(HttpServletRequest request, HttpServletResponse response, @RequestParam("network") MultipartFile network) {
+    @PostMapping("/api/strategicIndicators")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newSI(HttpServletRequest request, HttpServletResponse response, @RequestParam("network") MultipartFile network) {
         try {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
@@ -136,38 +139,42 @@ public class Util {
                 Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors);
                 siRep.save(newSI);
             }
-            if (AssessStrategicIndicator(name))
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            else
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-
+            if (!AssessStrategicIndicator(name)) {
+                throw new AssessmentErrorException();
+            }
+        } catch (AssessmentErrorException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
-    @RequestMapping(value = "/api/EditStrategicIndicator/{id}", method = RequestMethod.GET)
-    public @ResponseBody
-    Strategic_Indicator getEditSI(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/api/strategicIndicators/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Strategic_Indicator getSI(@PathVariable Long id) {
         if (siRep.existsById(id)) {
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
             return siRep.getOne(id);
         } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Strategic indicator not found");
         }
     }
 
-
-
-    @RequestMapping(value = "/api/EditStrategicIndicator/{id}", method = RequestMethod.POST)
-    public @ResponseBody
-    void editSI(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response, @RequestParam("network") MultipartFile network) throws IOException {
+    @PutMapping("/api/strategicIndicators/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void editSI(@PathVariable Long id, HttpServletRequest request, @RequestParam("network") MultipartFile network) throws IOException {
         try {
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
-            byte[] file = IOUtils.toByteArray(network.getInputStream());
-            List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
+            String name;
+            String description;
+            byte[] file;
+            List<String> qualityFactors;
+            try {
+                name = request.getParameter("name");
+                description = request.getParameter("description");
+                file = IOUtils.toByteArray(network.getInputStream());
+                qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
+            } catch (Exception e) {
+                throw new MissingParametersException();
+            }
             if (name != "" && file != null && qualityFactors.size() > 0) {
                 Strategic_Indicator editSI = siRep.getOne(id);
                 //TOdo: the equals is not working
@@ -187,24 +194,24 @@ public class Util {
                 editSI.setQuality_factors(qualityFactors);
                 siRep.flush();
                 if (!same_factors)
-                    if (AssessStrategicIndicator(name))
-                        response.setStatus(HttpServletResponse.SC_ACCEPTED);
-                    else
-                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    if (!AssessStrategicIndicator(name)) {
+                        throw new AssessmentErrorException();
+                    }
             }
-            else {
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            }
+        } catch (MissingParametersException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing parameters in the request");
+        } catch (AssessmentErrorException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
         } catch (DataIntegrityViolationException e) {
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
-        }catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Integrity violation: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
-    @RequestMapping("/api/fetchSIs")
-    public @ResponseBody
-    void fetchSIs(HttpServletResponse response) {
+    @GetMapping("/api/strategicIndicators/fetch")
+    @ResponseStatus(HttpStatus.OK)
+    public void fetchSIs() {
         if (siRep.count() == 0) {
             try {
                 List<DTODetailedStrategicIndicator> dsi = qmadsi.CurrentEvaluation(null, null);
@@ -217,11 +224,10 @@ public class Util {
                     siRep.save(newSI);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
             }
-            if (response != null) response.setStatus(HttpServletResponse.SC_ACCEPTED);
         } else {
-            if (response != null) response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Strategic indicators already loaded");
         }
     }
 
@@ -229,12 +235,11 @@ public class Util {
         NONE, ONE, ALL
     }
 
-    @RequestMapping("/api/assessStrategicIndicators")
-    public @ResponseBody
-    void assesStrategicIndicators(@RequestParam(value = "prj", required=false) String prj,
+    @GetMapping("/api/strategicIndicators/assess")
+    @ResponseStatus(HttpStatus.OK)
+    public void assesStrategicIndicators(@RequestParam(value = "prj", required=false) String prj,
                                   @RequestParam(value = "from", required=false) String from,
-                                  @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType,
-                                  HttpServletRequest request, HttpServletResponse response) {
+                                  @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType) {
         boolean correct = true;
 
         try {
@@ -262,16 +267,13 @@ public class Util {
                     trainForecastModelsSingleProject(prj, technique);
             }
 
-            if (correct)
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            else
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        } catch (Exception e) {
-            try {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            if (!correct) {
+                throw new AssessmentErrorException();
             }
+        } catch (AssessmentErrorException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error in the request parameters");
         }
     }
 
@@ -507,9 +509,9 @@ public class Util {
         return qmaRelations.setStrategicIndicatorFactorRelation(prj, factorIds, si, evaluationDate, weights, factorValues, factorLabels, siValueOrLabel);
     }
 
-    @RequestMapping("/api/Simulate")
-    public @ResponseBody
-    List<DTOStrategicIndicatorEvaluation> Simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/api/strategicIndicators/simulate")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStrategicIndicatorEvaluation> Simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request) {
         try {
             List<DTOFactor> factors = qmaqf.getAllFactors(prj);
             JsonParser parser = new JsonParser();
@@ -568,36 +570,27 @@ public class Util {
                             si.getNetwork() != null));
                 }
             }
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
             return result;
         } catch (Exception e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Simulation error: " + e.getMessage());
         }
     }
 
-    @RequestMapping("/api/deleteCategories")
-    public @ResponseBody
-    void deleteCategories(HttpServletRequest request, HttpServletResponse response) {
+    @DeleteMapping("/api/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteCategories() {
         SICatRep.deleteAll();
         QFCatRep.deleteAll();
     }
 
-    @RequestMapping("/api/rawdataDashboard")
-    public @ResponseBody
-    String RawDataDashboard(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            return rawdataDashboard;
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
-        }
+    @GetMapping("/api/rawdataDashboard")
+    @ResponseStatus(HttpStatus.OK)
+    public String RawDataDashboard() {
+        return rawdataDashboard;
     }
 
-    @RequestMapping("/api/serverUrl")
+    @GetMapping("/api/serverUrl")
+    @ResponseStatus(HttpStatus.OK)
     public String serverUrl() {
         return "{\"serverUrl\":\""+serverUrl+"\"}";
     }
@@ -702,32 +695,39 @@ public class Util {
         return category.getColor();
     }
 
-    @RequestMapping("/api/addToBacklog")
+    @GetMapping("/api/addToBacklog")
+    @ResponseStatus(HttpStatus.OK)
     public String addToBacklogUrl() {
         return "{\"issue_url\":\"https://essi.upc.edu/jira/issue/999\"," +
                 "\"issue_id\":\"ID-999\"}";
     }
 
-    @RequestMapping("/api/ForecastTechniques")
+    @GetMapping("/api/forecastTechniques")
+    @ResponseStatus(HttpStatus.OK)
     public List<String> getForecastTechniques() {
         return forecast.getForecastTechniques();
     }
 
     @GetMapping("/api/qualityModel")
-    public List<DTORelationsSI> getQualityModel(@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) throws IOException {
-        if (date == null)
-            return qmaRelations.getRelations(prj, null);
-        else
-            return qmaRelations.getRelations(prj, LocalDate.parse(date));
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTORelationsSI> getQualityModel(@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) {
+        try {
+            if (date == null)
+                return qmaRelations.getRelations(prj, null);
+            else
+                return qmaRelations.getRelations(prj, LocalDate.parse(date));
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
     }
 
-    @RequestMapping("api/me")
+    @GetMapping("api/me")
+    @ResponseStatus(HttpStatus.OK)
     public String getUserName (HttpServletResponse response, Authentication authentication) {
         if (authentication == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "{}";
         } else {
-            response.setStatus(HttpServletResponse.SC_OK);
             return "{\"userName\":\"" + authentication.getName() + "\"}";
         }
     }

@@ -100,13 +100,13 @@ $('#accept').click(function () {
         alert("There has to be at least 2 categories for each indicator.")
     else {
         $.ajax({
-            url: '../api/newCategories',
+            url: '../api/categories',
             data: formData,
             type: "POST",
             contentType: false,
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
-                if (jqXHR.status == 405)
+                if (jqXHR.status == 500)
                     alert("You can't have two categories with the same name.");
             },
             success: function() {

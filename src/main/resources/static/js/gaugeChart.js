@@ -11,7 +11,7 @@ var urlLink;
 
 function getData(width, height, showButtons, chartHyperlinked, color) {
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/StrategicIndicators/CurrentEvaluation";
+    var url = "/api/strategicIndicators/current";
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -38,7 +38,7 @@ function getData(width, height, showButtons, chartHyperlinked, color) {
 function seeFeedback(i){
     jQuery.ajax({
         dataType: "json",
-        url: '../api/StrategicIndicators/CurrentEvaluation',
+        url: '../api/strategicIndicators/current',
         cache: false,
         type: "GET",
         async: true,

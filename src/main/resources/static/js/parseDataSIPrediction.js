@@ -24,7 +24,7 @@ function getData() {
         //get data from API
         jQuery.ajax({
             dataType: "json",
-            url: "../api/StrategicIndicators/PredictionData",
+            url: "../api/strategicIndicators/prediction",
             data: {
                 "technique": technique,
                 "horizon": diffDays

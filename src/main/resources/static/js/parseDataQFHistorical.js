@@ -1,7 +1,7 @@
 var isdsi = false;
 var isqf = true;
 
-var url = parseURLSimple("../api/qualityFactors/historical");
+var url = parseURLSimple("../api/qualityFactors/metrics/historical");
 
 //initialize data vectors
 var texts = [];

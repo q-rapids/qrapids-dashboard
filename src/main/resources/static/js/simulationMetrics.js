@@ -78,7 +78,7 @@ function showMetricsSliders (metrics) {
 function getDetailedStrategicIndicators () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/DetailedStrategicIndicators/CurrentEvaluation",
+        url: "../api/strategicIndicators/qualityFactors/current",
         cache: false,
         type: "GET",
         async: true,
@@ -183,7 +183,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
 function getFactors () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/qualityFactors/current",
+        url: "../api/qualityFactors/metrics/current",
         cache: false,
         type: "GET",
         async: true,
@@ -408,13 +408,13 @@ function simulateSI (qualityFactors) {
     formData.append("factors", JSON.stringify(qfs));
 
     $.ajax({
-        url: "../api/Simulate",
+        url: "../api/strategicIndicators/simulate",
         data: formData,
-        type: "POST",
+        type: "GET",
         contentType: false,
         processData: false,
         error: function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status == 405)
+            if (jqXHR.status == 500)
                 alert(textStatus);
         },
         success: function(result) {

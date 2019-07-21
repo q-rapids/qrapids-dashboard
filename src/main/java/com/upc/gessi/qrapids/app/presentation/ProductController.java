@@ -5,7 +5,7 @@ import com.upc.gessi.qrapids.app.dto.DTOProduct;
 import com.upc.gessi.qrapids.app.dto.DTOProject;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.exceptions.ElementAlreadyPresent;
+import com.upc.gessi.qrapids.app.exceptions.ElementAlreadyPresentException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -84,9 +84,9 @@ public class ProductController {
             	DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId);
             	productCont.updateProject(p);
             } else {
-                throw new ElementAlreadyPresent();
+                throw new ElementAlreadyPresentException();
         	}
-        } catch (ElementAlreadyPresent e) {
+        } catch (ElementAlreadyPresentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
@@ -108,9 +108,9 @@ public class ProductController {
             if (productCont.checkProductByName(id, name)) {
             	productCont.updateProduct(id, name, description, logoBytes, projectIds);
             } else {
-                throw new ElementAlreadyPresent();
+                throw new ElementAlreadyPresentException();
         	}
-        } catch (ElementAlreadyPresent e) {
+        } catch (ElementAlreadyPresentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Product name already exists");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
@@ -137,9 +137,9 @@ public class ProductController {
             if (productCont.checkNewProductByName(name)) {
             	productCont.newProduct(name, description, logoBytes, projectIds);
             } else {
-                throw new ElementAlreadyPresent();
+                throw new ElementAlreadyPresentException();
             }
-        } catch (ElementAlreadyPresent e) {
+        } catch (ElementAlreadyPresentException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
@@ -158,7 +158,7 @@ public class ProductController {
 		try {
 			return productCont.getProductEvaluation(Long.parseLong(id));
         } catch (CategoriesException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The categories do not match");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
@@ -170,7 +170,7 @@ public class ProductController {
 		try {
 			return productCont.getDetailedProductEvaluation(Long.parseLong(id));
         } catch (CategoriesException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The categories do not match");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }

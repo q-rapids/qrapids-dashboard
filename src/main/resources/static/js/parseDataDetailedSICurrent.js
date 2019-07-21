@@ -1,4 +1,4 @@
-var url = parseURLSimple("../api/DetailedStrategicIndicators/CurrentEvaluation");
+var url = parseURLSimple("../api/strategicIndicators/qualityFactors/current");
 
 var isdsi = true;
 
