@@ -466,3 +466,103 @@ include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
+
+
+
+== Projects
+
+=== Import projects
+
+operation::projects/import[snippets='curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response categories error
+include::{snippets}/projects/import-conflict/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/projects/import-read-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Get all projects
+
+operation::projects/all[snippets='curl-request,response-fields,http-response']
+
+
+=== Get single project
+
+operation::projects/single[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== Update project
+
+:numbered!:
+
+==== Path parameters
+
+include::{snippets}/projects/single/path-parameters.adoc[]
+
+operation::projects/update[snippets='request-parameters,request-parts,curl-request,http-response']
+
+==== HTTP response name already exists
+include::{snippets}/projects/update-error/http-response.adoc[]
+
+:numbered:
+
+
+
+== Products
+
+=== Get all products
+
+operation::products/all[snippets='curl-request,response-fields,http-response']
+
+
+=== Get single product
+
+operation::products/single[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== New product
+
+operation::products/add[snippets='request-parameters,request-parts,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response name already exists
+include::{snippets}/products/add-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Update product
+
+:numbered!:
+
+==== Path parameters
+
+include::{snippets}/products/single/path-parameters.adoc[]
+
+operation::products/update[snippets='request-parameters,request-parts,curl-request,http-response']
+
+==== HTTP response name already exists
+include::{snippets}/products/update-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Delete product
+
+operation::products/delete[snippets='path-parameters,curl-request,http-response']
+
+
+=== Get product evaluation
+
+operation::products/evaluation[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== Get product detailed evaluation
+
+operation::products/evaluation-detailed[snippets='path-parameters,curl-request,response-fields,http-response']

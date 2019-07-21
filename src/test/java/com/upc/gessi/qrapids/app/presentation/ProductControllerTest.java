@@ -7,16 +7,21 @@ import com.upc.gessi.qrapids.app.dto.DTOProject;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.util.Pair;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.File;
@@ -29,12 +34,21 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ProductControllerTest {
 
     private MockMvc mockMvc;
+
+    @Rule
+    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     @Mock
     private ProductsController productsController;
@@ -51,6 +65,7 @@ public class ProductControllerTest {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders
                 .standaloneSetup(productController)
+                .apply(documentationConfiguration(this.restDocumentation))
                 .build();
     }
 
@@ -81,7 +96,26 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$[0].description", is(projectDescription)))
                 .andExpect(jsonPath("$[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].active", is(active)))
-                .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)));
+                .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
+                .andDo(document("projects/all",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Project identifier"),
+                                fieldWithPath("[].externalId")
+                                        .description("Project external identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Project name"),
+                                fieldWithPath("[].description")
+                                        .description("Project description"),
+                                fieldWithPath("[].logo")
+                                        .description("Project logo file"),
+                                fieldWithPath("[].active")
+                                        .description("Is an active project?"),
+                                fieldWithPath("[].backlogId")
+                                        .description("Project identifier in the backlog"))
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).getProjects();
@@ -128,7 +162,36 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$[0].projects[0].description", is(projectDescription)))
                 .andExpect(jsonPath("$[0].projects[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$[0].projects[0].active", is(active)))
-                .andExpect(jsonPath("$[0].projects[0].backlogId", is(projectBacklogId)));
+                .andExpect(jsonPath("$[0].projects[0].backlogId", is(projectBacklogId)))
+                .andDo(document("products/all",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Product identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Product name"),
+                                fieldWithPath("[].description")
+                                        .description("Product description"),
+                                fieldWithPath("[].logo")
+                                        .description("Product logo file"),
+                                fieldWithPath("[].projects")
+                                        .description("List of all the projects which compose the product"),
+                                fieldWithPath("[].projects[].id")
+                                        .description("Project identifier"),
+                                fieldWithPath("[].projects[].externalId")
+                                        .description("Project external identifier"),
+                                fieldWithPath("[].projects[].name")
+                                        .description("Project name"),
+                                fieldWithPath("[].projects[].description")
+                                        .description("Project description"),
+                                fieldWithPath("[].projects[].logo")
+                                        .description("Project logo file"),
+                                fieldWithPath("[].projects[].active")
+                                        .description("Is an active project?"),
+                                fieldWithPath("[].projects[].backlogId")
+                                        .description("Project identifier in the backlog"))
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).getProducts();
@@ -156,8 +219,8 @@ public class ProductControllerTest {
         when(productsController.getProductById(productId.toString())).thenReturn(dtoProduct);
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/products/" + productId);
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/products/{id}", productId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -172,7 +235,40 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.projects[0].description", is(projectDescription)))
                 .andExpect(jsonPath("$.projects[0].logo", is(nullValue())))
                 .andExpect(jsonPath("$.projects[0].active", is(active)))
-                .andExpect(jsonPath("$.projects[0].backlogId", is(projectBacklogId)));
+                .andExpect(jsonPath("$.projects[0].backlogId", is(projectBacklogId)))
+                .andDo(document("products/single",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Product identifier")
+                        ),
+                        responseFields(
+                                fieldWithPath("id")
+                                        .description("Product identifier"),
+                                fieldWithPath("name")
+                                        .description("Product name"),
+                                fieldWithPath("description")
+                                        .description("Product description"),
+                                fieldWithPath("logo")
+                                        .description("Product logo file"),
+                                fieldWithPath("projects")
+                                        .description("List of all the projects which compose the product"),
+                                fieldWithPath("projects[].id")
+                                        .description("Project identifier"),
+                                fieldWithPath("projects[].externalId")
+                                        .description("Project external identifier"),
+                                fieldWithPath("projects[].name")
+                                        .description("Project name"),
+                                fieldWithPath("projects[].description")
+                                        .description("Project description"),
+                                fieldWithPath("projects[].logo")
+                                        .description("Project logo file"),
+                                fieldWithPath("projects[].active")
+                                        .description("Is an active project?"),
+                                fieldWithPath("projects[].backlogId")
+                                        .description("Project identifier in the backlog"))
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).getProductById(productId.toString());
@@ -192,8 +288,8 @@ public class ProductControllerTest {
         when(productsController.getProjectById(projectId.toString())).thenReturn(dtoProject);
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/products/project/" + projectId);
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/projects/{id}", projectId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -203,7 +299,30 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.description", is(projectDescription)))
                 .andExpect(jsonPath("$.logo", is(nullValue())))
                 .andExpect(jsonPath("$.active", is(active)))
-                .andExpect(jsonPath("$.backlogId", is(projectBacklogId)));
+                .andExpect(jsonPath("$.backlogId", is(projectBacklogId)))
+                .andDo(document("projects/single",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Project identifier")
+                        ),
+                        responseFields(
+                                fieldWithPath("id")
+                                        .description("Project identifier"),
+                                fieldWithPath("externalId")
+                                        .description("Project external identifier"),
+                                fieldWithPath("name")
+                                        .description("Project name"),
+                                fieldWithPath("description")
+                                        .description("Project description"),
+                                fieldWithPath("logo")
+                                        .description("Project logo file"),
+                                fieldWithPath("active")
+                                        .description("Is an active project?"),
+                                fieldWithPath("backlogId")
+                                        .description("Project identifier in the backlog"))
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).getProjectById(projectId.toString());
@@ -228,16 +347,39 @@ public class ProductControllerTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/updateProject")
+                .multipart("/api/projects/{id}", projectId)
                 .file(logoMultipartFile)
-                .param("id", projectId.toString())
                 .param("externalId", projectExternalId)
                 .param("name", projectName)
                 .param("description", projectDescription)
-                .param("backlogId", projectBacklogId);
+                .param("backlogId", projectBacklogId)
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted());
+                .andExpect(status().isOk())
+                .andDo(document("projects/update",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("externalId")
+                                        .description("Project external identifier"),
+                                parameterWithName("name")
+                                        .description("Project name"),
+                                parameterWithName("description")
+                                        .description("Project description"),
+                                parameterWithName("backlogId")
+                                        .description("Project identifier in the backlog")),
+                        requestParts(
+                                partWithName("logo")
+                                        .description("Project logo file")
+                        )
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).checkProjectByName(projectId, projectName);
@@ -270,16 +412,26 @@ public class ProductControllerTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/updateProject")
+                .multipart("/api/projects/{id}", projectId)
                 .file(logoMultipartFile)
-                .param("id", projectId.toString())
                 .param("externalId", projectExternalId)
                 .param("name", projectName)
                 .param("description", projectDescription)
-                .param("backlogId", projectBacklogId);
+                .param("backlogId", projectBacklogId)
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andDo(document("projects/update-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).checkProjectByName(projectId, projectName);
@@ -311,15 +463,36 @@ public class ProductControllerTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/updateProduct")
+                .multipart("/api/products/{id}", productId)
                 .file(logoMultipartFile)
-                .param("id", productId.toString())
                 .param("name", productName)
                 .param("description", productDescription)
-                .param("projects", projectId.toString());
+                .param("projects", projectId.toString())
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted());
+                .andExpect(status().isOk())
+                .andDo(document("products/update",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Product name"),
+                                parameterWithName("description")
+                                        .description("Product description"),
+                                parameterWithName("projects")
+                                        .description("Comma separated values of the project identifiers which belong to the product")),
+                        requestParts(
+                                partWithName("logo")
+                                        .description("Product logo file")
+                        )
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).checkProductByName(productId, productName);
@@ -355,15 +528,36 @@ public class ProductControllerTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/updateProduct")
+                .multipart("/api/products/{id}", productId)
                 .file(logoMultipartFile)
-                .param("id", productId.toString())
                 .param("name", productName)
                 .param("description", productDescription)
-                .param("projects", projectId.toString());
+                .param("projects", projectId.toString())
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andDo(document("products/update-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Product name"),
+                                parameterWithName("description")
+                                        .description("Product description"),
+                                parameterWithName("projects")
+                                        .description("Comma separated values of the project identifiers which belong to the product")),
+                        requestParts(
+                                partWithName("logo")
+                                        .description("Product logo file")
+                        )
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).checkProductByName(productId, productName);
@@ -384,14 +578,29 @@ public class ProductControllerTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/newProduct")
+                .multipart("/api/products")
                 .file(logoMultipartFile)
                 .param("name", productName)
                 .param("description", productDescription)
                 .param("projects", projectId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted());
+                .andExpect(status().isCreated())
+                .andDo(document("products/add",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Product name"),
+                                parameterWithName("description")
+                                        .description("Product description"),
+                                parameterWithName("projects")
+                                        .description("Comma separated values of the project identifiers which belong to the product")),
+                        requestParts(
+                                partWithName("logo")
+                                        .description("Product logo file")
+                        )
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).checkNewProductByName(productName);
@@ -417,14 +626,18 @@ public class ProductControllerTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .multipart("/api/newProduct")
+                .multipart("/api/products")
                 .file(logoMultipartFile)
                 .param("name", productName)
                 .param("description", productDescription)
                 .param("projects", projectId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andDo(document("products/add-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).checkNewProductByName(productName);
@@ -436,31 +649,22 @@ public class ProductControllerTest {
         Long productId = 1L;
 
         // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/deleteProduct")
-                .param("id", productId.toString());
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .delete("/api/products/{id}", productId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isAccepted());
+                .andExpect(status().isOk())
+                .andDo(document("products/delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Product identifier")
+                        )
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).deleteProduct(productId);
-        verifyNoMoreInteractions(productsController);
-    }
-
-    @Test
-    public void deleteProductBadId() throws Exception {
-        String productId = "test";
-
-        // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/deleteProduct")
-                .param("id", productId);
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isMethodNotAllowed());
-
-        // Verify mock interactions
         verifyNoMoreInteractions(productsController);
     }
 
@@ -514,8 +718,8 @@ public class ProductControllerTest {
 
         when(productsController.getProductEvaluation(productId)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/products/currentEvaluation/" + productId);
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/products/{id}/current", productId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -550,7 +754,53 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$[0].categories_description", is(dtoStrategicIndicatorEvaluation.getCategories_description())))
                 .andExpect(jsonPath("$[0].hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$[0].hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
-                .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())));
+                .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andDo(document("products/evaluation",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Product identifier")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].dbId")
+                                        .description("Strategic indicator database identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].probabilities")
+                                        .description("Strategic indicator categories list"),
+                                fieldWithPath("[].probabilities[].id")
+                                        .description("Strategic indicator category identifier"),
+                                fieldWithPath("[].probabilities[].label")
+                                        .description("Strategic indicator category label"),
+                                fieldWithPath("[].probabilities[].value")
+                                        .description("Strategic indicator category probability"),
+                                fieldWithPath("[].probabilities[].color")
+                                        .description("Strategic indicator category hexadecimal color"),
+                                fieldWithPath("[].probabilities[].upperThreshold")
+                                        .description("Strategic indicator category upper threshold"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].datasource")
+                                        .description("Strategic indicator source of data"),
+                                fieldWithPath("[].categories_description")
+                                        .description("Array with the strategic indicator categories and thresholds"),
+                                fieldWithPath("[].hasBN")
+                                        .description("Does the strategic indicator have a Bayesian Network?"),
+                                fieldWithPath("[].hasFeedback")
+                                        .description("Does the strategic indicator have any feedback"),
+                                fieldWithPath("[].forecastingError")
+                                        .description("Errors in the forecasting"))
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).getProductEvaluation(productId);
@@ -560,7 +810,7 @@ public class ProductControllerTest {
     @Test
     public void getDetailedCurrentEvaluation() throws Exception {
         Long productId = 1L;
-        String productName = "test";
+        String projectName = "test";
 
         List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
 
@@ -606,19 +856,19 @@ public class ProductControllerTest {
         List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();
         dtoStrategicIndicatorEvaluationList.add(dtoStrategicIndicatorEvaluation);
 
-        Pair<String, List<DTOStrategicIndicatorEvaluation>> productStrategicIndicatorsEvaluation = Pair.of(productName, dtoStrategicIndicatorEvaluationList);
+        Pair<String, List<DTOStrategicIndicatorEvaluation>> productStrategicIndicatorsEvaluation = Pair.of(projectName, dtoStrategicIndicatorEvaluationList);
         List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> productsEvaluations = new ArrayList<>();
         productsEvaluations.add(productStrategicIndicatorsEvaluation);
 
         when(productsController.getDetailedProductEvaluation(productId)).thenReturn(productsEvaluations);
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/products/detailedCurrentEvaluation/" + productId);
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/products/{id}/projects/current", productId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].first", is(productName)))
+                .andExpect(jsonPath("$[0].first", is(projectName)))
                 .andExpect(jsonPath("$[0].second", hasSize(1)))
                 .andExpect(jsonPath("$[0].second[0].id", is(dtoStrategicIndicatorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].second[0].dbId", is(dtoStrategicIndicatorEvaluation.getDbId().intValue())))
@@ -650,7 +900,57 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$[0].second[0].categories_description", is(dtoStrategicIndicatorEvaluation.getCategories_description())))
                 .andExpect(jsonPath("$[0].second[0].hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$[0].second[0].hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
-                .andExpect(jsonPath("$[0].second[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())));
+                .andExpect(jsonPath("$[0].second[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andDo(document("products/evaluation-detailed",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Product identifier")),
+                        responseFields(
+                                fieldWithPath("[].first")
+                                        .description("Project external identifier"),
+                                fieldWithPath("[].second")
+                                        .description("List of the current assessment of every strategic indicator inside the project"),
+                                fieldWithPath("[].second[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].second[].dbId")
+                                        .description("Strategic indicator database identifier"),
+                                fieldWithPath("[].second[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].second[].description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("[].second[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].second[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].second[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].second[].probabilities")
+                                        .description("Strategic indicator categories list"),
+                                fieldWithPath("[].second[].probabilities[].id")
+                                        .description("Strategic indicator category identifier"),
+                                fieldWithPath("[].second[].probabilities[].label")
+                                        .description("Strategic indicator category label"),
+                                fieldWithPath("[].second[].probabilities[].value")
+                                        .description("Strategic indicator category probability"),
+                                fieldWithPath("[].second[].probabilities[].color")
+                                        .description("Strategic indicator category hexadecimal color"),
+                                fieldWithPath("[].second[].probabilities[].upperThreshold")
+                                        .description("Strategic indicator category upper threshold"),
+                                fieldWithPath("[].second[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].second[].datasource")
+                                        .description("Strategic indicator source of data"),
+                                fieldWithPath("[].second[].categories_description")
+                                        .description("Array with the strategic indicator categories and thresholds"),
+                                fieldWithPath("[].second[].hasBN")
+                                        .description("Does the strategic indicator have a Bayesian Network?"),
+                                fieldWithPath("[].second[].hasFeedback")
+                                        .description("Does the strategic indicator have any feedback"),
+                                fieldWithPath("[].second[].forecastingError")
+                                        .description("Errors in the forecasting"))
+                ));
 
         // Verify mock interactions
         verify(productsController, times(1)).getDetailedProductEvaluation(productId);

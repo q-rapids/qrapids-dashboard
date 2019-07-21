@@ -1,8 +1,4 @@
 var serverUrl = sessionStorage.getItem("serverUrl");
-var url = "/api/products/detailedCurrentEvaluation/";
-if (serverUrl) {
-    url = serverUrl + url;
-}
 
 var isdsi = true;
 
@@ -58,10 +54,15 @@ function getData() {
     labels = [];
     values = [];
 
+    var url = "/api/products/" + currentProduct + "/projects/current";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+
     //get data from API
     jQuery.ajax({
         dataType: "json",
-        url: url + currentProduct,
+        url: url,
         cache: false,
         type: "GET",
         async: true,

@@ -121,7 +121,7 @@ function clickOnTree(e){
 }
 
 function getChosenProject(currentProjectId) {
-	var url = "/api/products/project/" + currentProjectId;
+	var url = "/api/projects/" + currentProjectId;
 	if (serverUrl) {
 		url = serverUrl + url;
 	}
@@ -252,14 +252,13 @@ function saveProject() {
     	var loadedFile = $('#projectLogo')[0].files[0];
     	if (loadedFile == null || loadedFile.size < 1048576) {
 	        var formData = new FormData();
-	        formData.append("id", currentProject);
 	        formData.append("externalId", document.getElementById("projectId").innerHTML);
 	        formData.append("name", $('#projectName').val());
 	        formData.append("description", $('#projectDescription').val());
 	        formData.append("logo", $('#projectLogo')[0].files[0]);
 	        formData.append("backlogId", $("#projectBacklogId").val());
 
-	        var url = "/api/updateProject";
+	        var url = "/api/projects/" + currentProject;
 			if (serverUrl) {
 				url = serverUrl + url;
 			}
@@ -267,7 +266,7 @@ function saveProject() {
 	        $.ajax({
 	            url: url,
 	            data: formData,
-	            type: "POST",
+	            type: "PUT",
 	            contentType: false,
 	            processData: false,
 	            error: function(jqXHR, textStatus, errorThrown) {
@@ -522,13 +521,12 @@ function saveProduct() {
     	var loadedFile = $('#productLogo')[0].files[0];
     	if (loadedFile == null || loadedFile.size < 1048576) {
     		var formData = new FormData();
-            formData.append("id", currentProduct);
             formData.append("name", $('#productName').val());
             formData.append("description", $('#productDescription').val());
             formData.append("logo", $('#productLogo')[0].files[0]);
             formData.append("projects", selectedProjects);
 
-            var url = "/api/updateProduct";
+            var url = "/api/products/" + currentProduct;
 			if (serverUrl) {
 				url = serverUrl + url;
 			}
@@ -536,7 +534,7 @@ function saveProduct() {
             $.ajax({
                 url: url,
                 data: formData,
-                type: "POST",
+                type: "PUT",
                 contentType: false,
                 processData: false,
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -560,17 +558,14 @@ function saveProduct() {
 
 function deleteProduct() {
 	if (confirm("Are you sure you want to delete this product?")) {
-		var formData = new FormData();
-        formData.append("id", currentProduct);
 
-        var url = "/api/deleteProduct";
+        var url = "/api/products/" + currentProduct;
 		if (serverUrl) {
 			url = serverUrl + url;
 		}
         $.ajax({
             url: url,
-            data: formData,
-            type: "POST",
+            type: "DELETE",
             contentType: false,
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
@@ -783,7 +778,7 @@ function saveNewProduct() {
             formData.append("logo", $('#newProductLogo')[0].files[0]);
             formData.append("projects", selectedProjects);
 
-			var url = "/api/newProduct";
+			var url = "/api/products";
 			if (serverUrl) {
 				url = serverUrl + url;
 			}

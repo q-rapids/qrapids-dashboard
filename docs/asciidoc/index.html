@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v0.3.5, 2019-07-20">
+<meta name="author" content="v0.3.5, 2019-07-21">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v0.3.5, 2019-07-20</span><br>
+<span id="author" class="author">v0.3.5, 2019-07-21</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -499,6 +499,25 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_get_historical_evaluation_for_quality_factor">7.6. Get historical evaluation for quality factor</a></li>
 <li><a href="#_get_prediction_2">7.7. Get prediction</a></li>
 <li><a href="#_get_prediction_for_quality_factor">7.8. Get prediction for quality factor</a></li>
+</ul>
+</li>
+<li><a href="#_projects">8. Projects</a>
+<ul class="sectlevel2">
+<li><a href="#_import_projects">8.1. Import projects</a></li>
+<li><a href="#_get_all_projects">8.2. Get all projects</a></li>
+<li><a href="#_get_single_project">8.3. Get single project</a></li>
+<li><a href="#_update_project">8.4. Update project</a></li>
+</ul>
+</li>
+<li><a href="#_products">9. Products</a>
+<ul class="sectlevel2">
+<li><a href="#_get_all_products">9.1. Get all products</a></li>
+<li><a href="#_get_single_product">9.2. Get single product</a></li>
+<li><a href="#_new_product">9.3. New product</a></li>
+<li><a href="#_update_product">9.4. Update product</a></li>
+<li><a href="#_delete_product">9.5. Delete product</a></li>
+<li><a href="#_get_product_evaluation">9.6. Get product evaluation</a></li>
+<li><a href="#_get_product_detailed_evaluation">9.7. Get product detailed evaluation</a></li>
 </ul>
 </li>
 </ul>
@@ -637,7 +656,7 @@ Content-Length: 245
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1563637582090,
+  "date" : 1563697129081,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -1421,7 +1440,7 @@ Content-Length: 400
 
 {
   "id" : 3,
-  "date" : 1563637581653,
+  "date" : 1563697128678,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -1610,7 +1629,7 @@ Content-Length: 664
 
 [ {
   "id" : 3,
-  "date" : 1563637581941,
+  "date" : 1563697128963,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -1625,7 +1644,7 @@ Content-Length: 664
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1563637581941,
+    "date" : 1563697128963,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -1769,7 +1788,7 @@ Content-Length: 400
 
 {
   "id" : 3,
-  "date" : 1563637582549,
+  "date" : 1563697129356,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -2510,7 +2529,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "siId" : 1,
-  "date" : 1563637584483,
+  "date" : 1563697130882,
   "author" : null,
   "appUser" : null,
   "newvalue" : 0.75,
@@ -2820,7 +2839,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 20 ],
+    "date" : [ 2019, 7, 21 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2989,11 +3008,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-07-20",
+  "formattedDate" : "2019-07-21",
   "strategicIndicators" : [ "processperformance" ]
 }</code></pre>
 </div>
@@ -3175,7 +3194,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 20 ],
+    "date" : [ 2019, 7, 21 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -3340,7 +3359,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 20 ],
+    "date" : [ 2019, 7, 21 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -3527,7 +3546,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 20 ],
+    "date" : [ 2019, 7, 21 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -3674,11 +3693,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-07-20",
+  "formattedDate" : "2019-07-21",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -3774,22 +3793,6 @@ Content-Length: 265
   "color" : "#ff8000",
   "upperThreshold" : 0.67
 } ]</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_wrong_project_12">HTTP response wrong project</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_7">HTTP response error on ElasticSearch connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
 </div>
 </div>
 </div>
@@ -3959,7 +3962,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 20 ],
+    "date" : [ 2019, 7, 21 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -3977,7 +3980,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_13">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_12">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -3985,7 +3988,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_8">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_7">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -4180,7 +4183,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 20 ],
+    "date" : [ 2019, 7, 21 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -4198,7 +4201,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_14">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_13">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -4206,7 +4209,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_9">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_8">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -4371,18 +4374,18 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-07-20",
+  "formattedDate" : "2019-07-21",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_15">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_14">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -4390,7 +4393,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_10">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_9">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -4522,7 +4525,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4533,7 +4536,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_16">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_15">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -4541,7 +4544,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_11">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_10">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -4690,7 +4693,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4701,7 +4704,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_17">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_16">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -4709,7 +4712,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_12">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_11">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -4858,7 +4861,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4869,7 +4872,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_18">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_17">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -4877,7 +4880,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_13">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_12">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -5012,7 +5015,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5023,7 +5026,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_19">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_18">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -5031,7 +5034,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_14">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_13">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -5188,7 +5191,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5199,7 +5202,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_20">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_19">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -5207,7 +5210,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_15">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_14">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -5364,7 +5367,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5375,7 +5378,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_21">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_20">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -5383,7 +5386,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_16">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_15">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -5538,7 +5541,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -5555,7 +5558,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_22">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_21">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -5563,7 +5566,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_17">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_16">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -5740,7 +5743,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 20 ],
+  "date" : [ 2019, 7, 21 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -5757,10 +5760,78 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_23">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_22">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_error_on_elasticsearch_connection_17">HTTP response error on ElasticSearch connection</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_projects">8. Projects</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_import_projects">8.1. Import projects</h3>
+<div class="sect3">
+<h4 id="_import_projects_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/projects/import' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_import_projects_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List with the external identifiers of all the assessed projects</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_import_projects_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 38
+Content-Type: application/json;charset=UTF-8
+
+[ "project1", "project2", "project3" ]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_categories_error">HTTP response categories error</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
 </div>
 </div>
 </div>
@@ -5773,12 +5844,1200 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_get_all_projects">8.2. Get all projects</h3>
+<div class="sect3">
+<h4 id="_get_all_projects_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/projects' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_all_projects_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].externalId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project logo file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].active</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is an active project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].backlogId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_all_projects_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 155
+
+[ {
+  "id" : 1,
+  "externalId" : "test",
+  "name" : "Test",
+  "description" : "Test project",
+  "logo" : null,
+  "active" : true,
+  "backlogId" : "999"
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_single_project">8.3. Get single project</h3>
+<div class="sect3">
+<h4 id="_get_single_project_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/projects/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_single_project_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/projects/1' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_single_project_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>externalId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project logo file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>active</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is an active project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backlogId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_single_project_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 151
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id" : 1,
+  "externalId" : "test",
+  "name" : "Test",
+  "description" : "Test project",
+  "logo" : null,
+  "active" : true,
+  "backlogId" : "999"
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_update_project">8.4. Update project</h3>
+<div class="sect3">
+<h4 id="_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/projects/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect4">
+<h5 id="_path_parameters_request_parameters">Request parameters</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>externalId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>backlogId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_request_parts">Request parts</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Part</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project logo file</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_curl_request">Curl request</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/projects/1' -i -X PUT \
+    -H 'Content-Type: multipart/form-data' \
+    -F 'logo=@logo.jpg;type=image/jpeg' \
+    -F 'externalId=test' \
+    -F 'name=Test' \
+    -F 'description=Test project' \
+    -F 'backlogId=999'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_http_response">HTTP response</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 202 Accepted</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_name_already_exists">HTTP response name already exists</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_products">9. Products</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_get_all_products">9.1. Get all products</h3>
+<div class="sect3">
+<h4 id="_get_all_products_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/products' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_all_products_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product logo file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of all the projects which compose the product</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].externalId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project logo file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].active</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is an active project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].backlogId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_all_products_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 276
+
+[ {
+  "id" : 1,
+  "name" : "Test",
+  "description" : "Test product",
+  "logo" : null,
+  "projects" : [ {
+    "id" : 1,
+    "externalId" : "test",
+    "name" : "Test",
+    "description" : "Test project",
+    "logo" : null,
+    "active" : true,
+    "backlogId" : "999"
+  } ]
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_single_product">9.2. Get single product</h3>
+<div class="sect3">
+<h4 id="_get_single_product_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/products/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_single_product_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/products/1' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_single_product_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product logo file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of all the projects which compose the product</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].externalId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project logo file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].active</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is an active project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].backlogId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_single_product_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 272
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id" : 1,
+  "name" : "Test",
+  "description" : "Test product",
+  "logo" : null,
+  "projects" : [ {
+    "id" : 1,
+    "externalId" : "test",
+    "name" : "Test",
+    "description" : "Test project",
+    "logo" : null,
+    "active" : true,
+    "backlogId" : "999"
+  } ]
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_new_product">9.3. New product</h3>
+<div class="sect3">
+<h4 id="_new_product_request_parameters">Request parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Comma separated values of the project identifiers which belong to the product</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_new_product_request_parts">Request parts</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Part</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product logo file</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_new_product_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/products' -i -X POST \
+    -H 'Content-Type: multipart/form-data' \
+    -F 'logo=@logo.jpg;type=image/jpeg' \
+    -F 'name=Test' \
+    -F 'description=Test product' \
+    -F 'projects=1'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_new_product_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 202 Accepted</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_name_already_exists_2">HTTP response name already exists</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_update_product">9.4. Update product</h3>
+<div class="sect3">
+<h4 id="_path_parameters_2">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. /api/products/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product identifier</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect4">
+<h5 id="_path_parameters_2_request_parameters">Request parameters</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Comma separated values of the project identifiers which belong to the product</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_2_request_parts">Request parts</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Part</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product logo file</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_2_curl_request">Curl request</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/products/1' -i -X PUT \
+    -H 'Content-Type: multipart/form-data' \
+    -F 'logo=@logo.jpg;type=image/jpeg' \
+    -F 'name=Test' \
+    -F 'description=Test product' \
+    -F 'projects=1'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_2_http_response">HTTP response</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 202 Accepted</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_name_already_exists_3">HTTP response name already exists</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete_product">9.5. Delete product</h3>
+<div class="sect3">
+<h4 id="_delete_product_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/products/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_delete_product_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/products/1' -i -X DELETE</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_delete_product_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 202 Accepted</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_product_evaluation">9.6. Get product evaluation</h3>
+<div class="sect3">
+<h4 id="_get_product_evaluation_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/products/{id}/current</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_product_evaluation_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/products/1/current' -i -X POST</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_product_evaluation_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].dbId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator database identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator categories list</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities[].label</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category label</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category probability</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities[].color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category hexadecimal color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities[].upperThreshold</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category upper threshold</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator assessment date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].datasource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator source of data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].categories_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Array with the strategic indicator categories and thresholds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].hasBN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Does the strategic indicator have a Bayesian Network?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].hasFeedback</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Does the strategic indicator have any feedback</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forecastingError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Errors in the forecasting</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_product_evaluation_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 791
+Content-Type: application/json;charset=UTF-8
+
+[ {
+  "id" : "blocking",
+  "dbId" : 1,
+  "name" : "Blocking",
+  "description" : "Blocking elements",
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0,80)",
+  "probabilities" : [ {
+    "id" : 10,
+    "label" : "Good",
+    "value" : null,
+    "color" : "#00ff00",
+    "upperThreshold" : 0.66
+  }, {
+    "id" : 11,
+    "label" : "Neutral",
+    "value" : null,
+    "color" : "#ff8000",
+    "upperThreshold" : 0.33
+  }, {
+    "id" : 11,
+    "label" : "Bad",
+    "value" : null,
+    "color" : "#ff0000",
+    "upperThreshold" : 0.0
+  } ],
+  "date" : [ 2019, 7, 7 ],
+  "datasource" : "Q-Rapdis Dashboard",
+  "categories_description" : "[Good (0,67), Neutral (0,33), Bad (0,00)]",
+  "hasBN" : false,
+  "hasFeedback" : false,
+  "forecastingError" : null
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_product_detailed_evaluation">9.7. Get product detailed evaluation</h3>
+<div class="sect3">
+<h4 id="_get_product_detailed_evaluation_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/products/{id}/projects/current</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_product_detailed_evaluation_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/products/1/projects/current' -i -X POST</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_product_detailed_evaluation_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of the current assessment of every strategic indicator inside the project</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].dbId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator database identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].probabilities</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator categories list</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].probabilities[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].probabilities[].label</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category label</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].probabilities[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category probability</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].probabilities[].color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category hexadecimal color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].probabilities[].upperThreshold</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category upper threshold</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator assessment date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].datasource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator source of data</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].categories_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Array with the strategic indicator categories and thresholds</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].hasBN</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Does the strategic indicator have a Bayesian Network?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].hasFeedback</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Does the strategic indicator have any feedback</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].forecastingError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Errors in the forecasting</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_product_detailed_evaluation_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 902
+Content-Type: application/json;charset=UTF-8
+
+[ {
+  "first" : "test",
+  "second" : [ {
+    "id" : "blocking",
+    "dbId" : 1,
+    "name" : "Blocking",
+    "description" : "Blocking elements",
+    "value" : {
+      "first" : 0.8,
+      "second" : "Good"
+    },
+    "value_description" : "Good (0,80)",
+    "probabilities" : [ {
+      "id" : 10,
+      "label" : "Good",
+      "value" : null,
+      "color" : "#00ff00",
+      "upperThreshold" : 0.66
+    }, {
+      "id" : 11,
+      "label" : "Neutral",
+      "value" : null,
+      "color" : "#ff8000",
+      "upperThreshold" : 0.33
+    }, {
+      "id" : 11,
+      "label" : "Bad",
+      "value" : null,
+      "color" : "#ff0000",
+      "upperThreshold" : 0.0
+    } ],
+    "date" : [ 2019, 7, 7 ],
+    "datasource" : "Q-Rapdis Dashboard",
+    "categories_description" : "[Good (0,67), Neutral (0,33), Bad (0,00)]",
+    "hasBN" : false,
+    "hasFeedback" : false,
+    "forecastingError" : null
+  } ]
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-07-20 17:47:59 +0200
+Last updated 2019-07-21 10:28:44 +0200
 </div>
 </div>
 </body>
