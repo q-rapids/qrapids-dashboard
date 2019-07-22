@@ -175,6 +175,9 @@ function drawChart() {
                         tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
                         tooltipEl.style.pointerEvents = 'none';
                     }
+                },
+                annotation: {
+                    annotations: []
                 }
             }
         };
@@ -233,6 +236,43 @@ function drawChart() {
                 c.data.errors.push("No data to display");
             }
         }
+
+        //Add category lines
+        if (typeof categories !== 'undefined') {
+            var annotations = [];
+            var lineHighCategory = {
+                type: 'line',
+                drawTime: 'beforeDatasetsDraw',
+                mode: 'horizontal',
+                scaleID: 'y-axis-0',
+                value: categories[1].upperThreshold,
+                borderColor: categories[0].color,
+                borderWidth: 1,
+                label: {
+                    enabled: false,
+                    content: categories[0].name
+                }
+            };
+            annotations.push(lineHighCategory);
+
+            var lineLowCategory = {
+                type: 'line',
+                drawTime: 'beforeDatasetsDraw',
+                mode: 'horizontal',
+                scaleID: 'y-axis-0',
+                value: categories[categories.length - 1].upperThreshold,
+                borderColor: categories[categories.length - 1].color,
+                borderWidth: 1,
+                label: {
+                    enabled: false,
+                    content: categories[categories.length - 1].name
+                }
+            };
+            annotations.push(lineLowCategory);
+
+            c.options.annotation.annotations = annotations;
+        }
+
         config.push(c);
     }
 

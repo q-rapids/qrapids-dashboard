@@ -731,8 +731,8 @@ public class Util {
         float thresholds_interval = 1.0f/(float)allCats.size();
         float upperThreshold=1;
         for (SICategory c : allCats) {
-            upperThreshold -=  thresholds_interval;
             result.add(new DTOSIAssesment(c.getId(), c.getName(), null, c.getColor(), abs((float)upperThreshold)));
+            upperThreshold -=  thresholds_interval;
         }
         return result;
     }
