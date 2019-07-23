@@ -637,14 +637,6 @@ app.controller('TablesCtrl', function($scope, $http) {
         else {
             url2 = url2 + "?id=" + id + "&name=" + name + "&si=" + si + "&siid=" + siid + "&cmd=" + cmd;
         }
-        var from = getParameterByName('from');
-        var to = getParameterByName('to');
-        if ($('#datepickerFrom').length || (from.length != 0 && to.length != 0)) {
-            if ($('#datepickerFrom').length)
-                url2 = url2 + "&from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val();
-            else
-                url2 = url2 + "&from=" + from + "&to=" + to;
-        }
         location.href = url2;
     };
 

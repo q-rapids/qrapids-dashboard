@@ -57,13 +57,6 @@ function drawChart(metrics, container, width, height, categories) {
         urlLink = "../Metrics/CurrentChart?id="
             + metrics[i].id + "&name=" + metrics[i].name;
 
-        //add from + to to link if found
-        var from = getParameterByName('from');
-        var to = getParameterByName('to');
-        if (from.length != 0 && to.length != 0) {
-            urlLink = urlLink + "&from=" + from + "&to=" + to;
-        }
-
         //create chart svg with hyperlink
         var svg = d3.select(container).append("svg")
             .attr("width", width)

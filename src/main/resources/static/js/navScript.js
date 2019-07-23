@@ -311,12 +311,10 @@ $("#LogoutProfileConfig").click(function () {
 
 
 function menuNav (urlNav) {
-    var parameters = false;
     //add id and name to url if found
     var id = getParameterByName('id');
     if (id.length !== 0) {
         urlNav = urlNav + "?id=" + id;
-        parameters = true;
         var name = getParameterByName('name');
         if (name.length !== 0) {
             urlNav = urlNav + "&name=" + name;
@@ -330,7 +328,7 @@ function menuNav (urlNav) {
             urlNav = urlNav + "&siid=" + siid;
         }
     }
-    addDatesAndGo(urlNav, parameters);
+    location.href = urlNav;
 }
 
 function parseURLSimple(url) {
@@ -378,45 +376,24 @@ function parseURLMetrics(url) {
     return url;
 }
 
-function addDatesAndGo(urlNav, parameters) {
-    //add from and to to url if found
-    var from = getParameterByName('from');
-    var to = getParameterByName('to');
-    if (($('#datepickerFrom').length || (from.length !== 0 && to.length !== 0)) && time !== "Prediction") {
-        //check if any previous parameters were added
-        if (parameters)
-            urlNav = urlNav + '&';
-        else
-            urlNav = urlNav + '?';
-
-        //if possible use data from datepicker
-        if ($('#datepickerFrom').length)
-            urlNav = urlNav + "from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val();
-        else
-            urlNav = urlNav + "from=" + from + "&to=" + to;
-    }
-    location.href = urlNav;
-}
-
 function navBack(toDetailed) {
+    var urlNav;
     var siid = getParameterByName('siid');
     var si = getParameterByName('si');
     if (currentURL.match("/PredictionChart")) {
         if (toDetailed)
-            var urlNav = "../DetailedStrategicIndicators/PredictionChart";
+            urlNav = "../DetailedStrategicIndicators/PredictionChart";
         else
-            var urlNav = "../QualityFactors/PredictionChart";
+            urlNav = "../QualityFactors/PredictionChart";
     }
     else {
         if (toDetailed)
-            var urlNav = "../DetailedStrategicIndicators/" + time + viewMode;
+            urlNav = "../DetailedStrategicIndicators/" + time + viewMode;
         else
-            var urlNav = "../QualityFactors/" + time + viewMode;
+            urlNav = "../QualityFactors/" + time + viewMode;
     }
-    var parameters = false;
     if (siid.length !== 0 && si.length !== 0) {
-        var urlNav = urlNav + "?id=" + siid + "&name=" + si;
-        parameters = true;
+        urlNav = urlNav + "?id=" + siid + "&name=" + si;
     }
-    addDatesAndGo(urlNav, parameters);
+    location.href = urlNav;
 }

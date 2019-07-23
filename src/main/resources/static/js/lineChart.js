@@ -28,12 +28,6 @@ function drawChart() {
             if (currentURL.match("/PredictionChart")) urlLink = "../DetailedStrategicIndicators/PredictionChart?id=" + ids[i] + "&name=" + text[i];
             else urlLink = "../DetailedStrategicIndicators/HistoricChart?id=" + ids[i] + "&name=" + text[i];
 
-            //add from + to to link
-            var from = getParameterByName('from');
-            var to = getParameterByName('to');
-            if ($('#datepickerFrom').length) {
-                urlLink = urlLink + "&from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val();
-            }
             a.setAttribute("href", urlLink);
         }
         a.innerHTML = text[i];

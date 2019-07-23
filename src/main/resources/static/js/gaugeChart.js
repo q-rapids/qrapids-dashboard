@@ -100,13 +100,6 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
             urlLink = "../DetailedStrategicIndicators/CurrentChart?id="
                 + data[i].id + "&name=" + data[i].name;
 
-            //add from + to to link if found
-            var from = getParameterByName('from');
-            var to = getParameterByName('to');
-            if (from.length != 0 && to.length != 0) {
-                urlLink = urlLink + "&from=" + from + "&to=" + to;
-            }
-
             // --> all the chart is hyperlinked
             console.log('#'+div.id);
             var svg = d3.select('#'+div.id).append("svg")
