@@ -10,6 +10,8 @@ var ids = [];
 var labels = [];
 var value = [];
 
+var categories = [];
+
 function getData() {
     getQualityModel();
     getDecisions();
@@ -74,7 +76,7 @@ function getData() {
                     --i;
                 }
             }
-            drawChart();
+            getFactorsCategories();
         }
     });
 }
@@ -127,6 +129,18 @@ function buildDecisionVectors (decisionsAdd, decisionsIgnore, strategicIndicator
             }
         });
     }
+}
+
+function getFactorsCategories () {
+    jQuery.ajax({
+        url: "../api/qualityFactors/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
+            drawChart();
+        }
+    });
 }
 
 window.onload = function() {

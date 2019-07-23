@@ -138,7 +138,6 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         }
 
         for (j = data[i].probabilities.length - 1; j > -1; --j) {
-            //draw arc from -90 to upper threshold degrees in orange
             svg.append("path")
                 .datum({endAngle: (j+1)/(data[i].probabilities.length) * Math.PI - Math.PI / 2})
                 .style("fill", data[i].probabilities[data[i].probabilities.length -1 - j].color)

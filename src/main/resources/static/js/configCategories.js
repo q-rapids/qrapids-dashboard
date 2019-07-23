@@ -2,12 +2,21 @@ $("#SICategoriesButton").click(function () {
     selectElement($(this));
     $("#SICategories").show();
     $("#FactorsCategories").hide();
+    $("#MetricsCategories").hide();
 });
 
 $("#FactorsCategoriesButton").click(function () {
     selectElement($(this));
     $("#SICategories").hide();
     $("#FactorsCategories").show();
+    $("#MetricsCategories").hide();
+});
+
+$("#MetricsCategoriesButton").click(function () {
+    selectElement($(this));
+    $("#SICategories").hide();
+    $("#FactorsCategories").hide();
+    $("#MetricsCategories").show();
 });
 
 function selectElement (selectedElement) {
@@ -55,13 +64,29 @@ function loadFactorCategories () {
                     buildCategoryRow(category, "tableQF", true);
                 });
             } else {
-                buildDefaultFactorTable();
+                buildDefaultThresholdTable("tableQF");
             }
         }
     });
 }
 
-function buildCategoryRow (category, tableId, isFactor) {
+function loadMetricsCategories () {
+    $.ajax({
+        url: '../api/metrics/categories',
+        type: "GET",
+        success: function(categories) {
+            if (categories.length > 0) {
+                categories.forEach(function (category) {
+                    buildCategoryRow(category, "tableMetrics", true);
+                });
+            } else {
+                buildDefaultThresholdTable("tableMetrics");
+            }
+        }
+    });
+}
+
+function buildCategoryRow (category, tableId, hasThreshold) {
     var table = document.getElementById(tableId);
     var row = table.insertRow(-1);
 
@@ -77,7 +102,7 @@ function buildCategoryRow (category, tableId, isFactor) {
     categoryColor.appendChild(categoryColorPicker);
     row.appendChild(categoryColor);
 
-    if (isFactor) {
+    if (hasThreshold) {
         var thresholdSelector = document.createElement("input");
         thresholdSelector.setAttribute("value", category.upperThreshold * 100);
         thresholdSelector.setAttribute("name", "upperThres");
@@ -140,27 +165,27 @@ function buildDefaultSITable () {
     buildCategoryRow(badCategory, "tableSI", false);
 }
 
-function buildDefaultFactorTable () {
+function buildDefaultThresholdTable (table) {
     var goodCategory = {
         name: "Good",
         color: "#00ff00",
-        upperThreshold: 0.67
+        upperThreshold: 1
     };
-    buildCategoryRow(goodCategory, "tableQF", true);
+    buildCategoryRow(goodCategory, table, true);
 
     var neutralCategory = {
         name: "Neutral",
         color: "#ff8000",
-        upperThreshold: 0.33
+        upperThreshold: 0.67
     };
-    buildCategoryRow(neutralCategory, "tableQF", true);
+    buildCategoryRow(neutralCategory, table, true);
 
     var badCategory = {
         name: "Bad",
         color: "#ff0000",
-        upperThreshold: 0
+        upperThreshold: 0.33
     };
-    buildCategoryRow(badCategory, "tableQF", true);
+    buildCategoryRow(badCategory, table, true);
 }
 
 function addButtonBehaviour () {
@@ -179,6 +204,15 @@ function addButtonBehaviour () {
             upperThreshold: 0
         };
         buildCategoryRow(goodCategory, "tableQF", true);
+    });
+
+    $('.table-addMetric').click(function () {
+        var goodCategory = {
+            name: "Good",
+            color: "#00ff00",
+            upperThreshold: 0
+        };
+        buildCategoryRow(goodCategory, "tableMetrics", true);
     });
 }
 
@@ -205,8 +239,8 @@ function getData() {
     return data;
 }
 
-function getDataQF() {
-    var $rows = $('#tableQF').find('tr:not(:hidden)');
+function getDataThreshold (table) {
+    var $rows = $('#'+table).find('tr:not(:hidden)');
     var headers = ["name", "color", "upperThreshold"];
     var data = [];
 
@@ -261,7 +295,7 @@ $('#saveSICategories').click(function () {
 
 $('#saveFactorCategories').click(function () {
     var formData = new FormData();
-    var dataQF = getDataQF();
+    var dataQF = getDataThreshold("tableQF");
     formData.append("QFCat", JSON.stringify(dataQF));
 
     if (dataQF.length < 2)
@@ -287,6 +321,34 @@ $('#saveFactorCategories').click(function () {
     }
 });
 
+$('#saveMetricCategories').click(function () {
+    var formData = new FormData();
+    var dataMetrics = getDataThreshold("tableMetrics");
+    formData.append("MCat", JSON.stringify(dataMetrics));
+
+    if (dataMetrics.length < 2)
+        alert("There has to be at least 2 categories for each factor");
+    else {
+        $.ajax({
+            url: '../api/metrics/categories',
+            data: formData,
+            type: "POST",
+            contentType: false,
+            processData: false,
+            error: function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status == 405)
+                    alert("You can't have two categories with the same name");
+                else
+                    alert("Error on saving categories");
+            },
+            success: function() {
+                alert("Metrics Categories saved successfully");
+            }
+        });
+
+    }
+});
+
 
 size = $('input[name=upperThres][class!="hide"]').length;
 $('input[name=upperThres][class!="hide"]').each(function (i) {
@@ -295,4 +357,5 @@ $('input[name=upperThres][class!="hide"]').each(function (i) {
 checkFirst();
 loadSICategories();
 loadFactorCategories();
+loadMetricsCategories();
 addButtonBehaviour();
