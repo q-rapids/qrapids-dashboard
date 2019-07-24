@@ -51,7 +51,7 @@ function buildSelector() {
 }
 
 function getData(width, height, showButtons, chartHyperlinked) {
-    var url = "/api/products/currentEvaluation/" + currentProduct;
+    var url = "/api/products/" + currentProduct + "/current";
     if (serverUrl) {
         url = serverUrl + url;
     }

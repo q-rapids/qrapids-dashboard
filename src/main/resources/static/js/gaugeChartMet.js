@@ -7,7 +7,14 @@ var upperThresh;
 var angle;
 var target;
 var tau = Math.PI / 2;
-var url = parseURLMetrics('../api/Metrics/CurrentEvaluation');
+
+var url;
+if (getParameterByName('id').length !== 0) {
+    url = parseURLMetrics("../api/qualityFactors/metrics/current");
+} else {
+    url = parseURLMetrics("../api/metrics/current");
+}
+
 var urlLink;
 
 function getData(width, height) {

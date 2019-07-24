@@ -20,7 +20,7 @@ function getData() {
     //get data from API
     jQuery.ajax({
         dataType: "json",
-        url: "../api/StrategicIndicators/HistoricalData",
+        url: "../api/strategicIndicators/historical",
         data: {
             "from": $('#datepickerFrom').val(),
             "to": $('#datepickerTo').val()

@@ -1,6 +1,6 @@
 function getFeedFact(){
     var id = getParameterByName('id');
-    var url =  "../api/FeedbackReport/" + id;
+    var url =  "../api/strategicIndicators/" + id + "/feedbackReport";
     jQuery.ajax({
         feedbackType: "json",
         url: url,

@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class QMAQualityFactors {
@@ -77,13 +78,14 @@ public class QMAQualityFactors {
         return qf;
     }
 
-    public void newCategories(JsonArray categories) {
+    public void newCategories(List<Map<String, String>> categories) {
         if (QFCatRep.count() == 0) {
-            for (JsonElement c : categories) {
+            for (Map<String, String> c : categories) {
                 QFCategory sic = new QFCategory();
-                sic.setName(c.getAsJsonObject().getAsJsonPrimitive("name").getAsString());
-                sic.setColor(c.getAsJsonObject().getAsJsonPrimitive("color").getAsString());
-                sic.setUpperThreshold((float)c.getAsJsonObject().getAsJsonPrimitive("upperThreshold").getAsInt()/100f);
+                sic.setName(c.get("name"));
+                sic.setColor(c.get("color"));
+                Float upperThreshold = Float.valueOf(c.get("upperThreshold"));
+                sic.setUpperThreshold(upperThreshold/100f);
                 QFCatRep.save(sic);
             }
         }

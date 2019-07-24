@@ -1,4 +1,5 @@
-var postUrl = "../api/newStrategicIndicator";
+var postUrl = "../api/strategicIndicators";
+var httpMethod = "POST";
 var id;
 var si_qf;
 var factorsLoaded = false;
@@ -11,7 +12,7 @@ function moveFactors() {
 }
 
 $.ajax({
-    url: "../api/QualityFactors/CurrentEvaluation",
+    url: "../api/qualityFactors/metrics/current",
     type: "GET",
     success: function(data) {
         for(i = 0; i < data.length; ++i) {
@@ -34,10 +35,11 @@ if (window.location.href.includes("/EditStrategicIndicators/")) {
         if (element == "EditStrategicIndicators")
             id = arr[i+1];
     });
-    postUrl = "../api/EditStrategicIndicator/" + id;
+    postUrl = "../api/strategicIndicators/" + id;
+    httpMethod = "PUT";
 
     $.ajax({
-        url: "../api/EditStrategicIndicator/" + id,
+        url: "../api/strategicIndicators/" + id,
         type: "GET",
         success: function(data) {
             console.log(data);
@@ -80,8 +82,8 @@ $(function () {
 
 $('#resetCategories').click(function () {
     $.ajax({
-        url: '../api/deleteCategories',
-        type: "GET",
+        url: '../api/categories',
+        type: "DELETE",
         success: function() {
             location.reload();
         }
@@ -108,7 +110,7 @@ $('#newSI').click(function () {
         $.ajax({
             url: postUrl,
             data: formData,
-            type: "POST",
+            type: httpMethod,
             contentType: false,
             processData: false,
             //ToDo: the service produces more than one error, the current message does not fit all of them

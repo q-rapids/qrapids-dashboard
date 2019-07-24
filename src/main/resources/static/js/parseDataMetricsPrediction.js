@@ -1,6 +1,11 @@
 var isSi = false;
 
-var url = parseURLMetrics("../api/Metrics/PredictionData");
+var url;
+if (getParameterByName('id').length !== 0) {
+    url = parseURLMetrics("../api/qualityFactors/metrics/prediction");
+} else {
+    url = parseURLMetrics("../api/metrics/prediction");
+}
 
 //initialize data vectors
 var text = [];

@@ -8,7 +8,7 @@ var detailedCharts = [];
 var factorsCharts = [];
 
 function getAllMetrics(){
-    var url = "../api/Metrics/CurrentEvaluation";
+    var url = "../api/metrics/current";
     $.ajax({
         url : url,
         type: "GET",
@@ -78,7 +78,7 @@ function showMetricsSliders (metrics) {
 function getDetailedStrategicIndicators () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/DetailedStrategicIndicators/CurrentEvaluation",
+        url: "../api/strategicIndicators/qualityFactors/current",
         cache: false,
         type: "GET",
         async: true,
@@ -183,7 +183,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
 function getFactors () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/QualityFactors/CurrentEvaluation",
+        url: "../api/qualityFactors/metrics/current",
         cache: false,
         type: "GET",
         async: true,
@@ -353,7 +353,7 @@ $('#apply').click(function () {
     var date = metrics[0].date;
 
     $.ajax({
-        url: "../api/QualityFactors/Simulate?date="+date,
+        url: "../api/qualityFactors/simulate?date="+date,
         data: JSON.stringify(newMetrics),
         type: "POST",
         contentType: 'application/json',
@@ -408,13 +408,13 @@ function simulateSI (qualityFactors) {
     formData.append("factors", JSON.stringify(qfs));
 
     $.ajax({
-        url: "../api/Simulate",
+        url: "../api/strategicIndicators/simulate",
         data: formData,
         type: "POST",
         contentType: false,
         processData: false,
         error: function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status == 405)
+            if (jqXHR.status == 500)
                 alert(textStatus);
         },
         success: function(result) {

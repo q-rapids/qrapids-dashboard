@@ -15,7 +15,7 @@ var patternId;
 function getDetailedStrategicIndicators () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/DetailedStrategicIndicators/CurrentEvaluation",
+        url: "../api/strategicIndicators/qualityFactors/current",
         cache: false,
         type: "GET",
         async: true,
@@ -120,7 +120,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
 function getFactors () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/QualityFactors/CurrentEvaluation",
+        url: "../api/qualityFactors/metrics/current",
         cache: false,
         type: "GET",
         async: true,
@@ -290,7 +290,7 @@ function showQRPattern (pattern) {
 }
 
 function getAllMetricsAndShowMetricForPattern (patternId){
-    var url = "../api/Metrics/CurrentEvaluation";
+    var url = "../api/metrics/current";
     $.ajax({
         url : url,
         type: "GET",
@@ -305,12 +305,12 @@ function getAndShowMetricsForPattern (patternId) {
     $.ajax({
         url: "../api/qrPatterns/"+patternId+"/metric",
         type: "GET",
-        success: function (metricForPattern) {
+        success: function (response) {
             $("#apply").attr("disabled", true);
             $("#restore").attr("disabled", true);
             var found = false;
             metrics.forEach(function (metric) {
-                if (metric.id === metricForPattern) {
+                if (metric.id === response.metric) {
                     found = true;
                     showMetricSlider(metric);
                 }
@@ -486,7 +486,7 @@ $('#apply').click(function () {
     var date = metrics[0].date;
 
     $.ajax({
-        url: "../api/QualityFactors/Simulate?date="+date,
+        url: "../api/qualityFactors/simulate?date="+date,
         data: JSON.stringify(newMetrics),
         type: "POST",
         contentType: 'application/json',
@@ -539,7 +539,7 @@ function simulateSI (qualityFactors) {
     formData.append("factors", JSON.stringify(qfs));
 
     $.ajax({
-        url: "../api/Simulate",
+        url: "../api/strategicIndicators/simulate",
         data: formData,
         type: "POST",
         contentType: false,
@@ -621,7 +621,7 @@ $('#decision').click(function () {
     var ignoreQR = function () {
         var rationale = $("#QRDecisionRationale").val();
         var ignoreQRUrl;
-        if (alertId) ignoreQRUrl = "../api/alerts/"+alertId+"/ignore";
+        if (alertId) ignoreQRUrl = "../api/alerts/"+alertId+"/qr/ignore";
         else ignoreQRUrl = "../api/qr/ignore";
         var body = new URLSearchParams();
         body.set('rationale', rationale);

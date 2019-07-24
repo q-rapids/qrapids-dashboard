@@ -8,8 +8,11 @@ import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.database.repositories.Strategic_Indicator.Strategic_IndicatorRepositoryImpl;
 import com.upc.gessi.qrapids.app.dto.*;
+import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,122 +42,133 @@ public class StrategicIndicators {
     @Autowired
     private Forecast qmaf;
 
-    @RequestMapping("/api/StrategicIndicators/CurrentEvaluation")
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsEvaluation(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/api/strategicIndicators/current")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsEvaluation(@RequestParam(value = "prj") String prj) {
         if (qmafake.usingFakeData()) {
             return kpirep.CurrentEvaluation();
         } else {
             try {
                 return qmasi.CurrentEvaluation(prj);
+            } catch (ElasticsearchStatusException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
             } catch (CategoriesException e) {
-                System.err.println(e.getMessage());
-                response.setStatus(HttpServletResponse.SC_CONFLICT);
-                return null;
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
             } catch (IOException e) {
-                System.err.println(e.getMessage());
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return null;
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
             }
 
         }
     }
 
-    @RequestMapping("/api/StrategicIndicators/{id}/CurrentEvaluation")
-    public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorEvaluation(@RequestParam("prj") String prj, @PathVariable String id, HttpServletResponse response) {
+    @GetMapping("/api/strategicIndicators/{id}/current")
+    @ResponseStatus(HttpStatus.OK)
+    public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorEvaluation(@RequestParam("prj") String prj, @PathVariable String id) {
         try {
             return qmasi.SingleCurrentEvaluation(prj, id);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (CategoriesException e) {
-            System.err.println(e.getMessage());
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
-            return null;
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
-    @RequestMapping("/api/StrategicIndicators/HistoricalData")
-    public @ResponseBody
-    List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to, HttpServletResponse response) {
+    @GetMapping("/api/strategicIndicators/historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
         if (qmafake.usingFakeData()) {
             return kpirep.HistoricalData();
         } else {
             try {
                 return qmasi.HistoricalData(LocalDate.parse(from), LocalDate.parse(to), prj);
+            } catch (ElasticsearchStatusException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
             } catch (CategoriesException e) {
-                System.err.println(e.getMessage());
-                response.setStatus(HttpServletResponse.SC_CONFLICT);
-                return null;
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
             } catch (IOException e) {
-                System.err.println(e.getMessage());
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return null;
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
             }
         }
     }
 
-    @RequestMapping("/api/DetailedStrategicIndicators/CurrentEvaluation")
-    public List<DTODetailedStrategicIndicator> getDetailedSI(@RequestParam(value = "prj", required=false) String prj, HttpServletResponse response) {
+    @GetMapping("/api/strategicIndicators/qualityFactors/current")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTODetailedStrategicIndicator> getDetailedSI(@RequestParam(value = "prj", required=false) String prj) {
         try {
             return qmadsi.CurrentEvaluation(null, prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
-    @RequestMapping("/api/DetailedStrategicIndicators/CurrentEvaluation/{id}")
-    public List<DTODetailedStrategicIndicator> getDetailedSIbyID(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id, HttpServletResponse response) {
+    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/current")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTODetailedStrategicIndicator> getDetailedSIbyID(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id) {
         try {
             return qmadsi.CurrentEvaluation(id, prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
-    @RequestMapping("/api/DetailedStrategicIndicators/HistoricalData")
-    public @ResponseBody
-    List<DTODetailedStrategicIndicator> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to, HttpServletResponse response) {
+    @GetMapping("/api/strategicIndicators/qualityFactors/historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTODetailedStrategicIndicator> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return qmadsi.HistoricalData(null, LocalDate.parse(from), LocalDate.parse(to), prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
-    @RequestMapping("/api/DetailedStrategicIndicators/HistoricalData/{id}")
-    public @ResponseBody
-    List<DTODetailedStrategicIndicator> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to, HttpServletResponse response) {
+    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTODetailedStrategicIndicator> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return qmadsi.HistoricalData(id, LocalDate.parse(from), LocalDate.parse(to), prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
-    @RequestMapping("/api/DetailedStrategicIndicators/PredictionData/{id}")
-    public @ResponseBody
-    List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
-        return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(id, prj), technique, "7", horizon, prj);
+    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/prediction")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
+        try {
+            return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(id, prj), technique, "7", horizon, prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        }
     }
 
-    @RequestMapping("/api/DetailedStrategicIndicators/PredictionData")
-    public @ResponseBody
-    List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
-        return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(null, prj), technique,"7", horizon, prj);
+    @GetMapping("/api/strategicIndicators/qualityFactors/prediction")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
+        try {
+            return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(null, prj), technique, "7", horizon, prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        }
     }
 
-    @RequestMapping("/api/StrategicIndicators/PredictionData")
+    @GetMapping("/api/strategicIndicators/prediction")
+    @ResponseStatus(HttpStatus.OK)
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
-        return qmaf.ForecastSI(technique,"7", horizon, prj);
+        try {
+            return qmaf.ForecastSI(technique, "7", horizon, prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        }
     }
 
     /*private List<DTOStrategicIndicatorEvaluation> mergeData(List<DTOStrategicIndicatorEvaluation> apiEval, List<Strategic_Indicator> dbEval) {

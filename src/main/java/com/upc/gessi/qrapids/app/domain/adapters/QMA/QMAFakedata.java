@@ -89,7 +89,7 @@ import java.util.List;
 *           |--#Customer Bugs
 * */
 @Component
-public final class QMAFakedata {
+public class QMAFakedata {
 
     @Autowired
     private Strategic_IndicatorRepositoryImpl kpirep;

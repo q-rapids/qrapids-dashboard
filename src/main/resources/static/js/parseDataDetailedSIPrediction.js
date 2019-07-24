@@ -1,6 +1,6 @@
 var isdsi = true;
 
-var url = parseURLSimple("../api/DetailedStrategicIndicators/PredictionData");
+var url = parseURLSimple("../api/strategicIndicators/qualityFactors/prediction");
 
 //initialize data vectors
 var texts = [];

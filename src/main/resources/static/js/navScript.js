@@ -330,7 +330,7 @@ function parseURLSimple(url) {
     var id = getParameterByName('id');
     var name = getParameterByName('name');
     if (id.length !== 0) {
-        url = url + "/" + id;
+        url = addStrategicIndicatorIdToUrl(url, id);
         if (currentURL.search("/Detailed") !== -1) {
             if (currentURL.match("/PredictionChart")) $('a#originSIQF').attr("href", "../StrategicIndicators/PredictionChart");
             $('a#originSIQF').text(name + ' (SI)');
@@ -351,7 +351,7 @@ function parseURLMetrics(url) {
     var name = getParameterByName('name');
     var si = getParameterByName('si');
     if (id.length !== 0) {
-        url = url + "/" + id;
+        url = addFactorIdToUrl(url, id);
         if (si.length === 0)
             $('a#origin').text(name + ' (QF)');
         else {
@@ -364,10 +364,26 @@ function parseURLMetrics(url) {
 
     var metricId = getParameterByName('metricId');
     if (metricId.length > 0) {
-        url = '../api/Metrics/'+metricId+"/HistoricalData";
+        url = '../api/metrics/'+metricId+"/historical";
     }
 
     return url;
+}
+
+function addStrategicIndicatorIdToUrl (url, id) {
+    var splits = url.split('/');
+    var i;
+    for (i = 0; i < splits.length && splits[i] !== "strategicIndicators"; i++) {}
+    splits.splice(i + 1, 0, id);
+    return splits.join('/');
+}
+
+function addFactorIdToUrl (url, id) {
+    var splits = url.split('/');
+    var i;
+    for (i = 0; i < splits.length && splits[i] !== "qualityFactors"; i++) {}
+    splits.splice(i + 1, 0, id);
+    return splits.join('/');
 }
 
 function addDatesAndGo(urlNav, parameters) {
