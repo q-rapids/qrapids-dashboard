@@ -1,6 +1,11 @@
 var isdsi = false;
 
-var url = parseURLSimple("/api/qualityFactors/metrics/current");
+var url;
+if (getParameterByName('id').length !== 0) {
+    url = parseURLSimple("/api/strategicIndicators/qualityFactors/metrics/current");
+} else {
+    url = parseURLSimple("/api/qualityFactors/metrics/current");
+}
 
 //initialize data vectors
 var titles = [];

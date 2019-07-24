@@ -1683,7 +1683,7 @@ public class UtilTest {
 
         Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/strategicIndicators/simulate")
+                .post("/api/strategicIndicators/simulate")
                 .param("prj", projectExternalId)
                 .param("factors", gson.toJson(factorSimulatedList));
 
@@ -1786,7 +1786,7 @@ public class UtilTest {
         when(qmaQualityFactors.getAllFactors(projectExternalId)).thenThrow(new IOException());
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/strategicIndicators/simulate")
+                .post("/api/strategicIndicators/simulate")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)

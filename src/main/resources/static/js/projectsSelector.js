@@ -18,7 +18,7 @@ function setProject(project) {
 // HTTP interceptor
 XMLHttpRequest.prototype.open = (function(open) {
     return function(method,url,async) {
-        if (url.search("/api") !== -1 && url.search("/api/projects/import") === -1 && url.search("/serverUrl") === -1 && url.search("/me") === -1) {
+        if (url.search("/api") !== -1 && url.search("/api/projects/import") === -1 && url.search("/serverUrl") === -1) {
             var prj = sessionStorage.getItem("prj");
             console.log(url+" Project: "+prj);
             if (!prj || prj === " ")

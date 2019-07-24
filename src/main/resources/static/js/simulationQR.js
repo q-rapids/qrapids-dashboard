@@ -305,12 +305,12 @@ function getAndShowMetricsForPattern (patternId) {
     $.ajax({
         url: "../api/qrPatterns/"+patternId+"/metric",
         type: "GET",
-        success: function (metricForPattern) {
+        success: function (response) {
             $("#apply").attr("disabled", true);
             $("#restore").attr("disabled", true);
             var found = false;
             metrics.forEach(function (metric) {
-                if (metric.id === metricForPattern) {
+                if (metric.id === response.metric) {
                     found = true;
                     showMetricSlider(metric);
                 }
@@ -541,7 +541,7 @@ function simulateSI (qualityFactors) {
     $.ajax({
         url: "../api/strategicIndicators/simulate",
         data: formData,
-        type: "GET",
+        type: "POST",
         contentType: false,
         processData: false,
         error: function(jqXHR, textStatus, errorThrown) {

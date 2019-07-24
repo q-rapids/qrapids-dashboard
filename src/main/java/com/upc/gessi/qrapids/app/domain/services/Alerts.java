@@ -201,8 +201,7 @@ public class Alerts {
 
     @PostMapping("/api/alerts/{id}/qr")
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody
-    DTOQualityRequirement newQRFromAlert(@PathVariable String id, @RequestParam(value = "prj") String prj, HttpServletRequest request, Authentication authentication) {
+    public DTOQualityRequirement newQRFromAlert(@PathVariable String id, @RequestParam(value = "prj") String prj, HttpServletRequest request, Authentication authentication) {
         try {
             String rationale = request.getParameter("rationale");
             String patternId = request.getParameter("patternId");

@@ -410,7 +410,7 @@ function simulateSI (qualityFactors) {
     $.ajax({
         url: "../api/strategicIndicators/simulate",
         data: formData,
-        type: "GET",
+        type: "POST",
         contentType: false,
         processData: false,
         error: function(jqXHR, textStatus, errorThrown) {

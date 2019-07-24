@@ -509,7 +509,7 @@ public class Util {
         return qmaRelations.setStrategicIndicatorFactorRelation(prj, factorIds, si, evaluationDate, weights, factorValues, factorLabels, siValueOrLabel);
     }
 
-    @GetMapping("/api/strategicIndicators/simulate")
+    @PostMapping("/api/strategicIndicators/simulate")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStrategicIndicatorEvaluation> Simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request) {
         try {
@@ -695,7 +695,7 @@ public class Util {
         return category.getColor();
     }
 
-    @GetMapping("/api/addToBacklog")
+    @PostMapping("/api/addToBacklog")
     @ResponseStatus(HttpStatus.OK)
     public String addToBacklogUrl() {
         return "{\"issue_url\":\"https://essi.upc.edu/jira/issue/999\"," +
