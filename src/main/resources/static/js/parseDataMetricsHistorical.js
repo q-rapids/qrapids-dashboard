@@ -13,6 +13,7 @@ if (getParameterByName('id').length !== 0) {
 var texts = [];
 var value = [];
 var labels = [];
+var categories = [];
 
 var decisions = new Map();
 
@@ -105,6 +106,18 @@ function getData() {
                     val.push(decisionsIgnore);
                 value.push(val);
             }
+            getMetricsCategories();
+        }
+    });
+}
+
+function getMetricsCategories () {
+    jQuery.ajax({
+        url: "../api/metrics/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
             drawChart();
         }
     });

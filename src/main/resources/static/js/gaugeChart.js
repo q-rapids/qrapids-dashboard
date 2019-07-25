@@ -9,6 +9,20 @@ var target;
 var tau = Math.PI / 2;
 var urlLink;
 
+function checkCategories() {
+    $.ajax({
+        url: '../api/strategicIndicators/categories',
+        type: "GET",
+        success: function(categories) {
+            if (categories.length === 0) {
+                alert("You need to define Strategic Indicator categories in order to see the chart correctly. " +
+                    "Please, go to the Categories section of the Configuration menu and define them.");
+            }
+        }
+    });
+}
+checkCategories();
+
 function getData(width, height, showButtons, chartHyperlinked, color) {
     var serverUrl = sessionStorage.getItem("serverUrl");
     var url = "/api/strategicIndicators/current";
@@ -86,13 +100,6 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
             urlLink = "../DetailedStrategicIndicators/CurrentChart?id="
                 + data[i].id + "&name=" + data[i].name;
 
-            //add from + to to link if found
-            var from = getParameterByName('from');
-            var to = getParameterByName('to');
-            if (from.length != 0 && to.length != 0) {
-                urlLink = urlLink + "&from=" + from + "&to=" + to;
-            }
-
             // --> all the chart is hyperlinked
             console.log('#'+div.id);
             var svg = d3.select('#'+div.id).append("svg")
@@ -124,7 +131,6 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         }
 
         for (j = data[i].probabilities.length - 1; j > -1; --j) {
-            //draw arc from -90 to upper threshold degrees in orange
             svg.append("path")
                 .datum({endAngle: (j+1)/(data[i].probabilities.length) * Math.PI - Math.PI / 2})
                 .style("fill", data[i].probabilities[data[i].probabilities.length -1 - j].color)
@@ -189,20 +195,6 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         if (showButtons) {
             var br = document.createElement("br");
             div.appendChild(br);
-
-            var editBtn = document.createElement("button");
-            editBtn.id = "buttonEdit"+data[i].dbId;
-            editBtn.dbId = data[i].dbId;
-            editBtn.classList.add('btn');
-            editBtn.classList.add('btn-default');
-            editBtn.style.marginRight = "5px";
-            editBtn.onclick = function () {
-                location.href = "../EditStrategicIndicators/" + this.dbId;
-            };
-            editBtn.appendChild(document.createTextNode("Edit"));
-            if (data[i].dbId == null) editBtn.disabled = true;
-            div.appendChild(editBtn);
-
 
             var feedbackBtn= document.createElement("button");
             feedbackBtn.id = "buttonFeedback"+data[i].dbId;

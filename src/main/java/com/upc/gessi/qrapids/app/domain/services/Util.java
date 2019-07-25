@@ -1,9 +1,12 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 
+import com.google.gson.JsonElement;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import com.upc.gessi.qrapids.app.exceptions.AssessmentErrorException;
@@ -107,36 +110,97 @@ public class Util {
     @Autowired
     private Forecast forecast;
 
+    @Autowired
+    private ProjectRepository projectRepository;
 
-    @PostMapping("/api/categories")
+    @Autowired
+    private MetricRepository metricRepository;
+
+    @GetMapping("/api/strategicIndicators/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOCategory> getSICategories () {
+        List<SICategory> siCategoryList = SICatRep.findAll();
+        List<DTOCategory> dtoCategoryList = new ArrayList<>();
+        for (SICategory siCategory : siCategoryList) {
+            dtoCategoryList.add(new DTOCategory(siCategory.getId(), siCategory.getName(), siCategory.getColor()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/strategicIndicators/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newCategories(@RequestBody Map<String, List<Map<String, String>>> categories) {
-        List<Map<String, String>> SICat = categories.get("SICat");
-        List<Map<String, String>> QFCat = categories.get("QFCat");
-
-        try {
-            if (SICat.size() > 1 && QFCat.size() > 1) {
-                qmasi.newCategories(SICat);
-                qmaqf.newCategories(QFCat);
-            }
-            allCats = SICatRep.findAll();
-        } catch (Exception e) {
+    public void newSICategories (@RequestBody List<Map<String, String>> categories) {
+        if (categories.size() > 1) {
             qmasi.deleteAllCategories();
+            qmasi.newCategories(categories);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
+        }
+    }
+
+    @GetMapping("/api/qualityFactors/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOCategoryThreshold> getFactorCategories () {
+        List<QFCategory> factorCategoryList = QFCatRep.findAll();
+        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+        for (QFCategory qfCategory : factorCategoryList) {
+            dtoCategoryList.add(new DTOCategoryThreshold(qfCategory.getId(), qfCategory.getName(), qfCategory.getColor(), qfCategory.getUpperThreshold()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/qualityFactors/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newFactorCategories (@RequestBody List<Map<String, String>> categories) {
+        if (categories.size() > 1) {
             qmaqf.deleteAllCategories();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            qmaqf.newCategories(categories);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
+        }
+    }
+
+    @GetMapping("/api/metrics/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOCategoryThreshold> getMetricCategories () {
+        Iterable<MetricCategory> metricCategoryList = metricRepository.findAll();
+        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+        for (MetricCategory metricCategory : metricCategoryList) {
+            dtoCategoryList.add(new DTOCategoryThreshold(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/metrics/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newMetricsCategories (@RequestBody List<Map<String, String>> categories) {
+        if (categories.size() > 1) {
+            metricRepository.deleteAll();
+            for (Map<String, String> c : categories) {
+                MetricCategory metricCategory = new MetricCategory();
+                metricCategory.setName(c.get("name"));
+                metricCategory.setColor(c.get("color"));
+                float upperThreshold = Float.parseFloat(c.get("upperThreshold"));
+                metricCategory.setUpperThreshold(upperThreshold/100f);
+                metricRepository.save(metricCategory);
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
         }
     }
 
     @PostMapping("/api/strategicIndicators")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newSI(HttpServletRequest request, HttpServletResponse response, @RequestParam("network") MultipartFile network) {
+    public void newSI(HttpServletRequest request, @RequestParam("network") MultipartFile network) {
         try {
+            String prj = request.getParameter("prj");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             byte[] file = IOUtils.toByteArray(network.getInputStream());
             List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
             if (name != "" && file != null && qualityFactors.size() > 0) {
-                Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors);
+                Project project = projectRepository.findByExternalId(prj);
+                Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors, project);
                 siRep.save(newSI);
             }
             if (!AssessStrategicIndicator(name)) {
@@ -161,7 +225,7 @@ public class Util {
 
     @PutMapping("/api/strategicIndicators/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void editSI(@PathVariable Long id, HttpServletRequest request, @RequestParam("network") MultipartFile network) throws IOException {
+    public void editSI(@PathVariable Long id, HttpServletRequest request, @RequestParam("network") MultipartFile network) {
         try {
             String name;
             String description;
@@ -212,22 +276,29 @@ public class Util {
     @GetMapping("/api/strategicIndicators/fetch")
     @ResponseStatus(HttpStatus.OK)
     public void fetchSIs() {
-        if (siRep.count() == 0) {
-            try {
-                List<DTODetailedStrategicIndicator> dsi = qmadsi.CurrentEvaluation(null, null);
-                for (DTODetailedStrategicIndicator d : dsi) {
+        try {
+            List<String> projects = qmaPrj.getAssessedProjects();
+            for(String projectName : projects) {
+                Project project = projectRepository.findByExternalId(projectName);
+                if (project == null) {
+                    byte[] bytes = null;
+                    project = new Project(projectName, projectName, "No description specified", bytes, true);
+                    projectRepository.save(project);
+                }
+                List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = qmadsi.CurrentEvaluation(null, projectName);
+                for (DTODetailedStrategicIndicator d : dtoDetailedStrategicIndicators) {
                     List<String> factors = new ArrayList<>();
                     for (DTOFactor f : d.getFactors()) {
                         factors.add(f.getId());
                     }
-                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors);
-                    siRep.save(newSI);
+                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors, project);
+                    if (!siRep.existsByExternalIdAndProject_Id(newSI.getExternalId(), project.getId())) {
+                        siRep.save(newSI);
+                    }
                 }
-            } catch (IOException e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
             }
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Strategic indicators already loaded");
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
@@ -576,13 +647,6 @@ public class Util {
         }
     }
 
-    @DeleteMapping("/api/categories")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteCategories() {
-        SICatRep.deleteAll();
-        QFCatRep.deleteAll();
-    }
-
     @GetMapping("/api/rawdataDashboard")
     @ResponseStatus(HttpStatus.OK)
     public String RawDataDashboard() {
@@ -611,8 +675,8 @@ public class Util {
         float thresholds_interval = 1.0f/(float)allCats.size();
         float upperThreshold=1;
         for (SICategory c : allCats) {
-            upperThreshold -=  thresholds_interval;
             result.add(new DTOSIAssesment(c.getId(), c.getName(), null, c.getColor(), abs((float)upperThreshold)));
+            upperThreshold -=  thresholds_interval;
         }
         return result;
     }
@@ -708,7 +772,7 @@ public class Util {
         return forecast.getForecastTechniques();
     }
 
-    @GetMapping("/api/qualityModel")
+    @GetMapping("/api/strategicIndicators/qualityModel")
     @ResponseStatus(HttpStatus.OK)
     public List<DTORelationsSI> getQualityModel(@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) {
         try {

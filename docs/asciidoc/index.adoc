@@ -175,11 +175,6 @@ include::{snippets}/si/update-assessment-error/http-response.adoc[]
 
 operation::si/fetch[snippets='curl-request,http-response']
 
-:numbered!:
-==== HTTP response strategic indicators already loaded
-include::{snippets}/si/fetch-error/http-response.adoc[]
-:numbered:
-
 
 === Assess strategic indicators
 
@@ -207,6 +202,21 @@ include::{snippets}/si/simulation-error/http-response.adoc[]
 === Get quality model
 
 operation::si/quality-model[snippets='request-parameters,curl-request,response-fields,http-response']
+
+
+=== Get strategic indicator categories
+
+operation::si/categories[snippets='curl-request,response-fields,http-response']
+
+
+=== Set strategic indicator categories
+
+operation::si/categories-new[snippets='request-fields,curl-request,http-response']
+
+:numbered!:
+==== HTTP response not enough categories
+include::{snippets}/si/categories-new-error/http-response.adoc[]
+:numbered:
 
 
 
@@ -302,11 +312,6 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 :numbered:
 
 
-=== Get quality factor categories
-
-operation::qf/categories[snippets='curl-request,response-fields,http-response']
-
-
 === Get prediction
 
 operation::qf/prediction[snippets='request-parameters,curl-request,response-fields,http-response']
@@ -349,6 +354,21 @@ include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 ==== HTTP response error on ElasticSearch connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
+:numbered:
+
+
+=== Get quality factor categories
+
+operation::qf/categories[snippets='curl-request,response-fields,http-response']
+
+
+=== Set quality factor categories
+
+operation::qf/categories-new[snippets='request-fields,curl-request,http-response']
+
+:numbered!:
+==== HTTP response not enough categories
+include::{snippets}/qf/categories-new-error/http-response.adoc[]
 :numbered:
 
 
@@ -472,6 +492,21 @@ include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
 ==== HTTP response error on ElasticSearch connection
 include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
+:numbered:
+
+
+=== Get metric categories
+
+operation::metrics/categories[snippets='curl-request,response-fields,http-response']
+
+
+=== Set strategic indicator categories
+
+operation::metrics/categories-new[snippets='request-fields,curl-request,http-response']
+
+:numbered!:
+==== HTTP response not enough categories
+include::{snippets}/metrics/categories-new-error/http-response.adoc[]
 :numbered:
 
 
@@ -768,19 +803,6 @@ operation::products/evaluation[snippets='path-parameters,curl-request,response-f
 === Get product detailed evaluation
 
 operation::products/evaluation-detailed[snippets='path-parameters,curl-request,response-fields,http-response']
-
-
-
-== Categories
-
-=== Add categories
-
-operation::categories/new[snippets='request-fields,curl-request,http-response']
-
-
-=== Delete categories
-
-operation::categories/delete[snippets='curl-request,http-response']
 
 
 

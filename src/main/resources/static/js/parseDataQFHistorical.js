@@ -9,6 +9,8 @@ var ids = [];
 var labels = [];
 var value = [];
 
+var categories = [];
+
 var decisions = new Map();
 
 function getData() {
@@ -77,7 +79,7 @@ function getData() {
                 }
             }
 
-            drawChart();
+            getMetricsCategories();
         }
     });
 }
@@ -104,6 +106,18 @@ function buildDecisionVectors (decisionsAdd, decisionsIgnore, metricId) {
             }
         }
     }
+}
+
+function getMetricsCategories () {
+    jQuery.ajax({
+        url: "../api/metrics/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
+            drawChart();
+        }
+    });
 }
 
 window.onload = function() {

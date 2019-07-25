@@ -10,6 +10,8 @@ var value = [];
 var labels = [];
 var ids = [];
 
+var categories = [];
+
 function getData() {
     getQualityModel();
     getDecisions();
@@ -38,6 +40,14 @@ function getData() {
                 texts.push(data[j].name);
                 labels.push([data[j].name]);
                 ids.push(data[j].id);
+
+                data[j].probabilities.forEach(function (category) {
+                    categories.push({
+                        name: category.label,
+                        color: category.color,
+                        upperThreshold: category.upperThreshold
+                    });
+                });
             }
             while (data[j]) {
                 //check if we are still on the same Strategic Indicator

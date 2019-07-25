@@ -14,7 +14,8 @@ import java.util.List;
 //TODO: refactor to have the name of the table 'strategic_indicator_quality_factor' independent to the this class name
 
 @Entity
-@Table(name="strategic_indicator")
+@Table(name="strategic_indicator",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"name", "projectId"}))
 public class Strategic_Indicator implements Serializable {
 
     // SerialVersion UID
@@ -24,10 +25,10 @@ public class Strategic_Indicator implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="external_id", unique = true)
-    private String external_id;
+    @Column(name="external_id")
+    private String externalId;
 
-    @Column(name="name", unique = true)
+    @Column(name="name")
     private String name;
 
     @Column(name="description")
@@ -41,15 +42,20 @@ public class Strategic_Indicator implements Serializable {
     @ElementCollection
     private List<String> quality_factors = new ArrayList<String>();
 
+    @ManyToOne
+    @JoinColumn(name="projectId", referencedColumnName = "id")
+    private Project project;
+
 
     public Strategic_Indicator() {
     }
 
-    public Strategic_Indicator(String name, String description, byte[] network, List<String> qualityFactors) {
+    public Strategic_Indicator(String name, String description, byte[] network, List<String> qualityFactors, Project project) {
         setName(name);
         setDescription(description);
         setNetwork(network);
         setQuality_factors(qualityFactors);
+        setProject(project);
     }
 
     public Long getId() {
@@ -61,14 +67,14 @@ public class Strategic_Indicator implements Serializable {
     }
 
     public void setExternalID (String externalId)  {
-        this.external_id = externalId;
+        this.externalId = externalId;
     }
 
     public String getExternalId () {
-        if (this.external_id == null || this.external_id.isEmpty()) {
-            this.external_id = name.replaceAll("\\s+","").toLowerCase();
+        if (this.externalId == null || this.externalId.isEmpty()) {
+            this.externalId = name.replaceAll("\\s+","").toLowerCase();
         }
-        return this.external_id;
+        return this.externalId;
     }
 
     public String getName() {
@@ -77,8 +83,8 @@ public class Strategic_Indicator implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-        if (this.external_id == null || this.external_id.isEmpty()) {
-            this.external_id = name.replaceAll("\\s+","").toLowerCase();
+        if (this.externalId == null || this.externalId.isEmpty()) {
+            this.externalId = name.replaceAll("\\s+","").toLowerCase();
         }
     }
 
@@ -104,5 +110,13 @@ public class Strategic_Indicator implements Serializable {
 
     public void setQuality_factors(List<String> quality_factors) {
         this.quality_factors = quality_factors;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

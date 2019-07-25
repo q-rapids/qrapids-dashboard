@@ -456,8 +456,9 @@ function getChosenProduct(currentProductId) {
     		var deleteBtn = document.createElement('button');
     		deleteBtn.classList.add("btn");
     		deleteBtn.classList.add("btn-primary");
+    		deleteBtn.classList.add("btn-danger");
     		deleteBtn.setAttribute("id", "deleteBtn");
-    		deleteBtn.setAttribute('style', 'font-size: 18px; max-width: 30%; background: #CC1212');
+    		deleteBtn.setAttribute('style', 'font-size: 18px; max-width: 30%;');
     		deleteBtn.appendChild(document.createTextNode("Delete Product"));
     		deleteBtn.onclick = deleteProduct;
     		saveBtnRow.appendChild(deleteBtn);

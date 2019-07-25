@@ -218,7 +218,7 @@ public class Alerts {
             QualityRequirement qualityRequirement = addQR(requirement, description, goal, rationale, patternId, id, user, prj);
             DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
                     qualityRequirement.getId(),
-                    new java.sql.Date(qualityRequirement.getAlert().getDate().getTime()),
+                    new java.sql.Date(qualityRequirement.getDecision().getDate().getTime()),
                     qualityRequirement.getRequirement(),
                     qualityRequirement.getDescription(),
                     qualityRequirement.getGoal(),

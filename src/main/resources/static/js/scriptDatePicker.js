@@ -1,8 +1,5 @@
 var today = new Date();
 
-var from = getParameterByName('from');
-var to = getParameterByName('to');
-
 var config = {
     format: 'yyyy-mm-dd',
     weekStartDay: 1,
@@ -29,13 +26,15 @@ function configureHistoric () {
     $('#intervalsDropdown').append('<li><a onclick="thisMonth();$(\'#chartContainer\').empty();getData()" href="#">This month</a></li>');
     $('#intervalsDropdown').append('<li><a onclick="thisYear();$(\'#chartContainer\').empty();getData()" href="#">This year</a></li>');
 
-    if (from.length == 0)
+    var historicFrom = sessionStorage.getItem("historicFromDate");
+    if (!historicFrom)
         last14Days();
-    else $('#datepickerFrom').datepicker().value(from);
+    else $('#datepickerFrom').datepicker().value(historicFrom);
 
-    if (to.length == 0)
-        to = parseDate(today);
-    $('#datepickerTo').datepicker().value(to);
+    var historicTo = sessionStorage.getItem("historicToDate");
+    if (!historicTo)
+        historicTo = parseDate(today);
+    $('#datepickerTo').datepicker().value(historicTo);
 
     $('#techniqueDropdownDiv').hide();
 }
@@ -48,21 +47,29 @@ function configurePrediction () {
     $('#intervalsDropdown').append('<li><a onclick="next7Days();$(\'#chartContainer\').empty();getData()" href="#">Next 7 days</a></li>');
     $('#intervalsDropdown').append('<li><a onclick="next14Days();$(\'#chartContainer\').empty();getData()" href="#">Next 14 days</a></li>');
 
-    from = parseDate(today);
-    $('#datepickerFrom').datepicker().value(from);
+    var predictionFrom = parseDate(today);
+    $('#datepickerFrom').datepicker().value(predictionFrom);
     $('#datepickerFrom').prop("disabled",true);
     $('#fromDiv').find("span").css("pointer-events", "none");
 
-    next7Days()
+    var predictionTo = sessionStorage.getItem("predictionToDate");
+    if (!predictionTo)
+        next7Days();
+    else $('#datepickerTo').datepicker().value(predictionTo);
 
     $('#techniqueDropdownDiv').show();
     loadTechniques();
 }
 
 function thisWeek() {
+    var todayTextDate = parseDate(today);
+    $('#datepickerTo').datepicker().value(todayTextDate);
+    sessionStorage.setItem("historicToDate", todayTextDate);
+
     var monday = getPreviousMonday();
     var textDate = parseDate(monday);
     $('#datepickerFrom').datepicker().value(textDate);
+    sessionStorage.setItem("historicFromDate", textDate);
 }
 
 function getPreviousMonday() {
@@ -102,30 +109,67 @@ function setTechnique(technique) {
     $("#selectedTechnique").text(technique);
 }
 
+$("#applyButton").click(function () {
+    $('#chartContainer').empty();
+    getData();
+
+    var currentURL = window.location.href;
+    if (currentURL.match("/PredictionChart")) {
+        var predictionTo = $('#datepickerTo').datepicker().val();
+        sessionStorage.setItem("predictionToDate", predictionTo);
+    } else {
+        var historicFrom = $('#datepickerFrom').datepicker().val();
+        sessionStorage.setItem("historicFromDate", historicFrom);
+
+        var historicTo = $('#datepickerTo').datepicker().val();
+        sessionStorage.setItem("historicToDate", historicTo);
+    }
+});
+
 //Historic intervals
 
 function last7Days() {
+    var todayTextDate = parseDate(today);
+    $('#datepickerTo').datepicker().value(todayTextDate);
+    sessionStorage.setItem("historicToDate", todayTextDate);
+
     var date = new Date().setDate(today.getDate() - 7);
     var textDate = parseDate(date);
     $('#datepickerFrom').datepicker().value(textDate);
+    sessionStorage.setItem("historicFromDate", textDate);
 }
 
 function last14Days() {
+    var todayTextDate = parseDate(today);
+    $('#datepickerTo').datepicker().value(todayTextDate);
+    sessionStorage.setItem("historicToDate", todayTextDate);
+
     var date = new Date().setDate(today.getDate() - 14);
     var textDate = parseDate(date);
     $('#datepickerFrom').datepicker().value(textDate);
+    sessionStorage.setItem("historicFromDate", textDate);
 }
 
 function thisMonth() {
+    var todayTextDate = parseDate(today);
+    $('#datepickerTo').datepicker().value(todayTextDate);
+    sessionStorage.setItem("historicToDate", todayTextDate);
+
     var date = new Date(today.getFullYear(), today.getMonth(), 1);
     var textDate = parseDate(date);
     $('#datepickerFrom').datepicker().value(textDate);
+    sessionStorage.setItem("historicFromDate", textDate);
 }
 
 function thisYear() {
+    var todayTextDate = parseDate(today);
+    $('#datepickerTo').datepicker().value(todayTextDate);
+    sessionStorage.setItem("historicToDate", todayTextDate);
+
     var date = new Date(today.getFullYear(), 0, 1);
     var textDate = parseDate(date);
     $('#datepickerFrom').datepicker().value(textDate);
+    sessionStorage.setItem("historicFromDate", textDate);
 }
 
 // Prediction intervals
@@ -134,12 +178,14 @@ function next7Days () {
     var date = new Date().setDate(today.getDate() + 7);
     var textDate = parseDate(date);
     $('#datepickerTo').datepicker().value(textDate);
+    sessionStorage.setItem("predictionToDate", textDate);
 }
 
 function next14Days () {
     var date = new Date().setDate(today.getDate() + 14);
     var textDate = parseDate(date);
     $('#datepickerTo').datepicker().value(textDate);
+    sessionStorage.setItem("predictionToDate", textDate);
 }
 
 function parseDate(date) {

@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
-import com.upc.gessi.qrapids.app.domain.models.QFCategory;
-import com.upc.gessi.qrapids.app.domain.models.SICategory;
-import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.models.*;
+import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
@@ -16,6 +16,7 @@ import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
+import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -90,6 +91,12 @@ public class UtilTest {
     @Mock
     private QMAProjects qmaProjects;
 
+    @Mock
+    private ProjectRepository projectRepository;
+
+    @Mock
+    private MetricRepository metricRepository;
+
     @InjectMocks
     private Util utilController;
 
@@ -103,8 +110,64 @@ public class UtilTest {
     }
 
     @Test
-    public void newCategories() throws Exception {
-        // Strategic Indicator Categories
+    public void getStrategicIndicatorsCategories () throws Exception {
+        Long strategicIndicatorGoodCategoryId = 10L;
+        String strategicIndicatorGoodCategoryName = "Good";
+        String strategicIndicatorGoodCategoryColor = "#00ff00";
+        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
+        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
+
+        Long strategicIndicatorNeutralCategoryId = 11L;
+        String strategicIndicatorNeutralCategoryName = "Neutral";
+        String strategicIndicatorNeutralCategoryColor = "#ff8000";
+        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
+        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
+
+        Long strategicIndicatorBadCategoryId = 12L;
+        String strategicIndicatorBadCategoryName = "Bad";
+        String strategicIndicatorBadCategoryColor = "#ff0000";
+        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
+        siBadCategory.setId(strategicIndicatorBadCategoryId);
+
+        List<SICategory> siCategoryList = new ArrayList<>();
+        siCategoryList.add(siGoodCategory);
+        siCategoryList.add(siNeutralCategory);
+        siCategoryList.add(siBadCategory);
+
+        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators/categories");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].id", is(strategicIndicatorGoodCategoryId.intValue())))
+                .andExpect(jsonPath("$[0].name", is(strategicIndicatorGoodCategoryName)))
+                .andExpect(jsonPath("$[0].color", is(strategicIndicatorGoodCategoryColor)))
+                .andExpect(jsonPath("$[1].id", is(strategicIndicatorNeutralCategoryId.intValue())))
+                .andExpect(jsonPath("$[1].name", is(strategicIndicatorNeutralCategoryName)))
+                .andExpect(jsonPath("$[1].color", is(strategicIndicatorNeutralCategoryColor)))
+                .andExpect(jsonPath("$[2].id", is(strategicIndicatorBadCategoryId.intValue())))
+                .andExpect(jsonPath("$[2].name", is(strategicIndicatorBadCategoryName)))
+                .andExpect(jsonPath("$[2].color", is(strategicIndicatorBadCategoryColor)))
+                .andDo(document("si/categories",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Category identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Category name"),
+                                fieldWithPath("[].color")
+                                        .description("Category hexadecimal color")
+                        )
+                ));
+    }
+
+    @Test
+    public void newStrategicIndicatorsCategories () throws Exception {
         String strategicIndicatorGoodCategoryName = "Good";
         String strategicIndicatorGoodCategoryColor = "#00ff00";
         Map<String, String> strategicIndicatorGoodCategory = new HashMap<>();
@@ -128,7 +191,128 @@ public class UtilTest {
         strategicIndicatorCategoriesList.add(strategicIndicatorNeutralCategory);
         strategicIndicatorCategoriesList.add(strategicIndicatorBadCategory);
 
-        // Factor categories
+        // Perform request
+        Gson gson = new Gson();
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/strategicIndicators/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(strategicIndicatorCategoriesList));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated())
+                .andDo(document("si/categories-new",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator category name"),
+                                fieldWithPath("[].color")
+                                        .description("Strategic indicator category color"))
+                ));
+
+        // Verify mock interactions
+        verify(qmaStrategicIndicators, times(1)).deleteAllCategories();
+        verify(qmaStrategicIndicators, times(1)).newCategories(strategicIndicatorCategoriesList);
+        verifyNoMoreInteractions(qmaStrategicIndicators);
+    }
+
+    @Test
+    public void newStrategicIndicatorsCategoriesNotEnough () throws Exception {
+        String strategicIndicatorGoodCategoryName = "Good";
+        String strategicIndicatorGoodCategoryColor = "#00ff00";
+        Map<String, String> strategicIndicatorGoodCategory = new HashMap<>();
+        strategicIndicatorGoodCategory.put("name", strategicIndicatorGoodCategoryName);
+        strategicIndicatorGoodCategory.put("color", strategicIndicatorGoodCategoryColor);
+
+        List<Map<String, String>> strategicIndicatorCategoriesList = new ArrayList<>();
+        strategicIndicatorCategoriesList.add(strategicIndicatorGoodCategory);
+
+        // Perform request
+        Gson gson = new Gson();
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/strategicIndicators/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(strategicIndicatorCategoriesList));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("Not enough categories"))
+                .andDo(document("si/categories-new-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verifyNoMoreInteractions(qmaStrategicIndicators);
+    }
+
+    @Test
+    public void getFactorsCategories () throws Exception {
+        Long factorGoodCategoryId = 10L;
+        String factorGoodCategoryName = "Good";
+        String factorGoodCategoryColor = "#00ff00";
+        float factorGoodCategoryUpperThreshold = 1f;
+        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
+        factorGoodCategory.setId(factorGoodCategoryId);
+
+        Long factorNeutralCategoryId = 11L;
+        String factorNeutralCategoryName = "Neutral";
+        String factorNeutralCategoryColor = "#ff8000";
+        float factorNeutralCategoryUpperThreshold = 0.67f;
+        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
+        factorNeutralCategory.setId(factorNeutralCategoryId);
+
+        Long factorBadCategoryId = 12L;
+        String factorBadCategoryName = "Bad";
+        String factorBadCategoryColor = "#ff0000";
+        float factorBadCategoryUpperThreshold = 0.33f;
+        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
+        factorBadCategory.setId(factorBadCategoryId);
+
+        List<QFCategory> factorCategoryList = new ArrayList<>();
+        factorCategoryList.add(factorGoodCategory);
+        factorCategoryList.add(factorNeutralCategory);
+        factorCategoryList.add(factorBadCategory);
+
+        when(qfCategoryRepository.findAll()).thenReturn(factorCategoryList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors/categories");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].id", is(factorGoodCategoryId.intValue())))
+                .andExpect(jsonPath("$[0].name", is(factorGoodCategoryName)))
+                .andExpect(jsonPath("$[0].color", is(factorGoodCategoryColor)))
+                .andExpect(jsonPath("$[0].upperThreshold", is(HelperFunctions.getFloatAsDouble(factorGoodCategoryUpperThreshold))))
+                .andExpect(jsonPath("$[1].id", is(factorNeutralCategoryId.intValue())))
+                .andExpect(jsonPath("$[1].name", is(factorNeutralCategoryName)))
+                .andExpect(jsonPath("$[1].color", is(factorNeutralCategoryColor)))
+                .andExpect(jsonPath("$[1].upperThreshold", is(HelperFunctions.getFloatAsDouble(factorNeutralCategoryUpperThreshold))))
+                .andExpect(jsonPath("$[2].id", is(factorBadCategoryId.intValue())))
+                .andExpect(jsonPath("$[2].name", is(factorBadCategoryName)))
+                .andExpect(jsonPath("$[2].color", is(factorBadCategoryColor)))
+                .andExpect(jsonPath("$[2].upperThreshold", is(HelperFunctions.getFloatAsDouble(factorBadCategoryUpperThreshold))))
+                .andDo(document("qf/categories",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Category identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Category name"),
+                                fieldWithPath("[].color")
+                                        .description("Category hexadecimal color"),
+                                fieldWithPath("[].upperThreshold")
+                                        .description("Category upper threshold")
+                        )
+                ));
+    }
+
+    @Test
+    public void newFactorsCategories () throws Exception {
         String factorGoodCategoryName = "Good";
         String factorGoodCategoryColor = "#00ff00";
         Float factorGoodCategoryUpperThreshold = 1.0f;
@@ -158,74 +342,232 @@ public class UtilTest {
         factorCategoriesList.add(factorNeutralCategory);
         factorCategoriesList.add(factorBadCategory);
 
-        Gson gson = new Gson();
-        Map<String, List<Map<String, String>>> categories = new HashMap<>();
-        categories.put("SICat", strategicIndicatorCategoriesList);
-        categories.put("QFCat", factorCategoriesList);
-
-        String json = gson.toJson(categories);
-        //ObjectMapper mapper = new ObjectMapper();
-        //mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        //ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
-        //String bodyJson = objectWriter.writeValueAsString(categories);
-
         // Perform request
+        Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/categories")
+                .post("/api/qualityFactors/categories")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json);
+                .content(gson.toJson(factorCategoriesList));
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isCreated())
-                .andDo(document("categories/new",
+                .andDo(document("qf/categories-new",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("SICat")
-                                        .description("List of all the strategic indicator categories"),
-                                fieldWithPath("SICat[].name")
-                                        .description("Strategic indicator category name"),
-                                fieldWithPath("SICat[].color")
-                                        .description("Strategic indicator category color"),
-                                fieldWithPath("QFCat")
-                                        .description("List of all the quality factor categories"),
-                                fieldWithPath("QFCat[].name")
-                                        .description("Quality factor category name"),
-                                fieldWithPath("QFCat[].color")
-                                        .description("Quality factor category color"),
-                                fieldWithPath("QFCat[].upperThreshold")
-                                        .description("Quality factor category upper threshold"))
+                                fieldWithPath("[].name")
+                                        .description("Quality factors category name"),
+                                fieldWithPath("[].color")
+                                        .description("Quality factors category color"),
+                                fieldWithPath("[].upperThreshold")
+                                        .description("Quality factors category upper threshold"))
                 ));
 
         // Verify mock interactions
-        verify(qmaStrategicIndicators, times(1)).newCategories(strategicIndicatorCategoriesList);
-        verifyNoMoreInteractions(qmaStrategicIndicators);
-
+        verify(qmaQualityFactors, times(1)).deleteAllCategories();
         verify(qmaQualityFactors, times(1)).newCategories(factorCategoriesList);
         verifyNoMoreInteractions(qmaQualityFactors);
-
-        verify(siCategoryRepository, times(1)).findAll();
     }
 
     @Test
-    public void deleteCategories() throws Exception {
+    public void newFactorsCategoriesNotEnough () throws Exception {
+        String factorGoodCategoryName = "Good";
+        String factorGoodCategoryColor = "#00ff00";
+        Float factorGoodCategoryUpperThreshold = 1.0f;
+        Map<String, String> factorGoodCategory = new HashMap<>();
+        factorGoodCategory.put("name", factorGoodCategoryName);
+        factorGoodCategory.put("color", factorGoodCategoryColor);
+        factorGoodCategory.put("upperThreshold", factorGoodCategoryUpperThreshold.toString());
+
+        List<Map<String, String>> factorCategoriesList = new ArrayList<>();
+        factorCategoriesList.add(factorGoodCategory);
+
+        //Perform request
+        Gson gson = new Gson();
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .delete("/api/categories");
+                .post("/api/qualityFactors/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(factorCategoriesList));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("Not enough categories"))
+                .andDo(document("qf/categories-new-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+    }
+
+    @Test
+    public void getMetricsCategories () throws Exception {
+        Long metricGoodCategoryId = 10L;
+        String metricGoodCategoryName = "Good";
+        String metricGoodCategoryColor = "#00ff00";
+        float metricGoodCategoryUpperThreshold = 1f;
+        MetricCategory metricGoodCategory = new MetricCategory(metricGoodCategoryName, metricGoodCategoryColor, metricGoodCategoryUpperThreshold);
+        metricGoodCategory.setId(metricGoodCategoryId);
+
+        Long metricNeutralCategoryId = 11L;
+        String metricNeutralCategoryName = "Neutral";
+        String metricNeutralCategoryColor = "#ff8000";
+        float metricNeutralCategoryUpperThreshold = 0.67f;
+        MetricCategory metricNeutralCategory = new MetricCategory(metricNeutralCategoryName, metricNeutralCategoryColor, metricNeutralCategoryUpperThreshold);
+        metricNeutralCategory.setId(metricNeutralCategoryId);
+
+        Long metricBadCategoryId = 12L;
+        String metricBadCategoryName = "Bad";
+        String metricBadCategoryColor = "#ff0000";
+        float metricBadCategoryUpperThreshold = 0.33f;
+        MetricCategory metricBadCategory = new MetricCategory(metricBadCategoryName, metricBadCategoryColor, metricBadCategoryUpperThreshold);
+        metricBadCategory.setId(metricBadCategoryId);
+
+        List<MetricCategory> metricCategoryList = new ArrayList<>();
+        metricCategoryList.add(metricGoodCategory);
+        metricCategoryList.add(metricNeutralCategory);
+        metricCategoryList.add(metricBadCategory);
+
+        when(metricRepository.findAll()).thenReturn(metricCategoryList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/metrics/categories");
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andDo(document("categories/delete",
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].id", is(metricGoodCategoryId.intValue())))
+                .andExpect(jsonPath("$[0].name", is(metricGoodCategoryName)))
+                .andExpect(jsonPath("$[0].color", is(metricGoodCategoryColor)))
+                .andExpect(jsonPath("$[0].upperThreshold", is(HelperFunctions.getFloatAsDouble(metricGoodCategoryUpperThreshold))))
+                .andExpect(jsonPath("$[1].id", is(metricNeutralCategoryId.intValue())))
+                .andExpect(jsonPath("$[1].name", is(metricNeutralCategoryName)))
+                .andExpect(jsonPath("$[1].color", is(metricNeutralCategoryColor)))
+                .andExpect(jsonPath("$[1].upperThreshold", is(HelperFunctions.getFloatAsDouble(metricNeutralCategoryUpperThreshold))))
+                .andExpect(jsonPath("$[2].id", is(metricBadCategoryId.intValue())))
+                .andExpect(jsonPath("$[2].name", is(metricBadCategoryName)))
+                .andExpect(jsonPath("$[2].color", is(metricBadCategoryColor)))
+                .andExpect(jsonPath("$[2].upperThreshold", is(HelperFunctions.getFloatAsDouble(metricBadCategoryUpperThreshold))))
+                .andDo(document("metrics/categories",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Category identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Category name"),
+                                fieldWithPath("[].color")
+                                        .description("Category hexadecimal color"),
+                                fieldWithPath("[].upperThreshold")
+                                        .description("Category upper threshold")
+                        )
+                ));
+    }
+
+    @Test
+    public void newMetricsCategories () throws Exception {
+        String metricGoodCategoryName = "Good";
+        String metricGoodCategoryColor = "#00ff00";
+        Float metricGoodCategoryUpperThreshold = 1.0f;
+        Map<String, String> metricGoodCategory = new HashMap<>();
+        metricGoodCategory.put("name", metricGoodCategoryName);
+        metricGoodCategory.put("color", metricGoodCategoryColor);
+        metricGoodCategory.put("upperThreshold", metricGoodCategoryUpperThreshold.toString());
+
+        String metricNeutralCategoryName = "Neutral";
+        String metricNeutralCategoryColor = "#ff8000";
+        Float metricNeutralCategoryUpperThreshold = 0.67f;
+        Map<String, String> metricNeutralCategory = new HashMap<>();
+        metricNeutralCategory.put("name", metricNeutralCategoryName);
+        metricNeutralCategory.put("color", metricNeutralCategoryColor);
+        metricNeutralCategory.put("upperThreshold", metricNeutralCategoryUpperThreshold.toString());
+
+        String metricBadCategoryName = "Bad";
+        String metricBadCategoryColor = "#ff0000";
+        Float metricBadCategoryUpperThreshold = 0.33f;
+        Map<String, String> metricBadCategory = new HashMap<>();
+        metricBadCategory.put("name", metricBadCategoryName);
+        metricBadCategory.put("color", metricBadCategoryColor);
+        metricBadCategory.put("upperThreshold", metricBadCategoryUpperThreshold.toString());
+
+        List<Map<String, String>> metricCategoriesList = new ArrayList<>();
+        metricCategoriesList.add(metricGoodCategory);
+        metricCategoriesList.add(metricNeutralCategory);
+        metricCategoriesList.add(metricBadCategory);
+
+        // Perform request
+        Gson gson = new Gson();
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/metrics/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(metricCategoriesList));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated())
+                .andDo(document("metrics/categories-new",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("[].name")
+                                        .description("Metrics category name"),
+                                fieldWithPath("[].color")
+                                        .description("Metrics category color"),
+                                fieldWithPath("[].upperThreshold")
+                                        .description("Metrics category upper threshold"))
+                ));
+
+        // Verify mock interactions
+        verify(metricRepository, times(1)).deleteAll();
+        verify(metricRepository, times(3)).save(ArgumentMatchers.any(MetricCategory.class));
+        verifyNoMoreInteractions(metricRepository);
+    }
+
+    @Test
+    public void newMetricsCategoriesNotEnough () throws Exception {
+        String metricGoodCategoryName = "Good";
+        String metricGoodCategoryColor = "#00ff00";
+        Float metricGoodCategoryUpperThreshold = 1.0f;
+        Map<String, String> metricGoodCategory = new HashMap<>();
+        metricGoodCategory.put("name", metricGoodCategoryName);
+        metricGoodCategory.put("color", metricGoodCategoryColor);
+        metricGoodCategory.put("upperThreshold", metricGoodCategoryUpperThreshold.toString());
+
+        List<Map<String, String>> metricCategoriesList = new ArrayList<>();
+        metricCategoriesList.add(metricGoodCategory);
+
+        // Perform request
+        Gson gson = new Gson();
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/metrics/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(metricCategoriesList));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(is("Not enough categories")))
+                .andDo(document("metrics/categories-new-error",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
                 ));
 
         // Verify mock interactions
-        verify(siCategoryRepository, times(1)).deleteAll();
-        verify(qfCategoryRepository, times(1)).deleteAll();
+        verifyNoMoreInteractions(metricRepository);
     }
 
     @Test
     public void newStrategicIndicator() throws Exception {
+        // Project setup
+        List<String> projectsList = new ArrayList<>();
+        String projectExternalId = "test";
+        projectsList.add(projectExternalId);
+
+        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
+
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+
+        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
+
         // Strategic Indicator setup
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Product Quality";
@@ -239,17 +581,10 @@ public class UtilTest {
         qualityFactors.add("softwarestability");
         qualityFactors.add("testingstatus");
 
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
-
-        // Project setup
-        List<String> projectsList = new ArrayList<>();
-        String projectExternalId = "test";
-        projectsList.add(projectExternalId);
-
-        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
 
         // Factors setup
         String factor1Id = "codequality";
@@ -392,6 +727,7 @@ public class UtilTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart("/api/strategicIndicators")
                 .file(network)
+                .param("prj", projectExternalId)
                 .param("name", strategicIndicatorName)
                 .param("description", strategicIndicatorDescription)
                 .param("quality_factors", String.join(",", qualityFactors));
@@ -402,6 +738,8 @@ public class UtilTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
                                 parameterWithName("name")
                                         .description("Product name"),
                                 parameterWithName("description")
@@ -441,6 +779,19 @@ public class UtilTest {
 
     @Test
     public void newStrategicIndicatorAssessmentError() throws Exception {
+        // Project setup
+        List<String> projectsList = new ArrayList<>();
+        String projectExternalId = "test";
+        projectsList.add(projectExternalId);
+
+        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
+
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+
+        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
+
         // Strategic Indicator setup
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Product Quality";
@@ -454,17 +805,10 @@ public class UtilTest {
         qualityFactors.add("softwarestability");
         qualityFactors.add("testingstatus");
 
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
-
-        // Project setup
-        List<String> projectsList = new ArrayList<>();
-        String projectExternalId = "test";
-        projectsList.add(projectExternalId);
-
-        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
 
         // Factors setup
         String factor1Id = "codequality";
@@ -629,6 +973,15 @@ public class UtilTest {
 
     @Test
     public void getStrategicIndicator() throws Exception {
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        String projectBacklogId = "prj-1";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+        project.setId(projectId);
+        project.setBacklogId(projectBacklogId);
+
         Long strategicIndicatorId = 1L;
         String strategicIndicatorExternalId = "productquality";
         String strategicIndicatorName = "Product Quality";
@@ -641,7 +994,7 @@ public class UtilTest {
         qualityFactors.add(factor2);
         String factor3 = "testingstatus";
         qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, IOUtils.toByteArray(networkFile.toURI()), qualityFactors);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, IOUtils.toByteArray(networkFile.toURI()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.existsById(strategicIndicatorId)).thenReturn(true);
@@ -662,6 +1015,13 @@ public class UtilTest {
                 .andExpect(jsonPath("$.quality_factors[0]", is(factor1)))
                 .andExpect(jsonPath("$.quality_factors[1]", is(factor2)))
                 .andExpect(jsonPath("$.quality_factors[2]", is(factor3)))
+                .andExpect(jsonPath("$.project.id", is(projectId.intValue())))
+                .andExpect(jsonPath("$.project.externalId", is(projectExternalId)))
+                .andExpect(jsonPath("$.project.name", is(projectName)))
+                .andExpect(jsonPath("$.project.description", is(projectDescription)))
+                .andExpect(jsonPath("$.project.logo", is(nullValue())))
+                .andExpect(jsonPath("$.project.active", is(true)))
+                .andExpect(jsonPath("$.project.backlogId", is(projectBacklogId)))
                 .andDo(document("si/get-one",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -680,8 +1040,21 @@ public class UtilTest {
                                 fieldWithPath("network")
                                         .description("Strategic indicator bayesian network"),
                                 fieldWithPath("quality_factors")
-                                        .description("Strategic indicator quality factors identifiers list")
-                        )
+                                        .description("Strategic indicator quality factors identifiers list"),
+                                fieldWithPath("project.id")
+                                        .description("Project identifier"),
+                                fieldWithPath("project.externalId")
+                                        .description("Project external identifier"),
+                                fieldWithPath("project.name")
+                                        .description("Project name"),
+                                fieldWithPath("project.description")
+                                        .description("Project description"),
+                                fieldWithPath("project.logo")
+                                        .description("Project logo"),
+                                fieldWithPath("project.active")
+                                        .description("Is an active project?"),
+                                fieldWithPath("project.backlogId")
+                                        .description("Project identifier in the backlog"))
                 ));
 
         // Verify mock interactions
@@ -708,6 +1081,11 @@ public class UtilTest {
 
     @Test
     public void editStrategicIndicator() throws Exception {
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Product Quality";
         String strategicIndicatorDescription = "Quality of the product built";
@@ -719,7 +1097,7 @@ public class UtilTest {
         qualityFactors.add(factor2);
         String factor3 = "testingstatus";
         qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, IOUtils.toByteArray(networkFile.toURI()), qualityFactors);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, IOUtils.toByteArray(networkFile.toURI()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.getOne(strategicIndicatorId)).thenReturn(strategicIndicator);
@@ -766,6 +1144,17 @@ public class UtilTest {
 
     @Test
     public void editStrategicIndicatorAssessment() throws Exception {
+        // Project setup
+        List<String> projectsList = new ArrayList<>();
+        String projectExternalId = "test";
+        projectsList.add(projectExternalId);
+
+        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
+
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+
         // Strategic Indicator setup
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Product Quality";
@@ -779,7 +1168,7 @@ public class UtilTest {
         qualityFactors.add("softwarestability");
         qualityFactors.add("testingstatus");
 
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.getOne(strategicIndicatorId)).thenReturn(strategicIndicator);
@@ -789,13 +1178,6 @@ public class UtilTest {
         newQualityFactors.add("codequality");
         newQualityFactors.add("softwarestability");
         newQualityFactors.add("testingperformance");
-
-        // Project setup
-        List<String> projectsList = new ArrayList<>();
-        String projectExternalId = "test";
-        projectsList.add(projectExternalId);
-
-        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
 
         // Factors setup
         String factor1Id = "codequality";
@@ -981,6 +1363,17 @@ public class UtilTest {
 
     @Test
     public void editStrategicIndicatorAssessmentError() throws Exception {
+        // Project setup
+        List<String> projectsList = new ArrayList<>();
+        String projectExternalId = "test";
+        projectsList.add(projectExternalId);
+
+        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
+
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+
         // Strategic Indicator setup
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Product Quality";
@@ -994,7 +1387,7 @@ public class UtilTest {
         qualityFactors.add("softwarestability");
         qualityFactors.add("testingstatus");
 
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.getOne(strategicIndicatorId)).thenReturn(strategicIndicator);
@@ -1004,13 +1397,6 @@ public class UtilTest {
         newQualityFactors.add("codequality");
         newQualityFactors.add("softwarestability");
         newQualityFactors.add("testingperformance");
-
-        // Project setup
-        List<String> projectsList = new ArrayList<>();
-        String projectExternalId = "test";
-        projectsList.add(projectExternalId);
-
-        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
 
         // Factors setup
         String factor1Id = "codequality";
@@ -1210,6 +1596,11 @@ public class UtilTest {
 
     @Test
     public void editStrategicIndicatorIntegrityViolation() throws Exception {
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Product Quality";
         String strategicIndicatorDescription = "Quality of the product built";
@@ -1221,7 +1612,7 @@ public class UtilTest {
         qualityFactors.add(factor2);
         String factor3 = "testingstatus";
         qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, IOUtils.toByteArray(networkFile.toURI()), qualityFactors);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, IOUtils.toByteArray(networkFile.toURI()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.getOne(strategicIndicatorId)).thenReturn(strategicIndicator);
@@ -1259,6 +1650,15 @@ public class UtilTest {
 
     @Test
     public void fetchStrategicIndicators() throws Exception {
+        List<String> projectsList = new ArrayList<>();
+        String projectExternalId = "test";
+        projectsList.add(projectExternalId);
+        Long projectId = 1L;
+
+        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
+
+        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
+
         String strategicIndicatorId = "blocking";
         String strategicIndicatorName = "Blocking";
         String factorId = "blockingcode";
@@ -1279,8 +1679,9 @@ public class UtilTest {
         List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
-        when(strategicIndicatorRepository.count()).thenReturn(0L);
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, null)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
+
+        when(strategicIndicatorRepository.existsByExternalIdAndProject_Id(strategicIndicatorId, projectId)).thenReturn(false);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1294,9 +1695,18 @@ public class UtilTest {
                 ));
 
         // Verify mock interactions
-        ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
-        verify(strategicIndicatorRepository, times(1)).save(argument.capture());
-        Strategic_Indicator strategicIndicatorSaved = argument.getValue();
+        ArgumentCaptor<Project> argumentPrj = ArgumentCaptor.forClass(Project.class);
+        verify(projectRepository, times(1)).save(argumentPrj.capture());
+        Project projectSaved = argumentPrj.getValue();
+        assertEquals(projectExternalId, projectSaved.getExternalId());
+        assertEquals(projectExternalId, projectSaved.getName());
+        assertEquals("No description specified", projectSaved.getDescription());
+        assertNull(projectSaved.getLogo());
+        assertTrue(projectSaved.getActive());
+
+        ArgumentCaptor<Strategic_Indicator> argumentSI = ArgumentCaptor.forClass(Strategic_Indicator.class);
+        verify(strategicIndicatorRepository, times(1)).save(argumentSI.capture());
+        Strategic_Indicator strategicIndicatorSaved = argumentSI.getValue();
         assertEquals(strategicIndicatorName, strategicIndicatorSaved.getName());
         assertEquals("", strategicIndicatorSaved.getDescription());
         List<String> factorIds = new ArrayList<>();
@@ -1305,24 +1715,11 @@ public class UtilTest {
     }
 
     @Test
-    public void fetchStrategicIndicatorsAlreadyLoaded() throws Exception {
-        when(strategicIndicatorRepository.count()).thenReturn(1L);
-
-        // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/strategicIndicators/fetch");
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andDo(document("si/fetch-error",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
-    }
-
-    @Test
     public void assesStrategicIndicators() throws Exception {
         String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
 
         String factor1Id = "testingperformance";
         String factor1Name = "Testing Performance";
@@ -1364,7 +1761,7 @@ public class UtilTest {
         qualityFactors.add(factor2);
         String factor3 = "externalquality";
         qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
@@ -1468,6 +1865,9 @@ public class UtilTest {
     @Test
     public void assesStrategicIndicatorsNotCorrect() throws Exception {
         String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
 
         String factor1Id = "testingperformance";
         String factor1Name = "Testing Performance";
@@ -1509,7 +1909,7 @@ public class UtilTest {
         qualityFactors.add(factor2);
         String factor3 = "externalquality";
         qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
@@ -1628,6 +2028,9 @@ public class UtilTest {
         dtoFactorList.add(dtoFactor);
 
         String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
 
         when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
 
@@ -1648,7 +2051,7 @@ public class UtilTest {
         qualityFactors.add(factor2);
         String factor3 = "testingperformance";
         qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
@@ -1702,17 +2105,17 @@ public class UtilTest {
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(strategicIndicatorGoodCategoryName)))
                 .andExpect(jsonPath("$[0].probabilities[0].value", is(nullValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].color", is(strategicIndicatorGoodCategoryColor)))
-                .andExpect(jsonPath("$[0].probabilities[0].upperThreshold", is(closeTo(0.66, 0.01))))
+                .andExpect(jsonPath("$[0].probabilities[0].upperThreshold", is(closeTo(1, 0.01))))
                 .andExpect(jsonPath("$[0].probabilities[1].id", is(strategicIndicatorNeutralCategoryId.intValue())))
                 .andExpect(jsonPath("$[0].probabilities[1].label", is(strategicIndicatorNeutralCategoryName)))
                 .andExpect(jsonPath("$[0].probabilities[1].value", is(nullValue())))
                 .andExpect(jsonPath("$[0].probabilities[1].color", is(strategicIndicatorNeutralCategoryColor)))
-                .andExpect(jsonPath("$[0].probabilities[1].upperThreshold", is(closeTo(0.33, 0.01))))
+                .andExpect(jsonPath("$[0].probabilities[1].upperThreshold", is(closeTo(0.66, 0.01))))
                 .andExpect(jsonPath("$[0].probabilities[2].id", is(strategicIndicatorBadCategoryId.intValue())))
                 .andExpect(jsonPath("$[0].probabilities[2].label", is(strategicIndicatorBadCategoryName)))
                 .andExpect(jsonPath("$[0].probabilities[2].value", is(nullValue())))
                 .andExpect(jsonPath("$[0].probabilities[2].color", is(strategicIndicatorBadCategoryColor)))
-                .andExpect(jsonPath("$[0].probabilities[2].upperThreshold", is(closeTo(0, 0.01))))
+                .andExpect(jsonPath("$[0].probabilities[2].upperThreshold", is(closeTo(0.33, 0.01))))
                 .andExpect(jsonPath("$[0].date", is(nullValue())))
                 .andExpect(jsonPath("$[0].datasource", is("Simulation")))
                 .andExpect(jsonPath("$[0].categories_description", is("")))
@@ -1869,7 +2272,7 @@ public class UtilTest {
         when(qmaRelations.getRelations(projectExternalId, null)).thenReturn(dtoRelationsSIList);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/qualityModel")
+                .get("/api/strategicIndicators/qualityModel")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -1932,7 +2335,7 @@ public class UtilTest {
         when(qmaRelations.getRelations(projectExternalId, LocalDate.parse(date))).thenReturn(dtoRelationsSIList);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/qualityModel")
+                .get("/api/strategicIndicators/qualityModel")
                 .param("prj", projectExternalId)
                 .param("date", date);
 

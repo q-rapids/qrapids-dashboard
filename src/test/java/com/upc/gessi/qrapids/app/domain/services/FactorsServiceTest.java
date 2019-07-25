@@ -607,68 +607,6 @@ public class FactorsServiceTest {
     }
 
     @Test
-    public void getQualityFactorsCategories() throws Exception {
-        // Factors categories setup
-        Long factorGoodCategoryId = 10L;
-        String factorGoodCategoryName = "Good";
-        String factorGoodCategoryColor = "#00ff00";
-        float factorGoodCategoryUpperThreshold = 1f;
-        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
-        factorGoodCategory.setId(factorGoodCategoryId);
-
-        Long factorNeutralCategoryId = 11L;
-        String factorNeutralCategoryName = "Neutral";
-        String factorNeutralCategoryColor = "#ff8000";
-        float factorNeutralCategoryUpperThreshold = 0.67f;
-        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
-        factorNeutralCategory.setId(factorNeutralCategoryId);
-
-        Long factorBadCategoryId = 12L;
-        String factorBadCategoryName = "Bad";
-        String factorBadCategoryColor = "#ff0000";
-        float factorBadCategoryUpperThreshold = 0.33f;
-        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
-        factorBadCategory.setId(factorBadCategoryId);
-
-        List<QFCategory> factorCategoryList = new ArrayList<>();
-        factorCategoryList.add(factorGoodCategory);
-        factorCategoryList.add(factorNeutralCategory);
-        factorCategoryList.add(factorNeutralCategory);
-
-        when(qfCategoryRepository.findAll()).thenReturn(factorCategoryList);
-
-        // Perform request
-        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/qualityFactors/categories");
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id", is(factorGoodCategoryId.intValue())))
-                .andExpect(jsonPath("$[0].name", is(factorGoodCategoryName)))
-                .andExpect(jsonPath("$[0].color", is(factorGoodCategoryColor)))
-                .andExpect(jsonPath("$[0].upperThreshold", is(HelperFunctions.getFloatAsDouble(factorGoodCategoryUpperThreshold))))
-                .andDo(document("qf/categories",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("[].id")
-                                        .description("Quality factor category identifier"),
-                                fieldWithPath("[].name")
-                                        .description("Quality factor category name"),
-                                fieldWithPath("[].color")
-                                        .description("Quality factor category hexadecimal color"),
-                                fieldWithPath("[].upperThreshold")
-                                        .description("Quality factor category upper threshold")
-                        )
-                ));
-
-        // Verify mock interactions
-        verify(qfCategoryRepository, times(1)).findAll();
-        verifyNoMoreInteractions(qfCategoryRepository);
-    }
-
-    @Test
     public void getQualityFactorsPredicitionData() throws Exception {
         // Factor setup
         String metricId = "fasttests";

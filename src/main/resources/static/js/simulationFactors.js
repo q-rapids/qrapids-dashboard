@@ -38,7 +38,7 @@ function showQualityFactorSliders () {
         return a.upperThreshold - b.upperThreshold;
     });
     for (var i = 0; i < categories.length; i++) {
-        var end = 1/categories.length * (i+1);
+        var end = categories[i].upperThreshold;
         var offset = 0;
         if (end < 1) offset = 0.02;
         var range = {

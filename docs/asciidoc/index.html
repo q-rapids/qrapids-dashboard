@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v0.3.5, 2019-07-22">
+<meta name="author" content="v0.3.5, 2019-07-25">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v0.3.5, 2019-07-22</span><br>
+<span id="author" class="author">v0.3.5, 2019-07-25</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -460,6 +460,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_assess_strategic_indicators">2.15. Assess strategic indicators</a></li>
 <li><a href="#_simulate_strategic_indicators_assessment">2.16. Simulate strategic indicators assessment</a></li>
 <li><a href="#_get_quality_model">2.17. Get quality model</a></li>
+<li><a href="#_get_strategic_indicator_categories">2.18. Get strategic indicator categories</a></li>
+<li><a href="#_set_strategic_indicator_categories">2.19. Set strategic indicator categories</a></li>
 </ul>
 </li>
 <li><a href="#_quality_factors">3. Quality Factors</a>
@@ -470,10 +472,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_get_historical_evaluation_2">3.4. Get historical evaluation</a></li>
 <li><a href="#_get_historical_evaluation_for_strategic_indicator">3.5. Get historical evaluation for strategic indicator</a></li>
 <li><a href="#_get_all_quality_factors">3.6. Get all quality factors</a></li>
-<li><a href="#_get_quality_factor_categories">3.7. Get quality factor categories</a></li>
-<li><a href="#_get_prediction">3.8. Get prediction</a></li>
-<li><a href="#_get_prediction_for_strategic_indicators">3.9. Get prediction for strategic indicators</a></li>
-<li><a href="#_simulation">3.10. Simulation</a></li>
+<li><a href="#_get_prediction">3.7. Get prediction</a></li>
+<li><a href="#_get_prediction_for_strategic_indicators">3.8. Get prediction for strategic indicators</a></li>
+<li><a href="#_simulation">3.9. Simulation</a></li>
+<li><a href="#_get_quality_factor_categories">3.10. Get quality factor categories</a></li>
+<li><a href="#_set_quality_factor_categories">3.11. Set quality factor categories</a></li>
 </ul>
 </li>
 <li><a href="#_metrics">4. Metrics</a>
@@ -486,6 +489,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_get_historical_evaluation_for_quality_factor">4.6. Get historical evaluation for quality factor</a></li>
 <li><a href="#_get_prediction_2">4.7. Get prediction</a></li>
 <li><a href="#_get_prediction_for_quality_factor">4.8. Get prediction for quality factor</a></li>
+<li><a href="#_get_metric_categories">4.9. Get metric categories</a></li>
+<li><a href="#_set_strategic_indicator_categories_2">4.10. Set strategic indicator categories</a></li>
 </ul>
 </li>
 <li><a href="#_alerts">5. Alerts</a>
@@ -541,15 +546,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_get_product_detailed_evaluation">10.7. Get product detailed evaluation</a></li>
 </ul>
 </li>
-<li><a href="#_categories">11. Categories</a>
+<li><a href="#_others">11. Others</a>
 <ul class="sectlevel2">
-<li><a href="#_add_categories">11.1. Add categories</a></li>
-<li><a href="#_delete_categories">11.2. Delete categories</a></li>
-</ul>
-</li>
-<li><a href="#_others">12. Others</a>
-<ul class="sectlevel2">
-<li><a href="#_get_forecasting_techniques">12.1. Get forecasting techniques</a></li>
+<li><a href="#_get_forecasting_techniques">11.1. Get forecasting techniques</a></li>
 </ul>
 </li>
 </ul>
@@ -1598,8 +1597,8 @@ Content-Length: 485
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "strategicIndicators" : [ "blocking" ],
-    "formattedDate" : "2019-07-07"
+    "formattedDate" : "2019-07-07",
+    "strategicIndicators" : [ "blocking" ]
   } ]
 } ]</code></pre>
 </div>
@@ -1785,8 +1784,8 @@ Content-Length: 485
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "strategicIndicators" : [ "blocking" ],
-    "formattedDate" : "2019-07-07"
+    "formattedDate" : "2019-07-07",
+    "strategicIndicators" : [ "blocking" ]
   } ]
 } ]</code></pre>
 </div>
@@ -1958,8 +1957,8 @@ Content-Length: 485
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "strategicIndicators" : [ "blocking" ],
-    "formattedDate" : "2019-07-07"
+    "formattedDate" : "2019-07-07",
+    "strategicIndicators" : [ "blocking" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2153,8 +2152,8 @@ Content-Length: 485
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "strategicIndicators" : [ "blocking" ],
-    "formattedDate" : "2019-07-07"
+    "formattedDate" : "2019-07-07",
+    "strategicIndicators" : [ "blocking" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2326,8 +2325,8 @@ Content-Type: application/json;charset=UTF-8
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "strategicIndicators" : [ "blocking" ],
-    "formattedDate" : "2019-07-07"
+    "formattedDate" : "2019-07-07",
+    "strategicIndicators" : [ "blocking" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2513,8 +2512,8 @@ Content-Type: application/json;charset=UTF-8
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "strategicIndicators" : [ "blocking" ],
-    "formattedDate" : "2019-07-07"
+    "formattedDate" : "2019-07-07",
+    "strategicIndicators" : [ "blocking" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2607,6 +2606,41 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator quality factors identifiers list</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>project.id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>project.externalId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>project.name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>project.description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>project.logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project logo</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>project.active</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is an active project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>project.backlogId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2615,16 +2649,25 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 8966
+Content-Length: 9151
 Content-Type: application/json;charset=UTF-8
 
 {
   "id" : 1,
+  "externalId" : "productquality",
   "name" : "Product Quality",
   "description" : "Quality of the product built",
   "network" : "Ly8gfi0+W0RORVQtMV0tPn4KCi8vIEZpbGUgY3JlYXRlZCBieSBhbiB1bmxpY2Vuc2VkIHVzZXIgdXNpbmcgTmV0aWNhIDYuMDQgb24gTWFyIDIwLCAyMDE4IGF0IDEwOjQ1OjExIFVUQy4KCmJuZXQgcHJvZHVjdHF1YWxpdHkgewpBdXRvQ29tcGlsZSA9IFRSVUU7CmF1dG91cGRhdGUgPSBUUlVFOwp3aGVuY2hhbmdlZCA9IDE1MjE1NDExNzk7Cgp2aXN1YWwgVjEgewoJZGVmZGlzcGZvcm0gPSBCRUxJRUZCQVJTOwoJbm9kZWxhYmVsaW5nID0gVElUTEU7CglOb2RlTWF4TnVtRW50cmllcyA9IDUwOwoJbm9kZWZvbnQgPSBmb250IHtzaGFwZT0gIkFyaWFsIjsgc2l6ZT0gOTt9OwoJbGlua2ZvbnQgPSBmb250IHtzaGFwZT0gIkFyaWFsIjsgc2l6ZT0gOTt9OwoJU2hvd0xpbmtTdHJlbmd0aHMgPSAxOwoJd2luZG93cG9zbiA9ICgyLCA1LCA5MzIsIDYzNyk7CglyZXNvbHV0aW9uID0gNzI7CglkcmF3aW5nYm91bmRzID0gKDEwODAsIDcyMCk7CglzaG93cGFnZWJyZWFrcyA9IEZBTFNFOwoJdXNlZ3JpZCA9IFRSVUU7Cglncmlkc3BhY2UgPSAoNiwgNik7CglOb2RlU2V0IE5vZGUge0J1aWx0SW4gPSAxOyBDb2xvciA9IDB4MDBlMWUxZTE7fTsKCU5vZGVTZXQgTmF0dXJlIHtCdWlsdEluID0gMTsgQ29sb3IgPSAweDAwZjhlZWQyO307CglOb2RlU2V0IERldGVybWluaXN0aWMge0J1aWx0SW4gPSAxOyBDb2xvciA9IDB4MDBkM2NhYTY7fTsKCU5vZGVTZXQgRmluZGluZyB7QnVpbHRJbiA9IDE7IENvbG9yID0gMHgwMGM4YzhjODt9OwoJTm9kZVNldCBDb25zdGFudCB7QnVpbHRJbiA9IDE7IENvbG9yID0gMHgwMGZmZmZmZjt9OwoJTm9kZVNldCBDb25zdGFudFZhbHVlIHtCdWlsdEluID0gMTsgQ29sb3IgPSAweDAwZmZmZmI0O307CglOb2RlU2V0IFV0aWxpdHkge0J1aWx0SW4gPSAxOyBDb2xvciA9IDB4MDBmZmJkYmQ7fTsKCU5vZGVTZXQgRGVjaXNpb24ge0J1aWx0SW4gPSAxOyBDb2xvciA9IDB4MDBkZWU4ZmY7fTsKCU5vZGVTZXQgRG9jdW1lbnRhdGlvbiB7QnVpbHRJbiA9IDE7IENvbG9yID0gMHgwMGYwZmFmYTt9OwoJTm9kZVNldCBUaXRsZSB7QnVpbHRJbiA9IDE7IENvbG9yID0gMHgwMGZmZmZmZjt9OwoJUHJpbnRlclNldHRpbmcgQSB7CgkJbWFyZ2lucyA9ICgxMjcwLCAxMjcwLCAxMjcwLCAxMjcwKTsKCQl9OwoJfTsKCm5vZGUgY29kZXF1YWxpdHkgewoJZGlzY3JldGUgPSBUUlVFOwoJc3RhdGVzID0gKExvdywgTWVkaXVtLCBIaWdoKTsKCWtpbmQgPSBOQVRVUkU7CgljaGFuY2UgPSBDSEFOQ0U7CglwYXJlbnRzID0gKCk7Cglwcm9icyA9IAoJCS8vIExvdyAgICAgICAgICBNZWRpdW0gICAgICAgSGlnaCAgICAgICAgIAoJCSAgKDAuMjUsICAgICAgICAwLjQsICAgICAgICAgMC4zNSk7Cgl3aGVuY2hhbmdlZCA9IDE1MjE1NDExNTE7CgliZWxpZWYgPSAoMC4yNSwgMC40LCAwLjM1KTsKCXZpc3VhbCBWMSB7CgkJY2VudGVyID0gKDk2LCA0Mik7CgkJaGVpZ2h0ID0gMTsKCQl9OwoJfTsKCm5vZGUgc29mdHdhcmVzdGFiaWxpdHkgewoJZGlzY3JldGUgPSBUUlVFOwoJc3RhdGVzID0gKExvdywgTWVkaXVtLCBIaWdoKTsKCWtpbmQgPSBOQVRVUkU7CgljaGFuY2UgPSBDSEFOQ0U7CglwYXJlbnRzID0gKCk7Cglwcm9icyA9IAoJCS8vIExvdyAgICAgICAgICBNZWRpdW0gICAgICAgSGlnaCAgICAgICAgIAoJCSAgKDAuMSwgICAgICAgICAwLjMsICAgICAgICAgMC42KTsKCXdoZW5jaGFuZ2VkID0gMTUyMTU0MTE2NjsKCWJlbGllZiA9ICgwLjEsIDAuMywgMC42KTsKCXZpc3VhbCBWMSB7CgkJY2VudGVyID0gKDM2NiwgNDIpOwoJCWhlaWdodCA9IDQ7CgkJfTsKCX07Cgpub2RlIHRlc3RpbmdzdGF0dXMgewoJZGlzY3JldGUgPSBUUlVFOwoJc3RhdGVzID0gKExvdywgTWVkaXVtLCBIaWdoKTsKCWtpbmQgPSBOQVRVUkU7CgljaGFuY2UgPSBDSEFOQ0U7CglwYXJlbnRzID0gKCk7Cglwcm9icyA9IAoJCS8vIExvdyAgICAgICAgICBNZWRpdW0gICAgICAgSGlnaCAgICAgICAgIAoJCSAgKDAuMiwgICAgICAgICAwLjYsICAgICAgICAgMC4yKTsKCXdoZW5jaGFuZ2VkID0gMTUyMTU0MTE3OTsKCWJlbGllZiA9ICgwLjIsIDAuNiwgMC4yKTsKCXZpc3VhbCBWMSB7CgkJY2VudGVyID0gKDYxOCwgNDIpOwoJCWhlaWdodCA9IDI7CgkJfTsKCX07Cgpub2RlIHByb2R1Y3RxdWFsaXR5IHsKCWRpc2NyZXRlID0gVFJVRTsKCXN0YXRlcyA9IChMb3csIE1lZGl1bSwgSGlnaCk7CglraW5kID0gTkFUVVJFOwoJY2hhbmNlID0gQ0hBTkNFOwoJcGFyZW50cyA9IChjb2RlcXVhbGl0eSwgc29mdHdhcmVzdGFiaWxpdHksIHRlc3RpbmdzdGF0dXMpOwoJcHJvYnMgPSAKCQkvLyBMb3cgICAgICAgICAgTWVkaXVtICAgICAgIEhpZ2ggICAgICAgICAgLy8gQ29kZVF1YWxpdHkgU3RhYmlsaXR5IFRlc3RpbmdTdGF0dXMgCgkJICAoMSwgICAgICAgICAgIDAsICAgICAgICAgICAwLCAgICAgICAgICAgIC8vIExvdyAgICAgICAgIExvdyAgICAgICBMb3cgICAgICAgICAgIAoJCSAgIDAuOTUsICAgICAgICAwLjA1LCAgICAgICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBMb3cgICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLjcxLCAgICAgICAgMC4wOSwgICAgICAgIDAuMiwgICAgICAgICAgLy8gTG93ICAgICAgICAgTG93ICAgICAgIEhpZ2ggICAgICAgICAgCgkJICAgMC44LCAgICAgICAgIDAuMiwgICAgICAgICAwLCAgICAgICAgICAgIC8vIExvdyAgICAgICAgIE1lZGl1bSAgICBMb3cgICAgICAgICAgIAoJCSAgIDAuNTczNzUsICAgICAwLjMzMzc1LCAgICAgMC4wOTI1LCAgICAgICAvLyBMb3cgICAgICAgICBNZWRpdW0gICAgTWVkaXVtICAgICAgICAKCQkgICAwLjQ1NSwgICAgICAgMC4yNzc1LCAgICAgIDAuMjY3NSwgICAgICAgLy8gTG93ICAgICAgICAgTWVkaXVtICAgIEhpZ2ggICAgICAgICAgCgkJICAgMC4zOTYyNSwgICAgIDAuNDE1LCAgICAgICAwLjE4ODc1LCAgICAgIC8vIExvdyAgICAgICAgIEhpZ2ggICAgICBMb3cgICAgICAgICAgIAoJCSAgIDAuMzk5Mzc1LCAgICAwLjQxODEyNSwgICAgMC4xODI1LCAgICAgICAvLyBMb3cgICAgICAgICBIaWdoICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLjI4MDYyNSwgICAgMC4zNjE4NzUsICAgIDAuMzU3NSwgICAgICAgLy8gTG93ICAgICAgICAgSGlnaCAgICAgIEhpZ2ggICAgICAgICAgCgkJICAgMC42NTA2MjUsICAgIDAuMjI4MTI1LCAgICAwLjEyMTI1LCAgICAgIC8vIE1lZGl1bSAgICAgIExvdyAgICAgICBMb3cgICAgICAgICAgIAoJCSAgIDAuOTUsICAgICAgICAwLjA1LCAgICAgICAgMCwgICAgICAgICAgICAvLyBNZWRpdW0gICAgICBMb3cgICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLjUzNSwgICAgICAgMC4xNzUsICAgICAgIDAuMjksICAgICAgICAgLy8gTWVkaXVtICAgICAgTG93ICAgICAgIEhpZ2ggICAgICAgICAgCgkJICAgMC4zOTU2MjUsICAgIDAuNDE1NjI1LCAgICAwLjE4ODc1LCAgICAgIC8vIE1lZGl1bSAgICAgIE1lZGl1bSAgICBMb3cgICAgICAgICAgIAoJCSAgIDAuMzk4NzUsICAgICAwLjQxODc1LCAgICAgMC4xODI1LCAgICAgICAvLyBNZWRpdW0gICAgICBNZWRpdW0gICAgTWVkaXVtICAgICAgICAKCQkgICAwLjI4LCAgICAgICAgMC4zNjI1LCAgICAgIDAuMzU3NSwgICAgICAgLy8gTWVkaXVtICAgICAgTWVkaXVtICAgIEhpZ2ggICAgICAgICAgCgkJICAgMC4wNSwgICAgICAgIDAuODUsICAgICAgICAwLjEsICAgICAgICAgIC8vIE1lZGl1bSAgICAgIEhpZ2ggICAgICBMb3cgICAgICAgICAgIAoJCSAgIDAuMjI0Mzc1LCAgICAwLjUwMzEyNSwgICAgMC4yNzI1LCAgICAgICAvLyBNZWRpdW0gICAgICBIaWdoICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLCAgICAgICAgICAgMC4yLCAgICAgICAgIDAuOCwgICAgICAgICAgLy8gTWVkaXVtICAgICAgSGlnaCAgICAgIEhpZ2ggICAgICAgICAgCgkJICAgMC41NTA2MjUsICAgIDAuMzM4MTI1LCAgICAwLjExMTI1LCAgICAgIC8vIEhpZ2ggICAgICAgIExvdyAgICAgICBMb3cgICAgICAgICAgIAoJCSAgIDAuNTUzNzUsICAgICAwLjM0MTI1LCAgICAgMC4xMDUsICAgICAgICAvLyBIaWdoICAgICAgICBMb3cgICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLjQzNSwgICAgICAgMC4yODUsICAgICAgIDAuMjgsICAgICAgICAgLy8gSGlnaCAgICAgICAgTG93ICAgICAgIEhpZ2ggICAgICAgICAgCgkJICAgMC4yOTU2MjUsICAgIDAuNTI1NjI1LCAgICAwLjE3ODc1LCAgICAgIC8vIEhpZ2ggICAgICAgIE1lZGl1bSAgICBMb3cgICAgICAgICAgIAoJCSAgIDAsICAgICAgICAgICAwLjcsICAgICAgICAgMC4zLCAgICAgICAgICAvLyBIaWdoICAgICAgICBNZWRpdW0gICAgTWVkaXVtICAgICAgICAKCQkgICAwLjE4LCAgICAgICAgMC40NzI1LCAgICAgIDAuMzQ3NSwgICAgICAgLy8gSGlnaCAgICAgICAgTWVkaXVtICAgIEhpZ2ggICAgICAgICAgCgkJICAgMCwgICAgICAgICAgIDAuNiwgICAgICAgICAwLjQsICAgICAgICAgIC8vIEhpZ2ggICAgICAgIEhpZ2ggICAgICBMb3cgICAgICAgICAgIAoJCSAgIDAsICAgICAgICAgICAwLjksICAgICAgICAgMC4xLCAgICAgICAgICAvLyBIaWdoICAgICAgICBIaWdoICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLjAwNTYyNSwgICAgMC41NTY4NzUxLCAgIDAuNDM3NSk7ICAgICAgLy8gSGlnaCAgICAgICAgSGlnaCAgICAgIEhpZ2ggICAgICAgICAgOwoJbnVtY2FzZXMgPSAKCQkgICAgICAgICAgICAgICAgIC8vIENvZGVRdWFsaXR5IFN0YWJpbGl0eSBUZXN0aW5nU3RhdHVzIAoJCSAgKDAsICAgICAgICAgICAgLy8gTG93ICAgICAgICAgTG93ICAgICAgIExvdyAgICAgICAgICAgCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBMb3cgICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLCAgICAgICAgICAgIC8vIExvdyAgICAgICAgIExvdyAgICAgICBIaWdoICAgICAgICAgIAoJCSAgIDAsICAgICAgICAgICAgLy8gTG93ICAgICAgICAgTWVkaXVtICAgIExvdyAgICAgICAgICAgCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBNZWRpdW0gICAgTWVkaXVtICAgICAgICAKCQkgICAwLCAgICAgICAgICAgIC8vIExvdyAgICAgICAgIE1lZGl1bSAgICBIaWdoICAgICAgICAgIAoJCSAgIDAsICAgICAgICAgICAgLy8gTG93ICAgICAgICAgSGlnaCAgICAgIExvdyAgICAgICAgICAgCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBIaWdoICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLCAgICAgICAgICAgIC8vIExvdyAgICAgICAgIEhpZ2ggICAgICBIaWdoICAgICAgICAgIAoJCSAgIC0xLCAgICAgICAgICAgLy8gTWVkaXVtICAgICAgTG93ICAgICAgIExvdyAgICAgICAgICAgCgkJICAgMCwgICAgICAgICAgICAvLyBNZWRpdW0gICAgICBMb3cgICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLCAgICAgICAgICAgIC8vIE1lZGl1bSAgICAgIExvdyAgICAgICBIaWdoICAgICAgICAgIAoJCSAgIDAsICAgICAgICAgICAgLy8gTWVkaXVtICAgICAgTWVkaXVtICAgIExvdyAgICAgICAgICAgCgkJICAgLTEsICAgICAgICAgICAvLyBNZWRpdW0gICAgICBNZWRpdW0gICAgTWVkaXVtICAgICAgICAKCQkgICAwLCAgICAgICAgICAgIC8vIE1lZGl1bSAgICAgIE1lZGl1bSAgICBIaWdoICAgICAgICAgIAoJCSAgIDAsICAgICAgICAgICAgLy8gTWVkaXVtICAgICAgSGlnaCAgICAgIExvdyAgICAgICAgICAgCgkJICAgMCwgICAgICAgICAgICAvLyBNZWRpdW0gICAgICBIaWdoICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLCAgICAgICAgICAgIC8vIE1lZGl1bSAgICAgIEhpZ2ggICAgICBIaWdoICAgICAgICAgIAoJCSAgIDAsICAgICAgICAgICAgLy8gSGlnaCAgICAgICAgTG93ICAgICAgIExvdyAgICAgICAgICAgCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBMb3cgICAgICAgTWVkaXVtICAgICAgICAKCQkgICAwLCAgICAgICAgICAgIC8vIEhpZ2ggICAgICAgIExvdyAgICAgICBIaWdoICAgICAgICAgIAoJCSAgIDAsICAgICAgICAgICAgLy8gSGlnaCAgICAgICAgTWVkaXVtICAgIExvdyAgICAgICAgICAgCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBNZWRpdW0gICAgTWVkaXVtICAgICAgICAKCQkgICAwLCAgICAgICAgICAgIC8vIEhpZ2ggICAgICAgIE1lZGl1bSAgICBIaWdoICAgICAgICAgIAoJCSAgIDAsICAgICAgICAgICAgLy8gSGlnaCAgICAgICAgSGlnaCAgICAgIExvdyAgICAgICAgICAgCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBIaWdoICAgICAgTWVkaXVtICAgICAgICAKCQkgICAxKTsgICAgICAgICAgIC8vIEhpZ2ggICAgICAgIEhpZ2ggICAgICBIaWdoICAgICAgICAgIDsKCXdoZW5jaGFuZ2VkID0gMDsKCWJlbGllZiA9ICgwLjI2NDM2NjIsIDAuNDk4OTk2MywgMC4yMzY2Mzc1KTsKCXZpc3VhbCBWMSB7CgkJY2VudGVyID0gKDM3MiwgMjU4KTsKCQloZWlnaHQgPSAzOwoJCX07Cgl9OwpFbGltT3JkZXIgPSAoY29kZXF1YWxpdHksIHNvZnR3YXJlc3RhYmlsaXR5LCB0ZXN0aW5nc3RhdHVzLCBwcm9kdWN0cXVhbGl0eSk7Cn07Cg==",
   "quality_factors" : [ "codequality", "softwarestability", "testingstatus" ],
-  "externalId" : "productquality"
+  "project" : {
+    "id" : 1,
+    "externalId" : "test",
+    "name" : "Test",
+    "description" : "Test project",
+    "logo" : null,
+    "active" : true,
+    "backlogId" : "prj-1"
+  }
 }</code></pre>
 </div>
 </div>
@@ -2646,6 +2689,10 @@ Content-Type: application/json;charset=UTF-8
 </tr>
 </thead>
 <tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Product name</p></td>
@@ -2689,6 +2736,7 @@ Content-Type: application/json;charset=UTF-8
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators' -i -X POST \
     -H 'Content-Type: multipart/form-data' \
     -F 'network=@network.dne;type=text/plain' \
+    -F 'prj=test' \
     -F 'name=Product Quality' \
     -F 'description=Quality of the product built' \
     -F 'quality_factors=codequality,softwarestability,testingstatus'</code></pre>
@@ -2828,14 +2876,6 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_http_response_strategic_indicators_already_loaded">HTTP response strategic indicators already loaded</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
-</div>
-</div>
-</div>
 </div>
 <div class="sect2">
 <h3 id="_assess_strategic_indicators">2.15. Assess strategic indicators</h3>
@@ -2928,7 +2968,8 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_simulate_strategic_indicators_assessment_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/simulate?prj=test&amp;factors=%5B%7B%22id%22%3A%22testingperformance%22%2C%22value%22%3A%220.9%22%7D%5D' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/simulate' -i -X POST \
+    -d 'prj=test&amp;factors=%5B%7B%22id%22%3A%22testingperformance%22%2C%22value%22%3A%220.9%22%7D%5D'</code></pre>
 </div>
 </div>
 </div>
@@ -3051,7 +3092,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 815
+Content-Length: 806
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -3069,19 +3110,19 @@ Content-Type: application/json;charset=UTF-8
     "label" : "Good",
     "value" : null,
     "color" : "#00ff00",
-    "upperThreshold" : 0.6666666
+    "upperThreshold" : 1.0
   }, {
     "id" : 11,
     "label" : "Neutral",
     "value" : null,
     "color" : "#ff8000",
-    "upperThreshold" : 0.33333328
+    "upperThreshold" : 0.6666666
   }, {
     "id" : 12,
     "label" : "Bad",
     "value" : null,
     "color" : "#ff0000",
-    "upperThreshold" : 5.9604645E-8
+    "upperThreshold" : 0.33333328
   } ],
   "date" : null,
   "datasource" : "Simulation",
@@ -3133,7 +3174,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_quality_model_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityModel?prj=test&amp;date=2019-07-07' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/qualityModel?prj=test&amp;date=2019-07-07' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -3244,6 +3285,142 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_get_strategic_indicator_categories">2.18. Get strategic indicator categories</h3>
+<div class="sect3">
+<h4 id="_get_strategic_indicator_categories_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/categories' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_strategic_indicator_categories_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category hexadecimal color</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_strategic_indicator_categories_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 181
+Content-Type: application/json;charset=UTF-8
+
+[ {
+  "id" : 10,
+  "name" : "Good",
+  "color" : "#00ff00"
+}, {
+  "id" : 11,
+  "name" : "Neutral",
+  "color" : "#ff8000"
+}, {
+  "id" : 12,
+  "name" : "Bad",
+  "color" : "#ff0000"
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_strategic_indicator_categories">2.19. Set strategic indicator categories</h3>
+<div class="sect3">
+<h4 id="_set_strategic_indicator_categories_request_fields">Request fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category color</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_set_strategic_indicator_categories_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/categories' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -d '[ {
+  "color" : "#00ff00",
+  "name" : "Good"
+}, {
+  "color" : "#ff8000",
+  "name" : "Neutral"
+}, {
+  "color" : "#ff0000",
+  "name" : "Bad"
+} ]'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_set_strategic_indicator_categories_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_not_enough_categories">HTTP response not enough categories</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -3276,7 +3453,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_current_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/current?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/current?prj=test' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -3386,7 +3563,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 22 ],
+    "date" : [ 2019, 7, 25 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -3555,12 +3732,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2019-07-22"
+  "formattedDate" : "2019-07-25",
+  "strategicIndicators" : [ "processperformance" ]
 }</code></pre>
 </div>
 </div>
@@ -3587,7 +3764,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="sect3">
 <h4 id="_get_current_evaluation_for_strategic_indicator_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/current</caption>
+<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/metrics/current</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -3631,7 +3808,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_current_evaluation_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/current?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/current?prj=test' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -3741,7 +3918,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 22 ],
+    "date" : [ 2019, 7, 25 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -3796,7 +3973,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_historical_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/current?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/current?prj=test' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -3906,7 +4083,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 22 ],
+    "date" : [ 2019, 7, 25 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -3939,7 +4116,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="sect3">
 <h4 id="_get_historical_evaluation_for_strategic_indicator_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/current</caption>
+<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/metrics/current</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -3983,7 +4160,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_historical_evaluation_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/current?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/current?prj=test' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -4093,7 +4270,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 22 ],
+    "date" : [ 2019, 7, 25 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4240,12 +4417,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2019-07-22"
+  "formattedDate" : "2019-07-25",
+  "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
 </div>
@@ -4268,84 +4445,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_quality_factor_categories">3.7. Get quality factor categories</h3>
-<div class="sect3">
-<h4 id="_get_quality_factor_categories_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/categories' -i -X GET</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_get_quality_factor_categories_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].color</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category hexadecimal color</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].upperThreshold</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category upper threshold</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_quality_factor_categories_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Content-Length: 265
-
-[ {
-  "id" : 10,
-  "name" : "Good",
-  "color" : "#00ff00",
-  "upperThreshold" : 1.0
-}, {
-  "id" : 11,
-  "name" : "Neutral",
-  "color" : "#ff8000",
-  "upperThreshold" : 0.67
-}, {
-  "id" : 11,
-  "name" : "Neutral",
-  "color" : "#ff8000",
-  "upperThreshold" : 0.67
-} ]</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_get_prediction">3.8. Get prediction</h3>
+<h3 id="_get_prediction">3.7. Get prediction</h3>
 <div class="sect3">
 <h4 id="_get_prediction_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -4379,7 +4479,7 @@ Content-Length: 265
 <h4 id="_get_prediction_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/prediction?prj=test&amp;technique=PROPHET&amp;horizon=7' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/prediction?prj=test&amp;technique=PROPHET&amp;horizon=7' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -4509,7 +4609,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 22 ],
+    "date" : [ 2019, 7, 25 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -4544,11 +4644,11 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_prediction_for_strategic_indicators">3.9. Get prediction for strategic indicators</h3>
+<h3 id="_get_prediction_for_strategic_indicators">3.8. Get prediction for strategic indicators</h3>
 <div class="sect3">
 <h4 id="_get_prediction_for_strategic_indicators_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/prediction</caption>
+<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/metrics/prediction</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -4600,7 +4700,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_prediction_for_strategic_indicators_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/prediction?prj=test&amp;technique=PROPHET&amp;horizon=7' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/prediction?prj=test&amp;technique=PROPHET&amp;horizon=7' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -4730,7 +4830,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 22 ],
+    "date" : [ 2019, 7, 25 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -4765,7 +4865,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_simulation">3.10. Simulation</h3>
+<h3 id="_simulation">3.9. Simulation</h3>
 <div class="sect3">
 <h4 id="_simulation_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -4921,12 +5021,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2019-07-22"
+  "formattedDate" : "2019-07-25",
+  "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
 </div>
@@ -4944,6 +5044,158 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_quality_factor_categories">3.10. Get quality factor categories</h3>
+<div class="sect3">
+<h4 id="_get_quality_factor_categories_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/categories' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_quality_factor_categories_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category hexadecimal color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].upperThreshold</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category upper threshold</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_quality_factor_categories_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 261
+Content-Type: application/json;charset=UTF-8
+
+[ {
+  "id" : 10,
+  "name" : "Good",
+  "color" : "#00ff00",
+  "upperThreshold" : 1.0
+}, {
+  "id" : 11,
+  "name" : "Neutral",
+  "color" : "#ff8000",
+  "upperThreshold" : 0.67
+}, {
+  "id" : 12,
+  "name" : "Bad",
+  "color" : "#ff0000",
+  "upperThreshold" : 0.33
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_quality_factor_categories">3.11. Set quality factor categories</h3>
+<div class="sect3">
+<h4 id="_set_quality_factor_categories_request_fields">Request fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors category name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors category color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].upperThreshold</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors category upper threshold</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_set_quality_factor_categories_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/categories' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -d '[ {
+  "upperThreshold" : "1.0",
+  "color" : "#00ff00",
+  "name" : "Good"
+}, {
+  "upperThreshold" : "0.67",
+  "color" : "#ff8000",
+  "name" : "Neutral"
+}, {
+  "upperThreshold" : "0.33",
+  "color" : "#ff0000",
+  "name" : "Bad"
+} ]'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_set_quality_factor_categories_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_not_enough_categories_2">HTTP response not enough categories</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
 </div>
 </div>
 </div>
@@ -5072,7 +5324,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5240,7 +5492,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5408,7 +5660,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5562,7 +5814,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5738,7 +5990,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5914,7 +6166,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6088,7 +6340,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -6290,7 +6542,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 22 ],
+  "date" : [ 2019, 7, 25 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -6319,6 +6571,158 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_metric_categories">4.9. Get metric categories</h3>
+<div class="sect3">
+<h4 id="_get_metric_categories_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/metrics/categories' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_metric_categories_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category hexadecimal color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].upperThreshold</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category upper threshold</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_metric_categories_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 261
+Content-Type: application/json;charset=UTF-8
+
+[ {
+  "id" : 10,
+  "name" : "Good",
+  "color" : "#00ff00",
+  "upperThreshold" : 1.0
+}, {
+  "id" : 11,
+  "name" : "Neutral",
+  "color" : "#ff8000",
+  "upperThreshold" : 0.67
+}, {
+  "id" : 12,
+  "name" : "Bad",
+  "color" : "#ff0000",
+  "upperThreshold" : 0.33
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set_strategic_indicator_categories_2">4.10. Set strategic indicator categories</h3>
+<div class="sect3">
+<h4 id="_set_strategic_indicator_categories_2_request_fields">Request fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics category name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics category color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].upperThreshold</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics category upper threshold</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_set_strategic_indicator_categories_2_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/metrics/categories' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -d '[ {
+  "upperThreshold" : "1.0",
+  "color" : "#00ff00",
+  "name" : "Good"
+}, {
+  "upperThreshold" : "0.67",
+  "color" : "#ff8000",
+  "name" : "Neutral"
+}, {
+  "upperThreshold" : "0.33",
+  "color" : "#ff0000",
+  "name" : "Bad"
+} ]'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_set_strategic_indicator_categories_2_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_not_enough_categories_3">HTTP response not enough categories</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
 </div>
 </div>
 </div>
@@ -6449,7 +6853,7 @@ Content-Length: 245
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1563747688830,
+  "date" : 1564090531051,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -7233,7 +7637,7 @@ Content-Length: 400
 
 {
   "id" : 3,
-  "date" : 1563747688453,
+  "date" : 1564090530765,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -7422,7 +7826,7 @@ Content-Length: 664
 
 [ {
   "id" : 3,
-  "date" : 1563747688720,
+  "date" : 1564090530970,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -7437,7 +7841,7 @@ Content-Length: 664
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1563747688720,
+    "date" : 1564090530970,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -7581,7 +7985,7 @@ Content-Length: 400
 
 {
   "id" : 3,
-  "date" : 1563747689067,
+  "date" : 1564090531240,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8322,7 +8726,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "siId" : 1,
-  "date" : 1563747690662,
+  "date" : 1564090532622,
   "author" : null,
   "appUser" : null,
   "newvalue" : 0.75,
@@ -9749,133 +10153,10 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect1">
-<h2 id="_categories">11. Categories</h2>
+<h2 id="_others">11. Others</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_add_categories">11.1. Add categories</h3>
-<div class="sect3">
-<h4 id="_add_categories_request_fields">Request fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SICat</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">List of all the strategic indicator categories</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SICat[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SICat[].color</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category color</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QFCat</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">List of all the quality factor categories</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QFCat[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QFCat[].color</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category color</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QFCat[].upperThreshold</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category upper threshold</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_add_categories_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/categories' -i -X POST \
-    -H 'Content-Type: application/json' \
-    -d '{
-  "SICat" : [ {
-    "color" : "#00ff00",
-    "name" : "Good"
-  }, {
-    "color" : "#ff8000",
-    "name" : "Neutral"
-  }, {
-    "color" : "#ff0000",
-    "name" : "Bad"
-  } ],
-  "QFCat" : [ {
-    "upperThreshold" : "1.0",
-    "color" : "#00ff00",
-    "name" : "Good"
-  }, {
-    "upperThreshold" : "0.67",
-    "color" : "#ff8000",
-    "name" : "Neutral"
-  }, {
-    "upperThreshold" : "0.33",
-    "color" : "#ff0000",
-    "name" : "Bad"
-  } ]
-}'</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_add_categories_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_delete_categories">11.2. Delete categories</h3>
-<div class="sect3">
-<h4 id="_delete_categories_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/categories' -i -X DELETE</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_delete_categories_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_others">12. Others</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_get_forecasting_techniques">12.1. Get forecasting techniques</h3>
+<h3 id="_get_forecasting_techniques">11.1. Get forecasting techniques</h3>
 <div class="sect3">
 <h4 id="_get_forecasting_techniques_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -9926,7 +10207,7 @@ Content-Length: 26
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-07-22 10:12:29 +0200
+Last updated 2019-07-25 23:42:57 +0200
 </div>
 </div>
 </body>

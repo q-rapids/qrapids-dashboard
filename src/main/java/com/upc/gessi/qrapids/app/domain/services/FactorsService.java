@@ -111,17 +111,6 @@ public class FactorsService {
         }
     }
 
-    @GetMapping("/api/qualityFactors/categories")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOFactorCategory> getQualityFactorsCategories () {
-        List<QFCategory> categories = qfCategoryRepository.findAll();
-        List<DTOFactorCategory> dtoFactorCategories = new ArrayList<>();
-        for (QFCategory category : categories) {
-            dtoFactorCategories.add(new DTOFactorCategory(category.getId(), category.getName(), category.getColor(), category.getUpperThreshold()));
-        }
-        return dtoFactorCategories;
-    }
-
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
