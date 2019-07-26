@@ -69,14 +69,17 @@ public class ProductController {
 	
 	@PutMapping("/api/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateProject(@PathVariable Long id, HttpServletRequest request, @RequestParam("logo") MultipartFile logo) {
+    public void updateProject(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "logo", required = false) MultipartFile logo) {
         try {
         	String externalId = request.getParameter("externalId");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             String backlogId = request.getParameter("backlogId");
-            byte[] logoBytes = IOUtils.toByteArray(logo.getInputStream());
-            if (logoBytes.length < 10) {
+            byte[] logoBytes = null;
+            if (logo != null) {
+                logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            }
+            if (logoBytes != null && logoBytes.length < 10) {
             	DTOProject p = productCont.getProjectById(Long.toString(id));
             	logoBytes = p.getLogo();
             }
@@ -95,13 +98,16 @@ public class ProductController {
 	
 	@PutMapping("/api/products/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateProduct(@PathVariable Long id, HttpServletRequest request, @RequestParam("logo") MultipartFile logo) {
+    public void updateProduct(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "logo", required = false) MultipartFile logo) {
         try {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            byte[] logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            byte[] logoBytes = null;
+            if (logo != null) {
+                logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            }
             List<String> projectIds = Arrays.asList(request.getParameter("projects").split(","));
-            if (logoBytes.length < 10) {
+            if (logoBytes != null && logoBytes.length < 10) {
             	DTOProduct p = productCont.getProductById(Long.toString(id));
             	logoBytes = p.getLogo();
             }
@@ -119,13 +125,16 @@ public class ProductController {
 	
 	@PostMapping("/api/products")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newProduct(HttpServletRequest request, HttpServletResponse response, @RequestParam("logo") MultipartFile logo) {
+    public void newProduct(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "logo", required = false) MultipartFile logo) {
         try {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            byte[] logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            byte[] logoBytes = null;
+            if (logo != null) {
+                logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            }
             List<String> projectIds = Arrays.asList(request.getParameter("projects").split(","));
-            if (logoBytes.length < 10) {
+            if (logoBytes != null && logoBytes.length < 10) {
                 //URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
                 //File f = new File(projectImageUrl.getPath());
 				//BufferedImage img = ImageIO.read(f);

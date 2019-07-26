@@ -125,7 +125,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         jQuery.ajax({
             dataType: "json",
             type: "GET",
-            url : "api/qualityModel?prj=" + sessionStorage.getItem("prj"),
+            url : "api/strategicIndicators/qualityModel?prj=" + sessionStorage.getItem("prj"),
             async: false,
             success: function (data) {
                 data.forEach(function (strategicIndicator) {

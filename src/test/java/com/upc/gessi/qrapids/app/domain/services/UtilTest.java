@@ -1011,17 +1011,10 @@ public class UtilTest {
                 .andExpect(jsonPath("$.name", is(strategicIndicatorName)))
                 .andExpect(jsonPath("$.description", is(strategicIndicatorDescription)))
                 .andExpect(jsonPath("$.network", is(notNullValue())))
-                .andExpect(jsonPath("$.quality_factors", hasSize(3)))
-                .andExpect(jsonPath("$.quality_factors[0]", is(factor1)))
-                .andExpect(jsonPath("$.quality_factors[1]", is(factor2)))
-                .andExpect(jsonPath("$.quality_factors[2]", is(factor3)))
-                .andExpect(jsonPath("$.project.id", is(projectId.intValue())))
-                .andExpect(jsonPath("$.project.externalId", is(projectExternalId)))
-                .andExpect(jsonPath("$.project.name", is(projectName)))
-                .andExpect(jsonPath("$.project.description", is(projectDescription)))
-                .andExpect(jsonPath("$.project.logo", is(nullValue())))
-                .andExpect(jsonPath("$.project.active", is(true)))
-                .andExpect(jsonPath("$.project.backlogId", is(projectBacklogId)))
+                .andExpect(jsonPath("$.qualityFactors", hasSize(3)))
+                .andExpect(jsonPath("$.qualityFactors[0]", is(factor1)))
+                .andExpect(jsonPath("$.qualityFactors[1]", is(factor2)))
+                .andExpect(jsonPath("$.qualityFactors[2]", is(factor3)))
                 .andDo(document("si/get-one",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1039,22 +1032,8 @@ public class UtilTest {
                                         .description("Strategic indicator description"),
                                 fieldWithPath("network")
                                         .description("Strategic indicator bayesian network"),
-                                fieldWithPath("quality_factors")
-                                        .description("Strategic indicator quality factors identifiers list"),
-                                fieldWithPath("project.id")
-                                        .description("Project identifier"),
-                                fieldWithPath("project.externalId")
-                                        .description("Project external identifier"),
-                                fieldWithPath("project.name")
-                                        .description("Project name"),
-                                fieldWithPath("project.description")
-                                        .description("Project description"),
-                                fieldWithPath("project.logo")
-                                        .description("Project logo"),
-                                fieldWithPath("project.active")
-                                        .description("Is an active project?"),
-                                fieldWithPath("project.backlogId")
-                                        .description("Project identifier in the backlog"))
+                                fieldWithPath("qualityFactors")
+                                        .description("Strategic indicator quality factors identifiers list"))
                 ));
 
         // Verify mock interactions

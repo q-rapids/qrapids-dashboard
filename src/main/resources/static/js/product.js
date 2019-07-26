@@ -274,13 +274,13 @@ function saveProject() {
 	                    alert("This Project name is already in use");
 	                else {
 	                    alert("Error in the ElasticSearch: contact to the system administrator");
-	                    location.href = "../Products";
+	                    location.href = "../Products/Configuration";
 	                }
 	            },
 	            success: function() {
 	            	/*buildFirstPartOfTree();
 	            	getChosenProject(currentProjectId);*/
-	            	location.href = serverUrl + "/Products";
+	            	location.href = serverUrl + "/Products/Configuration";
 	            	
 	            }
 	        });
@@ -543,7 +543,7 @@ function saveProduct() {
                         alert("This Product name is already in use");
                     else {
                         alert("Error in the ElasticSearch: contact to the system administrator");
-                        location.href = serverUrl + "/Products";
+                        location.href = serverUrl + "/Products/Configuration";
                     }
                 },
                 success: function() {
@@ -571,7 +571,7 @@ function deleteProduct() {
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
                 alert("Error in the ElasticSearch: contact to the system administrator");
-                location.href = serverUrl + "/Products";
+                location.href = serverUrl + "/Products/Configuration";
             },
             success: function() {
             	buildFirstPartOfTree();
@@ -795,7 +795,7 @@ function saveNewProduct() {
                         alert("This Product name is already in use");
                     else {
                         alert("Error in the ElasticSearch: contact to the system administrator");
-                        location.href = serverUrl + "/Products";
+                        location.href = serverUrl + "/Products/Configuration";
                     }
                 },
                 success: function() {
@@ -811,11 +811,11 @@ function saveNewProduct() {
 };
 
 function goToDetailedEvaluation() {
-	location.href = serverUrl + "/Products/detailedEvaluation";
+	location.href = serverUrl + "/Products/DetailedEvaluation";
 }
 
 function goToEvaluation() {
-	location.href = serverUrl + "/Products/evaluation";
+	location.href = serverUrl + "/Products/Evaluation";
 }
 
 window.onload = function() {

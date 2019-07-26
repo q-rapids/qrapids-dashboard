@@ -4,12 +4,17 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAFakedata;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,6 +30,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -61,6 +67,12 @@ public class StrategicIndicatorsTest {
 
     @Mock
     private QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
+
+    @Mock
+    private ProjectRepository projectRepository;
+
+    @Mock
+    private StrategicIndicatorRepository strategicIndicatorRepository;
 
     @InjectMocks
     private StrategicIndicators strategicIndicatorsController;
@@ -1233,4 +1245,107 @@ public class StrategicIndicatorsTest {
         verify(forecast, times(1)).ForecastSI(technique, freq, horizon, projectExternalId);
         verifyNoMoreInteractions(forecast);
     }
+
+    @Test
+    public void getAllStrategicIndicators () throws Exception {
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        String projectBacklogId = "prj-1";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+        project.setId(projectId);
+        project.setBacklogId(projectBacklogId);
+
+        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
+
+        Long strategicIndicatorId = 1L;
+        String strategicIndicatorExternalId = "productquality";
+        String strategicIndicatorName = "Product Quality";
+        String strategicIndicatorDescription = "Quality of the product built";
+        List<String> qualityFactors = new ArrayList<>();
+        String factor1 = "codequality";
+        qualityFactors.add(factor1);
+        String factor2 = "softwarestability";
+        qualityFactors.add(factor2);
+        String factor3 = "testingstatus";
+        qualityFactors.add(factor3);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+        strategicIndicator.setId(strategicIndicatorId);
+
+        List<Strategic_Indicator> strategicIndicatorList = new ArrayList<>();
+        strategicIndicatorList.add(strategicIndicator);
+
+        when(strategicIndicatorRepository.findByProject_Id(projectId)).thenReturn(strategicIndicatorList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators")
+                .param("prj", projectExternalId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(strategicIndicatorId.intValue())))
+                .andExpect(jsonPath("$[0].externalId", is(strategicIndicatorExternalId)))
+                .andExpect(jsonPath("$[0].name", is(strategicIndicatorName)))
+                .andExpect(jsonPath("$[0].description", is(strategicIndicatorDescription)))
+                .andExpect(jsonPath("$[0].network", is(nullValue())))
+                .andExpect(jsonPath("$[0].qualityFactors", hasSize(3)))
+                .andExpect(jsonPath("$[0].qualityFactors[0]", is(factor1)))
+                .andExpect(jsonPath("$[0].qualityFactors[1]", is(factor2)))
+                .andExpect(jsonPath("$[0].qualityFactors[2]", is(factor3)))
+                .andDo(document("si/get-all",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].externalId")
+                                        .description("Strategic indicator external identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("[].network")
+                                        .description("Strategic indicator bayesian network"),
+                                fieldWithPath("[].qualityFactors")
+                                        .description("List of the quality factors composing the strategic indicator"),
+                                fieldWithPath("[].qualityFactors[]")
+                                        .description("Quality factor name"))
+                ));
+
+        // Verify mock interactions
+        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
+        verifyNoMoreInteractions(projectRepository);
+
+        verify(strategicIndicatorRepository, times(1)).findByProject_Id(projectId);
+        verifyNoMoreInteractions(strategicIndicatorRepository);
+    }
+
+    @Test
+    public void deleteOneStrategicIndicator() throws Exception {
+        Long strategicIndicatorId = 1L;
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .delete("/api/strategicIndicators/{id}", strategicIndicatorId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("si/delete-one",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic indicator identifier"))
+                ));
+
+        // Verify mock interactions
+        verify(strategicIndicatorRepository, times(1)).deleteById(strategicIndicatorId);
+    }
+
 }

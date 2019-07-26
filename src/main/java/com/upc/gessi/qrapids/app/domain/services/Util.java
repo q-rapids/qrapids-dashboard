@@ -191,14 +191,17 @@ public class Util {
 
     @PostMapping("/api/strategicIndicators")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newSI(HttpServletRequest request, @RequestParam("network") MultipartFile network) {
+    public void newSI(HttpServletRequest request, @RequestParam(value = "network", required = false) MultipartFile network) {
         try {
             String prj = request.getParameter("prj");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            byte[] file = IOUtils.toByteArray(network.getInputStream());
+            byte[] file = null;
+            if (network != null) {
+                file = IOUtils.toByteArray(network.getInputStream());
+            }
             List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
-            if (name != "" && file != null && qualityFactors.size() > 0) {
+            if (name != "" && qualityFactors.size() > 0) {
                 Project project = projectRepository.findByExternalId(prj);
                 Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors, project);
                 siRep.save(newSI);
@@ -215,9 +218,16 @@ public class Util {
 
     @GetMapping("/api/strategicIndicators/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Strategic_Indicator getSI(@PathVariable Long id) {
+    public DTOSI getSI(@PathVariable Long id) {
         if (siRep.existsById(id)) {
-            return siRep.getOne(id);
+            Strategic_Indicator strategicIndicator = siRep.getOne(id);
+            DTOSI dtosi = new DTOSI(strategicIndicator.getId(),
+                    strategicIndicator.getExternalId(),
+                    strategicIndicator.getName(),
+                    strategicIndicator.getDescription(),
+                    strategicIndicator.getNetwork(),
+                    strategicIndicator.getQuality_factors());
+            return dtosi;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Strategic indicator not found");
         }
@@ -225,21 +235,23 @@ public class Util {
 
     @PutMapping("/api/strategicIndicators/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void editSI(@PathVariable Long id, HttpServletRequest request, @RequestParam("network") MultipartFile network) {
+    public void editSI(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "network", required = false) MultipartFile network) {
         try {
             String name;
             String description;
-            byte[] file;
+            byte[] file = null;
             List<String> qualityFactors;
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
-                file = IOUtils.toByteArray(network.getInputStream());
+                if (network != null) {
+                    file = IOUtils.toByteArray(network.getInputStream());
+                }
                 qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
             } catch (Exception e) {
                 throw new MissingParametersException();
             }
-            if (name != "" && file != null && qualityFactors.size() > 0) {
+            if (name != "" && qualityFactors.size() > 0) {
                 Strategic_Indicator editSI = siRep.getOne(id);
                 //TOdo: the equals is not working
                 //boolean same_factors = editSI.getQuality_factors().equals(qualityFactors);
@@ -252,15 +264,16 @@ public class Util {
                     i++;
                 }
 
-                if (file.length > 10) editSI.setNetwork(file);
+                if (file != null && file.length > 10) editSI.setNetwork(file);
                 editSI.setName(name);
                 editSI.setDescription(description);
                 editSI.setQuality_factors(qualityFactors);
                 siRep.flush();
-                if (!same_factors)
+                if (!same_factors) {
                     if (!AssessStrategicIndicator(name)) {
                         throw new AssessmentErrorException();
                     }
+                }
             }
         } catch (MissingParametersException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing parameters in the request");
@@ -285,7 +298,10 @@ public class Util {
                     project = new Project(projectName, projectName, "No description specified", bytes, true);
                     projectRepository.save(project);
                 }
-                List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = qmadsi.CurrentEvaluation(null, projectName);
+                List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
+                try {
+                    dtoDetailedStrategicIndicators = qmadsi.CurrentEvaluation(null, projectName);
+                } catch (Exception e) {}
                 for (DTODetailedStrategicIndicator d : dtoDetailedStrategicIndicators) {
                     List<String> factors = new ArrayList<>();
                     for (DTOFactor f : d.getFactors()) {

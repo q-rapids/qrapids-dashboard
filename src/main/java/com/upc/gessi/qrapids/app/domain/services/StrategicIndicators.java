@@ -178,7 +178,8 @@ public class StrategicIndicators {
         }
     }
 
-    @RequestMapping("/api/StrategicIndicators")
+    @GetMapping("/api/strategicIndicators")
+    @ResponseStatus(HttpStatus.OK)
     public List<DTOSI> getAllStrategicIndicators (@RequestParam(value = "prj") String prj) {
         Project project = projectRepository.findByExternalId(prj);
         List<Strategic_Indicator> strategic_indicators = siRep.findByProject_Id(project.getId());
@@ -195,9 +196,9 @@ public class StrategicIndicators {
         return dtosis;
     }
 
-    @DeleteMapping("/api/StrategicIndicators/{id}")
-    public @ResponseBody
-    void deleteSI (@PathVariable Long id) {
+    @DeleteMapping("/api/strategicIndicators/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteSI (@PathVariable Long id) {
         siRep.deleteById(id);
     }
 
