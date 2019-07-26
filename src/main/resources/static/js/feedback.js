@@ -1,7 +1,7 @@
 function getStrategicIndicators() {
     jQuery.ajax({
         dataType: "json",
-        url: '../api/StrategicIndicators/CurrentEvaluation',
+        url: '../api/strategicIndicators/current',
         cache: false,
         type: "GET",
         async: true,
@@ -14,7 +14,7 @@ function getStrategicIndicators() {
 function getFactors(strategicIndicators) {
     jQuery.ajax({
         dataType: "json",
-        url: '../api/DetailedStrategicIndicators/CurrentEvaluation',
+        url: '../api/strategicIndicators/qualityFactors/current',
         cache: false,
         type: "GET",
         async: true,
@@ -174,7 +174,6 @@ function drawChart(strategicIndicators) {
 
 function newFeedback(strategicIndicator, newvalue){
     var formData = new FormData();
-    formData.append("id", strategicIndicator.dbId);
     formData.append("newvalue", newvalue);
     formData.append("oldvalue", strategicIndicator.value.first);
     var factorIds = JSON.stringify(strategicIndicator.factorIds);
@@ -187,7 +186,7 @@ function newFeedback(strategicIndicator, newvalue){
     formData.append("factorEvaluationDates", factorEvaluationDates);
 
     $.ajax({
-        url: '../api/feedback',
+        url: '../api/strategicIndicators/' + strategicIndicator.dbId + "/feedback",
         data: formData,
         type: "POST",
         contentType: false,

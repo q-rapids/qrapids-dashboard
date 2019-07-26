@@ -102,7 +102,7 @@ public class UserGroupController {
                 AuthTools.getUser( token )
         );
 
-        UserGroup userGroup = this.userGroupRepository.findOne( id );
+        UserGroup userGroup = this.userGroupRepository.getOne( id );
         List<Route> routes = this.routeRepository.findAll();
 
         view.addObject("userGroup", userGroup);
@@ -144,7 +144,7 @@ public class UserGroupController {
         );
 
         try {
-            UserGroup user = this.userGroupRepository.findOne( id );
+            UserGroup user = this.userGroupRepository.getOne( id );
             view.addObject("id", user.getId() );
             view.addObject("name", user.getName() );
             view.addObject("appuser", currenUser );
@@ -160,7 +160,7 @@ public class UserGroupController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteEntity( @RequestParam("id") Long id, @RequestParam("name") String name ) {
 
-        UserGroup userGroup = this.userGroupRepository.findOne( id );
+        UserGroup userGroup = this.userGroupRepository.getOne( id );
 
         String name_string = userGroup.getName();
 
@@ -206,7 +206,7 @@ public class UserGroupController {
         binder.registerCustomEditor(Route.class, "routes", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                Route route = routeRepository.findOne( Long.parseLong( text ) );
+                Route route = routeRepository.getOne( Long.parseLong( text ) );
                 setValue( route );
             }
         });

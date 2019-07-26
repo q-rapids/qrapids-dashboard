@@ -145,21 +145,21 @@ function displayData(qmnodes, qmedges) {
 function showNodeDetails(node) {
     var serverUrl = sessionStorage.getItem("serverUrl");
     if (node.color === siColor) {
-        var urlSI = "/api/StrategicIndicators/"+ node.id + "/CurrentEvaluation";
+        var urlSI = "/api/strategicIndicators/"+ node.id + "/current";
         if (serverUrl) {
             urlSI = serverUrl + urlSI;
         }
         getAndShowElement(urlSI);
     }
     else if (node.color === factorColor) {
-        var urlFactor = "/api/QualityFactors/"+ node.id + "/CurrentEvaluation";
+        var urlFactor = "/api/qualityFactors/"+ node.id + "/current";
         if (serverUrl) {
             urlFactor = serverUrl + urlFactor;
         }
         getAndShowElement(urlFactor);
     }
     else {
-        var urlMetric = "/api/Metrics/"+ node.id + "/CurrentEvaluation";
+        var urlMetric = "/api/metrics/"+ node.id + "/current";
         if (serverUrl) {
             urlMetric = serverUrl + urlMetric;
         }

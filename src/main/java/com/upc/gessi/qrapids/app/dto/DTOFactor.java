@@ -42,6 +42,7 @@ public class DTOFactor {
                      String rationale, List<String> strategicIndicators) {
         setId(id);
         setName(name);
+        setDescription(description);
         setValue(value);
         setDate(date);
         setDatasource(datasource);

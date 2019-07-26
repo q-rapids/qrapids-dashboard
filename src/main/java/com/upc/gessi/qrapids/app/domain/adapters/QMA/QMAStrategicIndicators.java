@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class QMAStrategicIndicators {
@@ -89,12 +90,12 @@ public class QMAStrategicIndicators {
         return result;
     }
 
-    public void newCategories(JsonArray categories) {
+    public void newCategories(List<Map<String, String>> categories) {
         if (SICatRep.count() == 0) {
-            for (JsonElement c : categories) {
+            for (Map<String, String> c : categories) {
                 SICategory sic = new SICategory();
-                sic.setName(c.getAsJsonObject().getAsJsonPrimitive("name").getAsString());
-                sic.setColor(c.getAsJsonObject().getAsJsonPrimitive("color").getAsString());
+                sic.setName(c.get("name"));
+                sic.setColor(c.get("color"));
                 SICatRep.save(sic);
             }
         }

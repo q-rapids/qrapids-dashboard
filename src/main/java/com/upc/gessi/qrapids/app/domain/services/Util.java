@@ -1,12 +1,17 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 
+import com.google.gson.JsonElement;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
+import com.upc.gessi.qrapids.app.exceptions.AssessmentErrorException;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.exceptions.MissingParametersException;
 import evaluation.StrategicIndicator;
 import org.springframework.dao.DataIntegrityViolationException;
 import com.google.gson.JsonArray;
@@ -23,8 +28,11 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -102,74 +110,149 @@ public class Util {
     @Autowired
     private Forecast forecast;
 
+    @Autowired
+    private ProjectRepository projectRepository;
 
-    @RequestMapping("/api/newCategories")
-    public @ResponseBody
-    void newCategories(HttpServletRequest request, HttpServletResponse response) {
-        JsonParser parser = new JsonParser();
-        JsonArray sic = parser.parse(request.getParameter("SICat")).getAsJsonArray();
-        JsonArray qfc = parser.parse(request.getParameter("QFCat")).getAsJsonArray();
-        try {
-            if (sic.size() > 1 && qfc.size() > 1) {
-                qmasi.newCategories(sic);
-                qmaqf.newCategories(qfc);
-            }
-            allCats = SICatRep.findAll();
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-        } catch (Exception e) {
+    @Autowired
+    private MetricRepository metricRepository;
+
+    @GetMapping("/api/strategicIndicators/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOCategory> getSICategories () {
+        List<SICategory> siCategoryList = SICatRep.findAll();
+        List<DTOCategory> dtoCategoryList = new ArrayList<>();
+        for (SICategory siCategory : siCategoryList) {
+            dtoCategoryList.add(new DTOCategory(siCategory.getId(), siCategory.getName(), siCategory.getColor()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/strategicIndicators/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newSICategories (@RequestBody List<Map<String, String>> categories) {
+        if (categories.size() > 1) {
             qmasi.deleteAllCategories();
-            qmaqf.deleteAllCategories();
-            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            qmasi.newCategories(categories);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
         }
     }
 
-    @RequestMapping(value = "/api/newStrategicIndicator", method = RequestMethod.POST)
-    public @ResponseBody
-    void newSI(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/api/qualityFactors/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOCategoryThreshold> getFactorCategories () {
+        List<QFCategory> factorCategoryList = QFCatRep.findAll();
+        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+        for (QFCategory qfCategory : factorCategoryList) {
+            dtoCategoryList.add(new DTOCategoryThreshold(qfCategory.getId(), qfCategory.getName(), qfCategory.getColor(), qfCategory.getUpperThreshold()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/qualityFactors/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newFactorCategories (@RequestBody List<Map<String, String>> categories) {
+        if (categories.size() > 1) {
+            qmaqf.deleteAllCategories();
+            qmaqf.newCategories(categories);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
+        }
+    }
+
+    @GetMapping("/api/metrics/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOCategoryThreshold> getMetricCategories () {
+        Iterable<MetricCategory> metricCategoryList = metricRepository.findAll();
+        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+        for (MetricCategory metricCategory : metricCategoryList) {
+            dtoCategoryList.add(new DTOCategoryThreshold(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold()));
+        }
+        return dtoCategoryList;
+    }
+
+    @PostMapping("/api/metrics/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newMetricsCategories (@RequestBody List<Map<String, String>> categories) {
+        if (categories.size() > 1) {
+            metricRepository.deleteAll();
+            for (Map<String, String> c : categories) {
+                MetricCategory metricCategory = new MetricCategory();
+                metricCategory.setName(c.get("name"));
+                metricCategory.setColor(c.get("color"));
+                float upperThreshold = Float.parseFloat(c.get("upperThreshold"));
+                metricCategory.setUpperThreshold(upperThreshold/100f);
+                metricRepository.save(metricCategory);
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
+        }
+    }
+
+    @PostMapping("/api/strategicIndicators")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newSI(HttpServletRequest request, @RequestParam(value = "network", required = false) MultipartFile network) {
         try {
+            String prj = request.getParameter("prj");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            byte[] file = IOUtils.toByteArray(request.getPart("network").getInputStream());
+            byte[] file = null;
+            if (network != null) {
+                file = IOUtils.toByteArray(network.getInputStream());
+            }
             List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
-            if (name != "" && file != null && qualityFactors.size() > 0) {
-                Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors);
+            if (!name.equals("") && qualityFactors.size() > 0) {
+                Project project = projectRepository.findByExternalId(prj);
+                Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors, project);
                 siRep.save(newSI);
             }
-            if (AssessStrategicIndicator(name))
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            else
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
+            if (!AssessStrategicIndicator(name)) {
+                throw new AssessmentErrorException();
+            }
+        } catch (AssessmentErrorException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
-    @RequestMapping(value = "/api/EditStrategicIndicator/{id}", method = RequestMethod.GET)
-    public @ResponseBody
-    Strategic_Indicator getEditSI(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response) {
-        if (siRep.exists(id)) {
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            return siRep.findOne(id);
+    @GetMapping("/api/strategicIndicators/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public DTOSI getSI(@PathVariable Long id) {
+        if (siRep.existsById(id)) {
+            Strategic_Indicator strategicIndicator = siRep.getOne(id);
+            DTOSI dtosi = new DTOSI(strategicIndicator.getId(),
+                    strategicIndicator.getExternalId(),
+                    strategicIndicator.getName(),
+                    strategicIndicator.getDescription(),
+                    strategicIndicator.getNetwork(),
+                    strategicIndicator.getQuality_factors());
+            return dtosi;
         } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Strategic indicator not found");
         }
     }
 
-
-
-    @RequestMapping(value = "/api/EditStrategicIndicator/{id}", method = RequestMethod.POST)
-    public @ResponseBody
-    void editSI(@PathVariable Long id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @PutMapping("/api/strategicIndicators/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void editSI(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "network", required = false) MultipartFile network) {
         try {
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
-            byte[] file = IOUtils.toByteArray(request.getPart("network").getInputStream());
-            List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
-            if (name != "" && file != null && qualityFactors.size() > 0) {
-                Strategic_Indicator editSI = siRep.findOne(id);
+            String name;
+            String description;
+            byte[] file = null;
+            List<String> qualityFactors;
+            try {
+                name = request.getParameter("name");
+                description = request.getParameter("description");
+                if (network != null) {
+                    file = IOUtils.toByteArray(network.getInputStream());
+                }
+                qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
+            } catch (Exception e) {
+                throw new MissingParametersException();
+            }
+            if (!name.equals("") && qualityFactors.size() > 0) {
+                Strategic_Indicator editSI = siRep.getOne(id);
                 //TOdo: the equals is not working
                 //boolean same_factors = editSI.getQuality_factors().equals(qualityFactors);
                 List<String> si_quality_factors=editSI.getQuality_factors();
@@ -181,47 +264,57 @@ public class Util {
                     i++;
                 }
 
-                if (file.length > 10) editSI.setNetwork(file);
+                if (file != null && file.length > 10) editSI.setNetwork(file);
                 editSI.setName(name);
                 editSI.setDescription(description);
                 editSI.setQuality_factors(qualityFactors);
                 siRep.flush();
-                if (!same_factors)
-                    if (AssessStrategicIndicator(name))
-                        response.setStatus(HttpServletResponse.SC_ACCEPTED);
-                    else
-                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                if (!same_factors) {
+                    if (!AssessStrategicIndicator(name)) {
+                        throw new AssessmentErrorException();
+                    }
+                }
             }
-            else {
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            }
+        } catch (MissingParametersException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing parameters in the request");
+        } catch (AssessmentErrorException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
         } catch (DataIntegrityViolationException e) {
-            response.setStatus(HttpServletResponse.SC_CONFLICT);
-        }catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Integrity violation: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
-    @RequestMapping("/api/fetchSIs")
-    public @ResponseBody
-    void fetchSIs(HttpServletResponse response) {
-        if (siRep.count() == 0) {
-            try {
-                List<DTODetailedStrategicIndicator> dsi = qmadsi.CurrentEvaluation(null, null);
-                for (DTODetailedStrategicIndicator d : dsi) {
+    @GetMapping("/api/strategicIndicators/fetch")
+    @ResponseStatus(HttpStatus.OK)
+    public void fetchSIs() {
+        try {
+            List<String> projects = qmaPrj.getAssessedProjects();
+            for(String projectName : projects) {
+                Project project = projectRepository.findByExternalId(projectName);
+                if (project == null) {
+                    byte[] bytes = null;
+                    project = new Project(projectName, projectName, "No description specified", bytes, true);
+                    projectRepository.save(project);
+                }
+                List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
+                try {
+                    dtoDetailedStrategicIndicators = qmadsi.CurrentEvaluation(null, projectName);
+                } catch (Exception e) {}
+                for (DTODetailedStrategicIndicator d : dtoDetailedStrategicIndicators) {
                     List<String> factors = new ArrayList<>();
                     for (DTOFactor f : d.getFactors()) {
                         factors.add(f.getId());
                     }
-                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors);
-                    siRep.save(newSI);
+                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors, project);
+                    if (!siRep.existsByExternalIdAndProject_Id(newSI.getExternalId(), project.getId())) {
+                        siRep.save(newSI);
+                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-            if (response != null) response.setStatus(HttpServletResponse.SC_ACCEPTED);
-        } else {
-            if (response != null) response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
@@ -229,12 +322,11 @@ public class Util {
         NONE, ONE, ALL
     }
 
-    @RequestMapping("/api/assessStrategicIndicators")
-    public @ResponseBody
-    void assesStrategicIndicators(@RequestParam(value = "prj", required=false) String prj,
+    @GetMapping("/api/strategicIndicators/assess")
+    @ResponseStatus(HttpStatus.OK)
+    public void assesStrategicIndicators(@RequestParam(value = "prj", required=false) String prj,
                                   @RequestParam(value = "from", required=false) String from,
-                                  @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType,
-                                  HttpServletRequest request, HttpServletResponse response) {
+                                  @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType) {
         boolean correct = true;
 
         try {
@@ -262,16 +354,13 @@ public class Util {
                     trainForecastModelsSingleProject(prj, technique);
             }
 
-            if (correct)
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            else
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        } catch (Exception e) {
-            try {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            if (!correct) {
+                throw new AssessmentErrorException();
             }
+        } catch (AssessmentErrorException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error in the request parameters");
         }
     }
 
@@ -507,9 +596,9 @@ public class Util {
         return qmaRelations.setStrategicIndicatorFactorRelation(prj, factorIds, si, evaluationDate, weights, factorValues, factorLabels, siValueOrLabel);
     }
 
-    @RequestMapping("/api/Simulate")
-    public @ResponseBody
-    List<DTOStrategicIndicatorEvaluation> Simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request, HttpServletResponse response) {
+    @PostMapping("/api/strategicIndicators/simulate")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStrategicIndicatorEvaluation> Simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request) {
         try {
             List<DTOFactor> factors = qmaqf.getAllFactors(prj);
             JsonParser parser = new JsonParser();
@@ -568,36 +657,20 @@ public class Util {
                             si.getNetwork() != null));
                 }
             }
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
             return result;
         } catch (Exception e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Simulation error: " + e.getMessage());
         }
     }
 
-    @RequestMapping("/api/deleteCategories")
-    public @ResponseBody
-    void deleteCategories(HttpServletRequest request, HttpServletResponse response) {
-        SICatRep.deleteAll();
-        QFCatRep.deleteAll();
+    @GetMapping("/api/rawdataDashboard")
+    @ResponseStatus(HttpStatus.OK)
+    public String RawDataDashboard() {
+        return rawdataDashboard;
     }
 
-    @RequestMapping("/api/rawdataDashboard")
-    public @ResponseBody
-    String RawDataDashboard(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            return rawdataDashboard;
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
-        }
-    }
-
-    @RequestMapping("/api/serverUrl")
+    @GetMapping("/api/serverUrl")
+    @ResponseStatus(HttpStatus.OK)
     public String serverUrl() {
         return "{\"serverUrl\":\""+serverUrl+"\"}";
     }
@@ -618,8 +691,8 @@ public class Util {
         float thresholds_interval = 1.0f/(float)allCats.size();
         float upperThreshold=1;
         for (SICategory c : allCats) {
-            upperThreshold -=  thresholds_interval;
             result.add(new DTOSIAssesment(c.getId(), c.getName(), null, c.getColor(), abs((float)upperThreshold)));
+            upperThreshold -=  thresholds_interval;
         }
         return result;
     }
@@ -702,32 +775,39 @@ public class Util {
         return category.getColor();
     }
 
-    @RequestMapping("/api/addToBacklog")
+    @PostMapping("/api/addToBacklog")
+    @ResponseStatus(HttpStatus.OK)
     public String addToBacklogUrl() {
         return "{\"issue_url\":\"https://essi.upc.edu/jira/issue/999\"," +
                 "\"issue_id\":\"ID-999\"}";
     }
 
-    @RequestMapping("/api/ForecastTechniques")
+    @GetMapping("/api/forecastTechniques")
+    @ResponseStatus(HttpStatus.OK)
     public List<String> getForecastTechniques() {
         return forecast.getForecastTechniques();
     }
 
-    @GetMapping("/api/qualityModel")
-    public List<DTORelationsSI> getQualityModel(@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) throws IOException {
-        if (date == null)
-            return qmaRelations.getRelations(prj, null);
-        else
-            return qmaRelations.getRelations(prj, LocalDate.parse(date));
+    @GetMapping("/api/strategicIndicators/qualityModel")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTORelationsSI> getQualityModel(@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) {
+        try {
+            if (date == null)
+                return qmaRelations.getRelations(prj, null);
+            else
+                return qmaRelations.getRelations(prj, LocalDate.parse(date));
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
     }
 
-    @RequestMapping("api/me")
+    @GetMapping("api/me")
+    @ResponseStatus(HttpStatus.OK)
     public String getUserName (HttpServletResponse response, Authentication authentication) {
         if (authentication == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "{}";
         } else {
-            response.setStatus(HttpServletResponse.SC_OK);
             return "{\"userName\":\"" + authentication.getName() + "\"}";
         }
     }

@@ -1,0 +1,10 @@
+language: java
+
+addons:
+  sonarcloud:
+    organization: q-rapids
+
+script:
+  - ./gradlew test
+  - ./gradlew jacocoTestReport
+  - sonar-scanner

@@ -1,13 +1,20 @@
 var isdsi = false;
 var isqf = true;
 
-var url = parseURLSimple("../api/QualityFactors/HistoricalData");
+var url;
+if (getParameterByName('id').length !== 0) {
+    url = parseURLSimple("/api/strategicIndicators/qualityFactors/metrics/historical");
+} else {
+    url = parseURLSimple("/api/qualityFactors/metrics/historical");
+}
 
 //initialize data vectors
 var texts = [];
 var ids = [];
 var labels = [];
 var value = [];
+
+var categories = [];
 
 var decisions = new Map();
 
@@ -55,8 +62,7 @@ function getData() {
                         if (!isNaN(data[i].metrics[j].value)){
                             value[i][k].push(
                                 {
-                                    x: data[i].metrics[j].date.year + "-" + data[i].metrics[j].date.monthValue
-                                    + "-" + data[i].metrics[j].date.dayOfMonth,
+                                    x: data[i].metrics[j].date,
                                     y: data[i].metrics[j].value
                                 }
                             );
@@ -78,7 +84,7 @@ function getData() {
                 }
             }
 
-            drawChart();
+            getMetricsCategories();
         }
     });
 }
@@ -105,6 +111,18 @@ function buildDecisionVectors (decisionsAdd, decisionsIgnore, metricId) {
             }
         }
     }
+}
+
+function getMetricsCategories () {
+    jQuery.ajax({
+        url: "../api/metrics/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
+            drawChart();
+        }
+    });
 }
 
 window.onload = function() {

@@ -1,6 +1,6 @@
 var isdsi = true;
 
-var url = parseURLSimple("../api/DetailedStrategicIndicators/HistoricalData");
+var url = parseURLSimple("../api/strategicIndicators/qualityFactors/historical");
 
 var qualityModelSIMetrics = new Map();
 
@@ -9,6 +9,8 @@ var texts = [];
 var ids = [];
 var labels = [];
 var value = [];
+
+var categories = [];
 
 function getData() {
     getQualityModel();
@@ -52,7 +54,7 @@ function getData() {
                         {
                             value[i][k].push(
                                 {
-                                    x: data[i].factors[j].date.year + "-" + data[i].factors[j].date.monthValue + "-" + data[i].factors[j].date.dayOfMonth,
+                                    x: data[i].factors[j].date,
                                     y: data[i].factors[j].value
                                 }
                             );
@@ -74,7 +76,7 @@ function getData() {
                     --i;
                 }
             }
-            drawChart();
+            getFactorsCategories();
         }
     });
 }
@@ -127,6 +129,18 @@ function buildDecisionVectors (decisionsAdd, decisionsIgnore, strategicIndicator
             }
         });
     }
+}
+
+function getFactorsCategories () {
+    jQuery.ajax({
+        url: "../api/qualityFactors/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
+            drawChart();
+        }
+    });
 }
 
 window.onload = function() {

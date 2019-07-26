@@ -104,8 +104,6 @@ function drawChart() {
 
     for (i = 0; i < text.length; ++i) {
         var a = document.createElement('a');
-        var from = getParameterByName('from');
-        var to = getParameterByName('to');
         a.innerHTML = text[i];
         a.style.fontSize = "16px";
         var div = document.createElement('div');

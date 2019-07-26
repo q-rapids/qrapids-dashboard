@@ -175,6 +175,9 @@ function drawChart() {
                         tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
                         tooltipEl.style.pointerEvents = 'none';
                     }
+                },
+                annotation: {
+                    annotations: []
                 }
             }
         };
@@ -233,16 +236,54 @@ function drawChart() {
                 c.data.errors.push("No data to display");
             }
         }
+
+        //Add category lines
+        if (typeof categories !== 'undefined') {
+            var annotations = [];
+            var lineHighCategory = {
+                type: 'line',
+                drawTime: 'beforeDatasetsDraw',
+                mode: 'horizontal',
+                scaleID: 'y-axis-0',
+                value: categories[1].upperThreshold,
+                borderColor: categories[0].color,
+                borderWidth: 1,
+                label: {
+                    enabled: false,
+                    content: categories[0].name
+                }
+            };
+            annotations.push(lineHighCategory);
+
+            var lineLowCategory = {
+                type: 'line',
+                drawTime: 'beforeDatasetsDraw',
+                mode: 'horizontal',
+                scaleID: 'y-axis-0',
+                value: categories[categories.length - 1].upperThreshold,
+                borderColor: categories[categories.length - 1].color,
+                borderWidth: 1,
+                label: {
+                    enabled: false,
+                    content: categories[categories.length - 1].name
+                }
+            };
+            annotations.push(lineLowCategory);
+
+            c.options.annotation.annotations = annotations;
+        }
+
         config.push(c);
     }
 
     for (i = 0; i < texts.length; ++i) {
         var a = document.createElement('a');
         var currentURL = window.location.href;
-        if (isdsi)  //if it is a Stacked Line Chart for Detailed Strategic Indicators
+        if (isdsi) {  //if it is a Stacked Line Chart for Detailed Strategic Indicators
             if (currentURL.match("/PredictionChart")) urlLink = "../QualityFactors/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
             else urlLink = "../QualityFactors/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
-        else if (isqf) { //if it is a Stacked Line Chart for Quality Factors
+            a.setAttribute("href", urlLink);
+        } else if (isqf) { //if it is a Stacked Line Chart for Quality Factors
             var name = getParameterByName('name');
             var id = getParameterByName('id');
             if (name.length != 0) {//if we know from which Detailed Strategic Indicator we are coming
@@ -253,17 +294,11 @@ function drawChart() {
                 if (currentURL.match("/PredictionChart")) urlLink = "../Metrics/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
                 else urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             }
-        }
-
-        if (isdsi || isqf) {
-            var from = getParameterByName('from');
-            var to = getParameterByName('to');
-            if ($('#datepickerFrom').length || (from.length != 0 && to.length != 0)) {
-                if ($('#datepickerFrom').length)
-                    urlLink = urlLink + "&from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val();
-                else
-                    urlLink = urlLink + "&from=" + from + "&to=" + to;
-            }
+            a.setAttribute("href", urlLink);
+        } else if (isSi) {
+            //if its a SI chart make it a hyperlink
+            if (currentURL.match("/PredictionChart")) urlLink = "../DetailedStrategicIndicators/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
+            else urlLink = "../DetailedStrategicIndicators/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             a.setAttribute("href", urlLink);
         }
         a.innerHTML = texts[i];

@@ -11,14 +11,6 @@ function drawChart() {
             else
                 var urlLink = "../Metrics/CurrentChart?id=" + ids[i] + "&name=" + titles[i];
         }
-        var from = getParameterByName('from');
-        var to = getParameterByName('to');
-        if ($('#datepickerFrom').length || (from.length != 0 && to.length != 0)) {
-            if ($('#datepickerFrom').length)
-                urlLink = urlLink + "&from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val();
-            else
-                urlLink = urlLink + "&from=" + from + "&to=" + to;
-        }
         a.setAttribute("href", urlLink);
         a.innerHTML = titles[i];
         a.style.fontSize = "16px";

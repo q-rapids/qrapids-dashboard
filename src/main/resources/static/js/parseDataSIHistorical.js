@@ -10,6 +10,8 @@ var value = [];
 var labels = [];
 var ids = [];
 
+var categories = [];
+
 function getData() {
     getQualityModel();
     getDecisions();
@@ -20,7 +22,7 @@ function getData() {
     //get data from API
     jQuery.ajax({
         dataType: "json",
-        url: "../api/StrategicIndicators/HistoricalData",
+        url: "../api/strategicIndicators/historical",
         data: {
             "from": $('#datepickerFrom').val(),
             "to": $('#datepickerTo').val()
@@ -38,6 +40,14 @@ function getData() {
                 texts.push(data[j].name);
                 labels.push([data[j].name]);
                 ids.push(data[j].id);
+
+                data[j].probabilities.forEach(function (category) {
+                    categories.push({
+                        name: category.label,
+                        color: category.color,
+                        upperThreshold: category.upperThreshold
+                    });
+                });
             }
             while (data[j]) {
                 //check if we are still on the same Strategic Indicator
@@ -68,7 +78,7 @@ function getData() {
                 //push date and value to line vector
                 if (!isNaN(data[j].value.first)) {
                     line.push({
-                        x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                        x: data[j].date,
                         y: data[j].value.first
                     });
                 }

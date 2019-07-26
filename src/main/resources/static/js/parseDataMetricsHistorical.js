@@ -2,12 +2,18 @@ var isSi = false;
 var isdsi = false;
 var isqf = false;
 
-var url = parseURLMetrics("../api/Metrics/HistoricalData");
+var url;
+if (getParameterByName('id').length !== 0) {
+    url = parseURLMetrics("../api/qualityFactors/metrics/historical");
+} else {
+    url = parseURLMetrics("../api/metrics/historical");
+}
 
 //initialize data vectors
 var texts = [];
 var value = [];
 var labels = [];
+var categories = [];
 
 var decisions = new Map();
 
@@ -85,7 +91,7 @@ function getData() {
                 //push date and value to line vector
                 if (!isNaN(data[j].value)) {
                     line.push({
-                        x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                        x: data[j].date,
                         y: data[j].value
                     });
                 }
@@ -100,6 +106,18 @@ function getData() {
                     val.push(decisionsIgnore);
                 value.push(val);
             }
+            getMetricsCategories();
+        }
+    });
+}
+
+function getMetricsCategories () {
+    jQuery.ajax({
+        url: "../api/metrics/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
             drawChart();
         }
     });

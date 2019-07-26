@@ -1,124 +1,140 @@
 package com.upc.gessi.qrapids.app.presentation;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Vector;
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.upc.gessi.qrapids.QrapidsApplication;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import com.upc.gessi.qrapids.app.domain.controllers.ProductsController;
 import com.upc.gessi.qrapids.app.dto.DTOProduct;
 import com.upc.gessi.qrapids.app.dto.DTOProject;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.exceptions.ElementAlreadyPresentException;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 
-@Controller("/Products")
+@RestController
 public class ProductController {
 	
 	@Autowired
     private ProductsController productCont;
 	
-	@RequestMapping("/Products")
-    public String Products(){
-        return "Product/Products";
+	@GetMapping("/api/projects")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOProject> getProjects() {
+	    try {
+            return productCont.getProjects();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
     }
 	
-	@RequestMapping("/api/projects")
-    public @ResponseBody List<DTOProject> getProjects() throws Exception {
-        return productCont.getProjects();
+	@GetMapping("/api/products")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOProduct> getProducts() {
+	    try {
+            return productCont.getProducts();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
     }
 	
-	@RequestMapping("/api/products")
-    public @ResponseBody List<DTOProduct> getProducts() throws Exception {
-        return productCont.getProducts();
-    }
-	
-	@RequestMapping("/api/products/{id}")
-	public @ResponseBody DTOProduct getProductById(@PathVariable String id) throws Exception {
-        return productCont.getProductById(id);
-    }
-	
-	@RequestMapping("/api/products/project/{id}")
-    /*public @ResponseBody DTOProject getProjectByExternalId(@PathVariable String externalId) throws Exception {
-        return productCont.getProjectByExternalId(externalId);
-    }*/
-	public @ResponseBody DTOProject getProjectById(@PathVariable String id) throws Exception {
-        return productCont.getProjectById(id);
-    }
-	
-	@RequestMapping(value = "/api/updateProject", method = RequestMethod.POST)
-    public @ResponseBody void updateProject(HttpServletRequest request, HttpServletResponse response) {
+	@GetMapping("/api/products/{id}")
+    @ResponseStatus(HttpStatus.OK)
+	public DTOProduct getProductById(@PathVariable String id) {
         try {
-        	Long id = Long.parseLong(request.getParameter("id"));
+            return productCont.getProductById(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
+	
+	@GetMapping("/api/projects/{id}")
+    @ResponseStatus(HttpStatus.OK)
+	public DTOProject getProjectById(@PathVariable String id) throws Exception {
+        try {
+            return productCont.getProjectById(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
+	
+	@PutMapping("/api/projects/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateProject(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "logo", required = false) MultipartFile logo) {
+        try {
         	String externalId = request.getParameter("externalId");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             String backlogId = request.getParameter("backlogId");
-            byte[] logo = IOUtils.toByteArray(request.getPart("logo").getInputStream());
-            if (logo.length < 10) {
+            byte[] logoBytes = null;
+            if (logo != null) {
+                logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            }
+            if (logoBytes != null && logoBytes.length < 10) {
             	DTOProject p = productCont.getProjectById(Long.toString(id));
-            	logo = p.getLogo();
+            	logoBytes = p.getLogo();
             }
             if (productCont.checkProjectByName(id, name)) {
-            	DTOProject p = new DTOProject(id, externalId, name, description, logo, true, backlogId);
+            	DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId);
             	productCont.updateProject(p);
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
             } else {
-                response.setStatus(HttpServletResponse.SC_CONFLICT);
+                throw new ElementAlreadyPresentException();
         	}
-            //response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        } catch (ElementAlreadyPresentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 	
-	@RequestMapping(value = "/api/updateProduct", method = RequestMethod.POST)
-    public @ResponseBody void updateProduct(HttpServletRequest request, HttpServletResponse response) {
+	@PutMapping("/api/products/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateProduct(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "logo", required = false) MultipartFile logo) {
         try {
-        	Long id = Long.parseLong(request.getParameter("id"));
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            byte[] logo = IOUtils.toByteArray(request.getPart("logo").getInputStream());
+            byte[] logoBytes = null;
+            if (logo != null) {
+                logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            }
             List<String> projectIds = Arrays.asList(request.getParameter("projects").split(","));
-            if (logo.length < 10) {
+            if (logoBytes != null && logoBytes.length < 10) {
             	DTOProduct p = productCont.getProductById(Long.toString(id));
-            	logo = p.getLogo();
+            	logoBytes = p.getLogo();
             }
             if (productCont.checkProductByName(id, name)) {
-            	productCont.updateProduct(id, name, description, logo, projectIds);
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
+            	productCont.updateProduct(id, name, description, logoBytes, projectIds);
             } else {
-                response.setStatus(HttpServletResponse.SC_CONFLICT);
+                throw new ElementAlreadyPresentException();
         	}
-            //response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        } catch (ElementAlreadyPresentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Product name already exists");
         } catch (Exception e) {
-        	System.err.println(e);
-            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 	
-	@RequestMapping(value = "/api/newProduct", method = RequestMethod.POST)
-    public @ResponseBody void newProduct(HttpServletRequest request, HttpServletResponse response) {
+	@PostMapping("/api/products")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newProduct(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "logo", required = false) MultipartFile logo) {
         try {
             String name = request.getParameter("name");
             String description = request.getParameter("description");
-            byte[] logo = IOUtils.toByteArray(request.getPart("logo").getInputStream());
+            byte[] logoBytes = null;
+            if (logo != null) {
+                logoBytes = IOUtils.toByteArray(logo.getInputStream());
+            }
             List<String> projectIds = Arrays.asList(request.getParameter("projects").split(","));
-            if (logo.length < 10) {
+            if (logoBytes != null && logoBytes.length < 10) {
                 //URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
                 //File f = new File(projectImageUrl.getPath());
 				//BufferedImage img = ImageIO.read(f);
@@ -128,60 +144,44 @@ public class ProductController {
                 logo = null;
             }
             if (productCont.checkNewProductByName(name)) {
-            	productCont.newProduct(name, description, logo, projectIds);
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
+            	productCont.newProduct(name, description, logoBytes, projectIds);
             } else {
-                response.setStatus(HttpServletResponse.SC_CONFLICT);
-        	}
-            //response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                throw new ElementAlreadyPresentException();
+            }
+        } catch (ElementAlreadyPresentException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
-        	System.err.println(e);
-            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 	
-	@RequestMapping(value = "/api/deleteProduct", method = RequestMethod.POST)
-    public @ResponseBody void deleteProduct(HttpServletRequest request, HttpServletResponse response) {
-        try {
-        	Long id = Long.parseLong(request.getParameter("id"));
-        	productCont.deleteProduct(id);
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-        } catch (Exception e) {
-        	System.err.println(e);
-            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-        }
+	@DeleteMapping("/api/products/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteProduct(@PathVariable Long id) {
+	    productCont.deleteProduct(id);
     }
 	
-	@RequestMapping("/api/products/currentEvaluation/{id}")
-    public @ResponseBody List<DTOStrategicIndicatorEvaluation> getProductEvaluation(@PathVariable String id) {
-		List<DTOStrategicIndicatorEvaluation> evaluations = new Vector<DTOStrategicIndicatorEvaluation>();
+	@GetMapping("/api/products/{id}/current")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStrategicIndicatorEvaluation> getProductEvaluation(@PathVariable String id) {
 		try {
-			evaluations =  productCont.getProductEvaluation(Long.parseLong(id));
-        } catch (Exception e) {
-        	System.err.println(e);
+			return productCont.getProductEvaluation(Long.parseLong(id));
+        } catch (CategoriesException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
-		return evaluations;
     }
 	
-	@RequestMapping("/api/products/detailedCurrentEvaluation/{id}")
-    public @ResponseBody List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> getDetailedCurrentEvaluation(@PathVariable String id) {
-		List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> evaluations = new Vector<Pair<String, List<DTOStrategicIndicatorEvaluation>>>();
+	@GetMapping("/api/products/{id}/projects/current")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> getDetailedCurrentEvaluation(@PathVariable String id) {
 		try {
-			evaluations =  productCont.getDetailedProductEvaluation(Long.parseLong(id));
-        } catch (Exception e) {
-        	System.err.println(e);
+			return productCont.getDetailedProductEvaluation(Long.parseLong(id));
+        } catch (CategoriesException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
-		return evaluations;
     }
-	
-	@RequestMapping("/Products/Evaluation")
-    public String ProductEvaluation(){
-		return "Product/ProductEvaluation";
-    }
-	
-	@RequestMapping("/Products/DetailedEvaluation")
-    public String ProductDetailedEvaluation(){
-		return "Product/DetailedProductEvaluation";
-    }
-
 }

@@ -121,7 +121,7 @@ function clickOnTree(e){
 }
 
 function getChosenProject(currentProjectId) {
-	var url = "/api/products/project/" + currentProjectId;
+	var url = "/api/projects/" + currentProjectId;
 	if (serverUrl) {
 		url = serverUrl + url;
 	}
@@ -252,14 +252,13 @@ function saveProject() {
     	var loadedFile = $('#projectLogo')[0].files[0];
     	if (loadedFile == null || loadedFile.size < 1048576) {
 	        var formData = new FormData();
-	        formData.append("id", currentProject);
 	        formData.append("externalId", document.getElementById("projectId").innerHTML);
 	        formData.append("name", $('#projectName').val());
 	        formData.append("description", $('#projectDescription').val());
 	        formData.append("logo", $('#projectLogo')[0].files[0]);
 	        formData.append("backlogId", $("#projectBacklogId").val());
 
-	        var url = "/api/updateProject";
+	        var url = "/api/projects/" + currentProject;
 			if (serverUrl) {
 				url = serverUrl + url;
 			}
@@ -267,7 +266,7 @@ function saveProject() {
 	        $.ajax({
 	            url: url,
 	            data: formData,
-	            type: "POST",
+	            type: "PUT",
 	            contentType: false,
 	            processData: false,
 	            error: function(jqXHR, textStatus, errorThrown) {
@@ -275,13 +274,13 @@ function saveProject() {
 	                    alert("This Project name is already in use");
 	                else {
 	                    alert("Error in the ElasticSearch: contact to the system administrator");
-	                    location.href = "../Products";
+	                    location.href = "../Products/Configuration";
 	                }
 	            },
 	            success: function() {
 	            	/*buildFirstPartOfTree();
 	            	getChosenProject(currentProjectId);*/
-	            	location.href = serverUrl + "/Products";
+	            	location.href = serverUrl + "/Products/Configuration";
 	            	
 	            }
 	        });
@@ -457,8 +456,9 @@ function getChosenProduct(currentProductId) {
     		var deleteBtn = document.createElement('button');
     		deleteBtn.classList.add("btn");
     		deleteBtn.classList.add("btn-primary");
+    		deleteBtn.classList.add("btn-danger");
     		deleteBtn.setAttribute("id", "deleteBtn");
-    		deleteBtn.setAttribute('style', 'font-size: 18px; max-width: 30%; background: #CC1212');
+    		deleteBtn.setAttribute('style', 'font-size: 18px; max-width: 30%;');
     		deleteBtn.appendChild(document.createTextNode("Delete Product"));
     		deleteBtn.onclick = deleteProduct;
     		saveBtnRow.appendChild(deleteBtn);
@@ -522,13 +522,12 @@ function saveProduct() {
     	var loadedFile = $('#productLogo')[0].files[0];
     	if (loadedFile == null || loadedFile.size < 1048576) {
     		var formData = new FormData();
-            formData.append("id", currentProduct);
             formData.append("name", $('#productName').val());
             formData.append("description", $('#productDescription').val());
             formData.append("logo", $('#productLogo')[0].files[0]);
             formData.append("projects", selectedProjects);
 
-            var url = "/api/updateProduct";
+            var url = "/api/products/" + currentProduct;
 			if (serverUrl) {
 				url = serverUrl + url;
 			}
@@ -536,7 +535,7 @@ function saveProduct() {
             $.ajax({
                 url: url,
                 data: formData,
-                type: "POST",
+                type: "PUT",
                 contentType: false,
                 processData: false,
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -544,7 +543,7 @@ function saveProduct() {
                         alert("This Product name is already in use");
                     else {
                         alert("Error in the ElasticSearch: contact to the system administrator");
-                        location.href = serverUrl + "/Products";
+                        location.href = serverUrl + "/Products/Configuration";
                     }
                 },
                 success: function() {
@@ -560,22 +559,19 @@ function saveProduct() {
 
 function deleteProduct() {
 	if (confirm("Are you sure you want to delete this product?")) {
-		var formData = new FormData();
-        formData.append("id", currentProduct);
 
-        var url = "/api/deleteProduct";
+        var url = "/api/products/" + currentProduct;
 		if (serverUrl) {
 			url = serverUrl + url;
 		}
         $.ajax({
             url: url,
-            data: formData,
-            type: "POST",
+            type: "DELETE",
             contentType: false,
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
                 alert("Error in the ElasticSearch: contact to the system administrator");
-                location.href = serverUrl + "/Products";
+                location.href = serverUrl + "/Products/Configuration";
             },
             success: function() {
             	buildFirstPartOfTree();
@@ -783,7 +779,7 @@ function saveNewProduct() {
             formData.append("logo", $('#newProductLogo')[0].files[0]);
             formData.append("projects", selectedProjects);
 
-			var url = "/api/newProduct";
+			var url = "/api/products";
 			if (serverUrl) {
 				url = serverUrl + url;
 			}
@@ -799,7 +795,7 @@ function saveNewProduct() {
                         alert("This Product name is already in use");
                     else {
                         alert("Error in the ElasticSearch: contact to the system administrator");
-                        location.href = serverUrl + "/Products";
+                        location.href = serverUrl + "/Products/Configuration";
                     }
                 },
                 success: function() {
@@ -815,11 +811,11 @@ function saveNewProduct() {
 };
 
 function goToDetailedEvaluation() {
-	location.href = serverUrl + "/Products/detailedEvaluation";
+	location.href = serverUrl + "/Products/DetailedEvaluation";
 }
 
 function goToEvaluation() {
-	location.href = serverUrl + "/Products/evaluation";
+	location.href = serverUrl + "/Products/Evaluation";
 }
 
 window.onload = function() {

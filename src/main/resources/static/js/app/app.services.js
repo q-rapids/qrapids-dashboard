@@ -7,7 +7,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     $scope.getStratInd = function (){
         $http({
             method : "GET",
-            url : "../api/StrategicIndicators/CurrentEvaluation"
+            url : "../api/strategicIndicators/current"
         }).then(function mySuccess(response) {
             $scope.data = response.data;
             $scope.sortType = 'name';
@@ -18,7 +18,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     $scope.getKPIEval = function(){
         $http({
             method : "GET",
-            url : "../api/StrategicIndicators/HistoricalData",
+            url : "../api/strategicIndicators/historical",
             params: {from: $('#datepickerFrom').val(),
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {
@@ -27,7 +27,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                 data.push({
                     id: strategicIndicatorEval.id,
                     name: strategicIndicatorEval.name,
-                    date: strategicIndicatorEval.date.year+"-"+strategicIndicatorEval.date.monthValue+"-"+strategicIndicatorEval.date.dayOfMonth,
+                    date: strategicIndicatorEval.date,
                     description: strategicIndicatorEval.description,
                     value: strategicIndicatorEval.value_description,
                     categories: strategicIndicatorEval.categories_description
@@ -41,7 +41,7 @@ app.controller('TablesCtrl', function($scope, $http) {
 
     $scope.getFeedback = function(){
         var id = getParameterByName('id');
-        var url =  "../api/Feedback_Factors/" + id;
+        var url =  "../api/strategicIndicators/" + id + "/feedbackReport";
         $http({
             method : "GET",
             url : url
@@ -125,7 +125,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         jQuery.ajax({
             dataType: "json",
             type: "GET",
-            url : "api/qualityModel?prj=" + sessionStorage.getItem("prj"),
+            url : "api/strategicIndicators/qualityModel?prj=" + sessionStorage.getItem("prj"),
             async: false,
             success: function (data) {
                 data.forEach(function (strategicIndicator) {
@@ -180,7 +180,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         jQuery.ajax({
             dataType: "json",
             type: "GET",
-            url: "api/DetailedStrategicIndicators/CurrentEvaluation?prj=" + sessionStorage.getItem("prj"),
+            url: "api/strategicIndicators/qualityFactors/current?prj=" + sessionStorage.getItem("prj"),
             async: false,
             success: function (strategicIndicators) {
                 strategicIndicators.forEach(function (strategicIndicator) {
@@ -299,7 +299,7 @@ app.controller('TablesCtrl', function($scope, $http) {
 
         var ignoreQR = function () {
             var rationale = $("#QRDecisionRationale").val();
-            var ignoreQRUrl = "api/alerts/"+alertId+"/ignore?prj=" + sessionStorage.getItem("prj");
+            var ignoreQRUrl = "api/alerts/"+alertId+"/qr/ignore?prj=" + sessionStorage.getItem("prj");
             var body = new URLSearchParams();
             body.set('rationale', rationale);
             body.set('patternId', QRCandidate.id);
@@ -398,7 +398,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.newAlert = function () {
-        var url = "api/notifyAlert";
+        var url = "api/alerts";
         $http({
             method: "POST",
             url: url,
@@ -419,7 +419,7 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.newAlertFactor = function () {
-        var url = "api/notifyAlert";
+        var url = "api/alerts";
         $http({
             method: "POST",
             url: url,
@@ -443,9 +443,9 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextSimple();
-            var url = "../api/DetailedStrategicIndicators/CurrentEvaluation/" + id;
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/current";
         } else {
-            var url = "../api/DetailedStrategicIndicators/CurrentEvaluation";
+            var url = "../api/strategicIndicators/qualityFactors/current";
         }
         $http({
             method : "GET",
@@ -474,13 +474,13 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextSimple();
-            var url = "../api/DetailedStrategicIndicators/HistoricalData/" + id;
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/historical";
         } else {
-            var url = "../api/DetailedStrategicIndicators/HistoricalData";
+            var url = "../api/strategicIndicators/qualityFactors/historical";
         }
         $http({
             method : "GET",
-            url : url,//"../api/DetailedStrategicIndicators/HistoricalData",
+            url : url,
             params: {from: $('#datepickerFrom').val(),
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {
@@ -489,7 +489,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                 strategicIndicatorEval.factors.forEach(function (factor) {
                     data.push({
                         id: strategicIndicatorEval.id,
-                        date: factor.date.year+"-"+factor.date.monthValue+"-"+factor.date.dayOfMonth,
+                        date: factor.date,
                         strategicIndicatorName: strategicIndicatorEval.name,
                         factorName: factor.name,
                         description: factor.description,
@@ -508,9 +508,9 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextSimple();
-            var url = "../api/QualityFactors/CurrentEvaluation/" + id;
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/current";
         } else {
-            var url = "../api/QualityFactors/CurrentEvaluation";
+            var url = "../api/qualityFactors/metrics/current";
         }
         $http({
             method : "GET",
@@ -539,9 +539,9 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextSimple();
-            var url = "../api/QualityFactors/HistoricalData/" + id;
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/historical";
         } else {
-            var url = "../api/QualityFactors/HistoricalData";
+            var url = "../api/qualityFactors/metrics/historical";
         }
         $http({
             method : "GET",
@@ -554,7 +554,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                 factorEval.metrics.forEach(function (metric) {
                     data.push({
                         id: factorEval.id,
-                        date: metric.date.year+"-"+metric.date.monthValue+"-"+metric.date.dayOfMonth,
+                        date: metric.date,
                         factorName: factorEval.name,
                         metricName: metric.name,
                         description: metric.description,
@@ -573,10 +573,10 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextComplex();
-            var url = "../api/Metrics/CurrentEvaluation/" + id;
+            var url = "../api/qualityFactors/" + id + "/metrics/current"
         }
         else {
-            var url = "../api/Metrics/CurrentEvaluation";
+            var url = "../api/metrics/current";
         }
         $http({
             method : "GET",
@@ -602,10 +602,10 @@ app.controller('TablesCtrl', function($scope, $http) {
         var id = getParameterByName('id');
         if (id != null) {
             navTextComplex();
-            var url = "../api/Metrics/HistoricalData/" + id;
+            var url = "../api/qualityFactors/" + id + "/metrics/historical";
         }
         else {
-            var url = "../api/Metrics/HistoricalData";
+            var url = "../api/metrics/historicalData";
         }
         $http({
             method : "GET",
@@ -617,7 +617,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             response.data.forEach(function (metricEval) {
                 data.push({
                     id: metricEval.id,
-                    date: metricEval.date.year+"-"+metricEval.date.monthValue+"-"+metricEval.date.dayOfMonth,
+                    date: metricEval.date,
                     name: metricEval.name,
                     description: metricEval.description,
                     value: metricEval.value_description,
@@ -636,14 +636,6 @@ app.controller('TablesCtrl', function($scope, $http) {
         if (!isqf || si.length == 0) url2 = url2 + "?id=" + id + "&name=" + name;
         else {
             url2 = url2 + "?id=" + id + "&name=" + name + "&si=" + si + "&siid=" + siid + "&cmd=" + cmd;
-        }
-        var from = getParameterByName('from');
-        var to = getParameterByName('to');
-        if ($('#datepickerFrom').length || (from.length != 0 && to.length != 0)) {
-            if ($('#datepickerFrom').length)
-                url2 = url2 + "&from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val();
-            else
-                url2 = url2 + "&from=" + from + "&to=" + to;
         }
         location.href = url2;
     };

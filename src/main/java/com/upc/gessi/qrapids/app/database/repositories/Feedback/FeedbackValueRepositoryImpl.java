@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.database.repositories.Feedback;
 
 import com.upc.gessi.qrapids.app.domain.models.FeedbackValues;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.CustomFeedbackValueRepository;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -9,6 +10,7 @@ import javax.persistence.TypedQuery;
 import java.sql.Date;
 import java.util.List;
 
+@Component("feedbackValueRepositoryImpl")
 public class FeedbackValueRepositoryImpl implements CustomFeedbackValueRepository {
 
     @PersistenceContext

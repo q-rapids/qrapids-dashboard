@@ -31,6 +31,7 @@
 
             <script type="text/javascript" th:src="@{/js/lib/moment.js}"></script>
             <script type="text/javascript" th:src="@{/js/lib/Chart.min.js}"></script>
+            <script type="text/javascript" th:src="@{/js/lib/chartjs-plugin-annotation.min.js}"></script>
         </th:block>
 
         <th:block th:fragment="HistoricView">
@@ -118,6 +119,8 @@
     </div>
     <div class="subnav" id="submenuConfiguration" th:fragment="navSubBarConfiguration">
         <a id="ProductsConfig">Products</a>
+        <a id="StrategicIndicatorsConfig">Strategic Indicators</a>
+        <a id="CategoriesConfig">Categories</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="LogoutProfileConfig">Logout</a>
@@ -152,7 +155,7 @@
                     <label class="control-label"> To: </label>
                     <input id="datepickerTo" width="250" class="form-control"/>
                 </div>
-                <button type="button" onclick="$('#chartContainer').empty();getData();" class="btn btn-default">Apply</button>
+                <button id="applyButton" type="button" class="btn btn-default">Apply</button>
                 <div class="form-group dropdown">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
                     <ul id="intervalsDropdown" class="dropdown-menu dropdown-menu-right"></ul>

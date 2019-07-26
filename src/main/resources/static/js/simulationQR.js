@@ -8,6 +8,7 @@ var qualityFactors = [];
 var metrics = [];
 var detailedCharts = [];
 var factorsCharts = [];
+var categories = [];
 
 var alertId;
 var patternId;
@@ -15,7 +16,7 @@ var patternId;
 function getDetailedStrategicIndicators () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/DetailedStrategicIndicators/CurrentEvaluation",
+        url: "../api/strategicIndicators/qualityFactors/current",
         cache: false,
         type: "GET",
         async: true,
@@ -120,7 +121,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
 function getFactors () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/QualityFactors/CurrentEvaluation",
+        url: "../api/qualityFactors/metrics/current",
         cache: false,
         type: "GET",
         async: true,
@@ -290,12 +291,24 @@ function showQRPattern (pattern) {
 }
 
 function getAllMetricsAndShowMetricForPattern (patternId){
-    var url = "../api/Metrics/CurrentEvaluation";
+    var url = "../api/metrics/current";
     $.ajax({
         url : url,
         type: "GET",
         success: function (response) {
             metrics = response;
+            getMetricsCategoriesAndShow(patternId);
+        }
+    });
+}
+
+function getMetricsCategoriesAndShow (patternId) {
+    var url = "../api/metrics/categories";
+    $.ajax({
+        url : url,
+        type: "GET",
+        success: function (response) {
+            categories = response;
             getAndShowMetricsForPattern(patternId);
         }
     });
@@ -305,12 +318,12 @@ function getAndShowMetricsForPattern (patternId) {
     $.ajax({
         url: "../api/qrPatterns/"+patternId+"/metric",
         type: "GET",
-        success: function (metricForPattern) {
+        success: function (response) {
             $("#apply").attr("disabled", true);
             $("#restore").attr("disabled", true);
             var found = false;
             metrics.forEach(function (metric) {
-                if (metric.id === metricForPattern) {
+                if (metric.id === response.metric) {
                     found = true;
                     showMetricSlider(metric);
                 }
@@ -326,6 +339,25 @@ function getAndShowMetricsForPattern (patternId) {
 }
 
 function showMetricSlider (metric) {
+    // Metrics categories
+    var rangeHighlights = [];
+    var start = 0;
+    categories.sort(function (a, b) {
+        return a.upperThreshold - b.upperThreshold;
+    });
+    for (var i = 0; i < categories.length; i++) {
+        var end = categories[i].upperThreshold;
+        var offset = 0;
+        if (end < 1) offset = 0.02;
+        var range = {
+            start: start,
+            end: end + offset,
+            class: categories[i].name
+        };
+        rangeHighlights.push(range);
+        start = end;
+    }
+
     var metricsDiv = $("#metricsSliders");
     var div = document.createElement('div');
     div.id = "div" + metric.id;
@@ -342,7 +374,7 @@ function showMetricSlider (metric) {
 
     var slider = document.createElement("input");
     slider.id = "sliderValue" + metric.id;
-    slider.style.width = "80%";
+    slider.style.width = "100%";
     var sliderConfig = {
         id: "slider" + metric.id,
         min: 0,
@@ -350,6 +382,8 @@ function showMetricSlider (metric) {
         step: 0.01,
         value: metric.value
     };
+    sliderConfig.rangeHighlights = [];
+    Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
     // Add original value
     var start, end;
     if (metric.value === 0) {
@@ -364,15 +398,17 @@ function showMetricSlider (metric) {
         start = metric.value - 0.015;
         end = metric.value + 0.015;
     }
-    sliderConfig.rangeHighlights = [{
+    sliderConfig.rangeHighlights.push({
         start: start,
         end: end
-    }];
+    });
     div.appendChild(slider);
     metricsDiv.append(div);
     $("#"+slider.id).slider(sliderConfig);
     $(".slider-rangeHighlight").css("background", currentColor);
-
+    for (var j = 0; j < categories.length; j++) {
+        $(".slider-rangeHighlight." + categories[j].name).css("background", categories[j].color)
+    }
     //Change QR value
     updateQRValueText(metric.value.toFixed(2));
 }
@@ -483,21 +519,10 @@ $('#apply').click(function () {
             newMetrics.push(metricsSlider[i]);
     }
 
-    var year = metrics[0].date.year;
-    var month = "";
-    if (metrics[0].date.monthValue < 10)
-        month = "0" + metrics[0].date.monthValue;
-    else
-        month = metrics[0].date.monthValue;
-    var day = "";
-    if (metrics[0].date.dayOfMonth < 10)
-        day = "0" + metrics[0].date.dayOfMonth;
-    else
-        day = metrics[0].date.dayOfMonth;
-    var date = year + "-" + month + "-" + day;
+    var date = metrics[0].date;
 
     $.ajax({
-        url: "../api/QualityFactors/Simulate?date="+date,
+        url: "../api/qualityFactors/simulate?date="+date,
         data: JSON.stringify(newMetrics),
         type: "POST",
         contentType: 'application/json',
@@ -550,7 +575,7 @@ function simulateSI (qualityFactors) {
     formData.append("factors", JSON.stringify(qfs));
 
     $.ajax({
-        url: "../api/Simulate",
+        url: "../api/strategicIndicators/simulate",
         data: formData,
         type: "POST",
         contentType: false,
@@ -632,7 +657,7 @@ $('#decision').click(function () {
     var ignoreQR = function () {
         var rationale = $("#QRDecisionRationale").val();
         var ignoreQRUrl;
-        if (alertId) ignoreQRUrl = "../api/alerts/"+alertId+"/ignore";
+        if (alertId) ignoreQRUrl = "../api/alerts/"+alertId+"/qr/ignore";
         else ignoreQRUrl = "../api/qr/ignore";
         var body = new URLSearchParams();
         body.set('rationale', rationale);

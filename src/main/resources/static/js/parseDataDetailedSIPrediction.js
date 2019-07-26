@@ -1,6 +1,6 @@
 var isdsi = true;
 
-var url = parseURLSimple("../api/DetailedStrategicIndicators/PredictionData");
+var url = parseURLSimple("../api/strategicIndicators/qualityFactors/prediction");
 
 //initialize data vectors
 var texts = [];
@@ -64,7 +64,7 @@ function getData() {
                                     if (data[i].factors[j].value !== null) {
                                         value[i][k].push(
                                             {
-                                                x: data[i].factors[j].date.year + "-" + data[i].factors[j].date.monthValue + "-" + data[i].factors[j].date.dayOfMonth,
+                                                x: data[i].factors[j].date,
                                                 y: data[i].factors[j].value
                                             }
                                         );

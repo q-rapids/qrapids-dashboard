@@ -18,7 +18,7 @@ function checkAlertsPending(){
     var serverUrl = sessionStorage.getItem("serverUrl");
     jQuery.ajax({
         dataType: "json",
-        url: serverUrl+'/api/alerts/new',
+        url: serverUrl+'/api/alerts/countNew',
         cache: false,
         type: "GET",
         async: true,

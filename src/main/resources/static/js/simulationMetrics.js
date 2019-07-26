@@ -6,20 +6,52 @@ var qualityFactors = [];
 var metrics = [];
 var detailedCharts = [];
 var factorsCharts = [];
+var categories = [];
 
 function getAllMetrics(){
-    var url = "../api/Metrics/CurrentEvaluation";
+    var url = "../api/metrics/current";
     $.ajax({
         url : url,
         type: "GET",
         success: function (response) {
             metrics = response;
-            showMetricsSliders(metrics);
+            getMetricsCategoriesAndShow();
         }
     });
 }
 
-function showMetricsSliders (metrics) {
+function getMetricsCategoriesAndShow () {
+    var url = "../api/metrics/categories";
+    $.ajax({
+        url : url,
+        type: "GET",
+        success: function (response) {
+            categories = response;
+            showMetricsSliders();
+        }
+    });
+}
+
+function showMetricsSliders () {
+    // Metrics categories
+    var rangeHighlights = [];
+    var start = 0;
+    categories.sort(function (a, b) {
+        return a.upperThreshold - b.upperThreshold;
+    });
+    for (var i = 0; i < categories.length; i++) {
+        var end = categories[i].upperThreshold;
+        var offset = 0;
+        if (end < 1) offset = 0.02;
+        var range = {
+            start: start,
+            end: end + offset,
+            class: categories[i].name
+        };
+        rangeHighlights.push(range);
+        start = end;
+    }
+
     var metricsDiv = $("#metricsSliders");
     metrics.forEach(function (metric) {
         var div = document.createElement('div');
@@ -48,6 +80,8 @@ function showMetricsSliders (metrics) {
             step: 0.01,
             value: value
         };
+        sliderConfig.rangeHighlights = [];
+        Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
         // Add original value
         var start, end;
         if (metric.value === 0) {
@@ -62,15 +96,18 @@ function showMetricsSliders (metrics) {
             start = metric.value - 0.015;
             end = metric.value + 0.015;
         }
-        sliderConfig.rangeHighlights = [{
+        sliderConfig.rangeHighlights.push({
             start: start,
             end: end
-        }];
+        });
         div.appendChild(slider);
         metricsDiv.append(div);
         $("#"+slider.id).slider(sliderConfig);
-        $(".slider-rangeHighlight").css("background", currentColor);
     });
+    $(".slider-rangeHighlight").css("background", currentColor);
+    for (var j = 0; j < categories.length; j++) {
+        $(".slider-rangeHighlight." + categories[j].name).css("background", categories[j].color)
+    }
     if (qualityFactors.length > 0)
         checkMetricsSliders();
 }
@@ -78,7 +115,7 @@ function showMetricsSliders (metrics) {
 function getDetailedStrategicIndicators () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/DetailedStrategicIndicators/CurrentEvaluation",
+        url: "../api/strategicIndicators/qualityFactors/current",
         cache: false,
         type: "GET",
         async: true,
@@ -183,7 +220,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
 function getFactors () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/QualityFactors/CurrentEvaluation",
+        url: "../api/qualityFactors/metrics/current",
         cache: false,
         type: "GET",
         async: true,
@@ -349,21 +386,11 @@ $('#apply').click(function () {
             newMetrics.push(metricsSlider[i]);
     }
 
-    var year = metrics[0].date.year;
-    var month = "";
-    if (metrics[0].date.monthValue < 10)
-        month = "0" + metrics[0].date.monthValue;
-    else
-        month = metrics[0].date.monthValue;
-    var day = "";
-    if (metrics[0].date.dayOfMonth < 10)
-        day = "0" + metrics[0].date.dayOfMonth;
-    else
-        day = metrics[0].date.dayOfMonth;
-    var date = year + "-" + month + "-" + day;
+
+    var date = metrics[0].date;
 
     $.ajax({
-        url: "../api/QualityFactors/Simulate?date="+date,
+        url: "../api/qualityFactors/simulate?date="+date,
         data: JSON.stringify(newMetrics),
         type: "POST",
         contentType: 'application/json',
@@ -418,13 +445,13 @@ function simulateSI (qualityFactors) {
     formData.append("factors", JSON.stringify(qfs));
 
     $.ajax({
-        url: "../api/Simulate",
+        url: "../api/strategicIndicators/simulate",
         data: formData,
         type: "POST",
         contentType: false,
         processData: false,
         error: function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status == 405)
+            if (jqXHR.status == 500)
                 alert(textStatus);
         },
         success: function(result) {

@@ -73,7 +73,7 @@ public class UserProfileController {
 
         ModelAndView modelAndView = new ModelAndView("/AppUser/update");
 
-        AppUser user = this.userRepository.findOne( id );
+        AppUser user = this.userRepository.getOne( id );
 
         modelAndView.addObject("appuser", user);
 
@@ -91,7 +91,7 @@ public class UserProfileController {
         System.out.println(user.toString());
 
         try{
-            AppUser update = this.userRepository.findOne( user.getId() );
+            AppUser update = this.userRepository.getOne( user.getId() );
 
             update.setEmail( user.getEmail() );
 

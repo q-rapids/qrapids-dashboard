@@ -11,8 +11,10 @@ import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,7 @@ import java.net.UnknownHostException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -41,10 +44,10 @@ public class Feedback {
     @Autowired
     private UserRepository userRepository;
 
-    @RequestMapping(value="/api/feedback", method= RequestMethod.POST)
-    public void newSI(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws UnknownHostException {
+    @PostMapping("/api/strategicIndicators/{id}/feedback")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void newSI(@PathVariable Long id, @RequestBody Map<String, String> requestBody, Authentication authentication) throws UnknownHostException {
         try {
-            Long id = Long.parseLong(request.getParameter("id"));
             java.util.Date dateAux = new java.util.Date();
             Date date = new Date(dateAux.getTime());
             String author = "-1";
@@ -53,14 +56,14 @@ public class Feedback {
                 author = authentication.getName();
                 user = userRepository.findByUsername(author);
             }
-            float value = Float.parseFloat(request.getParameter("newvalue"));
-            float oldvalue = Float.parseFloat(request.getParameter("oldvalue"));
+            float value = Float.parseFloat(requestBody.get("newvalue"));
+            float oldvalue = Float.parseFloat(requestBody.get("oldvalue"));
             Type stringListType = new TypeToken<List<String>>() {}.getType();
-            List<String> factorIds = new Gson().fromJson(request.getParameter("factorIds"), stringListType);
-            List<String> factorNames = new Gson().fromJson(request.getParameter("factorNames"), stringListType);
+            List<String> factorIds = new Gson().fromJson(requestBody.get("factorIds"), stringListType);
+            List<String> factorNames = new Gson().fromJson(requestBody.get("factorNames"), stringListType);
             Type floatListType = new TypeToken<List<Float>>() {}.getType();
-            List<Float> factorValues = new Gson().fromJson(request.getParameter("factorValues"), floatListType);
-            List<String> factorEvaluationDates = new Gson().fromJson(request.getParameter("factorEvaluationDates"), stringListType);
+            List<Float> factorValues = new Gson().fromJson(requestBody.get("factorValues"), floatListType);
+            List<String> factorEvaluationDates = new Gson().fromJson(requestBody.get("factorEvaluationDates"), stringListType);
 
             if (!id.equals("")) {
                 com.upc.gessi.qrapids.app.domain.models.Feedback feed = new com.upc.gessi.qrapids.app.domain.models.Feedback(id, date, author, user, value, oldvalue);
@@ -72,22 +75,21 @@ public class Feedback {
                     fvRep.save(feedbackValue);
                 }
             }
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
         } catch (Exception e) {
             System.err.println(e);
-            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more attributes are missing in the request body");
         }
     }
 
-    @RequestMapping("/api/Feedback/{id}")
-    public List<com.upc.gessi.qrapids.app.domain.models.Feedback> getFeedback(@PathVariable Long id) throws UnknownHostException {
+    @GetMapping("/api/strategicIndicator/{id}/feedback")
+    @ResponseStatus(HttpStatus.OK)
+    public List<com.upc.gessi.qrapids.app.domain.models.Feedback> getFeedback(@PathVariable Long id) {
             return fRep.getFeedback(id);
     }
 
-
-
-    @RequestMapping("/api/FeedbackReport/{id}")
-    public List<FeedbackFactors> getFeedbackReport(@RequestParam(value = "prj", required=false) String prj, @PathVariable Long id) throws Exception {
+    @RequestMapping("/api/strategicIndicator/{id}/feedbackReport")
+    @ResponseStatus(HttpStatus.OK)
+    public List<FeedbackFactors> getFeedbackReport(@RequestParam(value = "prj") String prj, @PathVariable Long id) throws Exception {
         return ffRep.getFeedbackReport(id, prj);
     }
 
