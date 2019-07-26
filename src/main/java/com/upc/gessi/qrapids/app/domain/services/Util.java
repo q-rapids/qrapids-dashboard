@@ -201,7 +201,7 @@ public class Util {
                 file = IOUtils.toByteArray(network.getInputStream());
             }
             List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
-            if (name != "" && qualityFactors.size() > 0) {
+            if (!name.equals("") && qualityFactors.size() > 0) {
                 Project project = projectRepository.findByExternalId(prj);
                 Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors, project);
                 siRep.save(newSI);
@@ -251,7 +251,7 @@ public class Util {
             } catch (Exception e) {
                 throw new MissingParametersException();
             }
-            if (name != "" && qualityFactors.size() > 0) {
+            if (!name.equals("") && qualityFactors.size() > 0) {
                 Strategic_Indicator editSI = siRep.getOne(id);
                 //TOdo: the equals is not working
                 //boolean same_factors = editSI.getQuality_factors().equals(qualityFactors);
