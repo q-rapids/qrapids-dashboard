@@ -1,6 +1,7 @@
 buildscript {
 	ext {
-		springBootVersion = '1.5.4.RELEASE'
+		springBootVersion = '2.1.6.RELEASE'
+		snippetsDir = file('build/generated-snippets')
 	}
 	repositories {
 		mavenCentral()
@@ -8,13 +9,21 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath('org.postgresql:postgresql:42.1.4.jre7')
+		classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2'
 	}
+}
+
+plugins {
+	id "org.sonarqube" version "2.7"
 }
 
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'jacoco'
+apply plugin: 'org.asciidoctor.convert'
 
 group = 'com.upc.gessi.qrapids'
 version = '0.3.5'
@@ -30,6 +39,9 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('elasticsearch.version', '5.6.3')
+}
 
 dependencies {
     // Security
@@ -39,7 +51,7 @@ dependencies {
     compile("io.jsonwebtoken:jjwt:0.7.0")
 
     // Development
-    compile('org.springframework.boot:spring-boot-devtools:1.5.8.RELEASE')
+    compile('org.springframework.boot:spring-boot-devtools')
 
     // Spring Boot
 	compile('org.springframework.boot:spring-boot-starter-actuator')
@@ -75,8 +87,30 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.apache.logging.log4j:log4j-api:2.9.1')
 	compile('org.apache.logging.log4j:log4j-core:2.9.1')
+	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
 	// comment this line to launch application from developing environment
 	// uncomment this line before generating .war file
 	//providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 }
+
+jacoco {
+	toolVersion = "0.8.2"
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled = true
+		html.enabled = false
+	}
+}
+
+asciidoctor {
+	sourceDir = file('docs/asciidoc')
+	inputs.dir snippetsDir
+	outputDir = file('docs/asciidoc')
+	separateOutputDirs = false
+	dependsOn test
+}
+

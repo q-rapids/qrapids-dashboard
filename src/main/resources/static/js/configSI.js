@@ -4,9 +4,10 @@ var factors = [];
 
 var postUrl;
 var deleteUrl;
+var httpMethod = "POST";
 
 function buildSIList() {
-    var url = "/api/StrategicIndicators";
+    var url = "/api/strategicIndicators";
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -40,8 +41,9 @@ function clickOnTree(e){
             $(this).removeClass("active");
     });
 
-    postUrl = "/api/EditStrategicIndicator/" + e.target.id;
-    deleteUrl = "/api/StrategicIndicators/" + e.target.id;
+    postUrl = "/api/strategicIndicators/" + e.target.id;
+    httpMethod = "PUT";
+    deleteUrl = "/api/strategicIndicators/" + e.target.id;
     if (serverUrl) {
         postUrl = serverUrl + postUrl;
     }
@@ -62,7 +64,7 @@ function clickOnTree(e){
             $("#deleteSI").show();
             if (factors.length > 0) {
                 showFactors();
-                si.quality_factors.forEach(function (factor) {
+                si.qualityFactors.forEach(function (factor) {
                     $('#avFactorsBox').find("option[value='" + factor + "']").appendTo('#selFactorsBox');
                 });
             }
@@ -84,7 +86,7 @@ function newSI() {
     else {
         loadFactors(true);
     }
-    postUrl="/api/newStrategicIndicator";
+    postUrl="/api/strategicIndicators";
 }
 
 function showFactors () {
@@ -100,7 +102,7 @@ function showFactors () {
 
 function loadFactors (show) {
     $.ajax({
-        url: "../api/QualityFactors/CurrentEvaluation",
+        url: "../api/qualityFactors",
         type: "GET",
         async: true,
         success: function(data) {
@@ -141,13 +143,15 @@ $("#saveSI").click(function () {
         var formData = new FormData();
         formData.append("name", $('#SIName').val());
         formData.append("description", $('#SIDescription').val());
-        formData.append("network", $('#SINetwork')[0].files[0]);
+        var file = $('#SINetwork').prop('files')[0];
+        if (file)
+            formData.append("network", file);
         formData.append("quality_factors", qualityFactors);
 
         $.ajax({
             url: postUrl,
             data: formData,
-            type: "POST",
+            type: httpMethod,
             contentType: false,
             processData: false,
             //ToDo: the service produces more than one error, the current message does not fit all of them

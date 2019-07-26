@@ -74,7 +74,7 @@ public class ProductsController {
     }
 	
 	public DTOProduct getProductById(String id) throws Exception {
-		Product p = productRep.findOne(Long.parseLong(id));
+		Product p = productRep.getOne(Long.parseLong(id));
 		List<DTOProject> relatedProjects = new Vector<DTOProject>();
 		for (Project proj : p.getProjects()) {
 			DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId());
@@ -91,7 +91,7 @@ public class ProductsController {
     }
 	
 	public DTOProject getProjectById(String id) throws Exception {
-		Project p = projectRep.findOne(Long.parseLong(id));
+		Project p = projectRep.getOne(Long.parseLong(id));
 		DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
         return project;
     }
@@ -127,7 +127,7 @@ public class ProductsController {
 	public void updateProduct(Long id, String name, String description, byte[] logo, List<String> projectIds) {
 		List<Project> projects = new Vector<Project>();
 		for (int i=0; i<projectIds.size(); i++) {
-			Project p = projectRep.findOne(Long.parseLong(projectIds.get(i)));
+			Project p = projectRep.getOne(Long.parseLong(projectIds.get(i)));
 			projects.add(p);
 		}
 		Product product = new Product(name, description, logo, projects);
@@ -138,7 +138,7 @@ public class ProductsController {
 	public void newProduct(String name, String description, byte[] logo, List<String> projectIds) {
 		List<Project> projects = new Vector<Project>();
 		for (int i=0; i<projectIds.size(); i++) {
-			Project p = projectRep.findOne(Long.parseLong(projectIds.get(i)));
+			Project p = projectRep.getOne(Long.parseLong(projectIds.get(i)));
 			projects.add(p);
 		}
 		Product product = new Product(name, description, logo, projects);
@@ -146,11 +146,11 @@ public class ProductsController {
 	}
 	
 	public void deleteProduct(Long id) {
-		productRep.delete(id);
+		productRep.deleteById(id);
 	}
 	
 	public List<DTOStrategicIndicatorEvaluation> getProductEvaluation(Long id) throws IOException, CategoriesException {
-		Product p = productRep.findOne(id);
+		Product p = productRep.getOne(id);
 		List<List<DTOStrategicIndicatorEvaluation>> evaluations = new Vector<List<DTOStrategicIndicatorEvaluation>>();
 		for (int i=0; i<p.getProjects().size(); i++) {
 			/*if (qmafake.usingFakeData()) {
@@ -185,7 +185,7 @@ public class ProductsController {
 	}
 	
 	public List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> getDetailedProductEvaluation(Long id) throws IOException, CategoriesException {
-		Product p = productRep.findOne(id);
+		Product p = productRep.getOne(id);
 		List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> evaluations = new Vector<Pair<String, List<DTOStrategicIndicatorEvaluation>>>();
 		
 		for (int i=0; i<p.getProjects().size(); i++) {

@@ -136,7 +136,7 @@ public class AppUserController {
 
         ModelAndView view = new ModelAndView("/AppUser/Update");
 
-        AppUser user = this.userRepository.findOne( id );
+        AppUser user = this.userRepository.getOne( id );
         List<UserGroup> userGroups = this.userGroupRepository.findAll();
 
         view.addObject("userGroups", userGroups);
@@ -157,7 +157,7 @@ public class AppUserController {
     public String updateEntity(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
 
         try{
-            AppUser update = this.userRepository.findOne( user.getId() );
+            AppUser update = this.userRepository.getOne( user.getId() );
 
             if (! "".equals(user.getEmail())  )
                 update.setEmail( user.getEmail() );
@@ -198,7 +198,7 @@ public class AppUserController {
 
         try {
 
-            AppUser user = this.userRepository.findOne( id );
+            AppUser user = this.userRepository.getOne( id );
             view.addObject("id", user.getId() );
             view.addObject("name", user.getUsername() );
             view.addObject("appuser", user );
@@ -215,7 +215,7 @@ public class AppUserController {
     @PostMapping("/delete")
     public String deleteEntity(@CookieValue(COOKIE_STRING) String token, @RequestParam("id") Long id, @RequestParam("name") String name ) {
 
-        AppUser user = this.userRepository.findOne( id );
+        AppUser user = this.userRepository.getOne( id );
 
         // Is current user
         AuthTools authTools = new AuthTools();
@@ -262,7 +262,7 @@ public class AppUserController {
     public String resetPassword(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
 
         try{
-            AppUser update = this.userRepository.findOne( user.getId() );
+            AppUser update = this.userRepository.getOne( user.getId() );
 
             update.setPassword( bCryptPasswordEncoder.encode( update.getEmail() ) );
 
@@ -285,7 +285,7 @@ public class AppUserController {
     public String updateAdminAccess(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
 
         try{
-            AppUser update = this.userRepository.findOne( user.getId() );
+            AppUser update = this.userRepository.getOne( user.getId() );
 
             update.setAdmin(true);
             update.setUserGroup(null);
@@ -309,7 +309,7 @@ public class AppUserController {
     public String setUpUserGroup(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
 
         try{
-            AppUser update = this.userRepository.findOne( user.getId() );
+            AppUser update = this.userRepository.getOne( user.getId() );
 
             update.setAdmin(false);
 
@@ -339,7 +339,7 @@ public class AppUserController {
         binder.registerCustomEditor(UserGroup.class, "area", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                UserGroup route = userGroupRepository.findOne( Long.parseLong( text ) );
+                UserGroup route = userGroupRepository.getOne( Long.parseLong( text ) );
                 setValue( route );
             }
         });

@@ -4,7 +4,7 @@ app.controller('NewSICtrl', function($scope, $http) {
     $scope.data = [];
 
     $scope.getAllFactorQuality = function(){
-        var url = "api/QualityFactors/getAll?prj="+sessionStorage.getItem("prj");
+        var url = "api/qualityFactors?prj="+sessionStorage.getItem("prj");
         $http({
             method : "GET",
             url : url

@@ -165,7 +165,7 @@ public class AuthController {
     @PostMapping("/reset-trigger")
     public String resetTraigger(@ModelAttribute(value = "appuser") @Valid AppUser user ){
 
-        AppUser update = this.userRepository.findOne( user.getId() );
+        AppUser update = this.userRepository.getOne( user.getId() );
 
         System.out.println("FORM : " + user.toString());
         System.out.println("ORIGIN : " + update.toString());
@@ -245,7 +245,7 @@ public class AuthController {
         binder.registerCustomEditor( Question.class, "question", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                Question question = questionRepository.findOne( Long.parseLong( text ) );
+                Question question = questionRepository.getOne( Long.parseLong( text ) );
                 setValue( question );
             }
         });

@@ -2,7 +2,12 @@ var isSi = false;
 var isdsi = false;
 var isqf = false;
 
-var url = parseURLMetrics("../api/Metrics/HistoricalData");
+var url;
+if (getParameterByName('id').length !== 0) {
+    url = parseURLMetrics("../api/qualityFactors/metrics/historical");
+} else {
+    url = parseURLMetrics("../api/metrics/historical");
+}
 
 //initialize data vectors
 var texts = [];
@@ -86,7 +91,7 @@ function getData() {
                 //push date and value to line vector
                 if (!isNaN(data[j].value)) {
                     line.push({
-                        x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                        x: data[j].date,
                         y: data[j].value
                     });
                 }

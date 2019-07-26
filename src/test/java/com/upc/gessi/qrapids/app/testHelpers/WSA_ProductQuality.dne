@@ -1,0 +1,161 @@
+// ~->[DNET-1]->~
+
+// File created by an unlicensed user using Netica 6.04 on Mar 20, 2018 at 10:45:11 UTC.
+
+bnet productquality {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+whenchanged = 1521541179;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 9;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	ShowLinkStrengths = 1;
+	windowposn = (2, 5, 932, 637);
+	resolution = 72;
+	drawingbounds = (1080, 720);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0x00e1e1e1;};
+	NodeSet Nature {BuiltIn = 1; Color = 0x00f8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0x00d3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0x00c8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0x00ffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0x00ffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0x00ffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0x00dee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0x00f0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0x00ffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		};
+	};
+
+node codequality {
+	discrete = TRUE;
+	states = (Low, Medium, High);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = ();
+	probs = 
+		// Low          Medium       High         
+		  (0.25,        0.4,         0.35);
+	whenchanged = 1521541151;
+	belief = (0.25, 0.4, 0.35);
+	visual V1 {
+		center = (96, 42);
+		height = 1;
+		};
+	};
+
+node softwarestability {
+	discrete = TRUE;
+	states = (Low, Medium, High);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = ();
+	probs = 
+		// Low          Medium       High         
+		  (0.1,         0.3,         0.6);
+	whenchanged = 1521541166;
+	belief = (0.1, 0.3, 0.6);
+	visual V1 {
+		center = (366, 42);
+		height = 4;
+		};
+	};
+
+node testingstatus {
+	discrete = TRUE;
+	states = (Low, Medium, High);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = ();
+	probs = 
+		// Low          Medium       High         
+		  (0.2,         0.6,         0.2);
+	whenchanged = 1521541179;
+	belief = (0.2, 0.6, 0.2);
+	visual V1 {
+		center = (618, 42);
+		height = 2;
+		};
+	};
+
+node productquality {
+	discrete = TRUE;
+	states = (Low, Medium, High);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = (codequality, softwarestability, testingstatus);
+	probs = 
+		// Low          Medium       High          // CodeQuality Stability TestingStatus 
+		  (1,           0,           0,            // Low         Low       Low           
+		   0.95,        0.05,        0,            // Low         Low       Medium        
+		   0.71,        0.09,        0.2,          // Low         Low       High          
+		   0.8,         0.2,         0,            // Low         Medium    Low           
+		   0.57375,     0.33375,     0.0925,       // Low         Medium    Medium        
+		   0.455,       0.2775,      0.2675,       // Low         Medium    High          
+		   0.39625,     0.415,       0.18875,      // Low         High      Low           
+		   0.399375,    0.418125,    0.1825,       // Low         High      Medium        
+		   0.280625,    0.361875,    0.3575,       // Low         High      High          
+		   0.650625,    0.228125,    0.12125,      // Medium      Low       Low           
+		   0.95,        0.05,        0,            // Medium      Low       Medium        
+		   0.535,       0.175,       0.29,         // Medium      Low       High          
+		   0.395625,    0.415625,    0.18875,      // Medium      Medium    Low           
+		   0.39875,     0.41875,     0.1825,       // Medium      Medium    Medium        
+		   0.28,        0.3625,      0.3575,       // Medium      Medium    High          
+		   0.05,        0.85,        0.1,          // Medium      High      Low           
+		   0.224375,    0.503125,    0.2725,       // Medium      High      Medium        
+		   0,           0.2,         0.8,          // Medium      High      High          
+		   0.550625,    0.338125,    0.11125,      // High        Low       Low           
+		   0.55375,     0.34125,     0.105,        // High        Low       Medium        
+		   0.435,       0.285,       0.28,         // High        Low       High          
+		   0.295625,    0.525625,    0.17875,      // High        Medium    Low           
+		   0,           0.7,         0.3,          // High        Medium    Medium        
+		   0.18,        0.4725,      0.3475,       // High        Medium    High          
+		   0,           0.6,         0.4,          // High        High      Low           
+		   0,           0.9,         0.1,          // High        High      Medium        
+		   0.005625,    0.5568751,   0.4375);      // High        High      High          ;
+	numcases = 
+		                 // CodeQuality Stability TestingStatus 
+		  (0,            // Low         Low       Low           
+		   0,            // Low         Low       Medium        
+		   0,            // Low         Low       High          
+		   0,            // Low         Medium    Low           
+		   0,            // Low         Medium    Medium        
+		   0,            // Low         Medium    High          
+		   0,            // Low         High      Low           
+		   0,            // Low         High      Medium        
+		   0,            // Low         High      High          
+		   -1,           // Medium      Low       Low           
+		   0,            // Medium      Low       Medium        
+		   0,            // Medium      Low       High          
+		   0,            // Medium      Medium    Low           
+		   -1,           // Medium      Medium    Medium        
+		   0,            // Medium      Medium    High          
+		   0,            // Medium      High      Low           
+		   0,            // Medium      High      Medium        
+		   0,            // Medium      High      High          
+		   0,            // High        Low       Low           
+		   0,            // High        Low       Medium        
+		   0,            // High        Low       High          
+		   0,            // High        Medium    Low           
+		   0,            // High        Medium    Medium        
+		   0,            // High        Medium    High          
+		   0,            // High        High      Low           
+		   0,            // High        High      Medium        
+		   1);           // High        High      High          ;
+	whenchanged = 0;
+	belief = (0.2643662, 0.4989963, 0.2366375);
+	visual V1 {
+		center = (372, 258);
+		height = 3;
+		};
+	};
+ElimOrder = (codequality, softwarestability, testingstatus, productquality);
+};

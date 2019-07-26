@@ -4,19 +4,19 @@ import java.util.List;
 
 public class DTOSI {
     private Long id;
-    private String external_id;
+    private String externalId;
     private String name;
     private String description;
     private byte[] network;
-    private List<String> quality_factors;
+    private List<String> qualityFactors;
 
-    public DTOSI(Long id, String external_id, String name, String description, byte[] network, List<String> quality_factors) {
+    public DTOSI(Long id, String externalId, String name, String description, byte[] network, List<String> qualityFactors) {
         this.id = id;
-        this.external_id = external_id;
+        this.externalId = externalId;
         this.name = name;
         this.description = description;
         this.network = network;
-        this.quality_factors = quality_factors;
+        this.qualityFactors = qualityFactors;
     }
 
     public Long getId() {
@@ -27,12 +27,12 @@ public class DTOSI {
         this.id = id;
     }
 
-    public String getExternal_id() {
-        return external_id;
+    public String getExternalId() {
+        return externalId;
     }
 
-    public void setExternal_id(String external_id) {
-        this.external_id = external_id;
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
     public String getName() {
@@ -59,11 +59,11 @@ public class DTOSI {
         this.network = network;
     }
 
-    public List<String> getQuality_factors() {
-        return quality_factors;
+    public List<String> getQualityFactors() {
+        return qualityFactors;
     }
 
-    public void setQuality_factors(List<String> quality_factors) {
-        this.quality_factors = quality_factors;
+    public void setQualityFactors(List<String> qualityFactors) {
+        this.qualityFactors = qualityFactors;
     }
 }

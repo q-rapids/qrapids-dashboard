@@ -1,6 +1,11 @@
 var isSi = false;
 
-var url = parseURLMetrics("../api/Metrics/PredictionData");
+var url;
+if (getParameterByName('id').length !== 0) {
+    url = parseURLMetrics("../api/qualityFactors/metrics/prediction");
+} else {
+    url = parseURLMetrics("../api/metrics/prediction");
+}
 
 //initialize data vectors
 var text = [];
@@ -73,23 +78,23 @@ function getData() {
                     if (!isNaN(data[j].value)) {
                         if (data[j].value !== null) {
                             line.push({
-                                x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                                x: data[j].date,
                                 y: data[j].value
                             });
                             line80l.push({
-                                x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                                x: data[j].date,
                                 y: data[j].confidence80.second
                             });
                             line80u.push({
-                                x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                                x: data[j].date,
                                 y: data[j].confidence80.first
                             });
                             line95l.push({
-                                x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                                x: data[j].date,
                                 y: data[j].confidence95.second
                             });
                             line95u.push({
-                                x: data[j].date.year + "-" + data[j].date.monthValue + "-" + data[j].date.dayOfMonth,
+                                x: data[j].date,
                                 y: data[j].confidence95.first
                             });
                         }

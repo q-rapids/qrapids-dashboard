@@ -266,19 +266,15 @@ function getDataThreshold (table) {
 }
 
 $('#saveSICategories').click(function () {
-    var formData = new FormData();
     var dataSI = getData();
-    formData.append("SICat", JSON.stringify(dataSI));
-
     if (dataSI.length < 2)
         alert("There has to be at least 2 categories for each indicator");
     else {
         $.ajax({
             url: '../api/strategicIndicators/categories',
-            data: formData,
+            data: JSON.stringify(dataSI),
             type: "POST",
-            contentType: false,
-            processData: false,
+            contentType: "application/json",
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 405)
                     alert("You can't have two categories with the same name");
@@ -294,19 +290,15 @@ $('#saveSICategories').click(function () {
 });
 
 $('#saveFactorCategories').click(function () {
-    var formData = new FormData();
     var dataQF = getDataThreshold("tableQF");
-    formData.append("QFCat", JSON.stringify(dataQF));
-
     if (dataQF.length < 2)
         alert("There has to be at least 2 categories for each factor");
     else {
         $.ajax({
             url: '../api/qualityFactors/categories',
-            data: formData,
+            data: JSON.stringify(dataQF),
             type: "POST",
-            contentType: false,
-            processData: false,
+            contentType: "application/json",
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 405)
                     alert("You can't have two categories with the same name");
@@ -322,19 +314,15 @@ $('#saveFactorCategories').click(function () {
 });
 
 $('#saveMetricCategories').click(function () {
-    var formData = new FormData();
     var dataMetrics = getDataThreshold("tableMetrics");
-    formData.append("MCat", JSON.stringify(dataMetrics));
-
     if (dataMetrics.length < 2)
         alert("There has to be at least 2 categories for each factor");
     else {
         $.ajax({
             url: '../api/metrics/categories',
-            data: formData,
+            data: JSON.stringify(dataMetrics),
             type: "POST",
-            contentType: false,
-            processData: false,
+            contentType: "application/json",
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 405)
                     alert("You can't have two categories with the same name");

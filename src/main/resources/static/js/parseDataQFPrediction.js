@@ -1,7 +1,12 @@
 var isdsi = false;
 var isqf = true;
 
-var url = parseURLSimple("../api/QualityFactors/PredictionData");
+var url;
+if (getParameterByName('id').length !== 0) {
+    url = parseURLSimple("../api/strategicIndicators/qualityFactors/metrics/prediction");
+} else {
+    url = parseURLSimple("../api/qualityFactors/metrics/prediction");
+}
 
 //initialize data vectors
 var texts = [];
@@ -63,8 +68,7 @@ function getData() {
                                 if (data[i].metrics[j].value !== null) {
                                     value[i][k].push(
                                         {
-                                            x: data[i].metrics[j].date.year + "-" + data[i].metrics[j].date.monthValue
-                                                + "-" + data[i].metrics[j].date.dayOfMonth,
+                                            x: data[i].metrics[j].date,
                                             y: data[i].metrics[j].value
                                         }
                                     );

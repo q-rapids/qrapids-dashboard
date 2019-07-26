@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.database.repositories.UserGroup;
 
 import com.upc.gessi.qrapids.app.domain.repositories.UserGroup.CustomUserGroupRepository;
 import com.upc.gessi.qrapids.app.domain.models.UserGroup;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -9,7 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 
-@Transactional
+@Component("userGroupRepositoryImpl")
 public class UserGroupRepositoryImpl implements CustomUserGroupRepository {
 
     @PersistenceContext
@@ -62,6 +63,7 @@ public class UserGroupRepositoryImpl implements CustomUserGroupRepository {
 
     }
 
+    @Transactional
     @Override
     public boolean updateUserGroupDefault(long id) {
         System.out.println("HOLA MUNDO");

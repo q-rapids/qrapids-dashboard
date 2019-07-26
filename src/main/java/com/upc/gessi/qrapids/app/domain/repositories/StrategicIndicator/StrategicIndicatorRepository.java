@@ -6,7 +6,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
-public interface StrategicIndicatorRepository extends JpaRepository<Strategic_Indicator, Long>, PagingAndSortingRepository<Strategic_Indicator,Long>, CustomStrategicIndicatorRepository {
+public interface StrategicIndicatorRepository extends JpaRepository<Strategic_Indicator, Long>, PagingAndSortingRepository<Strategic_Indicator,Long> {
+    Strategic_Indicator findByName (String name);
     List<Strategic_Indicator> findByProject_Id (Long projectId);
     boolean existsByExternalIdAndProject_Id (String externalId, Long projectId);
 }

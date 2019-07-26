@@ -7,7 +7,7 @@ var categories = [];
 var detailedCharts = [];
 
 function getAllQualityFactors () {
-    var url = "../api/QualityFactors/getAll";
+    var url = "../api/qualityFactors";
     $.ajax({
         url : url,
         type: "GET",
@@ -19,7 +19,7 @@ function getAllQualityFactors () {
 }
 
 function getQualityFactorsCategories () {
-    var url = "../api/QualityFactors/categories";
+    var url = "../api/qualityFactors/categories";
     $.ajax({
         url : url,
         type: "GET",
@@ -111,7 +111,7 @@ function showQualityFactorSliders () {
 function getDetailedStrategicIndicators () {
     jQuery.ajax({
         dataType: "json",
-        url: "../api/DetailedStrategicIndicators/CurrentEvaluation",
+        url: "../api/strategicIndicators/qualityFactors/current",
         cache: false,
         type: "GET",
         async: true,
@@ -280,7 +280,7 @@ $('#apply').click(function () {
     formData.append("factors", JSON.stringify(qualityFactors));
 
     $.ajax({
-        url: "../api/Simulate",
+        url: "../api/strategicIndicators/simulate",
         data: formData,
         type: "POST",
         contentType: false,
