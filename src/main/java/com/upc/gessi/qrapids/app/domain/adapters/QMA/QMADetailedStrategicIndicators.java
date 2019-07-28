@@ -80,6 +80,9 @@ public class QMADetailedStrategicIndicators {
             StrategicIndicatorFactorEvaluationDTO element = iterDSI.next();
             //Create Detailed Strategic Indicator with name, id and null factors
             DTODetailedStrategicIndicator d = new DTODetailedStrategicIndicator(element.getID(), element.getName(), null);
+            d.setDate(element.getEvaluations().get(0).getEvaluationDate());
+            d.setMismatchDays(element.getEvaluations().get(0).getMismatchDays());
+            d.setMissingFactors(element.getEvaluations().get(0).getMissingElements());
             //set Factors to Detailed Strategic Indicator
             d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors()));
             dsi.add(d);

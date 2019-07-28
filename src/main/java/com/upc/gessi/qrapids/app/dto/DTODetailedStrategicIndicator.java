@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -13,6 +14,9 @@ public class DTODetailedStrategicIndicator {
     //class atributes
     private String id;
     private String name;
+    private LocalDate date;
+    private int mismatchDays;
+    private List<String> missingFactors;
     private List<DTOFactor> factors;
 
     /**
@@ -49,5 +53,29 @@ public class DTODetailedStrategicIndicator {
 
     public void setFactors(List<DTOFactor> factors) {
         this.factors = factors;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public int getMismatchDays() {
+        return mismatchDays;
+    }
+
+    public void setMismatchDays(int mismatchDays) {
+        this.mismatchDays = mismatchDays;
+    }
+
+    public List<String> getMissingFactors() {
+        return missingFactors;
+    }
+
+    public void setMissingFactors(List<String> missingFactors) {
+        this.missingFactors = missingFactors;
     }
 }

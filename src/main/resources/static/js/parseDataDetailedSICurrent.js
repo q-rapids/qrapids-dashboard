@@ -7,6 +7,7 @@ var titles = [];
 var ids = [];
 var labels = [];
 var values = [];
+var warnings = [];
 
 function getData() {
     //empty previous data
@@ -23,8 +24,15 @@ function getData() {
         type: "GET",
         async: true,
         success: function (data) {
+            var assessmentDate;
             for (i = 0; i < data.length; ++i) {
                 //for each dsi save name to titles vector and id to ids vector
+                var siDate = new Date(data[i].date);
+                if (!assessmentDate) {
+                    assessmentDate = siDate;
+                } else if (assessmentDate < siDate) {
+                    assessmentDate = siDate;
+                }
                 titles.push(data[i].name);
                 ids.push(data[i].id);
                 labels.push([]);
@@ -37,7 +45,39 @@ function getData() {
                         labels[i].push(data[i].factors[j].name.slice(0, 23) + "...");
                     values[i].push(data[i].factors[j].value);
                 }
+
+                // Warnings
+                var messages = [];
+
+                var today = new Date();
+                today.setHours(0);
+                today.setMinutes(0);
+                today.setSeconds(0);
+                var millisecondsInOneDay = 86400000;
+                var millisecondsBetweenAssessmentAndToday = today.getTime() - siDate.getTime();
+                var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
+                if (oldAssessment) {
+                    var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
+                    var message = "The assessment is " + daysOld + " days old";
+                    messages.push(message)
+                }
+
+                var mismatchDays = data[i].mismatchDays;
+                if (mismatchDays > 0) {
+                    var message = "The assessment of the factors and the strategic indicator has a difference of " + mismatchDays + " days";
+                    messages.push(message);
+                }
+
+                var missingFactors = data[i].missingFactors;
+                if (missingFactors.length > 0) {
+                    var factors = missingFactors.length === 1 ? missingFactors[0] : [ missingFactors.slice(0, -1).join(", "), missingFactors[missingFactors.length - 1] ].join(" and ");
+                    var message = "The following factors were missing when the strategic indicator was assessed: " + factors;
+                    messages.push(message);
+                }
+
+                warnings.push(messages);
             }
+            $("#assessmentDate").text(assessmentDate.toLocaleDateString());
             drawChart();
         }
     });
