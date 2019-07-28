@@ -1,4 +1,4 @@
-var url = "/api/qualityModel";
+var url = "/api/strategicIndicators/qualityModel";
 var serverUrl = sessionStorage.getItem("serverUrl");
 if (serverUrl) {
     url = serverUrl + url;
