@@ -221,22 +221,32 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
             if (data[i].hasBN) someSIhasBN = true
         }
 
+        // Warnings
+
         var today = new Date();
         today.setHours(0);
         today.setMinutes(0);
         today.setSeconds(0);
         var millisecondsInOneDay = 86400000;
         var millisecondsBetweenAssessmentAndToday = today.getTime() - siDate.getTime();
-        if (millisecondsBetweenAssessmentAndToday > millisecondsInOneDay) {
-            var warning = document.createElement("span");
-            warning.setAttribute("class", "glyphicon glyphicon-alert");
+        var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
+        if (oldAssessment) {
             var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
-            warning.title = "The assessment is " + daysOld + " days old";
-            warning.style.paddingLeft = "1em";
-            warning.style.fontSize = "15px";
-            warning.style.color = "yellow";
-            warning.style.textShadow = "-2px 0 2px black, 0 2px 2px black, 2px 0 2px black, 0 -2px 2px black";
-            div.append(warning);
+            var message = "The assessment is " + daysOld + " days old";
+            addWarning(div, message);
+        }
+
+        var mismatchDays = data[i].mismatchDays;
+        if (mismatchDays > 0) {
+            var message = "The assessment of the factors and the strategic indicator has a difference of " + mismatchDays + " days";
+            addWarning(div, message);
+        }
+
+        var missingFactors = data[i].missingFactors;
+        if (missingFactors.length > 0) {
+            var factors = missingFactors.length === 1 ? missingFactors[0] : [ missingFactors.slice(0, -1).join(", "), missingFactors[missingFactors.length - 1] ].join(" and ");
+            var message = "The following factors were missing when the strategic indicator was assessed: " + factors;
+            addWarning(div, message);
         }
     }
 
@@ -303,4 +313,15 @@ function sortDataAlphabetically () {
     }
     data.sort(compare);
     console.log(data);
+}
+
+function addWarning(div, message) {
+    var warning = document.createElement("span");
+    warning.setAttribute("class", "glyphicon glyphicon-alert");
+    warning.title = message
+    warning.style.paddingLeft = "1em";
+    warning.style.fontSize = "15px";
+    warning.style.color = "yellow";
+    warning.style.textShadow = "-2px 0 2px black, 0 2px 2px black, 2px 0 2px black, 0 -2px 2px black";
+    div.append(warning);
 }

@@ -9,6 +9,31 @@ app.controller('TablesCtrl', function($scope, $http) {
             method : "GET",
             url : "../api/strategicIndicators/current"
         }).then(function mySuccess(response) {
+            response.data.forEach(function (strategicIndicator) {
+                var siDate = new Date(strategicIndicator.date);
+                var today = new Date();
+                today.setHours(0);
+                today.setMinutes(0);
+                today.setSeconds(0);
+                var millisecondsInOneDay = 86400000;
+                var millisecondsBetweenAssessmentAndToday = today.getTime() - siDate.getTime();
+                var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
+                if (oldAssessment) {
+                    var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
+                    strategicIndicator.warning = "The assessment is " + daysOld + " days old. \n";
+                }
+
+                var mismatchDays = strategicIndicator.mismatchDays;
+                if (mismatchDays > 0) {
+                    strategicIndicator.warning += "The assessment of the factors and the strategic \nindicator has a difference of " + mismatchDays + " days. \n";
+                }
+
+                var missingFactors = strategicIndicator.missingFactors;
+                if (missingFactors.length > 0) {
+                    var factors = missingFactors.length === 1 ? missingFactors[0] : [ missingFactors.slice(0, -1).join(", "), missingFactors[missingFactors.length - 1] ].join(" and ");
+                    strategicIndicator.warning += "The following factors were missing when \nthe strategic indicator was assessed: " + factors;
+                }
+            });
             $scope.data = response.data;
             $scope.sortType = 'name';
             $scope.sortReverse = false;
@@ -441,7 +466,7 @@ app.controller('TablesCtrl', function($scope, $http) {
 
     $scope.getKPIFactor = function (){
         var id = getParameterByName('id');
-        if (id != null) {
+        if (id !== "") {
             navTextSimple();
             var url = "../api/strategicIndicators/" + id + "/qualityFactors/current";
         } else {
@@ -472,7 +497,7 @@ app.controller('TablesCtrl', function($scope, $http) {
 
     $scope.getKPIFactorTable = function(){
         var id = getParameterByName('id');
-        if (id != null) {
+        if (id !== "") {
             navTextSimple();
             var url = "../api/strategicIndicators/" + id + "/qualityFactors/historical";
         } else {
@@ -506,7 +531,7 @@ app.controller('TablesCtrl', function($scope, $http) {
 
     $scope.getFactorQuality = function(){
         var id = getParameterByName('id');
-        if (id != null) {
+        if (id !== "") {
             navTextSimple();
             var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/current";
         } else {
@@ -537,7 +562,7 @@ app.controller('TablesCtrl', function($scope, $http) {
 
     $scope.getFactorQualityHistoric = function(){
         var id = getParameterByName('id');
-        if (id != null) {
+        if (id !== "") {
             navTextSimple();
             var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/historical";
         } else {
@@ -571,7 +596,7 @@ app.controller('TablesCtrl', function($scope, $http) {
 
     $scope.getMetricsTable = function(){
         var id = getParameterByName('id');
-        if (id != null) {
+        if (id !== "") {
             navTextComplex();
             var url = "../api/qualityFactors/" + id + "/metrics/current"
         }
@@ -600,12 +625,12 @@ app.controller('TablesCtrl', function($scope, $http) {
 
     $scope.getMetricsTableHistorical = function(){
         var id = getParameterByName('id');
-        if (id != null) {
+        if (id !== "") {
             navTextComplex();
             var url = "../api/qualityFactors/" + id + "/metrics/historical";
         }
         else {
-            var url = "../api/metrics/historicalData";
+            var url = "../api/metrics/historical";
         }
         $http({
             method : "GET",
