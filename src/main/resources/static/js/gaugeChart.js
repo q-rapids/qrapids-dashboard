@@ -76,7 +76,15 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         color = "#000";
     }
     var someSIhasBN = false;
+    var assessmentDate;
     for (i = 0; i < data.length; ++i) {
+        var siDate = new Date(data[i].date);
+        if (!assessmentDate) {
+            assessmentDate = siDate;
+        } else if (assessmentDate < siDate) {
+            assessmentDate = siDate;
+        }
+
         var div = document.createElement('div');
         div.id = container + "DivChart" + i;
         div.style.display = "inline-block";
@@ -212,9 +220,29 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
 
             if (data[i].hasBN) someSIhasBN = true
         }
+
+        var today = new Date();
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        var millisecondsInOneDay = 86400000;
+        var millisecondsBetweenAssessmentAndToday = today.getTime() - siDate.getTime();
+        if (millisecondsBetweenAssessmentAndToday > millisecondsInOneDay) {
+            var warning = document.createElement("span");
+            warning.setAttribute("class", "glyphicon glyphicon-alert");
+            var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
+            warning.title = "The assessment is " + daysOld + " days old";
+            warning.style.paddingLeft = "1em";
+            warning.style.fontSize = "15px";
+            warning.style.color = "yellow";
+            warning.style.textShadow = "-2px 0 2px black, 0 2px 2px black, 2px 0 2px black, 0 -2px 2px black";
+            div.append(warning);
+        }
     }
 
     if (!someSIhasBN) $("#feedbackButton").hide();
+
+    $("#assessmentDate").text(assessmentDate.toLocaleDateString());
 }
 
 function drawSimulationNeedle (container, width, height, color) {
