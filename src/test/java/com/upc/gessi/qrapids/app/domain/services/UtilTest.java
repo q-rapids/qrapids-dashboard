@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 
 import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
+import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
@@ -12,6 +13,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryReposi
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
+import com.upc.gessi.qrapids.app.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
@@ -96,6 +98,9 @@ public class UtilTest {
 
     @Mock
     private MetricRepository metricRepository;
+
+    @Mock
+    private Backlog backlog;
 
     @InjectMocks
     private Util utilController;
@@ -2373,5 +2378,100 @@ public class UtilTest {
         // Verify mock interactions
         verify(qmaRelations, times(1)).getRelations(projectExternalId, LocalDate.parse(date));
         verifyNoMoreInteractions(qmaRelations);
+    }
+
+    @Test
+    public void getNextMilestones () throws Exception {
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+        String projectBacklogId = "prj-1";
+        project.setBacklogId(projectBacklogId);
+
+        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
+
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        String milestoneName = "Version 1.3";
+        String milestoneDescription = "Version 1.3 adding new features";
+        String milestoneType = "Release";
+        DTOMilestone milestone = new DTOMilestone(date.toString(), milestoneName, milestoneDescription, milestoneType);
+
+        List<DTOMilestone> milestoneList = new ArrayList<>();
+        milestoneList.add(milestone);
+
+        LocalDate now = LocalDate.now();
+
+        when(backlog.getMilestones(project.getBacklogId(), now)).thenReturn(milestoneList);
+
+        //Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/milestones")
+                .param("prj", projectExternalId)
+                .param("date", now.toString());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].date", is(date.toString())))
+                .andExpect(jsonPath("$[0].name", is(milestoneName)))
+                .andExpect(jsonPath("$[0].description", is(milestoneDescription)))
+                .andExpect(jsonPath("$[0].type", is(milestoneType)))
+                .andDo(document("milestones/get-from-date",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("date")
+                                        .optional()
+                                        .description("Minimum milestone date (yyyy-mm-dd)")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].date")
+                                        .description("Milestone date"),
+                                fieldWithPath("[].name")
+                                        .description("Milestone name"),
+                                fieldWithPath("[].description")
+                                        .description("Milestone description"),
+                                fieldWithPath("[].type")
+                                        .description("Milestone type"))
+                ));
+    }
+
+    @Test
+    public void getAllMilestones () throws Exception {
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+        String projectBacklogId = "prj-1";
+        project.setBacklogId(projectBacklogId);
+
+        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
+
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        String milestoneName = "Version 1.3";
+        String milestoneDescription = "Version 1.3 adding new features";
+        String milestoneType = "Release";
+        List<DTOMilestone> milestoneList = new ArrayList<>();
+        milestoneList.add(new DTOMilestone(date.toString(), milestoneName, milestoneDescription, milestoneType));
+
+        when(backlog.getMilestones(project.getBacklogId(), null)).thenReturn(milestoneList);
+
+        //Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/milestones")
+                .param("prj", projectExternalId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].date", is(date.toString())))
+                .andExpect(jsonPath("$[0].name", is(milestoneName)))
+                .andExpect(jsonPath("$[0].description", is(milestoneDescription)))
+                .andExpect(jsonPath("$[0].type", is(milestoneType)));
     }
 }

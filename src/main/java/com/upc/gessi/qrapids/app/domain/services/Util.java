@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 
 
 import com.google.gson.JsonElement;
+import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
@@ -13,6 +14,7 @@ import com.upc.gessi.qrapids.app.exceptions.AssessmentErrorException;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.exceptions.MissingParametersException;
 import evaluation.StrategicIndicator;
+import org.apache.tomcat.jni.Local;
 import org.springframework.dao.DataIntegrityViolationException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
@@ -115,6 +117,9 @@ public class Util {
 
     @Autowired
     private MetricRepository metricRepository;
+
+    @Autowired
+    private Backlog backlog;
 
     @GetMapping("/api/strategicIndicators/categories")
     @ResponseStatus(HttpStatus.OK)
@@ -775,11 +780,23 @@ public class Util {
         return category.getColor();
     }
 
-    @PostMapping("/api/addToBacklog")
+    @PostMapping("/api/createIssue")
     @ResponseStatus(HttpStatus.OK)
     public String addToBacklogUrl() {
         return "{\"issue_url\":\"https://essi.upc.edu/jira/issue/999\"," +
                 "\"issue_id\":\"ID-999\"}";
+    }
+
+    @PostMapping("/api/milestones")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOMilestone> getMilestonesTest() {
+        List<DTOMilestone> milestoneList = new ArrayList<>();
+
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        milestoneList.add(new DTOMilestone(date.toString(), "Version 1.3", "Version 1.3 adding new features", "Release"));
+
+        return milestoneList;
     }
 
     @GetMapping("/api/forecastTechniques")
@@ -810,5 +827,16 @@ public class Util {
         } else {
             return "{\"userName\":\"" + authentication.getName() + "\"}";
         }
+    }
+
+    @GetMapping("api/milestones")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOMilestone> getMilestones (@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) {
+        Project project = projectRepository.findByExternalId(prj);
+        LocalDate localDate = null;
+        if (date != null) {
+            localDate = LocalDate.parse(date);
+        }
+        return backlog.getMilestones(project.getBacklogId(), localDate);
     }
 }
