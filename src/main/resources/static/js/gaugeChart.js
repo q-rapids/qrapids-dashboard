@@ -222,39 +222,41 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         }
 
         // Warnings
-        var message = "";
+        if (chartHyperlinked) {
+            var message = "";
 
-        var today = new Date();
-        today.setHours(0);
-        today.setMinutes(0);
-        today.setSeconds(0);
-        var millisecondsInOneDay = 86400000;
-        var millisecondsBetweenAssessmentAndToday = today.getTime() - siDate.getTime();
-        var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
-        if (oldAssessment) {
-            var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
-            message += "The assessment is " + daysOld + " days old.";
-        }
-
-        var mismatchDays = data[i].mismatchDays;
-        if (mismatchDays > 0) {
-            if (message !== "") {
-                message += "\n"
+            var today = new Date();
+            today.setHours(0);
+            today.setMinutes(0);
+            today.setSeconds(0);
+            var millisecondsInOneDay = 86400000;
+            var millisecondsBetweenAssessmentAndToday = today.getTime() - siDate.getTime();
+            var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
+            if (oldAssessment) {
+                var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
+                message += "The assessment is " + daysOld + " days old.";
             }
-            message += "The assessment of the factors and the strategic indicator has a difference of " + mismatchDays + " days.";
-        }
 
-        var missingFactors = data[i].missingFactors;
-        if (missingFactors.length > 0) {
-            var factors = missingFactors.length === 1 ? missingFactors[0] : [ missingFactors.slice(0, -1).join(", "), missingFactors[missingFactors.length - 1] ].join(" and ");
-            if (message !== "") {
-                message += "\n"
+            var mismatchDays = data[i].mismatchDays;
+            if (mismatchDays > 0) {
+                if (message !== "") {
+                    message += "\n"
+                }
+                message += "The assessment of the factors and the strategic indicator has a difference of " + mismatchDays + " days.";
             }
-            message += "The following factors were missing when the strategic indicator was assessed: " + factors + ".";
-        }
 
-        if (message !== ""){
-            addWarning(div, message);
+            var missingFactors = data[i].missingFactors;
+            if (missingFactors.length > 0) {
+                var factors = missingFactors.length === 1 ? missingFactors[0] : [missingFactors.slice(0, -1).join(", "), missingFactors[missingFactors.length - 1]].join(" and ");
+                if (message !== "") {
+                    message += "\n"
+                }
+                message += "The following factors were missing when the strategic indicator was assessed: " + factors + ".";
+            }
+
+            if (message !== "") {
+                addWarning(div, message);
+            }
         }
     }
 

@@ -65,16 +65,18 @@ function drawChart() {
         });
 
         //Warnings
-        var text = "";
-        warnings[i].forEach(function (message) {
-            if (text !== "") {
-                text += "\n"
-            }
-            text += message;
-        });
+        if (typeof warnings !== "undefined") {
+            var text = "";
+            warnings[i].forEach(function (message) {
+                if (text !== "") {
+                    text += "\n"
+                }
+                text += message;
+            });
 
-        if (text !== "") {
-            addWarning(div, text);
+            if (text !== "") {
+                addWarning(div, text);
+            }
         }
     }
 }
@@ -82,7 +84,7 @@ function drawChart() {
 function addWarning(div, message) {
     var warning = document.createElement("span");
     warning.setAttribute("class", "glyphicon glyphicon-alert");
-    warning.title = message
+    warning.title = message;
     warning.style.paddingLeft = "1em";
     warning.style.fontSize = "15px";
     warning.style.color = "yellow";

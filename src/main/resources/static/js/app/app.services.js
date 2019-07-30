@@ -477,31 +477,6 @@ app.controller('TablesCtrl', function($scope, $http) {
             url : url
         }).then(function mySuccess(response) {
             var data = [];
-            response.data.forEach(function (strategicIndicator) {
-                var siDate = new Date(strategicIndicator.date);
-                var today = new Date();
-                today.setHours(0);
-                today.setMinutes(0);
-                today.setSeconds(0);
-                var millisecondsInOneDay = 86400000;
-                var millisecondsBetweenAssessmentAndToday = today.getTime() - siDate.getTime();
-                var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
-                if (oldAssessment) {
-                    var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
-                    strategicIndicator.warning = "The assessment is " + daysOld + " days old. \n";
-                }
-
-                var mismatchDays = strategicIndicator.mismatchDays;
-                if (mismatchDays > 0) {
-                    strategicIndicator.warning += "The assessment of the factors and the strategic \nindicator has a difference of " + mismatchDays + " days. \n";
-                }
-
-                var missingFactors = strategicIndicator.missingFactors;
-                if (missingFactors.length > 0) {
-                    var factors = missingFactors.length === 1 ? missingFactors[0] : [ missingFactors.slice(0, -1).join(", "), missingFactors[missingFactors.length - 1] ].join(" and ");
-                    strategicIndicator.warning += "The following factors were missing when \nthe strategic indicator was assessed: " + factors;
-                }
-            });
             response.data.forEach(function (strategicIndicatorEval) {
                 strategicIndicatorEval.factors.forEach(function (factor) {
 
@@ -509,6 +484,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                         id: strategicIndicatorEval.id,
                         date: strategicIndicatorEval.date,
                         strategicIndicatorName: strategicIndicatorEval.name,
+                        strategicIndicatorValue: strategicIndicatorEval.value_description,
                         factorName: factor.name,
                         description: factor.description,
                         value: factor.value_description,

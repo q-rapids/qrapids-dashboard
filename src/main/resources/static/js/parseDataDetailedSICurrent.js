@@ -33,7 +33,7 @@ function getData() {
                 } else if (assessmentDate < siDate) {
                     assessmentDate = siDate;
                 }
-                titles.push(data[i].name);
+                titles.push(data[i].name + "<br/>" + data[i].value_description);
                 ids.push(data[i].id);
                 labels.push([]);
                 values.push([]);

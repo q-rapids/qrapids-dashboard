@@ -34,6 +34,12 @@
                         <span class="caret"></span>
                     </span>
                 </th>
+                <th ng-click="sortBy('strategicIndicatorValue')">SI Value
+                    <span ng-show="sortType == 'strategicIndicatorValue' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'strategicIndicatorValue' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
                 <th ng-click="sortBy('factorName')">Factor
                     <span ng-show="sortType == 'factorName' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'factorName' &amp;&amp; !sortReverse" class="dropup">
@@ -46,7 +52,7 @@
                         <span class="caret"></span>
                     </span>
                 </th>
-                <th ng-click="sortBy('value')">Current Value
+                <th ng-click="sortBy('value')">Factor Value
                     <span ng-show="sortType == 'value' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'value' &amp;&amp; !sortReverse" class="dropup">
                         <span class="caret"></span>
@@ -70,6 +76,7 @@
             <tr ng-repeat-start="d in data | filter:f | orderBy:sortType:sortReverse"></tr>
             <td id="date">{{d.date}}</td>
                     <td ng-click="getURL(d.id, d.strategicIndicatorName, null, '../QualityFactors/CurrentTable', false)">{{d.strategicIndicatorName}}</td>
+                    <td>{{d.strategicIndicatorValue}}</td>
                     <td>{{d.factorName}}</td>
                     <td>{{d.description}}</td>
                     <td>{{d.value}}</td>
