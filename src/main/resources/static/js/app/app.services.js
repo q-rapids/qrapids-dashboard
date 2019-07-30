@@ -526,18 +526,18 @@ app.controller('TablesCtrl', function($scope, $http) {
                     var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
                     if (oldAssessment) {
                         var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
-                        strategicIndicator.warning = "The assessment is " + daysOld + " days old. \n";
+                        strategicIndicator.warning = "The " + strategicIndicatorEval.name +  " assessment is " + daysOld + " days old. \n";
                     }
 
                     var mismatchDays = strategicIndicatorEval.mismatchDays;
                     if (mismatchDays > 0) {
-                        strategicIndicator.warning += "The assessment of the factors and the strategic \nindicator has a difference of " + mismatchDays + " days. \n";
+                        strategicIndicator.warning += "The assessment of the factors and the " + strategicIndicatorEval.name + " strategic \nindicator has a difference of " + mismatchDays + " days. \n";
                     }
 
                     var missingFactors = strategicIndicatorEval.missingFactors;
                     if (missingFactors.length > 0) {
                         var factors = missingFactors.length === 1 ? missingFactors[0] : [ missingFactors.slice(0, -1).join(", "), missingFactors[missingFactors.length - 1] ].join(" and ");
-                        strategicIndicator.warning += "The following factors were missing when \nthe strategic indicator was assessed: " + factors;
+                        strategicIndicator.warning += "The following factors were missing when \nthe " + strategicIndicatorEval.name + " strategic indicator was assessed: " + factors;
                     }
 
                     data.push(strategicIndicator);

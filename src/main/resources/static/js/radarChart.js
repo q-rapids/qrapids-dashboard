@@ -65,9 +65,17 @@ function drawChart() {
         });
 
         //Warnings
+        var text = "";
         warnings[i].forEach(function (message) {
-            addWarning(div, message);
-        })
+            if (text !== "") {
+                text += "\n"
+            }
+            text += message;
+        });
+
+        if (text !== "") {
+            addWarning(div, text);
+        }
     }
 }
 

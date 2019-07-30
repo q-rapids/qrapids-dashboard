@@ -58,20 +58,20 @@ function getData() {
                 var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
                 if (oldAssessment) {
                     var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
-                    var message = "The assessment is " + daysOld + " days old";
+                    var message = "The assessment is " + daysOld + " days old.";
                     messages.push(message)
                 }
 
                 var mismatchDays = data[i].mismatchDays;
                 if (mismatchDays > 0) {
-                    var message = "The assessment of the factors and the strategic indicator has a difference of " + mismatchDays + " days";
+                    var message = "The assessment of the factors and the strategic indicator has a difference of " + mismatchDays + " days.";
                     messages.push(message);
                 }
 
                 var missingFactors = data[i].missingFactors;
                 if (missingFactors.length > 0) {
                     var factors = missingFactors.length === 1 ? missingFactors[0] : [ missingFactors.slice(0, -1).join(", "), missingFactors[missingFactors.length - 1] ].join(" and ");
-                    var message = "The following factors were missing when the strategic indicator was assessed: " + factors;
+                    var message = "The following factors were missing when the strategic indicator was assessed: " + factors + ".";
                     messages.push(message);
                 }
 
