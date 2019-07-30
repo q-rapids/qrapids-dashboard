@@ -85,7 +85,7 @@ function getQualityModel () {
     jQuery.ajax({
         dataType: "json",
         type: "GET",
-        url : "../api/qualityModel",
+        url : "../api/strategicIndicators/qualityModel",
         async: false,
         success: function (data) {
             data.forEach(function (strategicIndicator) {

@@ -1,5 +1,6 @@
 var timeFormat = 'YYYY-MM-DD';
 var config = [];
+var charts = [];
 
 var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)', 'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
 var decisionIgnoreColor = 'rgb(189,0,0)';
@@ -314,7 +315,110 @@ function drawChart() {
         document.getElementById("chartContainer").appendChild(div).appendChild(ctx);
         div.appendChild(p).appendChild(a);
         ctx.getContext("2d");
-        window.myLine = new Chart(ctx, config[i]);  //draw chart
+
+        var chart = new Chart(ctx, config[i]);
+        charts.push(chart);
+        window.myLine = chart;  //draw chart
     }
+
+    var fit = sessionStorage.getItem("fitToContent");
+    if (fit === "true") {
+        $("#fitToContent").prop("checked", true);
+        fitToContent();
+    } else {
+        $("#fitToContent").prop("checked", false);
+        normalRange();
+    }
+}
+
+function getMax (datasets) {
+    var max = 0;
+    for(var i = 0; i < datasets.length; i++) {
+        var dataset = datasets[i];
+        if(datasets[i].hidden) {
+            continue;
+        }
+        dataset.data.forEach(function(d) {
+            if(d.y > max) {
+                max = d.y
+            }
+        });
+    }
+    return max;
+}
+
+function getMin (datasets) {
+    var min = 1;
+    for(var i = 0; i < datasets.length; i++) {
+        var dataset = datasets[i];
+        if(datasets[i].hidden) {
+            continue;
+        }
+        dataset.data.forEach(function(d) {
+            if(d.y < min) {
+                min = d.y
+            }
+        });
+    }
+    return min;
+}
+
+$("#fitToContent").change(function () {
+    if ($(this).is(":checked")) {
+        sessionStorage.setItem("fitToContent", "true");
+        fitToContent();
+    } else {
+        sessionStorage.setItem("fitToContent", "false");
+        normalRange();
+    }
+});
+
+
+
+function fitToContent() {
+    charts.forEach(function (chart) {
+        console.log(chart);
+        var max = getMax(chart.config.data.datasets);
+        var min = getMin(chart.config.data.datasets);
+        if (max === min) {
+            max += 0.001;
+            min -= 0.001;
+        }
+        chart.config.options.scales.yAxes[0].ticks.max = max;
+        chart.config.options.scales.yAxes[0].ticks.min = min;
+
+        chart.config.options.legend.onClick = function (e, legendItem) {
+            var index = legendItem.index;
+            var c = this.chart;
+            c.data.datasets[index].hidden = !c.data.datasets[index].hidden;
+            var max = getMax(c.data.datasets);
+            var min = getMin(c.data.datasets);
+            if (max === min) {
+                max += 0.001;
+                min -= 0.001;
+            }
+            c.options.scales.yAxes[0].ticks.max = max;
+            c.options.scales.yAxes[0].ticks.min = min;
+            c.update();
+        };
+
+        chart.update();
+    });
+}
+
+function normalRange() {
+    charts.forEach(function (chart) {
+        chart.config.options.scales.yAxes[0].ticks.max = 1.2;
+        chart.config.options.scales.yAxes[0].ticks.min = 0;
+
+        chart.config.options.legend.onClick = function(e, legendItem) {
+            var index = legendItem.index;
+            var chart = this.chart;
+            chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+            chart.update();
+        };
+
+        chart.update();
+    });
 }
 
