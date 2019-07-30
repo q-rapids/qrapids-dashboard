@@ -710,6 +710,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Errors in the forecasting</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -718,8 +728,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 791
 Content-Type: application/json;charset=UTF-8
+Content-Length: 840
 
 [ {
   "id" : "blocking",
@@ -755,7 +765,9 @@ Content-Type: application/json;charset=UTF-8
   "categories_description" : "[Good (0,67), Neutral (0,33), Bad (0,00)]",
   "hasBN" : false,
   "hasFeedback" : false,
-  "forecastingError" : null
+  "forecastingError" : null,
+  "mismatchDays" : 0,
+  "missingFactors" : null
 } ]</code></pre>
 </div>
 </div>
@@ -949,6 +961,16 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Errors in the forecasting</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -957,7 +979,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 787
+Content-Length: 836
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -994,7 +1016,9 @@ Content-Type: application/json;charset=UTF-8
   "categories_description" : "[Good (0,67), Neutral (0,33), Bad (0,00)]",
   "hasBN" : false,
   "hasFeedback" : false,
-  "forecastingError" : null
+  "forecastingError" : null,
+  "mismatchDays" : 0,
+  "missingFactors" : null
 }</code></pre>
 </div>
 </div>
@@ -1174,6 +1198,16 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Errors in the forecasting</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1182,8 +1216,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 791
 Content-Type: application/json;charset=UTF-8
+Content-Length: 840
 
 [ {
   "id" : "blocking",
@@ -1219,7 +1253,9 @@ Content-Type: application/json;charset=UTF-8
   "categories_description" : "[Good (0,67), Neutral (0,33), Bad (0,00)]",
   "hasBN" : false,
   "hasFeedback" : false,
-  "forecastingError" : null
+  "forecastingError" : null,
+  "mismatchDays" : 0,
+  "missingFactors" : null
 } ]</code></pre>
 </div>
 </div>
@@ -1399,6 +1435,16 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Errors in the forecasting</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1407,7 +1453,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 788
+Content-Length: 837
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -1444,7 +1490,9 @@ Content-Type: application/json;charset=UTF-8
   "categories_description" : "[Good (0,67), Neutral (0,33), Bad (0,00)]",
   "hasBN" : false,
   "hasFeedback" : false,
-  "forecastingError" : null
+  "forecastingError" : null,
+  "mismatchDays" : 0,
+  "missingFactors" : null
 } ]</code></pre>
 </div>
 </div>
@@ -1516,6 +1564,36 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator assessment date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors that compose the strategic indicator</p></td>
@@ -1583,12 +1661,20 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 660
 Content-Type: application/json;charset=UTF-8
-Content-Length: 485
 
 [ {
   "id" : "blocking",
   "name" : "Blocking",
+  "date" : [ 2019, 7, 7 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0,80)",
+  "mismatchDays" : 0,
+  "missingFactors" : null,
   "factors" : [ {
     "id" : "blockingcode",
     "name" : "Blocking code",
@@ -1703,6 +1789,36 @@ Content-Length: 485
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator assessment date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors that compose the strategic indicator</p></td>
@@ -1770,12 +1886,20 @@ Content-Length: 485
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 660
 Content-Type: application/json;charset=UTF-8
-Content-Length: 485
 
 [ {
   "id" : "blocking",
   "name" : "Blocking",
+  "date" : [ 2019, 7, 7 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0,80)",
+  "mismatchDays" : 0,
+  "missingFactors" : null,
   "factors" : [ {
     "id" : "blockingcode",
     "name" : "Blocking code",
@@ -1876,6 +2000,36 @@ Content-Length: 485
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator assessment date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors that compose the strategic indicator</p></td>
@@ -1943,12 +2097,20 @@ Content-Length: 485
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 660
 Content-Type: application/json;charset=UTF-8
-Content-Length: 485
 
 [ {
   "id" : "blocking",
   "name" : "Blocking",
+  "date" : [ 2019, 7, 7 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0,80)",
+  "mismatchDays" : 0,
+  "missingFactors" : null,
   "factors" : [ {
     "id" : "blockingcode",
     "name" : "Blocking code",
@@ -2071,6 +2233,36 @@ Content-Length: 485
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator assessment date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors that compose the strategic indicator</p></td>
@@ -2138,12 +2330,20 @@ Content-Length: 485
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 660
 Content-Type: application/json;charset=UTF-8
-Content-Length: 485
 
 [ {
   "id" : "blocking",
   "name" : "Blocking",
+  "date" : [ 2019, 7, 7 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0,80)",
+  "mismatchDays" : 0,
+  "missingFactors" : null,
   "factors" : [ {
     "id" : "blockingcode",
     "name" : "Blocking code",
@@ -2244,6 +2444,36 @@ Content-Length: 485
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator assessment date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors that compose the strategic indicator</p></td>
@@ -2311,12 +2541,20 @@ Content-Length: 485
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 468
+Content-Length: 643
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "blocking",
   "name" : "Blocking",
+  "date" : [ 2019, 7, 7 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0,80)",
+  "mismatchDays" : 0,
+  "missingFactors" : null,
   "factors" : [ {
     "id" : "blockingcode",
     "name" : "Blocking code",
@@ -2431,6 +2669,36 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator assessment date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factors that compose the strategic indicator</p></td>
@@ -2498,12 +2766,20 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 468
+Content-Length: 643
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "blocking",
   "name" : "Blocking",
+  "date" : [ 2019, 7, 7 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0,80)",
+  "mismatchDays" : 0,
+  "missingFactors" : null,
   "factors" : [ {
     "id" : "blockingcode",
     "name" : "Blocking code",
@@ -3188,6 +3464,16 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Errors in the forecasting</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3196,8 +3482,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 806
 Content-Type: application/json;charset=UTF-8
+Content-Length: 855
 
 [ {
   "id" : "processperformance",
@@ -3233,7 +3519,9 @@ Content-Type: application/json;charset=UTF-8
   "categories_description" : "",
   "hasBN" : false,
   "hasFeedback" : false,
-  "forecastingError" : null
+  "forecastingError" : null,
+  "mismatchDays" : 0,
+  "missingFactors" : null
 } ]</code></pre>
 </div>
 </div>
@@ -3667,7 +3955,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 26 ],
+    "date" : [ 2019, 7, 31 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -3854,7 +4142,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 26 ],
+    "date" : [ 2019, 7, 31 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4019,7 +4307,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 26 ],
+    "date" : [ 2019, 7, 31 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4206,7 +4494,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 26 ],
+    "date" : [ 2019, 7, 31 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4399,7 +4687,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 26 ],
+    "date" : [ 2019, 7, 31 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -4620,7 +4908,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 26 ],
+    "date" : [ 2019, 7, 31 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -4773,12 +5061,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2019-07-26"
+  "formattedDate" : "2019-07-31"
 } ]</code></pre>
 </div>
 </div>
@@ -4941,12 +5229,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2019-07-26"
+  "formattedDate" : "2019-07-31"
 }</code></pre>
 </div>
 </div>
@@ -5125,12 +5413,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2019-07-26"
+  "formattedDate" : "2019-07-31"
 } ]</code></pre>
 </div>
 </div>
@@ -5428,7 +5716,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5596,7 +5884,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5764,7 +6052,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5918,7 +6206,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6094,7 +6382,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6270,7 +6558,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6444,7 +6732,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -6646,7 +6934,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 26 ],
+  "date" : [ 2019, 7, 31 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -6957,7 +7245,7 @@ Content-Length: 245
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1564153202739,
+  "date" : 1564525148718,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -7753,7 +8041,7 @@ Content-Length: 400
 
 {
   "id" : 3,
-  "date" : 1564153202345,
+  "date" : 1564525148418,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -7942,7 +8230,7 @@ Content-Length: 664
 
 [ {
   "id" : 3,
-  "date" : 1564153202633,
+  "date" : 1564525148638,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -7957,7 +8245,7 @@ Content-Length: 664
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1564153202633,
+    "date" : 1564525148638,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -8101,7 +8389,7 @@ Content-Length: 400
 
 {
   "id" : 3,
-  "date" : 1564153203018,
+  "date" : 1564525148936,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8842,7 +9130,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "siId" : 1,
-  "date" : 1564153204913,
+  "date" : 1564525149921,
   "author" : null,
   "appUser" : null,
   "newvalue" : 0.75,
@@ -10008,6 +10296,16 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Errors in the forecasting</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -10016,8 +10314,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 791
 Content-Type: application/json;charset=UTF-8
+Content-Length: 840
 
 [ {
   "id" : "blocking",
@@ -10053,7 +10351,9 @@ Content-Type: application/json;charset=UTF-8
   "categories_description" : "[Good (0,67), Neutral (0,33), Bad (0,00)]",
   "hasBN" : false,
   "hasFeedback" : false,
-  "forecastingError" : null
+  "forecastingError" : null,
+  "mismatchDays" : 0,
+  "missingFactors" : null
 } ]</code></pre>
 </div>
 </div>
@@ -10212,6 +10512,16 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Errors in the forecasting</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].missingFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Factors without assessment</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -10220,7 +10530,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 902
+Content-Length: 955
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -10259,7 +10569,9 @@ Content-Type: application/json;charset=UTF-8
     "categories_description" : "[Good (0,67), Neutral (0,33), Bad (0,00)]",
     "hasBN" : false,
     "hasFeedback" : false,
-    "forecastingError" : null
+    "forecastingError" : null,
+    "mismatchDays" : 0,
+    "missingFactors" : null
   } ]
 } ]</code></pre>
 </div>
@@ -10323,7 +10635,7 @@ Content-Length: 26
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-07-26 17:01:08 +0200
+Last updated 2019-07-26 17:44:37 +0200
 </div>
 </div>
 </body>
