@@ -215,6 +215,8 @@ public class QMAStrategicIndicators {
                             categories.toString(),
                             hasBN);
                     dtoStrategicIndicatorEvaluation.setHasFeedback(hasFeedback);
+                    dtoStrategicIndicatorEvaluation.setMismatchDays(evaluation.getMismatchDays());
+                    dtoStrategicIndicatorEvaluation.setMissingFactors(evaluation.getMissingElements());
                     si.add(dtoStrategicIndicatorEvaluation);
                 } else {
                     DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
@@ -228,6 +230,8 @@ public class QMAStrategicIndicators {
                             categories.toString(),
                             hasBN);
                     dtoStrategicIndicatorEvaluation.setHasFeedback(hasFeedback);
+                    dtoStrategicIndicatorEvaluation.setMismatchDays(evaluation.getMismatchDays());
+                    dtoStrategicIndicatorEvaluation.setMissingFactors(evaluation.getMissingElements());
                     si.add(dtoStrategicIndicatorEvaluation);
                 }
             }

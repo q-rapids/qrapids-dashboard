@@ -2106,6 +2106,8 @@ public class UtilTest {
                 .andExpect(jsonPath("$[0].hasBN", is(false)))
                 .andExpect(jsonPath("$[0].hasFeedback", is(false)))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andDo(document("si/simulation",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -2152,7 +2154,11 @@ public class UtilTest {
                                 fieldWithPath("[].hasFeedback")
                                         .description("Does the strategic indicator have any feedback"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Errors in the forecasting"))
+                                        .description("Errors in the forecasting"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"))
                 ));
 
         // Verify mock interactions
