@@ -1,4 +1,6 @@
 var isSi = false;
+var isdsi = false;
+var isqf = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
@@ -8,23 +10,26 @@ if (getParameterByName('id').length !== 0) {
 }
 
 //initialize data vectors
-var text = [];
-var dades = [];
-var lower80 = [];
-var lower95 = [];
-var upper80 = [];
-var upper95 = [];
+var texts = [];
+var labels = [];
+var value = [];
+//var lower80 = [];
+//var lower95 = [];
+//var upper80 = [];
+//var upper95 = [];
 var errors = [];
+var categories = [];
 
 function getData() {
     document.getElementById("loader").style.display = "block";
     document.getElementById("chartContainer").style.display = "none";
-    text = [];
-    dades = [];
-    lower80 = [];
-    lower95 = [];
-    upper80 = [];
-    upper95 = [];
+    texts = [];
+    labels = [];
+    value = [];
+    //lower80 = [];
+    //lower95 = [];
+    //upper80 = [];
+    //upper95 = [];
     errors = [];
     var technique = $("#selectedTechnique").text();
     var date1 = new Date($('#datepickerFrom').val());
@@ -48,31 +53,33 @@ function getData() {
             success: function (data) {
                 j = 0;
                 var line = [];
-                var line80l = [];
-                var line80u = [];
-                var line95l = [];
-                var line95u = [];
+                //var line80l = [];
+                //var line80u = [];
+                //var line95l = [];
+                //var line95u = [];
                 if (data[j]) {
                     last = data[j].id;
-                    text.push(data[j].name);
-                    errors.push(data[j].forecastingError);
+                    texts.push(data[j].name);
+                    labels.push([data[j].name]);
+                    errors.push([data[j].forecastingError]);
                 }
                 while (data[j]) {
                     //check if we are still on the same metric
                     if (data[j].id !== last) {
-                        dades.push(line);
-                        lower80.push(line80l);
-                        upper80.push(line80u);
-                        lower95.push(line95l);
-                        upper95.push(line95u);
-                        errors.push(data[j].forecastingError);
+                        value.push([line]);
+                        //lower80.push(line80l);
+                        //upper80.push(line80u);
+                        //lower95.push(line95l);
+                        //upper95.push(line95u);
                         line = [];
-                        line80l = [];
-                        line80u = [];
-                        line95l = [];
-                        line95u = [];
+                        //line80l = [];
+                        //line80u = [];
+                        //line95l = [];
+                        //line95u = [];
                         last = data[j].id;
-                        text.push(data[j].name);
+                        texts.push(data[j].name);
+                        labels.push([data[j].name]);
+                        errors.push([data[j].forecastingError]);
                     }
                     //push date and value to line vector
                     if (!isNaN(data[j].value)) {
@@ -81,36 +88,37 @@ function getData() {
                                 x: data[j].date,
                                 y: data[j].value
                             });
-                            line80l.push({
-                                x: data[j].date,
-                                y: data[j].confidence80.second
-                            });
-                            line80u.push({
-                                x: data[j].date,
-                                y: data[j].confidence80.first
-                            });
-                            line95l.push({
-                                x: data[j].date,
-                                y: data[j].confidence95.second
-                            });
-                            line95u.push({
-                                x: data[j].date,
-                                y: data[j].confidence95.first
-                            });
+                            // line80l.push({
+                            //     x: data[j].date,
+                            //     y: data[j].confidence80.second
+                            // });
+                            // line80u.push({
+                            //     x: data[j].date,
+                            //     y: data[j].confidence80.first
+                            // });
+                            // line95l.push({
+                            //     x: data[j].date,
+                            //     y: data[j].confidence95.second
+                            // });
+                            // line95u.push({
+                            //     x: data[j].date,
+                            //     y: data[j].confidence95.first
+                            // });
                         }
                     }
                     ++j;
                 }
                 //push line vector to values vector for the last metric
                 if (data[j - 1]) {
-                    dades.push(line);
-                    lower80.push(line80l);
-                    upper80.push(line80u);
-                    lower95.push(line95l);
-                    upper95.push(line95u);
+                    value.push([line]);
+                    // lower80.push(line80l);
+                    // upper80.push(line80u);
+                    // lower95.push(line95l);
+                    // upper95.push(line95u);
                 }
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("chartContainer").style.display = "block";
+                getMetricsCategories();
                 drawChart();
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -120,7 +128,23 @@ function getData() {
             }
         });
     }
-    console.log(dades);
-    console.log(text);
+    console.log(value);
+    console.log(texts);
 
 }
+
+function getMetricsCategories () {
+    jQuery.ajax({
+        url: "../api/metrics/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
+            drawChart();
+        }
+    });
+}
+
+window.onload = function() {
+    getData();
+};

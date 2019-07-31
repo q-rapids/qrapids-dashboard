@@ -27,6 +27,8 @@ public class DTOStrategicIndicatorEvaluation {
     private boolean hasBN;
     private boolean hasFeedback;
     private String forecastingError;
+    private int mismatchDays;
+    private List<String> missingFactors;
 
     /**
      * Constructor of the DTO of Strategic Indicators Evaluation
@@ -180,5 +182,21 @@ public class DTOStrategicIndicatorEvaluation {
 
     public void setForecastingError(String forecastingError) {
         this.forecastingError = forecastingError;
+    }
+
+    public int getMismatchDays() {
+        return mismatchDays;
+    }
+
+    public void setMismatchDays(int mismatchDays) {
+        this.mismatchDays = mismatchDays;
+    }
+
+    public List<String> getMissingFactors() {
+        return missingFactors;
+    }
+
+    public void setMissingFactors(List<String> missingFactors) {
+        this.missingFactors = missingFactors;
     }
 }

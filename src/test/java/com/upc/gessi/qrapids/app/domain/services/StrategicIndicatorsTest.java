@@ -153,6 +153,8 @@ public class StrategicIndicatorsTest {
         dtoFactorList.add(dtoFactor);
 
         dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicator(strategicIndicatorId, strategicIndicatorName, dtoFactorList);
+        dtoDetailedStrategicIndicator.setDate(date);
+        dtoDetailedStrategicIndicator.setValue(Pair.of(factorValue, "Good"));
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
     }
 
@@ -206,6 +208,8 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$[0].hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
                 .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andDo(document("si/current",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -250,7 +254,11 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].hasFeedback")
                                         .description("Does the strategic indicator have any feedback"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Errors in the forecasting"))
+                                        .description("Errors in the forecasting"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"))
                 ));
 
 
@@ -338,6 +346,8 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$.hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$.hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
                 .andExpect(jsonPath("$.forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andExpect(jsonPath("$.mismatchDays", is(0)))
+                .andExpect(jsonPath("$.missingFactors", is(nullValue())))
                 .andDo(document("si/single-current",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -385,7 +395,11 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("hasFeedback")
                                         .description("Does the strategic indicator have any feedback"),
                                 fieldWithPath("forecastingError")
-                                        .description("Errors in the forecasting"))
+                                        .description("Errors in the forecasting"),
+                                fieldWithPath("mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("missingFactors")
+                                        .description("Factors without assessment"))
                 ));
 
 
@@ -480,6 +494,8 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$[0].hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
                 .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andDo(document("si/historical",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -528,7 +544,11 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].hasFeedback")
                                         .description("Does the strategic indicator have any feedback"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Errors in the forecasting"))
+                                        .description("Errors in the forecasting"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"))
                 ));
 
 
@@ -599,6 +619,14 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedStrategicIndicator.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedStrategicIndicator.getName())))
+                .andExpect(jsonPath("$[0].date[0]", is(dtoDetailedStrategicIndicator.getDate().getYear())))
+                .andExpect(jsonPath("$[0].date[1]", is(dtoDetailedStrategicIndicator.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].date[2]", is(dtoDetailedStrategicIndicator.getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoDetailedStrategicIndicator.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].value.second", is(dtoDetailedStrategicIndicator.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].value_description", is(dtoDetailedStrategicIndicator.getValue_description())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors", hasSize(dtoDetailedStrategicIndicator.getFactors().size())))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactor.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactor.getName())))
@@ -624,6 +652,18 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator identifier"),
                                 fieldWithPath("[].name")
                                         .description("Strategic indicator name"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"),
                                 fieldWithPath("[].factors")
                                         .description("Quality factors that compose the strategic indicator"),
                                 fieldWithPath("[].factors[].id")
@@ -686,6 +726,14 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedStrategicIndicator.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedStrategicIndicator.getName())))
+                .andExpect(jsonPath("$[0].date[0]", is(dtoDetailedStrategicIndicator.getDate().getYear())))
+                .andExpect(jsonPath("$[0].date[1]", is(dtoDetailedStrategicIndicator.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].date[2]", is(dtoDetailedStrategicIndicator.getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoDetailedStrategicIndicator.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].value.second", is(dtoDetailedStrategicIndicator.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].value_description", is(dtoDetailedStrategicIndicator.getValue_description())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors", hasSize(dtoDetailedStrategicIndicator.getFactors().size())))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactor.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactor.getName())))
@@ -714,6 +762,18 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator identifier"),
                                 fieldWithPath("[].name")
                                         .description("Strategic indicator name"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"),
                                 fieldWithPath("[].factors")
                                         .description("Quality factors that compose the strategic indicator"),
                                 fieldWithPath("[].factors[].id")
@@ -782,6 +842,14 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedStrategicIndicator.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedStrategicIndicator.getName())))
+                .andExpect(jsonPath("$[0].date[0]", is(dtoDetailedStrategicIndicator.getDate().getYear())))
+                .andExpect(jsonPath("$[0].date[1]", is(dtoDetailedStrategicIndicator.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].date[2]", is(dtoDetailedStrategicIndicator.getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoDetailedStrategicIndicator.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].value.second", is(dtoDetailedStrategicIndicator.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].value_description", is(dtoDetailedStrategicIndicator.getValue_description())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors", hasSize(dtoDetailedStrategicIndicator.getFactors().size())))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactor.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactor.getName())))
@@ -811,6 +879,18 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator identifier"),
                                 fieldWithPath("[].name")
                                         .description("Strategic indicator name"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"),
                                 fieldWithPath("[].factors")
                                         .description("Quality factors that compose the strategic indicator"),
                                 fieldWithPath("[].factors[].id")
@@ -885,6 +965,14 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedStrategicIndicator.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedStrategicIndicator.getName())))
+                .andExpect(jsonPath("$[0].date[0]", is(dtoDetailedStrategicIndicator.getDate().getYear())))
+                .andExpect(jsonPath("$[0].date[1]", is(dtoDetailedStrategicIndicator.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].date[2]", is(dtoDetailedStrategicIndicator.getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoDetailedStrategicIndicator.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].value.second", is(dtoDetailedStrategicIndicator.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].value_description", is(dtoDetailedStrategicIndicator.getValue_description())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors", hasSize(dtoDetailedStrategicIndicator.getFactors().size())))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactor.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactor.getName())))
@@ -917,6 +1005,18 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator identifier"),
                                 fieldWithPath("[].name")
                                         .description("Strategic indicator name"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"),
                                 fieldWithPath("[].factors")
                                         .description("Quality factors that compose the strategic indicator"),
                                 fieldWithPath("[].factors[].id")
@@ -993,6 +1093,14 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedStrategicIndicator.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedStrategicIndicator.getName())))
+                .andExpect(jsonPath("$[0].date[0]", is(dtoDetailedStrategicIndicator.getDate().getYear())))
+                .andExpect(jsonPath("$[0].date[1]", is(dtoDetailedStrategicIndicator.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].date[2]", is(dtoDetailedStrategicIndicator.getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoDetailedStrategicIndicator.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].value.second", is(dtoDetailedStrategicIndicator.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].value_description", is(dtoDetailedStrategicIndicator.getValue_description())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors", hasSize(dtoDetailedStrategicIndicator.getFactors().size())))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactor.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactor.getName())))
@@ -1022,6 +1130,18 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator identifier"),
                                 fieldWithPath("[].name")
                                         .description("Strategic indicator name"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"),
                                 fieldWithPath("[].factors")
                                         .description("Quality factors that compose the strategic indicator"),
                                 fieldWithPath("[].factors[].id")
@@ -1075,6 +1195,14 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedStrategicIndicator.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedStrategicIndicator.getName())))
+                .andExpect(jsonPath("$[0].date[0]", is(dtoDetailedStrategicIndicator.getDate().getYear())))
+                .andExpect(jsonPath("$[0].date[1]", is(dtoDetailedStrategicIndicator.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].date[2]", is(dtoDetailedStrategicIndicator.getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoDetailedStrategicIndicator.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].value.second", is(dtoDetailedStrategicIndicator.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].value_description", is(dtoDetailedStrategicIndicator.getValue_description())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andExpect(jsonPath("$[0].factors", hasSize(dtoDetailedStrategicIndicator.getFactors().size())))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactor.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactor.getName())))
@@ -1107,6 +1235,18 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator identifier"),
                                 fieldWithPath("[].name")
                                         .description("Strategic indicator name"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"),
                                 fieldWithPath("[].factors")
                                         .description("Quality factors that compose the strategic indicator"),
                                 fieldWithPath("[].factors[].id")
@@ -1190,6 +1330,8 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$[0].hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
                 .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andDo(document("si/prediction",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1238,7 +1380,11 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].hasFeedback")
                                         .description("Does the strategic indicator have any feedback"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Errors in the forecasting"))
+                                        .description("Errors in the forecasting"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"))
                 ));
 
         // Verify mock interactions

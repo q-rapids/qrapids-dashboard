@@ -217,7 +217,32 @@ function getChosenProject(currentProjectId) {
     		
     		var saveBtnRow = document.createElement('div');
     		saveBtnRow.classList.add("productInfoRow");
-    		saveBtnRow.setAttribute('style', 'justify-content: flex-end');
+    		saveBtnRow.setAttribute('style', 'justify-content: space-between');
+
+			var milestonesBtn = document.createElement('button');
+			milestonesBtn.classList.add("btn");
+			milestonesBtn.classList.add("btn-primary");
+			milestonesBtn.setAttribute("id", "milestonesBtn");
+			milestonesBtn.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+			milestonesBtn.appendChild(document.createTextNode("Show milestones"));
+			milestonesBtn.onclick = function () {
+				jQuery.ajax({
+					url: "../api/milestones?prj=" + data.externalId,
+					type: "GET",
+					async: true,
+					success: function (milestones) {
+						if (milestones.length > 0) {
+							$("#milestonesItems").empty();
+							milestones.forEach(function (milestone) {
+								$("#milestonesItems").append('<tr class="milestoneItem"><td>' + milestone.date + '</td><td>' + milestone.type + '</td><td>' + milestone.name + '</td><td>' + milestone.description + '</td></tr>');
+							});
+							$("#milestonesModal").modal();
+						}
+					}
+				})
+			};
+			saveBtnRow.appendChild(milestonesBtn);
+
     		var saveBtn = document.createElement('button');
     		saveBtn.classList.add("btn");
     		saveBtn.classList.add("btn-primary");
@@ -226,7 +251,7 @@ function getChosenProject(currentProjectId) {
     		saveBtn.appendChild(document.createTextNode("Save Project"));
     		saveBtn.onclick = saveProject;
     		saveBtnRow.appendChild(saveBtn);
-    		projectForm.appendChild(saveBtnRow);
+			projectForm.appendChild(saveBtnRow);
     		
     		var logoColumn = document.createElement('div');
     		logoColumn.classList.add("logoColumn");

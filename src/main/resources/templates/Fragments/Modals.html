@@ -207,5 +207,33 @@
         </div>
     </th:block>
 
+    <th:block th:fragment="milestonesModal">
+        <div class="modal fade" id="milestonesModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Milestones list</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table id="milestonesTable" class="milestonesTable">
+                            <thead>
+                                <tr class="milestoneItem">
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id = "milestonesItems">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
 </body>
 </html>

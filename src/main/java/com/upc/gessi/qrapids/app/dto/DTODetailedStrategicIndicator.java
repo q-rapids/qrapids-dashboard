@@ -1,5 +1,9 @@
 package com.upc.gessi.qrapids.app.dto;
 
+import com.upc.gessi.qrapids.app.domain.services.Util;
+import org.springframework.data.util.Pair;
+
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -13,6 +17,11 @@ public class DTODetailedStrategicIndicator {
     //class atributes
     private String id;
     private String name;
+    private LocalDate date;
+    private Pair<Float, String> value;
+    private String value_description;
+    private int mismatchDays;
+    private List<String> missingFactors;
     private List<DTOFactor> factors;
 
     /**
@@ -49,5 +58,44 @@ public class DTODetailedStrategicIndicator {
 
     public void setFactors(List<DTOFactor> factors) {
         this.factors = factors;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public Pair<Float, String> getValue() {
+        return value;
+    }
+
+    public void setValue(Pair<Float, String> value) {
+        this.value = value;
+        setValue_description(value);
+    }
+
+    public String getValue_description() { return value_description;}
+
+    private void setValue_description(Pair<Float, String> value) {
+        this.value_description = Util.buildDescriptiveLabelAndValue(value);
+    }
+
+    public int getMismatchDays() {
+        return mismatchDays;
+    }
+
+    public void setMismatchDays(int mismatchDays) {
+        this.mismatchDays = mismatchDays;
+    }
+
+    public List<String> getMissingFactors() {
+        return missingFactors;
+    }
+
+    public void setMissingFactors(List<String> missingFactors) {
+        this.missingFactors = missingFactors;
     }
 }

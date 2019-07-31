@@ -755,6 +755,8 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$[0].hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$[0].hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
                 .andExpect(jsonPath("$[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
                 .andDo(document("products/evaluation",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -799,7 +801,11 @@ public class ProductControllerTest {
                                 fieldWithPath("[].hasFeedback")
                                         .description("Does the strategic indicator have any feedback"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Errors in the forecasting"))
+                                        .description("Errors in the forecasting"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"))
                 ));
 
         // Verify mock interactions
@@ -901,6 +907,8 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$[0].second[0].hasBN", is(dtoStrategicIndicatorEvaluation.isHasBN())))
                 .andExpect(jsonPath("$[0].second[0].hasFeedback", is(dtoStrategicIndicatorEvaluation.isHasFeedback())))
                 .andExpect(jsonPath("$[0].second[0].forecastingError", is(dtoStrategicIndicatorEvaluation.getForecastingError())))
+                .andExpect(jsonPath("$[0].second[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].second[0].missingFactors", is(nullValue())))
                 .andDo(document("products/evaluation-detailed",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -949,7 +957,11 @@ public class ProductControllerTest {
                                 fieldWithPath("[].second[].hasFeedback")
                                         .description("Does the strategic indicator have any feedback"),
                                 fieldWithPath("[].second[].forecastingError")
-                                        .description("Errors in the forecasting"))
+                                        .description("Errors in the forecasting"),
+                                fieldWithPath("[].second[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].second[].missingFactors")
+                                        .description("Factors without assessment"))
                 ));
 
         // Verify mock interactions

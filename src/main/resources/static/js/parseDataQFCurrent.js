@@ -2,9 +2,9 @@ var isdsi = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
-    url = parseURLSimple("/api/strategicIndicators/qualityFactors/metrics/current");
+    url = parseURLSimple("../api/strategicIndicators/qualityFactors/metrics/current");
 } else {
-    url = parseURLSimple("/api/qualityFactors/metrics/current");
+    url = parseURLSimple("../api/qualityFactors/metrics/current");
 }
 
 //initialize data vectors
