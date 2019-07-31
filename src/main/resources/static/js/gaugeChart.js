@@ -76,7 +76,15 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         color = "#000";
     }
     var someSIhasBN = false;
+    var assessmentDate;
     for (i = 0; i < data.length; ++i) {
+        var siDate = new Date(data[i].date);
+        if (!assessmentDate) {
+            assessmentDate = siDate;
+        } else if (assessmentDate < siDate) {
+            assessmentDate = siDate;
+        }
+
         var div = document.createElement('div');
         div.id = container + "DivChart" + i;
         div.style.display = "inline-block";
@@ -212,9 +220,49 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
 
             if (data[i].hasBN) someSIhasBN = true
         }
+
+        // Warnings
+        if (chartHyperlinked) {
+            var message = "";
+
+            var today = new Date();
+            today.setHours(0);
+            today.setMinutes(0);
+            today.setSeconds(0);
+            var millisecondsInOneDay = 86400000;
+            var millisecondsBetweenAssessmentAndToday = today.getTime() - siDate.getTime();
+            var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
+            if (oldAssessment) {
+                var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
+                message += "The assessment is " + daysOld + " days old.";
+            }
+
+            var mismatchDays = data[i].mismatchDays;
+            if (mismatchDays > 0) {
+                if (message !== "") {
+                    message += "\n"
+                }
+                message += "The assessment of the factors and the strategic indicator has a difference of " + mismatchDays + " days.";
+            }
+
+            var missingFactors = data[i].missingFactors;
+            if (missingFactors.length > 0) {
+                var factors = missingFactors.length === 1 ? missingFactors[0] : [missingFactors.slice(0, -1).join(", "), missingFactors[missingFactors.length - 1]].join(" and ");
+                if (message !== "") {
+                    message += "\n"
+                }
+                message += "The following factors were missing when the strategic indicator was assessed: " + factors + ".";
+            }
+
+            if (message !== "") {
+                addWarning(div, message);
+            }
+        }
     }
 
     if (!someSIhasBN) $("#feedbackButton").hide();
+
+    $("#assessmentDate").text(assessmentDate.toLocaleDateString());
 }
 
 function drawSimulationNeedle (container, width, height, color) {
@@ -275,4 +323,15 @@ function sortDataAlphabetically () {
     }
     data.sort(compare);
     console.log(data);
+}
+
+function addWarning(div, message) {
+    var warning = document.createElement("span");
+    warning.setAttribute("class", "glyphicon glyphicon-alert");
+    warning.title = message
+    warning.style.paddingLeft = "1em";
+    warning.style.fontSize = "15px";
+    warning.style.color = "yellow";
+    warning.style.textShadow = "-2px 0 2px black, 0 2px 2px black, 2px 0 2px black, 0 -2px 2px black";
+    div.append(warning);
 }
