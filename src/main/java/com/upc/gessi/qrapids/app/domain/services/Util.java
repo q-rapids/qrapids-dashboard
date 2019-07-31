@@ -796,6 +796,14 @@ public class Util {
         date = date.plusDays(3);
         milestoneList.add(new DTOMilestone(date.toString(), "Version 1.3", "Version 1.3 adding new features", "Release"));
 
+        LocalDate date2 = LocalDate.now();
+        date2 = date2.plusDays(20);
+        milestoneList.add(new DTOMilestone(date2.toString(), "Version 1.4", "Version 1.4 adding new features", "Release"));
+
+        LocalDate date3 = LocalDate.now();
+        date3 = date3.plusDays(40);
+        milestoneList.add(new DTOMilestone(date3.toString(), "Version 1.5", "Version 1.5 adding new features", "Release"));
+
         return milestoneList;
     }
 
@@ -833,10 +841,14 @@ public class Util {
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMilestone> getMilestones (@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) {
         Project project = projectRepository.findByExternalId(prj);
-        LocalDate localDate = null;
-        if (date != null) {
-            localDate = LocalDate.parse(date);
+        if (project != null) {
+            LocalDate localDate = null;
+            if (date != null) {
+                localDate = LocalDate.parse(date);
+            }
+            return backlog.getMilestones(project.getBacklogId(), localDate);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project does not exist");
         }
-        return backlog.getMilestones(project.getBacklogId(), localDate);
     }
 }

@@ -214,7 +214,17 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         }
     }
 
-    if (!someSIhasBN) $("#feedbackButton").hide();
+    if (!someSIhasBN && currentURL.search("/CurrentChart") !== -1) {
+        var feedbackBtn= document.createElement("button");
+        feedbackBtn.id = "buttonFeedback";
+        feedbackBtn.classList.add('btn');
+        feedbackBtn.classList.add('btn-default');
+        feedbackBtn.onclick = function () {
+            location.href = "Feedback";
+        };
+        feedbackBtn.appendChild(document.createTextNode("Feedback"));
+        document.getElementById("projectSelectorDiv").appendChild(feedbackBtn);
+    }
 }
 
 function drawSimulationNeedle (container, width, height, color) {

@@ -13,9 +13,8 @@
     <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
     <br/>
     <div style="text-align: right; padding-right: 2em;">
-        <button id="feedbackButton" type="button" class="btn btn-default" onclick="location.href='Feedback';">Feedback</button>
-        <ul class="post-it">
-            <li>
+        <ul id="postIt" class="post-it" style="display: none; cursor: pointer">
+            <li onclick="getMilestonesList()">
                 <span id="milestone"></span>
             </li>
         </ul>
@@ -25,6 +24,7 @@
     <br/>
     <div id="gaugeChart" class="container" style="text-align:center;"></div>
     <br/>
+    <div th:replace="Fragments/Modals :: milestonesModal"></div>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
 <script type="text/javascript" src="../../static/js/gaugeChart.js" th:src="@{/js/gaugeChart.js}"></script>
