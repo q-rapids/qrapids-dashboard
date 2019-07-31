@@ -18,6 +18,7 @@ var value = [];
 //var upper80 = [];
 //var upper95 = [];
 var errors = [];
+var categories = [];
 
 function getData() {
     document.getElementById("loader").style.display = "block";
@@ -117,6 +118,7 @@ function getData() {
                 }
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("chartContainer").style.display = "block";
+                getMetricsCategories();
                 drawChart();
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -129,6 +131,18 @@ function getData() {
     console.log(value);
     console.log(texts);
 
+}
+
+function getMetricsCategories () {
+    jQuery.ajax({
+        url: "../api/metrics/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
+            drawChart();
+        }
+    });
 }
 
 window.onload = function() {

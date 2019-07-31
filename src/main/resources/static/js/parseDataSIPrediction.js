@@ -9,6 +9,8 @@ var labels = [];
 var value = [];
 var errors = [];
 
+var categories = [];
+
 function getData() {
     document.getElementById("loader").style.display = "block";
     document.getElementById("chartContainer").style.display = "none";
@@ -45,6 +47,14 @@ function getData() {
                     labels.push([data[j].name]);
                     ids.push(data[j].id);
                     errors.push([data[j].forecastingError]);
+
+                    data[j].probabilities.forEach(function (category) {
+                        categories.push({
+                            name: category.label,
+                            color: category.color,
+                            upperThreshold: category.upperThreshold
+                        });
+                    });
                 }
                 while (data[j]) {
                     //check if we are still on the same Strategic Indicator
