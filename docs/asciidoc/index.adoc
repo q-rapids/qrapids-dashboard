@@ -823,3 +823,8 @@ operation::products/evaluation-detailed[snippets='path-parameters,curl-request,r
 === Get forecasting techniques
 
 operation::forecast/techniques[snippets='curl-request,response-fields,http-response']
+
+
+=== Get project milestones
+
+operation::milestones/get-from-date[snippets='request-parameters,curl-request,response-fields,http-response']
