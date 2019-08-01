@@ -20,13 +20,16 @@ import java.util.*;
 @Component
 public class Backlog {
 
-    @Value("${backlog.url}")
-    private String url;
+    @Value("${backlog.newIssue.url}")
+    private String newIssueUrl;
+
+    @Value("${backlog.milestones.url}")
+    private String milestonesUrl;
 
     public QualityRequirement postNewQualityRequirement (QualityRequirement qualityRequirement) {
-        if (url != null && qualityRequirement.getProject().getBacklogId() != null) {
+        if (newIssueUrl != null && qualityRequirement.getProject().getBacklogId() != null) {
             RestTemplate restTemplate = new RestTemplate();
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/createIssue");
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(newIssueUrl);
 
             Map<String, String> params = new HashMap<>();
             params.put("issue_summary", qualityRequirement.getRequirement());
@@ -53,19 +56,15 @@ public class Backlog {
 
     public List<DTOMilestone> getMilestones (String backlogProjectId, LocalDate dateFrom) {
         List<DTOMilestone> dtoMilestonesList = new ArrayList<>();
-        if (url != null) {
+        if (milestonesUrl != null) {
             RestTemplate restTemplate = new RestTemplate();
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/milestones");
-
-            Map<String, String> params = new HashMap<>();
-            params.put("project_id", backlogProjectId);
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(milestonesUrl)
+                    .queryParam("project_id", backlogProjectId);
             if (dateFrom != null) {
-                params.put("date_from", dateFrom.toString());
+                builder.queryParam("date_from", dateFrom.toString());
             }
 
-            HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(params);
-
-            ResponseEntity<String> responseEntity = restTemplate.postForEntity(builder.build().encode().toUri(), requestEntity, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.getForEntity(builder.build().encode().toUri(), String.class);
 
             HttpStatus statusCode = responseEntity.getStatusCode();
             if (statusCode == HttpStatus.OK || statusCode == HttpStatus.CREATED) {

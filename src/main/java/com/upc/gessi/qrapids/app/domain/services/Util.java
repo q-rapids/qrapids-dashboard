@@ -92,9 +92,6 @@ public class Util {
     @Value("${pabre.url}")
     private String pabreUrl;
 
-    @Value("${backlog.url}")
-    private String backlogUrl;
-
     @Value("${server.url}")
     private String serverUrl;
 
@@ -780,16 +777,16 @@ public class Util {
         return category.getColor();
     }
 
-    @PostMapping("/api/createIssue")
+    @PostMapping("/api/createIssueTest")
     @ResponseStatus(HttpStatus.OK)
     public String addToBacklogUrl() {
         return "{\"issue_url\":\"https://essi.upc.edu/jira/issue/999\"," +
                 "\"issue_id\":\"ID-999\"}";
     }
 
-    @PostMapping("/api/milestones")
+    @GetMapping("/api/milestonesTest")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMilestone> getMilestonesTest() {
+    public List<DTOMilestone> getMilestonesTest(@RequestParam("project_id") String projectId, @RequestParam(value = "date_from", required = false) String dateFrom) {
         List<DTOMilestone> milestoneList = new ArrayList<>();
 
         LocalDate date = LocalDate.now();
