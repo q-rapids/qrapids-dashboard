@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import javax.validation.Valid;
+import java.util.Optional;
+
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE_STRING;
 
 /**
@@ -103,19 +105,23 @@ public class HomeController {
 
         try{
             // Fetch user from db
-            AppUser update = this.userRepository.getOne( user.getId() );
+            Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
 
-            update.setEmail( user.getEmail() );
-            update.setAppuser_question( user.getAppuser_question() );
-            update.setQuestion( bCryptPasswordEncoder.encode( user.getQuestion() ) );
+            if (userOptional.isPresent()) {
+                AppUser userUpdate = userOptional.get();
+                userUpdate.setEmail(user.getEmail());
+                userUpdate.setAppuser_question(user.getAppuser_question());
+                userUpdate.setQuestion(bCryptPasswordEncoder.encode(user.getQuestion()));
 
-            // Password update
-            if (! "".equals( user.getPassword() ) )
-                update.setPassword( bCryptPasswordEncoder.encode( user.getPassword() ) );
+                // Password update
+                if (! "".equals( user.getPassword()))
+                    userUpdate.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
-            this.userRepository.save( update );
-            return "redirect:/home?success=User+is+ready";
-
+                this.userRepository.save(userUpdate);
+                return "redirect:/home?success=User+is+ready";
+            } else {
+                return "redirect:/home?error=User+not+found";
+            }
         } catch( Exception e ){
             return "redirect:/home?error=Something+went+worng";
         }

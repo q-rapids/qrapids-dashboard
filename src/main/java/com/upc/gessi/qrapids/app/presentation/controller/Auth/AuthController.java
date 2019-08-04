@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
+import java.util.Optional;
 
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE_STRING;
 
@@ -145,49 +146,39 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public ModelAndView resetPasswordValidation( @RequestParam("email") String email){
-
-        AppUser current = this.userRepository.findUserByEmail( email );
+        AppUser current = this.userRepository.findByEmail(email);
         if (current == null) {
-
             return new ModelAndView("redirect:/login?error=Email+does+not+exist");
-
         } else{
-
             ModelAndView view = new ModelAndView("Auth/Reset");
             view.addObject("appuser", current);
             view.addObject("questions", this.questionRepository.findAll());
             return view;
-
         }
-
     }
 
     @PostMapping("/reset-trigger")
     public String resetTraigger(@ModelAttribute(value = "appuser") @Valid AppUser user ){
+        Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
+        if (userOptional.isPresent()) {
+            AppUser userUpdate = userOptional.get();
+            System.out.println("FORM : " + user.toString());
+            System.out.println("ORIGIN : " + userUpdate.toString());
+            System.out.println(userUpdate.getAppuser_question().getId() == user.getAppuser_question().getId());
+            System.out.println(userUpdate.getAppuser_question().getId().equals( user.getAppuser_question().getId()));
 
-        AppUser update = this.userRepository.getOne( user.getId() );
-
-        System.out.println("FORM : " + user.toString());
-        System.out.println("ORIGIN : " + update.toString());
-        System.out.println(update.getAppuser_question().getId() == user.getAppuser_question().getId());
-        System.out.println(update.getAppuser_question().getId().equals( user.getAppuser_question().getId() ));
-
-        if ( update.getAppuser_question().getId().equals( user.getAppuser_question().getId() ) ){
-
-            if (bCryptPasswordEncoder.matches( user.getQuestion(), update.getQuestion() )){
-
-                update.setPassword( bCryptPasswordEncoder.encode( update.getEmail() ) );
-                this.userRepository.save( update );
-
-                return "redirect:/login?success=Password+restarted";
+            if (userUpdate.getAppuser_question().getId().equals( user.getAppuser_question().getId())){
+                if (bCryptPasswordEncoder.matches( user.getQuestion(), userUpdate.getQuestion() )){
+                    userUpdate.setPassword( bCryptPasswordEncoder.encode(userUpdate.getEmail()));
+                    this.userRepository.save(userUpdate);
+                    return "redirect:/login?success=Password+restarted";
+                }
+                return "redirect:/login?error=Security+question+is+incorrect";
             }
-
-            return "redirect:/login?error=Security+question+is+incorrect";
-
+            return "redirect:/login?error=Security+question+is+not+the+same+as+the+original";
+        } else {
+            return "redirect:/login?error=User+not+found";
         }
-
-        return "redirect:/login?error=Security+question+is+not+the+same+as+the+original";
-
     }
 
 

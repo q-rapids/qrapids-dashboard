@@ -1,7 +1,6 @@
-package com.upc.gessi.qrapids.app.database.repositories.AppUser;
+package com.upc.gessi.qrapids.app.config.security;
 
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
-import com.upc.gessi.qrapids.app.domain.repositories.AppUser.CustomUserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +13,7 @@ import javax.persistence.PersistenceContext;
 import static java.util.Collections.emptyList;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService, CustomUserRepository {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -34,14 +33,4 @@ public class UserDetailsServiceImpl implements UserDetailsService, CustomUserRep
 		return new org.springframework.security.core.userdetails.User(appUser.getUsername(), appUser.getPassword(), emptyList());
 	}
 
-	@Override
-	public AppUser findUserByEmail(String email) {
-		AppUser result = null;
-
-		result = this.entityManager.createQuery("FROM AppUser AS u WHERE u.email = :email", AppUser.class)
-				.setParameter("email", email)
-				.getSingleResult();
-
-		return result;
-	}
 }

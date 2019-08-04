@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.util.List;
+import java.util.Optional;
 
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE_STRING;
 
@@ -136,16 +137,21 @@ public class AppUserController {
 
         ModelAndView view = new ModelAndView("/AppUser/Update");
 
-        AppUser user = this.userRepository.getOne( id );
-        List<UserGroup> userGroups = this.userGroupRepository.findAll();
+        Optional<AppUser> userOptional = this.userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            AppUser user = userOptional.get();
 
-        view.addObject("userGroups", userGroups);
-        view.addObject( "questions", this.questionRepository.findAll());
-        view.addObject("defautlUserGroup", this.userGroupRepository.findDefaultUserGroup() );
-        view.addObject("appuser", user);
+            List<UserGroup> userGroups = this.userGroupRepository.findAll();
 
+            view.addObject("userGroups", userGroups);
+            view.addObject( "questions", this.questionRepository.findAll());
+            view.addObject("defautlUserGroup", this.userGroupRepository.findDefaultUserGroup() );
+            view.addObject("appuser", user);
 
-        return view;
+            return view;
+        } else {
+            return new ModelAndView("redirect:/home?error=User+not+found");
+        }
     }
 
     /**
@@ -155,35 +161,30 @@ public class AppUserController {
      */
     @PostMapping("/update")
     public String updateEntity(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
-
         try{
-            AppUser update = this.userRepository.getOne( user.getId() );
+            Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
+            if (userOptional.isPresent()) {
+                AppUser userUpdate = userOptional.get();
 
-            if (! "".equals(user.getEmail())  )
-                update.setEmail( user.getEmail() );
+                if (! "".equals(user.getEmail()))
+                    userUpdate.setEmail(user.getEmail());
+                if (!(user.getAppuser_question() == null))
+                    userUpdate.setAppuser_question(user.getAppuser_question());
+                if (!(user.getUserGroup() == null))
+                    userUpdate.setUserGroup(user.getUserGroup());
+                if (! "".equals( user.getQuestion()))
+                    userUpdate.setQuestion(user.getQuestion());
+                if (!(user.getPassword() == null || "".equals(user.getPassword())))
+                    userUpdate.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
-            if (! (user.getAppuser_question() == null))
-                update.setAppuser_question( user.getAppuser_question() );
-
-            if (! (user.getUserGroup() == null))
-                update.setUserGroup( user.getUserGroup() );
-
-            if (! "".equals( user.getQuestion() ))
-                update.setQuestion( user.getQuestion() );
-
-
-            if (! ( user.getPassword() == null || "".equals( user.getPassword()) ))
-                update.setPassword( bCryptPasswordEncoder.encode( user.getPassword() ) );
-
-            System.out.println(update.toString());
-            this.userRepository.save( update );
-
-            return "redirect:" + this.redirectTo + "?success=Success";
-
+                this.userRepository.save(userUpdate);
+                return "redirect:" + this.redirectTo + "?success=Success";
+            } else {
+                return "redirect:" + this.redirectTo + "?error=User+not+found";
+            }
         } catch( Exception e ){
             return "redirect:" + this.redirectTo + "?error=Something+went+wrong";
         }
-
     }
 
     /**
@@ -193,64 +194,55 @@ public class AppUserController {
      */
     @GetMapping("/{id}/delete")
     public ModelAndView showDeleteView(@PathVariable("id") Long id) {
-
         ModelAndView view = new ModelAndView("/AppUser/Delete");
-
         try {
-
-            AppUser user = this.userRepository.getOne( id );
-            view.addObject("id", user.getId() );
-            view.addObject("name", user.getUsername() );
-            view.addObject("appuser", user );
-
+            Optional<AppUser> userOptional = this.userRepository.findById(id);
+            if (userOptional.isPresent()) {
+                AppUser user = userOptional.get();
+                view.addObject("id", user.getId());
+                view.addObject("name", user.getUsername());
+                view.addObject("appuser", user);
+                return view;
+            } else {
+                view.addObject("errors", "User not found" );
+            }
         } catch ( Exception err ) {
             view.addObject("errors", "Error" );
         }
-
         return view;
-
     }
 
 
     @PostMapping("/delete")
     public String deleteEntity(@CookieValue(COOKIE_STRING) String token, @RequestParam("id") Long id, @RequestParam("name") String name ) {
 
-        AppUser user = this.userRepository.getOne( id );
+        Optional<AppUser> userOptional = this.userRepository.findById(id);
+        if(userOptional.isPresent()) {
+            AppUser user = userOptional.get();
+            // Is current user
+            AuthTools authTools = new AuthTools();
+            String username = authTools.getUserToken( token );
 
-        // Is current user
-        AuthTools authTools = new AuthTools();
-        String username = authTools.getUserToken( token );
+            if ( username.equals(user.getUsername()))
+                return "redirect:" + this.redirectTo + "?error=" + "You can not delete the current user administrator".replace(" ","+");
+            // Last admin user
+            if (this.userRepository.count() <= 1)
+                return "redirect:" + this.redirectTo + "?error=" + "The application needs one administrator user".replace(" ","+");
 
-        if ( username.equals(user.getUsername()))
-            return "redirect:" + this.redirectTo + "?error=" + "You can not delete the current user administrator".replace(" ","+");
-
-        // Last admin user
-        if (this.userRepository.count() <= 1)
-            return "redirect:" + this.redirectTo + "?error=" + "The application needs one administrator user".replace(" ","+");
-
-
-        String name_string = user.getUsername();
-
-        if (! name.equals( name_string )){
-
-            return "redirect:" + this.redirectTo + "?error=" + "Something went wrong".replace(" ","+");
-
-        } else {
-
-            try{
-
-                this.userRepository.delete( user );
-
-                return "redirect:" + this.redirectTo + "?success=" + "User deleted".replace(" ","+");
-
-            } catch( Exception e ){
-
-                return "redirect:" + this.redirectTo + "?error=" + "User can not be deleted".replace(" ","+");
-
+            String name_string = user.getUsername();
+            if (! name.equals( name_string )){
+                return "redirect:" + this.redirectTo + "?error=" + "Something went wrong".replace(" ","+");
+            } else {
+                try{
+                    this.userRepository.delete( user );
+                    return "redirect:" + this.redirectTo + "?success=" + "User deleted".replace(" ","+");
+                } catch( Exception e ){
+                    return "redirect:" + this.redirectTo + "?error=" + "User can not be deleted".replace(" ","+");
+                }
             }
-
+        } else {
+            return "redirect:" + this.redirectTo + "?error=" + "User not found".replace(" ","+");
         }
-
     }
 
     /**
@@ -260,20 +252,19 @@ public class AppUserController {
      */
     @RequestMapping(value = "/resetpassword", method = RequestMethod.POST)
     public String resetPassword(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
-
         try{
-            AppUser update = this.userRepository.getOne( user.getId() );
-
-            update.setPassword( bCryptPasswordEncoder.encode( update.getEmail() ) );
-
-            this.userRepository.save( update );
-
-            return "redirect:" + this.redirectTo + "?success=" + "Success".replace(" ","+");
-
+            Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
+            if (userOptional.isPresent()) {
+                AppUser userUpdate = userOptional.get();
+                userUpdate.setPassword(bCryptPasswordEncoder.encode(userUpdate.getEmail()));
+                this.userRepository.save(userUpdate);
+                return "redirect:" + this.redirectTo + "?success=" + "Success".replace(" ","+");
+            } else {
+                return "redirect:" + this.redirectTo + "?error=" + "User not found".replace(" ","+");
+            }
         } catch( Exception e ){
             return "redirect:" + this.redirectTo + "?error=" + "Error".replace(" ","+");
         }
-
     }
 
     /**
@@ -283,21 +274,20 @@ public class AppUserController {
      */
     @RequestMapping(value = "/updateadmin", method = RequestMethod.POST)
     public String updateAdminAccess(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
-
         try{
-            AppUser update = this.userRepository.getOne( user.getId() );
-
-            update.setAdmin(true);
-            update.setUserGroup(null);
-
-            this.userRepository.save( update );
-
-            return "redirect:" + this.redirectTo + "?success=" + "User updated".replace(" ","+");
-
-        } catch( Exception e ){
+            Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
+            if(userOptional.isPresent()) {
+                AppUser userUpdate = userOptional.get();
+                userUpdate.setAdmin(true);
+                userUpdate.setUserGroup(null);
+                this.userRepository.save(userUpdate);
+                return "redirect:" + this.redirectTo + "?success=" + "User updated".replace(" ","+");
+            } else {
+                return "redirect:" + this.redirectTo + "?error=" + "User not found".replace(" ","+");
+            }
+        } catch( Exception e ) {
             return "redirect:" + this.redirectTo + "?error=" + "Error".replace(" ","+");
         }
-
     }
 
     /**
@@ -307,21 +297,19 @@ public class AppUserController {
      */
     @RequestMapping(value = "/setusergroup", method = RequestMethod.POST)
     public String setUpUserGroup(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
-
         try{
-            AppUser update = this.userRepository.getOne( user.getId() );
-
-            update.setAdmin(false);
-
-            if (user.getUserGroup() == null)
-                update.setUserGroup(this.userGroupRepository.findDefaultUserGroup());
-
-            update.setUserGroup(user.getUserGroup());
-
-            this.userRepository.save( update );
-
-            return "redirect:" + this.redirectTo + "?success=User+was+updated";
-
+            Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
+            if (userOptional.isPresent()) {
+                AppUser userUpdate = userOptional.get();
+                userUpdate.setAdmin(false);
+                if (user.getUserGroup() == null)
+                    userUpdate.setUserGroup(this.userGroupRepository.findDefaultUserGroup());
+                userUpdate.setUserGroup(user.getUserGroup());
+                this.userRepository.save(userUpdate);
+                return "redirect:" + this.redirectTo + "?success=User+was+updated";
+            } else {
+                return "redirect:" + this.redirectTo + "?error=" + "User+not+found";
+            }
         } catch( Exception e ){
             return "redirect:" + this.redirectTo + "?error=" + e.toString();
         }
