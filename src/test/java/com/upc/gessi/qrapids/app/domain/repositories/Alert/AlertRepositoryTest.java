@@ -39,7 +39,7 @@ public class AlertRepositoryTest {
     public void findAlertById() {
         // Given
         Alert alert = new Alert();
-        alert = entityManager.persistAndFlush(alert);
+        entityManager.persistAndFlush(alert);
 
         // When
         Optional<Alert> alertFound = alertRepository.findById(alert.getId());
@@ -54,10 +54,10 @@ public class AlertRepositoryTest {
         // Given
         Alert alertNew = new Alert();
         alertNew.setStatus(AlertStatus.NEW);
-        alertNew = entityManager.persist(alertNew);
+        entityManager.persist(alertNew);
         Alert alertResolved = new Alert();
         alertResolved.setStatus(AlertStatus.RESOLVED);
-        alertResolved = entityManager.persistAndFlush(alertResolved);
+        entityManager.persistAndFlush(alertResolved);
 
         List<Long> alertIds = new ArrayList<>();
         alertIds.add(alertNew.getId());
@@ -77,25 +77,25 @@ public class AlertRepositoryTest {
     public void countByProject_IdAndStatus() {
         // Given
         Project project1 = new Project("test", "Test", null, null, true);
-        project1 = entityManager.persist(project1);
+        entityManager.persist(project1);
 
         Alert alert1 = new Alert();
         alert1.setProject(project1);
         alert1.setStatus(AlertStatus.NEW);
-        alert1 = entityManager.persist(alert1);
+        entityManager.persist(alert1);
 
         Alert alert2 = new Alert();
         alert2.setProject(project1);
         alert2.setStatus(AlertStatus.VIEWED);
-        alert2 = entityManager.persist(alert2);
+        entityManager.persist(alert2);
 
         Project project2 = new Project("test2", "Test 2", null, null, true);
-        project2 = entityManager.persist(project2);
+        entityManager.persist(project2);
 
         Alert alert3 = new Alert();
         alert3.setProject(project2);
         alert3.setStatus(AlertStatus.RESOLVED);
-        alert3 = entityManager.persistAndFlush(alert3);
+        entityManager.persistAndFlush(alert3);
 
         // When
         Long numberOfAlerts = alertRepository.countByProject_IdAndStatus(project1.getId(), AlertStatus.NEW);
@@ -109,34 +109,34 @@ public class AlertRepositoryTest {
     public void countByProject_IdAndReqAssociatIsTrueAndStatusEquals() {
         // Given
         Project project1 = new Project("test", "Test", null, null, true);
-        project1 = entityManager.persist(project1);
+        entityManager.persist(project1);
 
         Alert alert1 = new Alert();
         alert1.setProject(project1);
         alert1.setStatus(AlertStatus.NEW);
         alert1.setReqAssociat(false);
-        alert1 = entityManager.persist(alert1);
+        entityManager.persist(alert1);
 
         Alert alert2 = new Alert();
         alert2.setProject(project1);
         alert2.setStatus(AlertStatus.NEW);
         alert2.setReqAssociat(true);
-        alert2 = entityManager.persist(alert2);
+        entityManager.persist(alert2);
 
         Alert alert3 = new Alert();
         alert3.setProject(project1);
         alert3.setStatus(AlertStatus.VIEWED);
         alert3.setReqAssociat(true);
-        alert3 = entityManager.persist(alert3);
+        entityManager.persist(alert3);
 
         Project project2 = new Project("test2", "Test 2", null, null, true);
-        project2 = entityManager.persist(project2);
+        entityManager.persist(project2);
 
         Alert alert4 = new Alert();
         alert4.setProject(project2);
         alert4.setStatus(AlertStatus.NEW);
         alert4.setReqAssociat(true);
-        alert4 = entityManager.persistAndFlush(alert4);
+        entityManager.persistAndFlush(alert4);
 
         // When
         Long numberOfAlerts = alertRepository.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(project1.getId(), AlertStatus.NEW);
@@ -152,13 +152,13 @@ public class AlertRepositoryTest {
         project1 = entityManager.persist(project1);
 
         Alert alert1 = new Alert("duplication", "Duplication", AlertType.METRIC, 0.4f, 0.5f, "duplication", new Date(), AlertStatus.NEW, true, project1);
-        alert1 = entityManager.persist(alert1);
+        entityManager.persist(alert1);
 
         Alert alert2 = new Alert("testingperformance", "Testing Performance", AlertType.METRIC, 0.6f, 0.8f, "testingperformance", new Date(), AlertStatus.NEW, true, project1);
-        alert2 = entityManager.persist(alert2);
+        entityManager.persist(alert2);
 
         Alert alert3 = new Alert("comments", "Comments", AlertType.METRIC, 0.3f, 0.5f, "comments", new Date(), AlertStatus.NEW, true, project1);
-        alert3 = entityManager.persistAndFlush(alert3);
+        entityManager.persistAndFlush(alert3);
 
         List<Alert> alertList = alertRepository.findAll();
 
@@ -169,16 +169,16 @@ public class AlertRepositoryTest {
     @Test
     public void getAlertsByName () {
         Project project1 = new Project("test", "Test", null, null, true);
-        project1 = entityManager.persist(project1);
+        entityManager.persist(project1);
 
         Alert alert1 = new Alert("duplication", "Duplication", AlertType.METRIC, 0.4f, 0.5f, "duplication", new Date(), AlertStatus.NEW, true, project1);
-        alert1 = entityManager.persist(alert1);
+        entityManager.persist(alert1);
 
         Alert alert2 = new Alert("testingperformance", "Testing Performance", AlertType.METRIC, 0.6f, 0.8f, "testingperformance", new Date(), AlertStatus.NEW, true, project1);
-        alert2 = entityManager.persist(alert2);
+        entityManager.persist(alert2);
 
         Alert alert3 = new Alert("comments", "Comments", AlertType.METRIC, 0.3f, 0.5f, "comments", new Date(), AlertStatus.NEW, true, project1);
-        alert3 = entityManager.persistAndFlush(alert3);
+        entityManager.persistAndFlush(alert3);
 
         List<Alert> alertList = alertRepository.findAlertByName("Duplication");
 
