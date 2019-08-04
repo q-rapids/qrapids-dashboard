@@ -4,7 +4,6 @@ import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AlertStatus;
 import com.upc.gessi.qrapids.app.domain.models.AlertType;
 import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.dto.DTOAlert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @ComponentScan("com.upc.gessi.qrapids.app.database.repositories")
@@ -41,10 +42,11 @@ public class AlertRepositoryTest {
         alert = entityManager.persistAndFlush(alert);
 
         // When
-        Alert alertFound = alertRepository.findAlertById(alert.getId());
+        Optional<Alert> alertFound = alertRepository.findById(alert.getId());
 
         // Then
-        assertEquals(alert.getId(), alertFound.getId());
+        assertTrue(alertFound.isPresent());
+        assertEquals(alert.getId(), alertFound.get().getId());
     }
 
     @Test
@@ -158,7 +160,7 @@ public class AlertRepositoryTest {
         Alert alert3 = new Alert("comments", "Comments", AlertType.METRIC, 0.3f, 0.5f, "comments", new Date(), AlertStatus.NEW, true, project1);
         alert3 = entityManager.persistAndFlush(alert3);
 
-        List<DTOAlert> alertList = alertRepository.getAlerts();
+        List<Alert> alertList = alertRepository.findAll();
 
         int expectedNumberOfAlerts = 3;
         assertEquals(expectedNumberOfAlerts, alertList.size());
@@ -178,7 +180,7 @@ public class AlertRepositoryTest {
         Alert alert3 = new Alert("comments", "Comments", AlertType.METRIC, 0.3f, 0.5f, "comments", new Date(), AlertStatus.NEW, true, project1);
         alert3 = entityManager.persistAndFlush(alert3);
 
-        List<Alert> alertList = alertRepository.getAlertByName("Duplication");
+        List<Alert> alertList = alertRepository.findAlertByName("Duplication");
 
         int expectedNumberOfAlerts = 1;
         assertEquals(expectedNumberOfAlerts, alertList.size());

@@ -96,8 +96,9 @@ public class Alerts {
     @GetMapping("/api/alerts/{id}/qrPatterns")
     @ResponseStatus(HttpStatus.OK)
     public List<QualityRequirementPattern> getQR(@PathVariable String id) {
-        Alert alert = ari.findAlertById(Long.parseLong(id));
-        if (alert != null) {
+        Optional<Alert> alertOptional = ari.findById(Long.parseLong(id));
+        if (alertOptional.isPresent()) {
+            Alert alert = alertOptional.get();
             qr.models.Alert alertModel = new qr.models.Alert(alert.getId_element(), alert.getName(), Type.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), null);
             QRGenerator gen = qrGeneratorFactory.getQRGenerator();
             return gen.generateQRs(alertModel);
@@ -109,8 +110,9 @@ public class Alerts {
     @GetMapping("/api/alerts/{id}/decision")
     @ResponseStatus(HttpStatus.OK)
     public DTOAlertDecision getAlertDecision(@PathVariable String id) {
-        Alert alert = ari.findAlertById(Long.parseLong(id));
-        if (alert != null) {
+        Optional<Alert> alertOptional = ari.findById(Long.parseLong(id));
+        if (alertOptional.isPresent()) {
+            Alert alert = alertOptional.get();
             Decision decision = alert.getDecision();
             DTOAlertDecision alertDecision = new DTOAlertDecision();
             switch (decision.getType()) {
@@ -185,8 +187,9 @@ public class Alerts {
             Decision decision = decisionRepository.save(decisionAux);
 
             if (alertId != null) {
-                Alert alert = ari.findAlertById(Long.parseLong(alertId));
-                if (alert != null) {
+                Optional<Alert> alertOptional = ari.findById(Long.parseLong(alertId));
+                if (alertOptional.isPresent()) {
+                    Alert alert = alertOptional.get();
                     alert.setDecision(decision);
                     alert.setStatus(AlertStatus.RESOLVED);
                     ari.save(alert);
@@ -274,8 +277,9 @@ public class Alerts {
 
         Alert alert = null;
         if (alertId != null) {
-            alert = ari.findAlertById(Long.parseLong(alertId));
-            if (alert != null) {
+            Optional<Alert> alertOptional = ari.findById(Long.parseLong(alertId));
+            if (alertOptional.isPresent()) {
+                alert = alertOptional.get();
                 alert.setDecision(decision);
                 alert.setStatus(AlertStatus.RESOLVED);
                 ari.save(alert);

@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface AlertRepository extends JpaRepository<Alert, Long>, PagingAndSortingRepository<Alert,Long>, CustomAlertRepository{
+public interface AlertRepository extends JpaRepository<Alert, Long> {
+
+    List<Alert> findAlertByName(String name);
 
     List<Alert> findByProject_IdOrderByDateDesc(Long projectId);
-
-    Alert findAlertById(Long id);
 
     @Transactional
     @Modifying(clearAutomatically = true)
