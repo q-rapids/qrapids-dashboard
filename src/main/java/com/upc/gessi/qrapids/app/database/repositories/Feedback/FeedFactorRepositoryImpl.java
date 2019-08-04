@@ -70,7 +70,7 @@ public class FeedFactorRepositoryImpl implements CustomFeedFactorRepository {
             }
 
             Date feedbackDate = feedbacks.get(i).getDate();
-            List<FeedbackValues> feedbackValues = fvRep.getFeedbackValues(id, feedbackDate);
+            List<FeedbackValues> feedbackValues = fvRep.findAllBySiIdAndFeedbackDate(id, feedbackDate);
             List<String> factors = new ArrayList<>();
             List<Float> factorsVal = new ArrayList<>();
             for (int j = 0; j < feedbackValues.size(); ++j){

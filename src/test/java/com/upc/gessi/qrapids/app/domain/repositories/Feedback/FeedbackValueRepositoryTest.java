@@ -29,7 +29,7 @@ public class FeedbackValueRepositoryTest {
     public void getFeedbackValues() {
         String factor1Id = "blockingcode";
         String factor1Name = "Blocking Code";
-        Float factor1Value = 0.8f;
+        float factor1Value = 0.8f;
         Date factor1EvaluationDate = Date.valueOf("2019-08-01");
         Long strategicIndicator1Id = 1L;
         Date feedback1Date = Date.valueOf("2019-08-02");
@@ -38,14 +38,14 @@ public class FeedbackValueRepositoryTest {
 
         String factor2Id = "testingperformance";
         String factor2Name = "Testing Performance";
-        Float factor2Value = 0.7f;
+        float factor2Value = 0.7f;
         Date factor2EvaluationDate = Date.valueOf("2019-08-02");
         Long strategicIndicator2Id = 2L;
         Date feedback2Date = Date.valueOf("2019-08-02");
         FeedbackValues feedbackValues2 = new FeedbackValues(factor2Id, factor2Name, factor2Value, factor2EvaluationDate, strategicIndicator2Id, feedback2Date);
         entityManager.persistAndFlush(feedbackValues2);
 
-        List<FeedbackValues> feedbackValuesList = feedbackValueRepository.getFeedbackValues(1L, Date.valueOf("2019-08-02"));
+        List<FeedbackValues> feedbackValuesList = feedbackValueRepository.findAllBySiIdAndFeedbackDate(strategicIndicator1Id, feedback1Date);
 
         int expectedNumberFeedbackValues = 1;
         assertEquals(expectedNumberFeedbackValues,feedbackValuesList.size());
