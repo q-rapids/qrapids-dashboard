@@ -31,11 +31,11 @@ public class FeedFactorRepositoryImpl implements CustomFeedFactorRepository {
     @Autowired
     private StrategicIndicatorRepository siRep;
 
-    @Autowired
-    private QMAStrategicIndicators qmasi;
-
-    @Autowired
-    private Util util;
+//    @Autowired
+//    private QMAStrategicIndicators qmasi;
+//
+//    @Autowired
+//    private Util util;
 
     public List<FeedbackFactors> getFeedbackReport(Long id, String prj) throws Exception {
         List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
@@ -51,9 +51,9 @@ public class FeedFactorRepositoryImpl implements CustomFeedFactorRepository {
             float newValue = feedbacks.get(i).getNewvalue();
             String oldCategory = null;
             String oldCategoryColor = null;
-            String newCategory = util.getLabel(newValue);
+            String newCategory = null; //util.getLabel(newValue);
             String newCategoryColor = null;
-            List<DTOStrategicIndicatorEvaluation> csi = qmasi.CurrentEvaluation(prj);
+            List<DTOStrategicIndicatorEvaluation> csi = new ArrayList<>(); //qmasi.CurrentEvaluation(prj);
             for (int j = 0; j < csi.size(); ++j) {
                 if (csi.get(j).getId().equals(si.getExternalId())) {
                     oldCategory = csi.get(j).getValue().getSecond();
