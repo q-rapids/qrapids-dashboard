@@ -187,7 +187,7 @@ public class FeedbackTest {
         com.upc.gessi.qrapids.app.domain.models.Feedback feedback = new com.upc.gessi.qrapids.app.domain.models.Feedback(strategicIndicatorId, date, null, null, newValue.floatValue(), oldValue.floatValue());
         List<com.upc.gessi.qrapids.app.domain.models.Feedback> feedbackList = new ArrayList<>();
         feedbackList.add(feedback);
-        when(feedbackRepository.getFeedback(strategicIndicatorId)).thenReturn(feedbackList);
+        when(feedbackRepository.findAllBySiId(strategicIndicatorId)).thenReturn(feedbackList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -226,7 +226,7 @@ public class FeedbackTest {
                 ));
 
         // Verify mock interactions
-        verify(feedbackRepository, times(1)).getFeedback(strategicIndicatorId);
+        verify(feedbackRepository, times(1)).findAllBySiId(strategicIndicatorId);
         verifyNoMoreInteractions(feedbackRepository);
     }
 

@@ -165,7 +165,7 @@ public class QMAStrategicIndicators {
                     hasBN = dbsi.getNetwork() != null;
                     List<Feedback> feedback = new ArrayList<>();
                     try {
-                        feedback = feedbackRepository.getFeedback(id);
+                        feedback = feedbackRepository.findAllBySiId(id);
                     } catch (Exception e) {}
                     if (!feedback.isEmpty()) hasFeedback = true;
                 }

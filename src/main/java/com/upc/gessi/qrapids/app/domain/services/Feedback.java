@@ -84,7 +84,7 @@ public class Feedback {
     @GetMapping("/api/strategicIndicator/{id}/feedback")
     @ResponseStatus(HttpStatus.OK)
     public List<com.upc.gessi.qrapids.app.domain.models.Feedback> getFeedback(@PathVariable Long id) {
-            return fRep.getFeedback(id);
+            return fRep.findAllBySiId(id);
     }
 
     @RequestMapping("/api/strategicIndicator/{id}/feedbackReport")

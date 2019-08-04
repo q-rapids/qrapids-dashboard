@@ -1,7 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.repositories.Feedback;
 
 import com.upc.gessi.qrapids.app.domain.models.Feedback;
-import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +47,7 @@ public class FeedbackRepositoryTest {
         entityManager.persistAndFlush(feedback2);
 
         // When
-        List<Feedback> feedbackFoundList = feedbackRepository.getFeedback(strategicIndicator1Id);
+        List<Feedback> feedbackFoundList = feedbackRepository.findAllBySiId(strategicIndicator1Id);
 
         // Then
         int expectedNumberFeedback = 1;

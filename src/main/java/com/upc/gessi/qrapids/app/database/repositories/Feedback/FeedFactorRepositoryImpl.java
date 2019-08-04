@@ -39,7 +39,7 @@ public class FeedFactorRepositoryImpl implements CustomFeedFactorRepository {
 
     public List<FeedbackFactors> getFeedbackReport(Long id, String prj) throws Exception {
         List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
-        List<com.upc.gessi.qrapids.app.domain.models.Feedback> feedbacks = fRep.getFeedback(id);
+        List<com.upc.gessi.qrapids.app.domain.models.Feedback> feedbacks = fRep.findAllBySiId(id);
         for (int i = 0; i < feedbacks.size(); ++i) {
             Strategic_Indicator si = siRep.getOne(id);
             Long siId = si.getId();
