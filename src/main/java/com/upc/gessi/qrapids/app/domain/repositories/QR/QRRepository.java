@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-public interface QRRepository extends JpaRepository<QualityRequirement, Long>, PagingAndSortingRepository<QualityRequirement,Long>, CustomQRRepository {
+public interface QRRepository extends JpaRepository<QualityRequirement, Long> {
 
     QualityRequirement findByDecisionId (Long id);
 
