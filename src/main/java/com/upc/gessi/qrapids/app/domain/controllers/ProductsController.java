@@ -1,10 +1,8 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -47,7 +45,9 @@ public class ProductsController {
     }
 	
 	public List<DTOProduct> getProducts() throws Exception {
-		List<Product> productsBD = productRep.findAll();
+		Iterable<Product> productIterable = productRep.findAll();
+		List<Product> productsBD = new ArrayList<>();
+		productIterable.forEach(productsBD::add);
 		List<DTOProduct> products = new Vector<DTOProduct>();
 		for (Product p : productsBD) {
 			List<DTOProject> relatedProjects = new Vector<DTOProject>();
@@ -74,20 +74,24 @@ public class ProductsController {
     }
 	
 	public DTOProduct getProductById(String id) throws Exception {
-		Product p = productRep.getOne(Long.parseLong(id));
-		List<DTOProject> relatedProjects = new Vector<DTOProject>();
-		for (Project proj : p.getProjects()) {
-			DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId());
-			relatedProjects.add(project);
+		Optional<Product> productOptional = productRep.findById(Long.parseLong(id));
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
+			List<DTOProject> relatedProjects = new Vector<DTOProject>();
+			for (Project proj : product.getProjects()) {
+				DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId());
+				relatedProjects.add(project);
+			}
+			Collections.sort(relatedProjects, new Comparator<DTOProject>() {
+				@Override
+				public int compare(DTOProject o1, DTOProject o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
+			DTOProduct dtoProduct = new DTOProduct(product.getId(), product.getName(), product.getDescription(), product.getLogo(), relatedProjects);
+			return dtoProduct;
 		}
-		Collections.sort(relatedProjects, new Comparator<DTOProject>() {
-	        @Override
-	        public int compare(DTOProject o1, DTOProject o2) {
-	            return o1.getName().compareTo(o2.getName());
-	        }
-	    });
-		DTOProduct product = new DTOProduct(p.getId(), p.getName(), p.getDescription(), p.getLogo(), relatedProjects);
-        return product;
+		return null;
     }
 	
 	public DTOProject getProjectById(String id) throws Exception {
@@ -150,46 +154,48 @@ public class ProductsController {
 	}
 	
 	public List<DTOStrategicIndicatorEvaluation> getProductEvaluation(Long id) throws IOException, CategoriesException {
-		Product p = productRep.getOne(id);
-		List<List<DTOStrategicIndicatorEvaluation>> evaluations = new Vector<List<DTOStrategicIndicatorEvaluation>>();
-		for (int i=0; i<p.getProjects().size(); i++) {
-			/*if (qmafake.usingFakeData()) {
-	            return kpirep.CurrentEvaluation();
-	        } else {
-	            
-	        }*/
-			evaluations.add(qmasi.CurrentEvaluation(p.getProjects().get(i).getExternalId()));
-		}
-		List<DTOStrategicIndicatorEvaluation> average = evaluations.get(0);
-		for (int i=1; i<evaluations.size(); i++) {
-			for (int j=0; j<evaluations.get(i).size(); j++) {
-				boolean found = false;
-				for (int k=0; k<average.size(); k++) {
-					if (average.get(k).getId().equals(evaluations.get(i).get(j).getId())) {
-						Float value1 = average.get(k).getValue().getFirst();
-						Float value2 = evaluations.get(i).get(j).getValue().getFirst();
-						average.get(k).setValue(Pair.of(value1 + value2, ""));
-						found = true;
+		List<DTOStrategicIndicatorEvaluation> average = new ArrayList<>();
+		Optional<Product> productOptional = productRep.findById(id);
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
+			List<List<DTOStrategicIndicatorEvaluation>> evaluations = new Vector<List<DTOStrategicIndicatorEvaluation>>();
+			for (int i = 0; i < product.getProjects().size(); i++) {
+				evaluations.add(qmasi.CurrentEvaluation(product.getProjects().get(i).getExternalId()));
+			}
+			average = evaluations.get(0);
+			for (int i = 1; i < evaluations.size(); i++) {
+				for (int j = 0; j < evaluations.get(i).size(); j++) {
+					boolean found = false;
+					for (int k = 0; k < average.size(); k++) {
+						if (average.get(k).getId().equals(evaluations.get(i).get(j).getId())) {
+							Float value1 = average.get(k).getValue().getFirst();
+							Float value2 = evaluations.get(i).get(j).getValue().getFirst();
+							average.get(k).setValue(Pair.of(value1 + value2, ""));
+							found = true;
+						}
+					}
+					if (!found) {
+						average.add(evaluations.get(i).get(j));
 					}
 				}
-				if (!found) {
-					average.add(evaluations.get(i).get(j));
-				}
 			}
-		}
-		for (int i=0; i<average.size(); i++) {
-			Pair<Float, String> pair = average.get(i).getValue();
-			average.get(i).setValue(Pair.of(pair.getFirst()/evaluations.size(), ""));
+			for (int i = 0; i < average.size(); i++) {
+				Pair<Float, String> pair = average.get(i).getValue();
+				average.get(i).setValue(Pair.of(pair.getFirst() / evaluations.size(), ""));
+			}
 		}
 		return average;
 	}
 	
 	public List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> getDetailedProductEvaluation(Long id) throws IOException, CategoriesException {
-		Product p = productRep.getOne(id);
+		Optional<Product> productOptional = productRep.findById(id);
 		List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> evaluations = new Vector<Pair<String, List<DTOStrategicIndicatorEvaluation>>>();
-		
-		for (int i=0; i<p.getProjects().size(); i++) {
-			evaluations.add(Pair.of(p.getProjects().get(i).getName(), qmasi.CurrentEvaluation(p.getProjects().get(i).getExternalId())));
+
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
+			for (int i = 0; i < product.getProjects().size(); i++) {
+				evaluations.add(Pair.of(product.getProjects().get(i).getName(), qmasi.CurrentEvaluation(product.getProjects().get(i).getExternalId())));
+			}
 		}
 		return evaluations;
 	}
