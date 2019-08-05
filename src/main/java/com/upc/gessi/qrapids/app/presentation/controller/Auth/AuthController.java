@@ -236,8 +236,11 @@ public class AuthController {
         binder.registerCustomEditor( Question.class, "question", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                Question question = questionRepository.getOne( Long.parseLong( text ) );
-                setValue( question );
+                Optional<Question> questionOptional = questionRepository.findById(Long.parseLong(text));
+                if (questionOptional.isPresent()) {
+                    Question question = questionOptional.get();
+                    setValue(question);
+                }
             }
         });
 
