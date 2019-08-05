@@ -143,7 +143,9 @@ public class Util {
     @GetMapping("/api/qualityFactors/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOCategoryThreshold> getFactorCategories () {
-        List<QFCategory> factorCategoryList = QFCatRep.findAll();
+        Iterable<QFCategory> categoryIterable = QFCatRep.findAll();
+        List<QFCategory> factorCategoryList = new ArrayList<>();
+        categoryIterable.forEach(factorCategoryList::add);
         List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
         for (QFCategory qfCategory : factorCategoryList) {
             dtoCategoryList.add(new DTOCategoryThreshold(qfCategory.getId(), qfCategory.getName(), qfCategory.getColor(), qfCategory.getUpperThreshold()));
