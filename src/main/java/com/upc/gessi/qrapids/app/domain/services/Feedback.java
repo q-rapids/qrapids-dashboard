@@ -6,7 +6,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicat
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackValues;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
-import com.upc.gessi.qrapids.app.database.repositories.Feedback.FeedFactorRepositoryImpl;
+import com.upc.gessi.qrapids.app.domain.controllers.FeedFactorController;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
@@ -16,8 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Type;
 import java.net.UnknownHostException;
 import java.sql.Date;
@@ -39,7 +37,7 @@ public class Feedback {
     private QMADetailedStrategicIndicators qmadsi;
 
     @Autowired
-    private FeedFactorRepositoryImpl ffRep;
+    private FeedFactorController feedFactorController;
 
     @Autowired
     private UserRepository userRepository;
@@ -90,7 +88,7 @@ public class Feedback {
     @RequestMapping("/api/strategicIndicator/{id}/feedbackReport")
     @ResponseStatus(HttpStatus.OK)
     public List<FeedbackFactors> getFeedbackReport(@RequestParam(value = "prj") String prj, @PathVariable Long id) throws Exception {
-        return ffRep.getFeedbackReport(id, prj);
+        return feedFactorController.getFeedbackReport(id, prj);
     }
 
 }

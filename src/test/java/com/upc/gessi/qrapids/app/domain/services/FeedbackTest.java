@@ -1,7 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 import com.google.gson.Gson;
-import com.upc.gessi.qrapids.app.database.repositories.Feedback.FeedFactorRepositoryImpl;
+import com.upc.gessi.qrapids.app.domain.controllers.FeedFactorController;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackValues;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
@@ -50,7 +50,7 @@ public class FeedbackTest {
     FeedbackValueRepository feedbackValueRepository;
 
     @Mock
-    FeedFactorRepositoryImpl feedFactorRepository;
+    FeedFactorController feedFactorController;
 
     @InjectMocks
     private Feedback feedbackController;
@@ -265,7 +265,7 @@ public class FeedbackTest {
         List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
         feedbackFactorsList.add(feedbackFactors);
 
-        when(feedFactorRepository.getFeedbackReport(strategicIndicatorId, projectId)).thenReturn(feedbackFactorsList);
+        when(feedFactorController.getFeedbackReport(strategicIndicatorId, projectId)).thenReturn(feedbackFactorsList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -331,7 +331,7 @@ public class FeedbackTest {
                 ));
 
         // Verify mock interactions
-        verify(feedFactorRepository, times(1)).getFeedbackReport(strategicIndicatorId, projectId);
-        verifyNoMoreInteractions(feedFactorRepository);
+        verify(feedFactorController, times(1)).getFeedbackReport(strategicIndicatorId, projectId);
+        verifyNoMoreInteractions(feedFactorController);
     }
 }

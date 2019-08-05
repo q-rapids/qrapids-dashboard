@@ -1,13 +1,9 @@
-package com.upc.gessi.qrapids.app.database.repositories.Feedback;
+package com.upc.gessi.qrapids.app.domain.controllers;
 
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
-import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.Feedback.CustomFeedFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.domain.services.Util;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackValues;
@@ -20,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class FeedFactorRepositoryImpl implements CustomFeedFactorRepository {
+public class FeedFactorController {
 
     @Autowired
     private FeedbackRepository fRep;
@@ -30,12 +26,6 @@ public class FeedFactorRepositoryImpl implements CustomFeedFactorRepository {
 
     @Autowired
     private StrategicIndicatorRepository siRep;
-
-//    @Autowired
-//    private QMAStrategicIndicators qmasi;
-//
-//    @Autowired
-//    private Util util;
 
     public List<FeedbackFactors> getFeedbackReport(Long id, String prj) throws Exception {
         List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
