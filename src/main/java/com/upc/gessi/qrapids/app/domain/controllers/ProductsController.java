@@ -30,7 +30,9 @@ public class ProductsController {
 		
 	public List<DTOProject> getProjects() throws Exception {
 		List<DTOProject> projects = new Vector<DTOProject>();
-		List<Project> projectsBD = projectRep.findAll();
+		Iterable<Project> projectIterable = projectRep.findAll();
+		List<Project> projectsBD = new ArrayList<>();
+		projectIterable.forEach(projectsBD::add);
 		for (Project p : projectsBD) {
 			DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
 			projects.add(project);
@@ -95,9 +97,13 @@ public class ProductsController {
     }
 	
 	public DTOProject getProjectById(String id) throws Exception {
-		Project p = projectRep.getOne(Long.parseLong(id));
-		DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
-        return project;
+		Optional<Project> projectOptional = projectRep.findById(Long.parseLong(id));
+		DTOProject dtoProject = null;
+		if (projectOptional.isPresent()) {
+			Project project = projectOptional.get();
+			dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId());
+		}
+        return dtoProject;
     }
 	
 	public DTOProject getProjectByExternalId(String externalId) throws Exception {
@@ -131,8 +137,8 @@ public class ProductsController {
 	public void updateProduct(Long id, String name, String description, byte[] logo, List<String> projectIds) {
 		List<Project> projects = new Vector<Project>();
 		for (int i=0; i<projectIds.size(); i++) {
-			Project p = projectRep.getOne(Long.parseLong(projectIds.get(i)));
-			projects.add(p);
+			Optional<Project> projectOptional = projectRep.findById(Long.parseLong(projectIds.get(i)));
+			projectOptional.ifPresent(projects::add);
 		}
 		Product product = new Product(name, description, logo, projects);
 		product.setId(id);
@@ -142,8 +148,8 @@ public class ProductsController {
 	public void newProduct(String name, String description, byte[] logo, List<String> projectIds) {
 		List<Project> projects = new Vector<Project>();
 		for (int i=0; i<projectIds.size(); i++) {
-			Project p = projectRep.getOne(Long.parseLong(projectIds.get(i)));
-			projects.add(p);
+			Optional<Project> projectOptional = projectRep.findById(Long.parseLong(projectIds.get(i)));
+			projectOptional.ifPresent(projects::add);
 		}
 		Product product = new Product(name, description, logo, projects);
 		productRep.save(product);
