@@ -104,8 +104,6 @@ public class Util {
     @Autowired
     private DecisionRepository decisionRepository;
 
-    private List<SICategory> allCats;
-
     @Autowired
     private Forecast forecast;
 
@@ -121,9 +119,9 @@ public class Util {
     @GetMapping("/api/strategicIndicators/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOCategory> getSICategories () {
-        List<SICategory> siCategoryList = SICatRep.findAll();
+        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
         List<DTOCategory> dtoCategoryList = new ArrayList<>();
-        for (SICategory siCategory : siCategoryList) {
+        for (SICategory siCategory : siCategoryIterable) {
             dtoCategoryList.add(new DTOCategory(siCategory.getId(), siCategory.getName(), siCategory.getColor()));
         }
         return dtoCategoryList;
@@ -680,21 +678,25 @@ public class Util {
     }
 
     public String getLabel(Float f) {
-        allCats = SICatRep.findAll();
-        if (f != null && allCats.size() > 0) {
+        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
+        List<SICategory> siCategoryList = new ArrayList<>();
+        siCategoryIterable.forEach(siCategoryList::add);
+        if (f != null && siCategoryList.size() > 0) {
             if (f < 1.0f)
-                return allCats.get(allCats.size() - 1 - (int) (f * (float) allCats.size())).getName();
+                return siCategoryList.get(siCategoryList.size() - 1 - (int) (f * (float) siCategoryList.size())).getName();
             else
-                return allCats.get(0).getName();
+                return siCategoryList.get(0).getName();
         } else return "No Category";
     }
 
     public List<DTOSIAssesment> getCategories() {
-        allCats = SICatRep.findAll();
+        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
+        List<SICategory> siCategoryList = new ArrayList<>();
+        siCategoryIterable.forEach(siCategoryList::add);
         List<DTOSIAssesment> result = new ArrayList<>();
-        float thresholds_interval = 1.0f/(float)allCats.size();
+        float thresholds_interval = 1.0f/(float)siCategoryList.size();
         float upperThreshold=1;
-        for (SICategory c : allCats) {
+        for (SICategory c : siCategoryIterable) {
             result.add(new DTOSIAssesment(c.getId(), c.getName(), null, c.getColor(), abs((float)upperThreshold)));
             upperThreshold -=  thresholds_interval;
         }
@@ -720,14 +722,16 @@ public class Util {
     }
 
     public Float getValueFromLabel (String label) {
-        List<SICategory> categories = SICatRep.findAll();
-        Collections.reverse(categories);
+        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
+        List<SICategory> siCategoryList = new ArrayList<>();
+        siCategoryIterable.forEach(siCategoryList::add);
+        Collections.reverse(siCategoryList);
         Float index = -1.f;
-        for (Float i = 0.f; i < categories.size(); i++) {
-            if (categories.get(i.intValue()).getName().equals(label))
+        for (Float i = 0.f; i < siCategoryList.size(); i++) {
+            if (siCategoryList.get(i.intValue()).getName().equals(label))
                 index = i;
         }
-        return (index/categories.size() + (index+1)/categories.size())/2.0f;
+        return (index/siCategoryList.size() + (index+1)/siCategoryList.size())/2.0f;
     }
 
     public String getQFLabelFromValue(Float f) {
