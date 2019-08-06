@@ -17,7 +17,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE_STRING;
 
@@ -51,7 +53,9 @@ public class UserGroupController {
     public ModelAndView index(@CookieValue(COOKIE_STRING) String token, Pageable page ){
 
         List<UserGroup> userGroups = this.userGroupRepository.findAll( page ).getContent();
-        List<Route> routes = this.routeRepository.findAll();
+        Iterable<Route> routesIterable = this.routeRepository.findAll();
+        List<Route> routes = new ArrayList<>();
+        routesIterable.forEach(routes::add);
 
         // Tools users validation
         // Current user -> session
@@ -103,7 +107,9 @@ public class UserGroupController {
         );
 
         UserGroup userGroup = this.userGroupRepository.getOne( id );
-        List<Route> routes = this.routeRepository.findAll();
+        Iterable<Route> routesIterable = this.routeRepository.findAll();
+        List<Route> routes = new ArrayList<>();
+        routesIterable.forEach(routes::add);
 
         view.addObject("userGroup", userGroup);
         view.addObject("routes", routes );
@@ -206,8 +212,11 @@ public class UserGroupController {
         binder.registerCustomEditor(Route.class, "routes", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                Route route = routeRepository.getOne( Long.parseLong( text ) );
-                setValue( route );
+                Optional<Route> routeOptional = routeRepository.findById(Long.parseLong(text));
+                if (routeOptional.isPresent()) {
+                    Route route = routeOptional.get();
+                    setValue(route);
+                }
             }
         });
 
