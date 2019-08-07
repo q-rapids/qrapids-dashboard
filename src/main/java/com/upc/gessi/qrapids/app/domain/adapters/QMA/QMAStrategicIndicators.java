@@ -34,9 +34,6 @@ import java.util.Map;
 public class QMAStrategicIndicators {
 
     @Autowired
-    private QMAFakedata qmafake;
-
-    @Autowired
     private QMAConnection qmacon;
 
     @Autowired
@@ -54,15 +51,12 @@ public class QMAStrategicIndicators {
     public List<DTOStrategicIndicatorEvaluation> CurrentEvaluation(String prj) throws IOException, CategoriesException {
         List<DTOStrategicIndicatorEvaluation> result;
 
-        if (qmafake.usingFakeData())
-            result = qmafake.getSIs();
-        else {
-            // Data coming from QMA API
-            qmacon.initConnexion();
-            List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj);
-            //Connection.closeConnection();
-            result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
-        }
+        // Data coming from QMA API
+        qmacon.initConnexion();
+        List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj);
+        //Connection.closeConnection();
+        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
+
         return result;
     }
 
@@ -77,16 +71,13 @@ public class QMAStrategicIndicators {
     public List<DTOStrategicIndicatorEvaluation> HistoricalData(LocalDate from, LocalDate to, String prj) throws IOException, CategoriesException  {
         List<DTOStrategicIndicatorEvaluation> result;
 
-        if (qmafake.usingFakeData())
-            result = qmafake.getHistoricalSIs();
-        else {
-            // Data coming from QMA API
-            qmacon.initConnexion();
-            //using dates from 1/1/2015 to now at the moment
-            List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj, from, to);
-            //Connection.closeConnection();
-            result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
-        }
+        // Data coming from QMA API
+        qmacon.initConnexion();
+        //using dates from 1/1/2015 to now at the moment
+        List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj, from, to);
+        //Connection.closeConnection();
+        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
+
         return result;
     }
 

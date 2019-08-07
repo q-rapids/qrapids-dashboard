@@ -26,31 +26,21 @@ import java.util.Map;
 public class QMAQualityFactors {
 
     @Autowired
-    private QMAFakedata qmafake;
-
-    @Autowired
     private QMAConnection qmacon;
 
     @Autowired
     private QFCategoryRepository QFCatRep;
 
     public List<DTOQualityFactor> CurrentEvaluation(String id, String prj) throws IOException {
-        List<DTOQualityFactor> qf;
-
-        if (qmafake.usingFakeData()) {
-            qf=qmafake.getFactors(id);
+        qmacon.initConnexion();
+        List<FactorMetricEvaluationDTO> evals = new ArrayList<>();
+        if (id == null) {
+            evals = Factor.getMetricsEvaluations(prj);
         } else {
-            qmacon.initConnexion();
-            List<FactorMetricEvaluationDTO> evals = new ArrayList<>();
-            if (id == null) {
-                evals = Factor.getMetricsEvaluations(prj);
-            } else {
-                evals = StrategicIndicator.getMetricsEvaluations(prj, id);
-            }
-//            Connection.closeConnection();
-            return FactorMetricEvaluationDTOListToDTOQualityFactorList(evals);
+            evals = StrategicIndicator.getMetricsEvaluations(prj, id);
         }
-        return qf;
+//            Connection.closeConnection();
+        return FactorMetricEvaluationDTOListToDTOQualityFactorList(evals);
     }
 
     public DTOFactor SingleCurrentEvaluation(String factorId, String prj) throws IOException {
@@ -63,18 +53,15 @@ public class QMAQualityFactors {
         List<FactorMetricEvaluationDTO> evals = new ArrayList<>();
         List<DTOQualityFactor> qf;
 
-        if (qmafake.usingFakeData()) {
-            qf = qmafake.getHistoricalFactors(id);
+        qmacon.initConnexion();
+        if (id == null) {
+            evals = Factor.getMetricsEvaluations(prj, from, to);
         } else {
-            qmacon.initConnexion();
-            if (id == null) {
-                evals = Factor.getMetricsEvaluations(prj, from, to);
-            } else {
-                evals = StrategicIndicator.getMetricsEvaluations(prj, id, from, to);
-            }
-//        Connection.closeConnection();
-            qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(evals);
+            evals = StrategicIndicator.getMetricsEvaluations(prj, id, from, to);
         }
+//        Connection.closeConnection();
+        qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(evals);
+
         return qf;
     }
 

@@ -2,7 +2,6 @@ package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAFakedata;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
@@ -13,8 +12,6 @@ import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,7 +27,6 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -55,9 +51,6 @@ public class StrategicIndicatorsTest {
 
     @Rule
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
-
-    @Mock
-    private QMAFakedata qmaFakedata;
 
     @Mock
     private QMAStrategicIndicators qmaStrategicIndicators;
@@ -166,7 +159,6 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsCurrentEvaluation() throws Exception {
-        when(qmaFakedata.usingFakeData()).thenReturn(false);
         when(qmaStrategicIndicators.CurrentEvaluation(projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         // Perform request
@@ -269,7 +261,6 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsCurrentEvaluationCategoriesConflict() throws Exception {
-        when(qmaFakedata.usingFakeData()).thenReturn(false);
         when(qmaStrategicIndicators.CurrentEvaluation(projectExternalId)).thenThrow(new CategoriesException());
 
         // Perform request
@@ -287,7 +278,6 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsCurrentEvaluationReadError() throws Exception {
-        when(qmaFakedata.usingFakeData()).thenReturn(false);
         when(qmaStrategicIndicators.CurrentEvaluation(projectExternalId)).thenThrow(new IOException());
 
         // Perform request
@@ -305,7 +295,6 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getSingleStrategicIndicatorCurrentEvaluation() throws Exception {
-        when(qmaFakedata.usingFakeData()).thenReturn(false);
         when(qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, dtoStrategicIndicatorEvaluation.getId())).thenReturn(dtoStrategicIndicatorEvaluation);
 
         // Perform request
@@ -410,7 +399,6 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getSingleStrategicIndicatorCurrentEvaluationCategoriesConflict() throws Exception {
-        when(qmaFakedata.usingFakeData()).thenReturn(false);
         when(qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, dtoStrategicIndicatorEvaluation.getId())).thenThrow(new CategoriesException());
 
         // Perform request
@@ -428,7 +416,6 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getSingleStrategicIndicatorCurrentEvaluationReadError() throws Exception {
-        when(qmaFakedata.usingFakeData()).thenReturn(false);
         when(qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, dtoStrategicIndicatorEvaluation.getId())).thenThrow(new IOException());
 
         // Perform request
@@ -446,7 +433,6 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsHistoricalData() throws Exception {
-        when(qmaFakedata.usingFakeData()).thenReturn(false);
         String from = "2019-07-07";
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
@@ -559,7 +545,6 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsHistoricalDataCategoriesConflict() throws Exception {
-        when(qmaFakedata.usingFakeData()).thenReturn(false);
         String from = "2019-07-07";
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
@@ -583,7 +568,6 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsHistoricalDataReadError() throws Exception {
-        when(qmaFakedata.usingFakeData()).thenReturn(false);
         String from = "2019-07-07";
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
