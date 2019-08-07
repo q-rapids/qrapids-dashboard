@@ -40,10 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -1003,7 +1000,7 @@ public class UtilTest {
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.existsById(strategicIndicatorId)).thenReturn(true);
-        when(strategicIndicatorRepository.getOne(strategicIndicatorId)).thenReturn(strategicIndicator);
+        when(strategicIndicatorRepository.findById(strategicIndicatorId)).thenReturn(Optional.of(strategicIndicator));
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1042,8 +1039,7 @@ public class UtilTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorRepository, times(1)).existsById(strategicIndicatorId);
-        verify(strategicIndicatorRepository, times(1)).getOne(strategicIndicatorId);
+        verify(strategicIndicatorRepository, times(1)).findById(strategicIndicatorId);
         verifyNoMoreInteractions(strategicIndicatorRepository);
     }
 
@@ -1084,7 +1080,7 @@ public class UtilTest {
         Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, IOUtils.toByteArray(networkFile.toURI()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
-        when(strategicIndicatorRepository.getOne(strategicIndicatorId)).thenReturn(strategicIndicator);
+        when(strategicIndicatorRepository.findById(strategicIndicatorId)).thenReturn(Optional.of(strategicIndicator));
 
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
 
@@ -1121,8 +1117,8 @@ public class UtilTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorRepository, times(1)).getOne(strategicIndicatorId);
-        verify(strategicIndicatorRepository, times(1)).flush();
+        verify(strategicIndicatorRepository, times(1)).findById(strategicIndicatorId);
+        verify(strategicIndicatorRepository, times(1)).save(ArgumentMatchers.any(Strategic_Indicator.class));
         verifyNoMoreInteractions(strategicIndicatorRepository);
     }
 
@@ -1155,7 +1151,7 @@ public class UtilTest {
         Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
-        when(strategicIndicatorRepository.getOne(strategicIndicatorId)).thenReturn(strategicIndicator);
+        when(strategicIndicatorRepository.findById(strategicIndicatorId)).thenReturn(Optional.of(strategicIndicator));
         when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
 
         List<String> newQualityFactors = new ArrayList<>();
@@ -1327,9 +1323,9 @@ public class UtilTest {
         verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
         verifyNoMoreInteractions(qmaQualityFactors);
 
-        verify(strategicIndicatorRepository, times(1)).getOne(strategicIndicatorId);
+        verify(strategicIndicatorRepository, times(1)).findById(strategicIndicatorId);
         verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicatorName);
-        verify(strategicIndicatorRepository, times(1)).flush();
+        verify(strategicIndicatorRepository, times(1)).save(ArgumentMatchers.any(Strategic_Indicator.class));
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
         verify(qmaProjects, times(1)).getAssessedProjects();
@@ -1374,7 +1370,7 @@ public class UtilTest {
         Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
-        when(strategicIndicatorRepository.getOne(strategicIndicatorId)).thenReturn(strategicIndicator);
+        when(strategicIndicatorRepository.findById(strategicIndicatorId)).thenReturn(Optional.of(strategicIndicator));
         when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
 
         List<String> newQualityFactors = new ArrayList<>();
@@ -1531,9 +1527,9 @@ public class UtilTest {
         verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
         verifyNoMoreInteractions(qmaQualityFactors);
 
-        verify(strategicIndicatorRepository, times(1)).getOne(strategicIndicatorId);
+        verify(strategicIndicatorRepository, times(1)).findById(strategicIndicatorId);
         verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicatorName);
-        verify(strategicIndicatorRepository, times(1)).flush();
+        verify(strategicIndicatorRepository, times(1)).save(ArgumentMatchers.any(Strategic_Indicator.class));
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
         verify(qmaProjects, times(1)).getAssessedProjects();
@@ -1599,9 +1595,9 @@ public class UtilTest {
         Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, IOUtils.toByteArray(networkFile.toURI()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
-        when(strategicIndicatorRepository.getOne(strategicIndicatorId)).thenReturn(strategicIndicator);
+        when(strategicIndicatorRepository.findById(strategicIndicatorId)).thenReturn(Optional.of(strategicIndicator));
 
-        doThrow(new DataIntegrityViolationException("")).when(strategicIndicatorRepository).flush();
+        doThrow(new DataIntegrityViolationException("")).when(strategicIndicatorRepository).save(ArgumentMatchers.any(Strategic_Indicator.class));
 
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
 
@@ -1627,8 +1623,8 @@ public class UtilTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorRepository, times(1)).getOne(strategicIndicatorId);
-        verify(strategicIndicatorRepository, times(1)).flush();
+        verify(strategicIndicatorRepository, times(1)).findById(strategicIndicatorId);
+        verify(strategicIndicatorRepository, times(1)).save(ArgumentMatchers.any(Strategic_Indicator.class));
         verifyNoMoreInteractions(strategicIndicatorRepository);
     }
 
