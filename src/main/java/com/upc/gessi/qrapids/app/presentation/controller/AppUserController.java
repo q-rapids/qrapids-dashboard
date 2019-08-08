@@ -74,7 +74,7 @@ public class AppUserController {
 
         List<AppUser> users = this.userRepository.findAll( page ).getContent();
 
-        UserGroup defautlUserGroup = this.userGroupRepository.findDefaultUserGroup();
+        UserGroup defautlUserGroup = this.userGroupRepository.findByDefaultGroupIsTrue();
 
         if (defautlUserGroup == null)
             defautlUserGroup = new UserGroup();
@@ -88,7 +88,7 @@ public class AppUserController {
         view.addObject("defautlUserGroup", defautlUserGroup );
         view.addObject("user", new AppUser());
 
-        boolean admin_select = ! this.userGroupRepository.hasDefaultGroup();
+        boolean admin_select = ! this.userGroupRepository.existsByDefaultGroupIsTrue();
         view.addObject("admin_select", admin_select);
 
 
@@ -145,7 +145,7 @@ public class AppUserController {
 
             view.addObject("userGroups", userGroups);
             view.addObject( "questions", this.questionRepository.findAll());
-            view.addObject("defautlUserGroup", this.userGroupRepository.findDefaultUserGroup() );
+            view.addObject("defautlUserGroup", this.userGroupRepository.findByDefaultGroupIsTrue() );
             view.addObject("appuser", user);
 
             return view;
@@ -303,7 +303,7 @@ public class AppUserController {
                 AppUser userUpdate = userOptional.get();
                 userUpdate.setAdmin(false);
                 if (user.getUserGroup() == null)
-                    userUpdate.setUserGroup(this.userGroupRepository.findDefaultUserGroup());
+                    userUpdate.setUserGroup(this.userGroupRepository.findByDefaultGroupIsTrue());
                 userUpdate.setUserGroup(user.getUserGroup());
                 this.userRepository.save(userUpdate);
                 return "redirect:" + this.redirectTo + "?success=User+was+updated";

@@ -50,7 +50,7 @@ public class UserProfileController {
         ModelAndView view = new ModelAndView("/AppUser/Profile");
         try{
             view.addObject( "questions", this.questionRepository.findAll());
-            view.addObject("defautlUserGroup", this.userGroupRepository.findDefaultUserGroup() );
+            view.addObject("defautlUserGroup", this.userGroupRepository.findByDefaultGroupIsTrue() );
             view.addObject("appuser", this.userRepository.findByUsername( userName ));
         }catch (Exception e){
             System.out.println(e);

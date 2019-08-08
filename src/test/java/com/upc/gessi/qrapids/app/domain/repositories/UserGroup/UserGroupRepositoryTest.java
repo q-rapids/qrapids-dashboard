@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashSet;
@@ -53,7 +52,7 @@ public class UserGroupRepositoryTest {
         entityManager.persistAndFlush(userGroup2);
 
         // When
-        UserGroup userGroupFound = userGroupRepository.findName(userGroup1Name);
+        UserGroup userGroupFound = userGroupRepository.findByName(userGroup1Name);
 
         // Then
         assertEquals(userGroup1, userGroupFound);
@@ -71,7 +70,7 @@ public class UserGroupRepositoryTest {
         Set<Route> routes1 = new HashSet<>();
         routes1.add(route1);
         UserGroup userGroup1 = new UserGroup(userGroup1Name, routes1);
-        userGroup1.setDefault_group(true);
+        userGroup1.setDefaultGroup(true);
         entityManager.persist(userGroup1);
 
         String route2Name = "REST : Strategic Indicators - Historical Data";
@@ -83,11 +82,11 @@ public class UserGroupRepositoryTest {
         Set<Route> routes2 = new HashSet<>();
         routes2.add(route2);
         UserGroup userGroup2 = new UserGroup(userGroup2Name, routes2);
-        userGroup2.setDefault_group(false);
+        userGroup2.setDefaultGroup(false);
         entityManager.persistAndFlush(userGroup2);
 
         // When
-        UserGroup userGroupFound = userGroupRepository.findDefaultUserGroup();
+        UserGroup userGroupFound = userGroupRepository.findByDefaultGroupIsTrue();
 
         // Then
         assertEquals(userGroup1, userGroupFound);
@@ -105,7 +104,7 @@ public class UserGroupRepositoryTest {
         Set<Route> routes1 = new HashSet<>();
         routes1.add(route1);
         UserGroup userGroup1 = new UserGroup(userGroup1Name, routes1);
-        userGroup1.setDefault_group(true);
+        userGroup1.setDefaultGroup(true);
         entityManager.persist(userGroup1);
 
         String route2Name = "REST : Strategic Indicators - Historical Data";
@@ -117,11 +116,11 @@ public class UserGroupRepositoryTest {
         Set<Route> routes2 = new HashSet<>();
         routes2.add(route2);
         UserGroup userGroup2 = new UserGroup(userGroup2Name, routes2);
-        userGroup2.setDefault_group(false);
+        userGroup2.setDefaultGroup(false);
         entityManager.persistAndFlush(userGroup2);
 
         // When
-        boolean found = userGroupRepository.hasDefaultGroup();
+        boolean found = userGroupRepository.existsByDefaultGroupIsTrue();
 
         // Then
         assertTrue(found);
@@ -150,11 +149,11 @@ public class UserGroupRepositoryTest {
         Set<Route> routes2 = new HashSet<>();
         routes2.add(route2);
         UserGroup userGroup2 = new UserGroup(userGroup2Name, routes2);
-        userGroup2.setDefault_group(false);
+        userGroup2.setDefaultGroup(false);
         entityManager.persistAndFlush(userGroup2);
 
         // When
-        boolean found = userGroupRepository.hasDefaultGroup();
+        boolean found = userGroupRepository.existsByDefaultGroupIsTrue();
 
         // Then
         assertFalse(found);
@@ -172,9 +171,9 @@ public class UserGroupRepositoryTest {
         Set<Route> routes1 = new HashSet<>();
         routes1.add(route1);
         UserGroup userGroup1 = new UserGroup(userGroup1Name, routes1);
-        userGroup1.setDefault_group(true);
+        userGroup1.setDefaultGroup(true);
         entityManager.persist(userGroup1);
-        System.out.println(userGroup1.getDefault_group());
+        System.out.println(userGroup1.getDefaultGroup());
 
         String route2Name = "REST : Strategic Indicators - Historical Data";
         String route2Path = "/HistoricalData";
@@ -185,22 +184,20 @@ public class UserGroupRepositoryTest {
         Set<Route> routes2 = new HashSet<>();
         routes2.add(route2);
         UserGroup userGroup2 = new UserGroup(userGroup2Name, routes2);
-        userGroup2.setDefault_group(false);
+        userGroup2.setDefaultGroup(false);
         entityManager.persistAndFlush(userGroup2);
-        System.out.println(userGroup2.getDefault_group());
+        System.out.println(userGroup2.getDefaultGroup());
 
         // When
-        boolean correct = userGroupRepository.updateUserGroupDefault(userGroup2.getId());
+        userGroupRepository.updateUserGroupDefault(userGroup2.getId());
 
         // Then
-        assertTrue(correct);
-
         UserGroup userGroupFound1 = entityManager.find(UserGroup.class, userGroup1.getId());
         entityManager.refresh(userGroupFound1);
-        assertFalse(userGroupFound1.getDefault_group());
+        assertFalse(userGroupFound1.getDefaultGroup());
 
         UserGroup userGroupFound2 = entityManager.find(UserGroup.class, userGroup2.getId());
         entityManager.refresh(userGroupFound2);
-        assertTrue(userGroupFound2.getDefault_group());
+        assertTrue(userGroupFound2.getDefaultGroup());
     }
 }

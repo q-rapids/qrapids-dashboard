@@ -22,7 +22,7 @@ public class UserGroup implements Serializable {
     private String name;
 
     @Column(name="default_group")
-    private boolean default_group;
+    private boolean defaultGroup;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable( name = "userGroup_route",
@@ -55,8 +55,8 @@ public class UserGroup implements Serializable {
         this.name = name;
     }
 
-    public void setDefault_group(boolean group_default) {
-        this.default_group = group_default;
+    public void setDefaultGroup(boolean group_default) {
+        this.defaultGroup = group_default;
     }
 
     public void setRoutes(Set<Route> routes) {
@@ -75,8 +75,8 @@ public class UserGroup implements Serializable {
         return name;
     }
 
-    public boolean getDefault_group() {
-        return default_group;
+    public boolean getDefaultGroup() {
+        return defaultGroup;
     }
 
     public Set<Route> getRoutes() {

@@ -197,14 +197,14 @@ public class AuthController {
         long groups = this.userGroupRepository.count();
 
         // App has default group
-        boolean hasDefaultGroup = this.userGroupRepository.hasDefaultGroup();
+        boolean hasDefaultGroup = this.userGroupRepository.existsByDefaultGroupIsTrue();
 
 
         // User has one group with default property
         if( groups >= 1 && hasDefaultGroup ){
             // Join user to group to the default group, if the aplication doesn't haver default group, is admin.
             user.setAdmin( false );
-            user.setUserGroup( this.userGroupRepository.findDefaultUserGroup() );
+            user.setUserGroup( this.userGroupRepository.findByDefaultGroupIsTrue() );
         } else {
             user.setAdmin( true );
         }
