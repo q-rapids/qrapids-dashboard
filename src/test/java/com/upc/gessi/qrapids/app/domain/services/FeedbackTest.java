@@ -265,12 +265,11 @@ public class FeedbackTest {
         List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
         feedbackFactorsList.add(feedbackFactors);
 
-        when(feedFactorController.getFeedbackReport(strategicIndicatorId, projectId)).thenReturn(feedbackFactorsList);
+        when(feedFactorController.getFeedbackReport(strategicIndicatorId)).thenReturn(feedbackFactorsList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/strategicIndicator/{id}/feedbackReport", strategicIndicatorId)
-                .param("prj", projectId);
+                .get("/api/strategicIndicator/{id}/feedbackReport", strategicIndicatorId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -297,10 +296,6 @@ public class FeedbackTest {
                         pathParameters(
                                 parameterWithName("id")
                                         .description("Strategic indicator identifier")
-                        ),
-                        requestParameters(
-                                parameterWithName("prj")
-                                        .description("Project external identifier")
                         ),
                         responseFields(
                                 fieldWithPath("[].siId")
@@ -331,7 +326,7 @@ public class FeedbackTest {
                 ));
 
         // Verify mock interactions
-        verify(feedFactorController, times(1)).getFeedbackReport(strategicIndicatorId, projectId);
+        verify(feedFactorController, times(1)).getFeedbackReport(strategicIndicatorId);
         verifyNoMoreInteractions(feedFactorController);
     }
 }

@@ -162,10 +162,6 @@ public class AuthController {
         Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
         if (userOptional.isPresent()) {
             AppUser userUpdate = userOptional.get();
-            System.out.println("FORM : " + user.toString());
-            System.out.println("ORIGIN : " + userUpdate.toString());
-            System.out.println(userUpdate.getAppuser_question().getId() == user.getAppuser_question().getId());
-            System.out.println(userUpdate.getAppuser_question().getId().equals( user.getAppuser_question().getId()));
 
             if (userUpdate.getAppuser_question().getId().equals( user.getAppuser_question().getId())){
                 if (bCryptPasswordEncoder.matches( user.getQuestion(), userUpdate.getQuestion() )){

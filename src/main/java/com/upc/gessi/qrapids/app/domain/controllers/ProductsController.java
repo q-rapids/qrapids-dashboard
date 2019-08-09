@@ -90,8 +90,7 @@ public class ProductsController {
 					return o1.getName().compareTo(o2.getName());
 				}
 			});
-			DTOProduct dtoProduct = new DTOProduct(product.getId(), product.getName(), product.getDescription(), product.getLogo(), relatedProjects);
-			return dtoProduct;
+			return new DTOProduct(product.getId(), product.getName(), product.getDescription(), product.getLogo(), relatedProjects);
 		}
 		return null;
     }
@@ -169,22 +168,7 @@ public class ProductsController {
 				evaluations.add(qmasi.CurrentEvaluation(product.getProjects().get(i).getExternalId()));
 			}
 			average = evaluations.get(0);
-			for (int i = 1; i < evaluations.size(); i++) {
-				for (int j = 0; j < evaluations.get(i).size(); j++) {
-					boolean found = false;
-					for (int k = 0; k < average.size(); k++) {
-						if (average.get(k).getId().equals(evaluations.get(i).get(j).getId())) {
-							Float value1 = average.get(k).getValue().getFirst();
-							Float value2 = evaluations.get(i).get(j).getValue().getFirst();
-							average.get(k).setValue(Pair.of(value1 + value2, ""));
-							found = true;
-						}
-					}
-					if (!found) {
-						average.add(evaluations.get(i).get(j));
-					}
-				}
-			}
+			buildAverageEvaluations(average, evaluations);
 			for (int i = 0; i < average.size(); i++) {
 				Pair<Float, String> pair = average.get(i).getValue();
 				average.get(i).setValue(Pair.of(pair.getFirst() / evaluations.size(), ""));
@@ -192,7 +176,30 @@ public class ProductsController {
 		}
 		return average;
 	}
-	
+
+	private void buildAverageEvaluations(List<DTOStrategicIndicatorEvaluation> average, List<List<DTOStrategicIndicatorEvaluation>> evaluations) {
+		for (int i = 1; i < evaluations.size(); i++) {
+			for (int j = 0; j < evaluations.get(i).size(); j++) {
+				boolean found = isFound(average, evaluations.get(i).get(j));
+				if (!found) {
+					average.add(evaluations.get(i).get(j));
+				}
+			}
+		}
+	}
+
+	private boolean isFound(List<DTOStrategicIndicatorEvaluation> average, DTOStrategicIndicatorEvaluation evaluation) {
+		for (DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation : average) {
+			if (dtoStrategicIndicatorEvaluation.getId().equals(evaluation.getId())) {
+				Float value1 = dtoStrategicIndicatorEvaluation.getValue().getFirst();
+				Float value2 = evaluation.getValue().getFirst();
+				dtoStrategicIndicatorEvaluation.setValue(Pair.of(value1 + value2, ""));
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> getDetailedProductEvaluation(Long id) throws IOException, CategoriesException {
 		Optional<Product> productOptional = productRep.findById(id);
 		List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> evaluations = new Vector<Pair<String, List<DTOStrategicIndicatorEvaluation>>>();

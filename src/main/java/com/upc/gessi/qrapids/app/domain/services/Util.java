@@ -258,12 +258,12 @@ public class Util {
                 Optional<Strategic_Indicator> strategicIndicatorOptional = siRep.findById(id);
                 if (strategicIndicatorOptional.isPresent()) {
                     Strategic_Indicator strategicIndicator = strategicIndicatorOptional.get();
-                    List<String> si_quality_factors = strategicIndicator.getQuality_factors();
-                    boolean same_factors = (si_quality_factors.size() == qualityFactors.size());
+                    List<String> strategicIndicatorQualityFactors = strategicIndicator.getQuality_factors();
+                    boolean sameFactors = (strategicIndicatorQualityFactors.size() == qualityFactors.size());
                     int i = 0;
-                    while (i < si_quality_factors.size() && same_factors) {
-                        if (qualityFactors.indexOf(si_quality_factors.get(i)) == -1)
-                            same_factors = false;
+                    while (i < strategicIndicatorQualityFactors.size() && sameFactors) {
+                        if (qualityFactors.indexOf(strategicIndicatorQualityFactors.get(i)) == -1)
+                            sameFactors = false;
                         i++;
                     }
 
@@ -272,7 +272,7 @@ public class Util {
                     strategicIndicator.setDescription(description);
                     strategicIndicator.setQuality_factors(qualityFactors);
                     siRep.save(strategicIndicator);
-                    if (!same_factors) {
+                    if (!sameFactors) {
                         if (!AssessStrategicIndicator(name)) {
                             throw new AssessmentErrorException();
                         }
@@ -683,7 +683,7 @@ public class Util {
         Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
         List<SICategory> siCategoryList = new ArrayList<>();
         siCategoryIterable.forEach(siCategoryList::add);
-        if (f != null && siCategoryList.size() > 0) {
+        if (f != null && !siCategoryList.isEmpty()) {
             if (f < 1.0f)
                 return siCategoryList.get(siCategoryList.size() - 1 - (int) (f * (float) siCategoryList.size())).getName();
             else
@@ -696,11 +696,11 @@ public class Util {
         List<SICategory> siCategoryList = new ArrayList<>();
         siCategoryIterable.forEach(siCategoryList::add);
         List<DTOSIAssesment> result = new ArrayList<>();
-        float thresholds_interval = 1.0f/(float)siCategoryList.size();
+        float thresholdsInterval = 1.0f/(float)siCategoryList.size();
         float upperThreshold=1;
         for (SICategory c : siCategoryIterable) {
             result.add(new DTOSIAssesment(c.getId(), c.getName(), null, c.getColor(), abs((float)upperThreshold)));
-            upperThreshold -=  thresholds_interval;
+            upperThreshold -=  thresholdsInterval;
         }
         return result;
     }

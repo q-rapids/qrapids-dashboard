@@ -33,6 +33,8 @@ public class UserProfileController {
 
     private final String redirectTo = "/profile";
 
+    private static final String REDIRECT = "redirect:";
+
     public UserProfileController(BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -97,12 +99,12 @@ public class UserProfileController {
                     userUpdate.setPassword(bCryptPasswordEncoder.encode( user.getPassword()));
 
                 this.userRepository.save(userUpdate);
-                return "redirect:" + this.redirectTo + "?success=" + "Data updated".replace(" ","+");
+                return REDIRECT + this.redirectTo + "?success=" + "Data updated".replace(" ","+");
             } else {
-                return "redirect:" + this.redirectTo + "?error=" + "User not found".replace(" ","+");
+                return REDIRECT + this.redirectTo + "?error=" + "User not found".replace(" ","+");
             }
         } catch( Exception e ){
-            return "redirect:" + this.redirectTo + "?error=" + "Something went wrong".replace(" ","+");
+            return REDIRECT + this.redirectTo + "?error=" + "Something went wrong".replace(" ","+");
         }
 
     }

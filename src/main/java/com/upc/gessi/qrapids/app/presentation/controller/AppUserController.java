@@ -46,6 +46,8 @@ public class AppUserController {
     // redirection url, after process finish
 	private String redirectTo = "/users";
 
+    private static final String USER_NOT_FOUND = "User not found";
+
     /**
      * Implementation
      * @param userRepository
@@ -88,8 +90,8 @@ public class AppUserController {
         view.addObject("defautlUserGroup", defautlUserGroup );
         view.addObject("user", new AppUser());
 
-        boolean admin_select = ! this.userGroupRepository.existsByDefaultGroupIsTrue();
-        view.addObject("admin_select", admin_select);
+        boolean adminSelect = ! this.userGroupRepository.existsByDefaultGroupIsTrue();
+        view.addObject("admin_select", adminSelect);
 
 
         return view;
@@ -204,7 +206,7 @@ public class AppUserController {
                 view.addObject("appuser", user);
                 return view;
             } else {
-                view.addObject("errors", "User not found" );
+                view.addObject("errors", USER_NOT_FOUND );
             }
         } catch ( Exception err ) {
             view.addObject("errors", "Error" );
@@ -241,7 +243,7 @@ public class AppUserController {
                 }
             }
         } else {
-            return "redirect:" + this.redirectTo + "?error=" + "User not found".replace(" ","+");
+            return "redirect:" + this.redirectTo + "?error=" + USER_NOT_FOUND.replace(" ","+");
         }
     }
 
@@ -260,7 +262,7 @@ public class AppUserController {
                 this.userRepository.save(userUpdate);
                 return "redirect:" + this.redirectTo + "?success=" + "Success".replace(" ","+");
             } else {
-                return "redirect:" + this.redirectTo + "?error=" + "User not found".replace(" ","+");
+                return "redirect:" + this.redirectTo + "?error=" + USER_NOT_FOUND.replace(" ","+");
             }
         } catch( Exception e ){
             return "redirect:" + this.redirectTo + "?error=" + "Error".replace(" ","+");
@@ -283,7 +285,7 @@ public class AppUserController {
                 this.userRepository.save(userUpdate);
                 return "redirect:" + this.redirectTo + "?success=" + "User updated".replace(" ","+");
             } else {
-                return "redirect:" + this.redirectTo + "?error=" + "User not found".replace(" ","+");
+                return "redirect:" + this.redirectTo + "?error=" + USER_NOT_FOUND.replace(" ","+");
             }
         } catch( Exception e ) {
             return "redirect:" + this.redirectTo + "?error=" + "Error".replace(" ","+");
