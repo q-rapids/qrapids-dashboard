@@ -1,7 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 import com.google.gson.Gson;
-import com.upc.gessi.qrapids.app.database.repositories.Feedback.FeedFactorRepositoryImpl;
+import com.upc.gessi.qrapids.app.domain.controllers.FeedFactorController;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackValues;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
@@ -50,7 +50,7 @@ public class FeedbackTest {
     FeedbackValueRepository feedbackValueRepository;
 
     @Mock
-    FeedFactorRepositoryImpl feedFactorRepository;
+    FeedFactorController feedFactorController;
 
     @InjectMocks
     private Feedback feedbackController;
@@ -187,7 +187,7 @@ public class FeedbackTest {
         com.upc.gessi.qrapids.app.domain.models.Feedback feedback = new com.upc.gessi.qrapids.app.domain.models.Feedback(strategicIndicatorId, date, null, null, newValue.floatValue(), oldValue.floatValue());
         List<com.upc.gessi.qrapids.app.domain.models.Feedback> feedbackList = new ArrayList<>();
         feedbackList.add(feedback);
-        when(feedbackRepository.getFeedback(strategicIndicatorId)).thenReturn(feedbackList);
+        when(feedbackRepository.findAllBySiId(strategicIndicatorId)).thenReturn(feedbackList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -226,7 +226,7 @@ public class FeedbackTest {
                 ));
 
         // Verify mock interactions
-        verify(feedbackRepository, times(1)).getFeedback(strategicIndicatorId);
+        verify(feedbackRepository, times(1)).findAllBySiId(strategicIndicatorId);
         verifyNoMoreInteractions(feedbackRepository);
     }
 
@@ -265,12 +265,11 @@ public class FeedbackTest {
         List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
         feedbackFactorsList.add(feedbackFactors);
 
-        when(feedFactorRepository.getFeedbackReport(strategicIndicatorId, projectId)).thenReturn(feedbackFactorsList);
+        when(feedFactorController.getFeedbackReport(strategicIndicatorId)).thenReturn(feedbackFactorsList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/strategicIndicator/{id}/feedbackReport", strategicIndicatorId)
-                .param("prj", projectId);
+                .get("/api/strategicIndicator/{id}/feedbackReport", strategicIndicatorId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -297,10 +296,6 @@ public class FeedbackTest {
                         pathParameters(
                                 parameterWithName("id")
                                         .description("Strategic indicator identifier")
-                        ),
-                        requestParameters(
-                                parameterWithName("prj")
-                                        .description("Project external identifier")
                         ),
                         responseFields(
                                 fieldWithPath("[].siId")
@@ -331,7 +326,7 @@ public class FeedbackTest {
                 ));
 
         // Verify mock interactions
-        verify(feedFactorRepository, times(1)).getFeedbackReport(strategicIndicatorId, projectId);
-        verifyNoMoreInteractions(feedFactorRepository);
+        verify(feedFactorController, times(1)).getFeedbackReport(strategicIndicatorId);
+        verifyNoMoreInteractions(feedFactorController);
     }
 }

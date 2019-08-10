@@ -273,7 +273,7 @@ public class AlertsTest {
         boolean hasReq = true;
         Alert alert = new Alert(idElement, name, alertType, value.floatValue(), threshold.floatValue(), category, date, alertStatus, hasReq, null);
         alert.setId(alertId);
-        when(alertRepository.findAlertById(alertId)).thenReturn(alert);
+        when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
 
         // Requirement pattern setup
         String formText = "The ratio of files without duplications should be at least %value%";
@@ -347,7 +347,7 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(alertRepository, times(1)).findAlertById(alertId);
+        verify(alertRepository, times(1)).findById(alertId);
         verifyNoMoreInteractions(alertRepository);
 
         verify(qrGeneratorFactory, times(1)).getQRGenerator();
@@ -360,7 +360,7 @@ public class AlertsTest {
     @Test
     public void getQRPatternForAlertNotFound() throws Exception {
         Long alertId = 1L;
-        when(alertRepository.findAlertById(alertId)).thenReturn(null);
+        when(alertRepository.findById(alertId)).thenReturn(Optional.empty());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -398,7 +398,7 @@ public class AlertsTest {
         decision.setId(decisionId);
         alert.setDecision(decision);
 
-        when(alertRepository.findAlertById(alertId)).thenReturn(alert);
+        when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
 
         // Requirement setup
         String requirement = "The ratio of files without duplications should be at least 0.8";
@@ -446,7 +446,7 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(alertRepository, times(1)).findAlertById(alertId);
+        verify(alertRepository, times(1)).findById(alertId);
         verifyNoMoreInteractions(alertRepository);
 
         verify(qrRepository, times(1)).findByDecisionId(decisionId);
@@ -456,7 +456,7 @@ public class AlertsTest {
     @Test
     public void getAlertDecisionAlertNotFound() throws Exception {
         Long alertId = 1L;
-        when(alertRepository.findAlertById(alertId)).thenReturn(null);
+        when(alertRepository.findById(alertId)).thenReturn(Optional.empty());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -502,7 +502,7 @@ public class AlertsTest {
         Alert alert = new Alert(idElement, name, alertType, value.floatValue(), threshold.floatValue(), category, date, alertStatus, hasReq, null);
         alert.setId(alertId);
 
-        when(alertRepository.findAlertById(alertId)).thenReturn(alert);
+        when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
         when(alertRepository.save(ArgumentMatchers.any(Alert.class))).thenReturn(alert);
 
         // Perform request
@@ -538,7 +538,7 @@ public class AlertsTest {
         verify(decisionRepository, times(1)).save(ArgumentMatchers.any(Decision.class));
         verifyNoMoreInteractions(decisionRepository);
 
-        verify(alertRepository, times(1)).findAlertById(alertId);
+        verify(alertRepository, times(1)).findById(alertId);
         verify(alertRepository, times(1)).save(ArgumentMatchers.any(Alert.class));
         verifyNoMoreInteractions(alertRepository);
     }
@@ -590,7 +590,7 @@ public class AlertsTest {
         // Alert setup
         Long alertId = 2L;
 
-        when(alertRepository.findAlertById(alertId)).thenReturn(null);
+        when(alertRepository.findById(alertId)).thenReturn(Optional.empty());
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -712,7 +712,7 @@ public class AlertsTest {
         Alert alert = new Alert(idElement, name, alertType, value.floatValue(), threshold.floatValue(), category, date, alertStatus, hasReq, null);
         alert.setId(alertId);
 
-        when(alertRepository.findAlertById(alertId)).thenReturn(alert);
+        when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
         when(alertRepository.save(ArgumentMatchers.any(Alert.class))).thenReturn(alert);
 
         // Requirement setup
@@ -801,7 +801,7 @@ public class AlertsTest {
         verify(decisionRepository, times(1)).save(ArgumentMatchers.any(Decision.class));
         verifyNoMoreInteractions(decisionRepository);
 
-        verify(alertRepository, times(1)).findAlertById(alertId);
+        verify(alertRepository, times(1)).findById(alertId);
         verify(alertRepository, times(1)).save(ArgumentMatchers.any(Alert.class));
 
         verify(qrRepository, times(2)).save(ArgumentMatchers.any(QualityRequirement.class));
@@ -843,7 +843,7 @@ public class AlertsTest {
         Alert alert = new Alert(idElement, name, alertType, value.floatValue(), threshold.floatValue(), category, date, alertStatus, hasReq, null);
         alert.setId(alertId);
 
-        when(alertRepository.findAlertById(alertId)).thenReturn(alert);
+        when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
         when(alertRepository.save(ArgumentMatchers.any(Alert.class))).thenReturn(alert);
 
         // Requirement setup
@@ -886,7 +886,7 @@ public class AlertsTest {
         verify(decisionRepository, times(1)).save(ArgumentMatchers.any(Decision.class));
         verifyNoMoreInteractions(decisionRepository);
 
-        verify(alertRepository, times(1)).findAlertById(alertId);
+        verify(alertRepository, times(1)).findById(alertId);
         verify(alertRepository, times(1)).save(ArgumentMatchers.any(Alert.class));
 
         verify(qrRepository, times(1)).save(ArgumentMatchers.any(QualityRequirement.class));
@@ -918,7 +918,7 @@ public class AlertsTest {
         // Alert setup
         Long alertId = 2L;
 
-        when(alertRepository.findAlertById(alertId)).thenReturn(null);
+        when(alertRepository.findById(alertId)).thenReturn(Optional.empty());
 
         // Requirement setup
         Long requirementId = 3L;
@@ -950,7 +950,7 @@ public class AlertsTest {
         verify(decisionRepository, times(1)).save(ArgumentMatchers.any(Decision.class));
         verifyNoMoreInteractions(decisionRepository);
 
-        verify(alertRepository, times(1)).findAlertById(alertId);
+        verify(alertRepository, times(1)).findById(alertId);
         verifyNoMoreInteractions(alertRepository);
 
         verifyNoMoreInteractions(qrRepository);

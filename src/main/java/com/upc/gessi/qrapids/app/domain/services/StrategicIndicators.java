@@ -2,14 +2,12 @@ package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAFakedata;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.database.repositories.Strategic_Indicator.Strategic_IndicatorRepositoryImpl;
 import com.upc.gessi.qrapids.app.dto.*;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,16 +25,10 @@ import java.util.List;
 public class StrategicIndicators {
 
     @Autowired
-    private Strategic_IndicatorRepositoryImpl kpirep;
-
-    @Autowired
     private QMAStrategicIndicators qmasi;
 
     @Autowired
     private QMADetailedStrategicIndicators qmadsi;
-
-    @Autowired
-    private QMAFakedata qmafake;
 
     @Autowired
     private StrategicIndicatorRepository siRep;
@@ -52,19 +42,14 @@ public class StrategicIndicators {
     @GetMapping("/api/strategicIndicators/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsEvaluation(@RequestParam(value = "prj") String prj) {
-        if (qmafake.usingFakeData()) {
-            return kpirep.CurrentEvaluation();
-        } else {
-            try {
-                return qmasi.CurrentEvaluation(prj);
-            } catch (ElasticsearchStatusException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
-            } catch (CategoriesException e) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
-            } catch (IOException e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
-            }
-
+        try {
+            return qmasi.CurrentEvaluation(prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (CategoriesException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
@@ -85,18 +70,14 @@ public class StrategicIndicators {
     @GetMapping("/api/strategicIndicators/historical")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
-        if (qmafake.usingFakeData()) {
-            return kpirep.HistoricalData();
-        } else {
-            try {
-                return qmasi.HistoricalData(LocalDate.parse(from), LocalDate.parse(to), prj);
-            } catch (ElasticsearchStatusException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
-            } catch (CategoriesException e) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
-            } catch (IOException e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
-            }
+        try {
+            return qmasi.HistoricalData(LocalDate.parse(from), LocalDate.parse(to), prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (CategoriesException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 

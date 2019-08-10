@@ -1,0 +1,130 @@
+package com.upc.gessi.qrapids.app.domain.controllers;
+
+import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.models.Feedback;
+import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
+import com.upc.gessi.qrapids.app.domain.services.Util;
+import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
+import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
+import com.upc.gessi.qrapids.app.domain.models.FeedbackValues;
+import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class FeedFactorController {
+
+    @Autowired
+    private FeedbackRepository fRep;
+
+    @Autowired
+    private FeedbackValueRepository fvRep;
+
+    @Autowired
+    private StrategicIndicatorRepository siRep;
+
+    @Autowired
+    private QMAStrategicIndicators qmasi;
+
+    @Autowired
+    private Util util;
+
+    public List<FeedbackFactors> getFeedbackReport(Long strategicIndicatorId) throws IOException, CategoriesException {
+        List<Feedback> feedbackList = fRep.findAllBySiId(strategicIndicatorId);
+        Optional<Strategic_Indicator> strategicIndicatorOptional = siRep.findById(strategicIndicatorId);
+        if (strategicIndicatorOptional.isPresent()) {
+            return getFeedbackReportFromFeedbackList(feedbackList, strategicIndicatorOptional.get());
+        }
+        return new ArrayList<>();
+    }
+
+    private List<FeedbackFactors> getFeedbackReportFromFeedbackList (List<Feedback> feedbackList, Strategic_Indicator strategicIndicator) throws IOException, CategoriesException {
+        List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
+        for (int i = 0; i < feedbackList.size(); ++i) {
+            Long siId = strategicIndicator.getId();
+            String siName = strategicIndicator.getName();
+            String date = feedbackList.get(i).getDate().toString();
+            String author = feedbackList.get(i).getAuthor();
+
+            float oldValue = feedbackList.get(i).getOldvalue();
+            float newValue = feedbackList.get(i).getNewvalue();
+            String oldCategory = null;
+            String oldCategoryColor = null;
+            String newCategory = util.getLabel(newValue);
+            String newCategoryColor = null;
+            List<DTOStrategicIndicatorEvaluation> csi = qmasi.CurrentEvaluation(strategicIndicator.getProject().getExternalId());
+            OldAndNewCategories oldAndNewCategories = new OldAndNewCategories(strategicIndicator, csi, newCategory).invoke();
+            oldCategory = oldAndNewCategories.getOldCategory();
+            oldCategoryColor = oldAndNewCategories.getOldCategoryColor();
+            newCategoryColor = oldAndNewCategories.getNewCategoryColor();
+
+            Date feedbackDate = feedbackList.get(i).getDate();
+            List<FeedbackValues> feedbackValues = fvRep.findAllBySiIdAndFeedbackDate(strategicIndicator.getId(), feedbackDate);
+            List<String> factors = new ArrayList<>();
+            List<Float> factorsVal = new ArrayList<>();
+            for (int j = 0; j < feedbackValues.size(); ++j) {
+                factors.add(feedbackValues.get(j).getFactorName());
+                factorsVal.add(feedbackValues.get(j).getFactorValue());
+            }
+
+            FeedbackFactors feedbackFactors = new FeedbackFactors(siId, siName, date, factors, factorsVal, author, oldValue, oldCategory, oldCategoryColor, newValue, newCategory, newCategoryColor);
+            feedbackFactorsList.add(feedbackFactors);
+        }
+        return feedbackFactorsList;
+    }
+
+    private static class OldAndNewCategories {
+        private Strategic_Indicator strategicIndicator;
+        private String oldCategory;
+        private String oldCategoryColor;
+        private String newCategory;
+        private String newCategoryColor;
+        private List<DTOStrategicIndicatorEvaluation> csi;
+
+        OldAndNewCategories(Strategic_Indicator strategicIndicator, List<DTOStrategicIndicatorEvaluation> csi, String newCategory) {
+            this.strategicIndicator = strategicIndicator;
+            this.csi = csi;
+            this.newCategory = newCategory;
+        }
+
+        String getOldCategory() {
+            return oldCategory;
+        }
+
+        String getOldCategoryColor() {
+            return oldCategoryColor;
+        }
+
+        String getNewCategoryColor() {
+            return newCategoryColor;
+        }
+
+        public OldAndNewCategories invoke() {
+            for (DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation : csi) {
+                if (dtoStrategicIndicatorEvaluation.getId().equals(strategicIndicator.getExternalId())) {
+                    oldCategory = dtoStrategicIndicatorEvaluation.getValue().getSecond();
+                    List<DTOSIAssesment> probabilities = dtoStrategicIndicatorEvaluation.getProbabilities();
+                    for (DTOSIAssesment probability : probabilities) {
+                        if (probability.getLabel().equals(oldCategory)) {
+                            oldCategoryColor = probability.getColor();
+                        }
+                        if (probability.getLabel().equals(newCategory)) {
+                            newCategoryColor = probability.getColor();
+                        }
+                    }
+                }
+            }
+            return this;
+        }
+    }
+}

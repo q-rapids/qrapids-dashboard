@@ -104,8 +104,6 @@ public class Util {
     @Autowired
     private DecisionRepository decisionRepository;
 
-    private List<SICategory> allCats;
-
     @Autowired
     private Forecast forecast;
 
@@ -121,9 +119,9 @@ public class Util {
     @GetMapping("/api/strategicIndicators/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOCategory> getSICategories () {
-        List<SICategory> siCategoryList = SICatRep.findAll();
+        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
         List<DTOCategory> dtoCategoryList = new ArrayList<>();
-        for (SICategory siCategory : siCategoryList) {
+        for (SICategory siCategory : siCategoryIterable) {
             dtoCategoryList.add(new DTOCategory(siCategory.getId(), siCategory.getName(), siCategory.getColor()));
         }
         return dtoCategoryList;
@@ -143,7 +141,9 @@ public class Util {
     @GetMapping("/api/qualityFactors/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOCategoryThreshold> getFactorCategories () {
-        List<QFCategory> factorCategoryList = QFCatRep.findAll();
+        Iterable<QFCategory> categoryIterable = QFCatRep.findAll();
+        List<QFCategory> factorCategoryList = new ArrayList<>();
+        categoryIterable.forEach(factorCategoryList::add);
         List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
         for (QFCategory qfCategory : factorCategoryList) {
             dtoCategoryList.add(new DTOCategoryThreshold(qfCategory.getId(), qfCategory.getName(), qfCategory.getColor(), qfCategory.getUpperThreshold()));
@@ -221,8 +221,9 @@ public class Util {
     @GetMapping("/api/strategicIndicators/{id}")
     @ResponseStatus(HttpStatus.OK)
     public DTOSI getSI(@PathVariable Long id) {
-        if (siRep.existsById(id)) {
-            Strategic_Indicator strategicIndicator = siRep.getOne(id);
+        Optional<Strategic_Indicator> strategicIndicatorOptional = siRep.findById(id);
+        if (strategicIndicatorOptional.isPresent()) {
+            Strategic_Indicator strategicIndicator = strategicIndicatorOptional.get();
             DTOSI dtosi = new DTOSI(strategicIndicator.getId(),
                     strategicIndicator.getExternalId(),
                     strategicIndicator.getName(),
@@ -254,26 +255,27 @@ public class Util {
                 throw new MissingParametersException();
             }
             if (!name.equals("") && qualityFactors.size() > 0) {
-                Strategic_Indicator editSI = siRep.getOne(id);
-                //TOdo: the equals is not working
-                //boolean same_factors = editSI.getQuality_factors().equals(qualityFactors);
-                List<String> si_quality_factors=editSI.getQuality_factors();
-                boolean same_factors = (si_quality_factors.size()==qualityFactors.size());
-                int i = 0;
-                while (i<si_quality_factors.size() && same_factors) {
-                    if (qualityFactors.indexOf(si_quality_factors.get(i))==-1)
-                        same_factors = false;
-                    i++;
-                }
+                Optional<Strategic_Indicator> strategicIndicatorOptional = siRep.findById(id);
+                if (strategicIndicatorOptional.isPresent()) {
+                    Strategic_Indicator strategicIndicator = strategicIndicatorOptional.get();
+                    List<String> strategicIndicatorQualityFactors = strategicIndicator.getQuality_factors();
+                    boolean sameFactors = (strategicIndicatorQualityFactors.size() == qualityFactors.size());
+                    int i = 0;
+                    while (i < strategicIndicatorQualityFactors.size() && sameFactors) {
+                        if (qualityFactors.indexOf(strategicIndicatorQualityFactors.get(i)) == -1)
+                            sameFactors = false;
+                        i++;
+                    }
 
-                if (file != null && file.length > 10) editSI.setNetwork(file);
-                editSI.setName(name);
-                editSI.setDescription(description);
-                editSI.setQuality_factors(qualityFactors);
-                siRep.flush();
-                if (!same_factors) {
-                    if (!AssessStrategicIndicator(name)) {
-                        throw new AssessmentErrorException();
+                    if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
+                    strategicIndicator.setName(name);
+                    strategicIndicator.setDescription(description);
+                    strategicIndicator.setQuality_factors(qualityFactors);
+                    siRep.save(strategicIndicator);
+                    if (!sameFactors) {
+                        if (!AssessStrategicIndicator(name)) {
+                            throw new AssessmentErrorException();
+                        }
                     }
                 }
             }
@@ -422,7 +424,7 @@ public class Util {
     // assessment is computed correctly
     private boolean AssessProjectStrategicIndicators(LocalDate evaluationDate, String  project, Factors factorsQMA) throws IOException {
         // List of ALL the strategic indicators in the local database
-        List<Strategic_Indicator> listSI = siRep.findAll();
+        Iterable<Strategic_Indicator> strategicIndicatorIterable = siRep.findAll();
 
 /*        // Local date to be used as evaluation date
         Date input = new Date();
@@ -435,7 +437,7 @@ public class Util {
 
         // 2.- We will compute the evaluation values for the SIs, adding the corresponding relations to the factors
         //      used for these computation
-        for (Strategic_Indicator si : listSI) {
+        for (Strategic_Indicator si : strategicIndicatorIterable) {
             correct = AssessStrategicIndicator(evaluationDate, project, si, factorsQMA);
         }
 
@@ -617,7 +619,7 @@ public class Util {
                     ++i;
                 }
             }
-            List<Strategic_Indicator> listSI = siRep.findAll();
+            Iterable<Strategic_Indicator> listSI = siRep.findAll();
             List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
             for (Strategic_Indicator si : listSI) {
                 Map<String,String> mapSIFactors = new HashMap<>();
@@ -678,23 +680,27 @@ public class Util {
     }
 
     public String getLabel(Float f) {
-        allCats = SICatRep.findAll();
-        if (f != null && allCats.size() > 0) {
+        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
+        List<SICategory> siCategoryList = new ArrayList<>();
+        siCategoryIterable.forEach(siCategoryList::add);
+        if (f != null && !siCategoryList.isEmpty()) {
             if (f < 1.0f)
-                return allCats.get(allCats.size() - 1 - (int) (f * (float) allCats.size())).getName();
+                return siCategoryList.get(siCategoryList.size() - 1 - (int) (f * (float) siCategoryList.size())).getName();
             else
-                return allCats.get(0).getName();
+                return siCategoryList.get(0).getName();
         } else return "No Category";
     }
 
     public List<DTOSIAssesment> getCategories() {
-        allCats = SICatRep.findAll();
+        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
+        List<SICategory> siCategoryList = new ArrayList<>();
+        siCategoryIterable.forEach(siCategoryList::add);
         List<DTOSIAssesment> result = new ArrayList<>();
-        float thresholds_interval = 1.0f/(float)allCats.size();
+        float thresholdsInterval = 1.0f/(float)siCategoryList.size();
         float upperThreshold=1;
-        for (SICategory c : allCats) {
+        for (SICategory c : siCategoryIterable) {
             result.add(new DTOSIAssesment(c.getId(), c.getName(), null, c.getColor(), abs((float)upperThreshold)));
-            upperThreshold -=  thresholds_interval;
+            upperThreshold -=  thresholdsInterval;
         }
         return result;
     }
@@ -718,14 +724,16 @@ public class Util {
     }
 
     public Float getValueFromLabel (String label) {
-        List<SICategory> categories = SICatRep.findAll();
-        Collections.reverse(categories);
+        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
+        List<SICategory> siCategoryList = new ArrayList<>();
+        siCategoryIterable.forEach(siCategoryList::add);
+        Collections.reverse(siCategoryList);
         Float index = -1.f;
-        for (Float i = 0.f; i < categories.size(); i++) {
-            if (categories.get(i.intValue()).getName().equals(label))
+        for (Float i = 0.f; i < siCategoryList.size(); i++) {
+            if (siCategoryList.get(i.intValue()).getName().equals(label))
                 index = i;
         }
-        return (index/categories.size() + (index+1)/categories.size())/2.0f;
+        return (index/siCategoryList.size() + (index+1)/siCategoryList.size())/2.0f;
     }
 
     public String getQFLabelFromValue(Float f) {

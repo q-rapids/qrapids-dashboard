@@ -25,9 +25,6 @@ import java.util.List;
 public class QMADetailedStrategicIndicators {
 
     @Autowired
-    private QMAFakedata qmafake;
-
-    @Autowired
     private QMAConnection qmacon;
 
     @Autowired
@@ -36,48 +33,40 @@ public class QMADetailedStrategicIndicators {
     public List<DTODetailedStrategicIndicator> CurrentEvaluation(String id, String prj) throws IOException {
         List<DTODetailedStrategicIndicator> dsi;
 
-        if (qmafake.usingFakeData())
-            dsi = qmafake.getDetailedSIs(id);
-        else {
-            // Data coming from QMA API
-            qmacon.initConnexion();
+        // Data coming from QMA API
+        qmacon.initConnexion();
 
-            List<StrategicIndicatorFactorEvaluationDTO> evals;
-            // All the strategic indicators
-            if (id == null) {
-                evals = StrategicIndicator.getFactorsEvaluations(prj);
-            } else {
-                evals = new ArrayList<>();
-                evals.add(StrategicIndicator.getFactorsEvaluations(prj, id));
-            }
-
-            dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(evals);
-            //Connection.closeConnection();
+        List<StrategicIndicatorFactorEvaluationDTO> evals;
+        // All the strategic indicators
+        if (id == null) {
+            evals = StrategicIndicator.getFactorsEvaluations(prj);
+        } else {
+            evals = new ArrayList<>();
+            evals.add(StrategicIndicator.getFactorsEvaluations(prj, id));
         }
+
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(evals);
+        //Connection.closeConnection();
         return dsi;
     }
 
     public List<DTODetailedStrategicIndicator> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
         List<DTODetailedStrategicIndicator> dsi;
 
-        if (qmafake.usingFakeData())
-            dsi=qmafake.getHistoricalDetailedSIs(id);
-        else {
-            // Data coming from QMA API
-            qmacon.initConnexion();
+        // Data coming from QMA API
+        qmacon.initConnexion();
 
-            List<StrategicIndicatorFactorEvaluationDTO> evals;
-            if (id == null) {
-                //using dates from 1/1/2015 to now at the moment
-                evals = StrategicIndicator.getFactorsEvaluations(prj, from, to);
-            } else {
-                //using dates from 1/1/2015 to now at the moment
-                evals = new ArrayList<>();
-                evals.add(StrategicIndicator.getFactorsEvaluations(prj, id, from, to));
-            }
-            dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(evals);
-            //Connection.closeConnection();
+        List<StrategicIndicatorFactorEvaluationDTO> evals;
+        if (id == null) {
+            //using dates from 1/1/2015 to now at the moment
+            evals = StrategicIndicator.getFactorsEvaluations(prj, from, to);
+        } else {
+            //using dates from 1/1/2015 to now at the moment
+            evals = new ArrayList<>();
+            evals.add(StrategicIndicator.getFactorsEvaluations(prj, id, from, to));
         }
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(evals);
+        //Connection.closeConnection();
         return dsi;
     }
 

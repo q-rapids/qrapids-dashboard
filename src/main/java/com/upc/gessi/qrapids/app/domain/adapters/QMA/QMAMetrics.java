@@ -20,30 +20,22 @@ import java.util.List;
 public class QMAMetrics {
 
     @Autowired
-    private QMAFakedata qmafake;
-
-    @Autowired
     private QMAConnection qmacon;
 
     public List<DTOMetric> CurrentEvaluation(String id, String prj) throws IOException {
         List<DTOMetric> result;
 
-        if (qmafake.usingFakeData()){
-            result = qmafake.getMetrics(id);
-        }
-        else {
-            List<MetricEvaluationDTO> evals;
+        List<MetricEvaluationDTO> evals;
 
-            qmacon.initConnexion();
+        qmacon.initConnexion();
 
+        if (id == null)
+            evals = Metric.getEvaluations(prj);
+        else
+            evals = Factor.getMetricsEvaluations(prj, id).getMetrics();
+        //Connection.closeConnection();
+        result = MetricEvaluationDTOListToDTOMetricList(evals);
 
-            if (id == null)
-                evals = Metric.getEvaluations(prj);
-            else
-                evals = Factor.getMetricsEvaluations(prj, id).getMetrics();
-            //Connection.closeConnection();
-            result = MetricEvaluationDTOListToDTOMetricList(evals);
-        }
         return result;
     }
 
@@ -56,21 +48,16 @@ public class QMAMetrics {
     public List<DTOMetric> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
         List<DTOMetric> result;
 
-        if (qmafake.usingFakeData()){
-            result = qmafake.getHistoricalMetrics(id);
-        }
-        else {
-            List<MetricEvaluationDTO> evals;
+        List<MetricEvaluationDTO> evals;
 
-            qmacon.initConnexion();
-            if (id == null)
-                evals = Metric.getEvaluations(prj, from, to);
-            else
-                evals = Factor.getMetricsEvaluations(prj, id, from, to).getMetrics();
-            //Connection.closeConnection();
-            result = MetricEvaluationDTOListToDTOMetricList(evals);
+        qmacon.initConnexion();
+        if (id == null)
+            evals = Metric.getEvaluations(prj, from, to);
+        else
+            evals = Factor.getMetricsEvaluations(prj, id, from, to).getMetrics();
+        //Connection.closeConnection();
+        result = MetricEvaluationDTOListToDTOMetricList(evals);
 
-        }
         return result;
     }
 
