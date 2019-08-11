@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
 import com.upc.gessi.qrapids.app.domain.controllers.AlertsController;
+import com.upc.gessi.qrapids.app.domain.controllers.QRPatternsController;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
@@ -13,6 +14,9 @@ import com.upc.gessi.qrapids.app.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.dto.DTOAlertDecision;
 import com.upc.gessi.qrapids.app.dto.DTONewAlerts;
 import com.upc.gessi.qrapids.app.dto.DTOQualityRequirement;
+import com.upc.gessi.qrapids.app.dto.qrPattern.DTOQRFixedPart;
+import com.upc.gessi.qrapids.app.dto.qrPattern.DTOQRForm;
+import com.upc.gessi.qrapids.app.dto.qrPattern.DTOQRPattern;
 import com.upc.gessi.qrapids.app.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 import qr.QRGenerator;
+import qr.models.FixedPart;
+import qr.models.Form;
 import qr.models.QualityRequirementPattern;
 import qr.models.enumerations.Type;
 
@@ -64,6 +70,9 @@ public class Alerts {
     @Autowired
     AlertsController alertsController;
 
+    @Autowired
+    QRPatternsController qrPatternsController;
+
     @GetMapping("/api/alerts")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj) {
@@ -95,14 +104,24 @@ public class Alerts {
 
     @GetMapping("/api/alerts/{id}/qrPatterns")
     @ResponseStatus(HttpStatus.OK)
-    public List<QualityRequirementPattern> getQR(@PathVariable String id) {
-        Optional<Alert> alertOptional = ari.findById(Long.parseLong(id));
-        if (alertOptional.isPresent()) {
-            Alert alert = alertOptional.get();
-            qr.models.Alert alertModel = new qr.models.Alert(alert.getId_element(), alert.getName(), Type.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), null);
-            QRGenerator gen = qrGeneratorFactory.getQRGenerator();
-            return gen.generateQRs(alertModel);
-        } else {
+    public List<DTOQRPattern> getQrPatternsForAlert(@PathVariable String id) {
+        try {
+            List<DTOQRPattern> dtoQRPatternList = new ArrayList<>();
+            Alert alert = alertsController.getAlertById(Long.parseLong(id));
+            List<QualityRequirementPattern> qrPatternList = qrPatternsController.getPatternsForAlert(alert);
+            for (QualityRequirementPattern qrPattern : qrPatternList) {
+                List<DTOQRForm> dtoQRFormList = new ArrayList<>();
+                for(Form form : qrPattern.getForms()) {
+                    FixedPart fixedPart = form.getFixedPart();
+                    DTOQRFixedPart dtoQRFixedPart = new DTOQRFixedPart(fixedPart.getFormText());
+                    DTOQRForm dtoQRForm = new DTOQRForm(form.getName(), form.getDescription(), form.getComments(), dtoQRFixedPart);
+                    dtoQRFormList.add(dtoQRForm);
+                }
+                DTOQRPattern dtoQRPattern = new DTOQRPattern(qrPattern.getId(), qrPattern.getName(), qrPattern.getComments(), qrPattern.getDescription(), qrPattern.getGoal(), dtoQRFormList, qrPattern.getCostFunction());
+                dtoQRPatternList.add(dtoQRPattern);
+            }
+            return dtoQRPatternList;
+        } catch (AlertNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
         }
     }

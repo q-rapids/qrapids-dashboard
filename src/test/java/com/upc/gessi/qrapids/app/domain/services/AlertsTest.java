@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
 import com.upc.gessi.qrapids.app.domain.controllers.AlertsController;
+import com.upc.gessi.qrapids.app.domain.controllers.QRPatternsController;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
+import com.upc.gessi.qrapids.app.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -80,6 +82,9 @@ public class AlertsTest {
 
     @Mock
     private AlertsController alertsDomainController;
+
+    @Mock
+    private QRPatternsController qrPatternsDomainController;
 
     @InjectMocks
     private Alerts alertsController;
@@ -263,7 +268,7 @@ public class AlertsTest {
         boolean hasReq = true;
         Alert alert = new Alert(idElement, name, alertType, value.floatValue(), threshold.floatValue(), category, date, alertStatus, hasReq, null);
         alert.setId(alertId);
-        when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
+        when(alertsDomainController.getAlertById(alertId)).thenReturn(alert);
 
         // Requirement pattern setup
         String formText = "The ratio of files without duplications should be at least %value%";
@@ -284,9 +289,7 @@ public class AlertsTest {
         List<QualityRequirementPattern> qualityRequirementPatternList = new ArrayList<>();
         qualityRequirementPatternList.add(qualityRequirementPattern);
 
-        QRGenerator qrGenerator = mock(QRGenerator.class);
-        when(qrGenerator.generateQRs(ArgumentMatchers.any(qr.models.Alert.class))).thenReturn(qualityRequirementPatternList);
-        when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
+        when(qrPatternsDomainController.getPatternsForAlert(alert)).thenReturn(qualityRequirementPatternList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -337,20 +340,17 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(alertRepository, times(1)).findById(alertId);
-        verifyNoMoreInteractions(alertRepository);
+        verify(alertsDomainController, times(1)).getAlertById(alertId);
+        verifyNoMoreInteractions(alertsDomainController);
 
-        verify(qrGeneratorFactory, times(1)).getQRGenerator();
-        verifyNoMoreInteractions(qrGeneratorFactory);
-
-        verify(qrGenerator, times(1)).generateQRs(ArgumentMatchers.any(qr.models.Alert.class));
-        verifyNoMoreInteractions(qrGenerator);
+        verify(qrPatternsDomainController, times(1)).getPatternsForAlert(alert);
+        verifyNoMoreInteractions(qrPatternsDomainController);
     }
 
     @Test
     public void getQRPatternForAlertNotFound() throws Exception {
         Long alertId = 1L;
-        when(alertRepository.findById(alertId)).thenReturn(Optional.empty());
+        when(alertsDomainController.getAlertById(alertId)).thenThrow(new AlertNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -450,7 +450,7 @@ public class AlertsTest {
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/alerts/{id}/qrPatterns", alertId);
+                .get("/api/alerts/{id}/decision", alertId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isNotFound())

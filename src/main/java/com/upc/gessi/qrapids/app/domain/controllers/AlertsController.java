@@ -5,6 +5,7 @@ import com.upc.gessi.qrapids.app.domain.models.AlertStatus;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AlertsController {
@@ -21,6 +23,15 @@ public class AlertsController {
 
     @Autowired
     private AlertRepository alertRepository;
+
+    public Alert getAlertById(long alertId) throws AlertNotFoundException {
+        Optional<Alert> alertOptional = alertRepository.findById(alertId);
+        if (alertOptional.isPresent()) {
+            return alertOptional.get();
+        } else {
+            throw new AlertNotFoundException();
+        }
+    }
 
     public List<Alert> getAlerts(String projectExternalId) throws ProjectNotFoundException {
         Project project = projectRepository.findByExternalId(projectExternalId);

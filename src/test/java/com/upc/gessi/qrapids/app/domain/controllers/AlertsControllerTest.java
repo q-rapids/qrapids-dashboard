@@ -6,6 +6,7 @@ import com.upc.gessi.qrapids.app.domain.models.AlertType;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import org.springframework.data.util.Pair;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -32,6 +34,46 @@ public class AlertsControllerTest {
 
     @InjectMocks
     private AlertsController alertsController;
+
+    @Test
+    public void getAlertById() throws AlertNotFoundException {
+        // Given
+        // Project setup
+        long projectId = 1L;
+        String projectExternalId = "test";
+        Project project = new Project(projectExternalId, "Test", "", null, true);
+        project.setId(projectId);
+
+        // Alerts setup
+        long alertId = 2L;
+        String idElement = "id";
+        String name = "Duplication";
+        AlertType alertType = AlertType.METRIC;
+        float value = 0.4f;
+        float threshold = 0.5f;
+        String category = "category";
+        Date date = new Date();
+        AlertStatus alertStatus = AlertStatus.NEW;
+        Alert alert = new Alert(idElement, name, alertType, value, threshold, category, date, alertStatus, true, project);
+        alert.setId(alertId);
+        when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
+
+        // When
+        Alert alertFound = alertsController.getAlertById(alertId);
+
+        // Then
+        assertEquals(alert, alertFound);
+    }
+
+    @Test(expected = AlertNotFoundException.class)
+    public void getAlertByIdNotFound () throws AlertNotFoundException {
+        // Given
+        long alertId = 1L;
+        when(alertRepository.findById(alertId)).thenReturn(Optional.empty());
+
+        // Throw
+        Alert alertFound = alertsController.getAlertById(alertId);
+    }
 
     @Test
     public void getAlerts() throws ProjectNotFoundException {
