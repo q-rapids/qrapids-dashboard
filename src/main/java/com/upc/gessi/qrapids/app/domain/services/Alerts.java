@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
+import com.upc.gessi.qrapids.app.domain.controllers.AlertsController;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
@@ -59,23 +60,23 @@ public class Alerts {
     @Autowired
     QRGeneratorFactory qrGeneratorFactory;
 
+    @Autowired
+    AlertsController alertsController;
+
     @GetMapping("/api/alerts")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj) {
-        Project project = projectRepository.findByExternalId(prj);
-        if (project != null) {
-            List<Alert> alerts = ari.findByProject_IdOrderByDateDesc(project.getId());
-            List<Long> alertIds = new ArrayList<>();
+        try {
+            List<Alert> alerts = alertsController.getAlerts(prj);
+            alertsController.setViewedStatusForAlerts(alerts);
+
             List<DTOAlert> dtoAlerts = new ArrayList<>();
             for (Alert a : alerts) {
                 DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getId_element(), a.getName(), a.getType(), a.getValue(), a.getThreshold(), a.getCategory(), new java.sql.Date(a.getDate().getTime()), a.getStatus(), a.isReqAssociat(), null);
                 dtoAlerts.add(dtoAlert);
-                alertIds.add(a.getId());
             }
-            if (!alertIds.isEmpty())
-                ari.setViewedStatusFor(alertIds);
             return dtoAlerts;
-        } else {
+        } catch (ProjectNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         }
     }

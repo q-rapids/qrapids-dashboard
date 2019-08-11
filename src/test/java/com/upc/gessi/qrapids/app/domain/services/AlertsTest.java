@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
+import com.upc.gessi.qrapids.app.domain.controllers.AlertsController;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
+import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -75,6 +77,9 @@ public class AlertsTest {
     @Mock
     private SimpMessagingTemplate simpleMessagingTemplate;
 
+    @Mock
+    private AlertsController alertsDomainController;
+
     @InjectMocks
     private Alerts alertsController;
 
@@ -94,7 +99,6 @@ public class AlertsTest {
         String projectExternalId = "test";
         Project project = new Project(projectExternalId, "Test", "", null, true);
         project.setId(projectId);
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
 
         // Alerts setup
         Long alertId = 2L;
@@ -112,7 +116,7 @@ public class AlertsTest {
 
         List<Alert> alertList = new ArrayList<>();
         alertList.add(alert);
-        when(alertRepository.findByProject_IdOrderByDateDesc(projectId)).thenReturn(alertList);
+        when(alertsDomainController.getAlerts(projectExternalId)).thenReturn(alertList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -166,19 +170,15 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
-
-        verify(alertRepository, times(1)).findByProject_IdOrderByDateDesc(projectId);
-        List<Long> alertIdsList = new ArrayList<>();
-        alertIdsList.add(alertId);
-        verify(alertRepository, times(1)).setViewedStatusFor(alertIdsList);
+        verify(alertsDomainController, times(1)).getAlerts(projectExternalId);
+        verify(alertsDomainController, times(1)).setViewedStatusForAlerts(alertList);
+        verifyNoMoreInteractions(alertsDomainController);
     }
 
     @Test
     public void getAllAlertsWrongProject() throws Exception {
         String projectExternalId = "test";
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
+        when(alertsDomainController.getAlerts(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
