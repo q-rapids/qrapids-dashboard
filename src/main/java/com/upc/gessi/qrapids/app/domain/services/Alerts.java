@@ -17,6 +17,7 @@ import com.upc.gessi.qrapids.app.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
@@ -84,12 +85,10 @@ public class Alerts {
     @GetMapping("/api/alerts/countNew")
     @ResponseStatus(HttpStatus.OK)
     public DTONewAlerts countNewAlerts(@RequestParam(value = "prj") String prj) {
-        Project project = projectRepository.findByExternalId(prj);
-        if (project != null) {
-            long newAlerts = ari.countByProject_IdAndStatus(project.getId(), AlertStatus.NEW);
-            long newAlertsWithQR = ari.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(project.getId(), AlertStatus.NEW);
-            return new DTONewAlerts(newAlerts, newAlertsWithQR);
-        } else {
+        try {
+            Pair<Long, Long> newAlerts = alertsController.countNewAlerts(prj);
+            return new DTONewAlerts(newAlerts.getFirst(), newAlerts.getSecond());
+        } catch (ProjectNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         }
     }

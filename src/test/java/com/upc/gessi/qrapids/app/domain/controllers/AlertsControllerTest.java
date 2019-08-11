@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,7 +75,7 @@ public class AlertsControllerTest {
         String projectExternalId = "missingProject";
         when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
 
-        // When
+        // Throws
         alertsController.getAlerts(projectExternalId);
     }
 
@@ -110,5 +111,46 @@ public class AlertsControllerTest {
         List<Long> alertIds = new ArrayList<>();
         alertIds.add(alertId);
         verify(alertRepository, times(1)).setViewedStatusFor(alertIds);
+    }
+
+    @Test
+    public void countNewAlerts() throws ProjectNotFoundException {
+        // Given
+        // project setup
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        Project project = new Project(projectExternalId, "Test", "", null, true);
+        project.setId(projectId);
+        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
+
+        // alerts setup
+        Long newAlerts = 2L;
+        Long newAlertWithQR = 1L;
+        when(alertRepository.countByProject_IdAndStatus(projectId, AlertStatus.NEW)).thenReturn(newAlerts);
+        when(alertRepository.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(projectId, AlertStatus.NEW)).thenReturn(newAlertWithQR);
+
+        // When
+        Pair<Long, Long> newAlertsFound = alertsController.countNewAlerts(projectExternalId);
+
+        // Then
+        assertEquals(newAlerts, newAlertsFound.getFirst());
+        assertEquals(newAlertWithQR, newAlertsFound.getSecond());
+
+        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
+        verifyNoMoreInteractions(projectRepository);
+
+        verify(alertRepository, times(1)).countByProject_IdAndStatus(projectId, AlertStatus.NEW);
+        verify(alertRepository, times(1)).countByProject_IdAndReqAssociatIsTrueAndStatusEquals(projectId, AlertStatus.NEW);
+        verifyNoMoreInteractions(alertRepository);
+    }
+
+    @Test(expected = ProjectNotFoundException.class)
+    public void countNewAlertsProjectNotFound () throws ProjectNotFoundException {
+        // Given
+        String projectExternalId = "missingProject";
+        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
+
+        // Throws
+        alertsController.countNewAlerts(projectExternalId);
     }
 }

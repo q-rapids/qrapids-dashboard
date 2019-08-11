@@ -20,6 +20,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -195,18 +196,11 @@ public class AlertsTest {
 
     @Test
     public void countNewAlerts() throws Exception {
-        // project setup
-        Long projectId = 1L;
+        // new alerts setup
         String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
-
-        // alerts setup
         Long newAlerts = 2L;
         Long newAlertWithQR = 1L;
-        when(alertRepository.countByProject_IdAndStatus(projectId, AlertStatus.NEW)).thenReturn(newAlerts);
-        when(alertRepository.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(projectId, AlertStatus.NEW)).thenReturn(newAlertWithQR);
+        when(alertsDomainController.countNewAlerts(projectExternalId)).thenReturn(Pair.of(newAlerts, newAlertWithQR));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -232,18 +226,14 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
-
-        verify(alertRepository, times(1)).countByProject_IdAndStatus(projectId, AlertStatus.NEW);
-        verify(alertRepository, times(1)).countByProject_IdAndReqAssociatIsTrueAndStatusEquals(projectId, AlertStatus.NEW);
-        verifyNoMoreInteractions(alertRepository);
+        verify(alertsDomainController, times(1)).countNewAlerts(projectExternalId);
+        verifyNoMoreInteractions(alertsDomainController);
     }
 
     @Test
     public void countNewAlertsWrongProject() throws Exception {
         String projectExternalId = "test";
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
+        when(alertsDomainController.countNewAlerts(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
