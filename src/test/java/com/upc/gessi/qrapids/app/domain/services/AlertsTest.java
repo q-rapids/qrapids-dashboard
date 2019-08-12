@@ -14,6 +14,8 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
 import com.upc.gessi.qrapids.app.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
+import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -53,6 +55,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 public class AlertsTest {
+
+    private DomainObjectsBuilder domainObjectsBuilder;
 
     private MockMvc mockMvc;
 
@@ -96,52 +100,37 @@ public class AlertsTest {
                 .standaloneSetup(alertsController)
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
+        domainObjectsBuilder = new DomainObjectsBuilder();
     }
 
     @Test
     public void getAllAlerts() throws Exception {
-        // project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
 
-        // Alerts setup
-        Long alertId = 2L;
-        String idElement = "id";
-        String name = "Duplication";
-        AlertType alertType = AlertType.METRIC;
-        Double value = 0.4;
-        Double threshold = 0.5;
-        String category = "category";
-        Date date = new Date();
-        AlertStatus alertStatus = AlertStatus.NEW;
-        boolean hasReq = true;
-        Alert alert = new Alert(idElement, name, alertType, value.floatValue(), threshold.floatValue(), category, date, alertStatus, hasReq, project);
-        alert.setId(alertId);
-
+        Alert alert = domainObjectsBuilder.buildAlert(project);
         List<Alert> alertList = new ArrayList<>();
         alertList.add(alert);
-        when(alertsDomainController.getAlerts(projectExternalId)).thenReturn(alertList);
+        when(alertsDomainController.getAlerts(project.getExternalId())).thenReturn(alertList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/alerts")
-                .param("prj", projectExternalId);
+                .param("prj", project.getExternalId());
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(alertId.intValue())))
-                .andExpect(jsonPath("$[0].id_element", is(idElement)))
-                .andExpect(jsonPath("$[0].name", is(name)))
-                .andExpect(jsonPath("$[0].type", is(alertType.toString())))
-                .andExpect(jsonPath("$[0].value", is(value)))
-                .andExpect(jsonPath("$[0].threshold", is(threshold)))
-                .andExpect(jsonPath("$[0].category", is(category)))
-                .andExpect(jsonPath("$[0].date", is(date.getTime())))
-                .andExpect(jsonPath("$[0].status", is(alertStatus.toString())))
-                .andExpect(jsonPath("$[0].reqAssociat", is(hasReq)))
+                .andExpect(jsonPath("$[0].id", is(alert.getId().intValue())))
+                .andExpect(jsonPath("$[0].id_element", is(alert.getId_element())))
+                .andExpect(jsonPath("$[0].name", is(alert.getName())))
+                .andExpect(jsonPath("$[0].type", is(alert.getType().toString())))
+                .andExpect(jsonPath("$[0].value", is(HelperFunctions.getFloatAsDouble(alert.getValue()))))
+                .andExpect(jsonPath("$[0].threshold", is(HelperFunctions.getFloatAsDouble(alert.getThreshold()))))
+                .andExpect(jsonPath("$[0].category", is(alert.getCategory())))
+                .andExpect(jsonPath("$[0].date", is(alert.getDate().getTime())))
+                .andExpect(jsonPath("$[0].status", is(alert.getStatus().toString())))
+                .andExpect(jsonPath("$[0].reqAssociat", is(alert.isReqAssociat())))
                 .andExpect(jsonPath("$[0].artefacts", is(nullValue())))
                 .andDo(document("alerts/get-all",
                         preprocessRequest(prettyPrint()),
@@ -176,13 +165,14 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(alertsDomainController, times(1)).getAlerts(projectExternalId);
+        verify(alertsDomainController, times(1)).getAlerts(project.getExternalId());
         verify(alertsDomainController, times(1)).setViewedStatusForAlerts(alertList);
         verifyNoMoreInteractions(alertsDomainController);
     }
 
     @Test
     public void getAllAlertsWrongProject() throws Exception {
+        // Given
         String projectExternalId = "test";
         when(alertsDomainController.getAlerts(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
@@ -201,7 +191,7 @@ public class AlertsTest {
 
     @Test
     public void countNewAlerts() throws Exception {
-        // new alerts setup
+        // Given
         String projectExternalId = "test";
         Long newAlerts = 2L;
         Long newAlertWithQR = 1L;
@@ -237,6 +227,7 @@ public class AlertsTest {
 
     @Test
     public void countNewAlertsWrongProject() throws Exception {
+        // Given
         String projectExternalId = "test";
         when(alertsDomainController.countNewAlerts(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
@@ -255,37 +246,12 @@ public class AlertsTest {
 
     @Test
     public void getQRPatternForAlert() throws Exception {
-        // Alert setup
-        Long alertId = 1L;
-        String idElement = "id";
-        String name = "Duplication";
-        AlertType alertType = AlertType.METRIC;
-        Double value = 0.4;
-        Double threshold = 0.5;
-        String category = "category";
-        Date date = new Date();
-        AlertStatus alertStatus = AlertStatus.NEW;
-        boolean hasReq = true;
-        Alert alert = new Alert(idElement, name, alertType, value.floatValue(), threshold.floatValue(), category, date, alertStatus, hasReq, null);
-        alert.setId(alertId);
-        when(alertsDomainController.getAlertById(alertId)).thenReturn(alert);
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Alert alert = domainObjectsBuilder.buildAlert(project);
+        when(alertsDomainController.getAlertById(alert.getId())).thenReturn(alert);
 
-        // Requirement pattern setup
-        String formText = "The ratio of files without duplications should be at least %value%";
-        FixedPart fixedPart = new FixedPart(formText);
-        String formName = "Duplications";
-        String formDescription = "The ratio of files without duplications should be at least the given value";
-        String formComments = "No comments";
-        Form form = new Form(formName, formDescription, formComments, fixedPart);
-        List<Form> formList = new ArrayList<>();
-        formList.add(form);
-        Integer requirementId = 1;
-        String requirementName = "Duplications";
-        String requirementComments = "No comments";
-        String requirementDescription = "No description";
-        String requirementGoal = "Improve the quality of the source code";
-        String requirementCostFunction = "No cost function";
-        QualityRequirementPattern qualityRequirementPattern = new QualityRequirementPattern(requirementId, requirementName, requirementComments, requirementDescription, requirementGoal, formList, requirementCostFunction);
+        QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
         List<QualityRequirementPattern> qualityRequirementPatternList = new ArrayList<>();
         qualityRequirementPatternList.add(qualityRequirementPattern);
 
@@ -293,21 +259,21 @@ public class AlertsTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/alerts/{id}/qrPatterns", alertId);
+                .get("/api/alerts/{id}/qrPatterns", alert.getId());
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(requirementId)))
-                .andExpect(jsonPath("$[0].name", is(requirementName)))
-                .andExpect(jsonPath("$[0].comments", is(requirementComments)))
-                .andExpect(jsonPath("$[0].description", is(requirementDescription)))
-                .andExpect(jsonPath("$[0].goal", is(requirementGoal)))
-                .andExpect(jsonPath("$[0].forms[0].name", is(formName)))
-                .andExpect(jsonPath("$[0].forms[0].description", is(formDescription)))
-                .andExpect(jsonPath("$[0].forms[0].comments", is(formComments)))
-                .andExpect(jsonPath("$[0].forms[0].fixedPart.formText", is(formText)))
-                .andExpect(jsonPath("$[0].costFunction", is(requirementCostFunction)))
+                .andExpect(jsonPath("$[0].id", is(qualityRequirementPattern.getId())))
+                .andExpect(jsonPath("$[0].name", is(qualityRequirementPattern.getName())))
+                .andExpect(jsonPath("$[0].comments", is(qualityRequirementPattern.getComments())))
+                .andExpect(jsonPath("$[0].description", is(qualityRequirementPattern.getDescription())))
+                .andExpect(jsonPath("$[0].goal", is(qualityRequirementPattern.getGoal())))
+                .andExpect(jsonPath("$[0].forms[0].name", is(qualityRequirementPattern.getForms().get(0).getName())))
+                .andExpect(jsonPath("$[0].forms[0].description", is(qualityRequirementPattern.getForms().get(0).getDescription())))
+                .andExpect(jsonPath("$[0].forms[0].comments", is(qualityRequirementPattern.getForms().get(0).getComments())))
+                .andExpect(jsonPath("$[0].forms[0].fixedPart.formText", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getFormText())))
+                .andExpect(jsonPath("$[0].costFunction", is(qualityRequirementPattern.getCostFunction())))
                 .andDo(document("alerts/get-qr-patterns",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -340,7 +306,7 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(alertsDomainController, times(1)).getAlertById(alertId);
+        verify(alertsDomainController, times(1)).getAlertById(alert.getId());
         verifyNoMoreInteractions(alertsDomainController);
 
         verify(qrPatternsDomainController, times(1)).getPatternsForAlert(alert);
@@ -349,7 +315,8 @@ public class AlertsTest {
 
     @Test
     public void getQRPatternForAlertNotFound() throws Exception {
-        Long alertId = 1L;
+        // Given
+        long alertId = 1L;
         when(alertsDomainController.getAlertById(alertId)).thenThrow(new AlertNotFoundException());
 
         // Perform request

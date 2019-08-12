@@ -2,12 +2,13 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AlertStatus;
-import com.upc.gessi.qrapids.app.domain.models.AlertType;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,7 +17,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +25,8 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AlertsControllerTest {
+
+    private DomainObjectsBuilder domainObjectsBuilder;
 
     @Mock
     private ProjectRepository projectRepository;
@@ -35,31 +37,22 @@ public class AlertsControllerTest {
     @InjectMocks
     private AlertsController alertsController;
 
+    @Before
+    public void setUp () {
+        domainObjectsBuilder = new DomainObjectsBuilder();
+    }
+
     @Test
     public void getAlertById() throws AlertNotFoundException {
         // Given
-        // Project setup
-        long projectId = 1L;
-        String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
+        Project project = domainObjectsBuilder.buildProject();
 
         // Alerts setup
-        long alertId = 2L;
-        String idElement = "id";
-        String name = "Duplication";
-        AlertType alertType = AlertType.METRIC;
-        float value = 0.4f;
-        float threshold = 0.5f;
-        String category = "category";
-        Date date = new Date();
-        AlertStatus alertStatus = AlertStatus.NEW;
-        Alert alert = new Alert(idElement, name, alertType, value, threshold, category, date, alertStatus, true, project);
-        alert.setId(alertId);
-        when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
+        Alert alert = domainObjectsBuilder.buildAlert(project);
+        when(alertRepository.findById(alert.getId())).thenReturn(Optional.of(alert));
 
         // When
-        Alert alertFound = alertsController.getAlertById(alertId);
+        Alert alertFound = alertsController.getAlertById(alert.getId());
 
         // Then
         assertEquals(alert, alertFound);
@@ -78,32 +71,16 @@ public class AlertsControllerTest {
     @Test
     public void getAlerts() throws ProjectNotFoundException {
         // Given
-        // Project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
 
-        // Alerts setup
-        Long alertId = 2L;
-        String idElement = "id";
-        String name = "Duplication";
-        AlertType alertType = AlertType.METRIC;
-        float value = 0.4f;
-        float threshold = 0.5f;
-        String category = "category";
-        Date date = new Date();
-        AlertStatus alertStatus = AlertStatus.NEW;
-        Alert alert = new Alert(idElement, name, alertType, value, threshold, category, date, alertStatus, true, project);
-        alert.setId(alertId);
-
+        Alert alert = domainObjectsBuilder.buildAlert(project);
         List<Alert> alertList = new ArrayList<>();
         alertList.add(alert);
-        when(alertRepository.findByProject_IdOrderByDateDesc(projectId)).thenReturn(alertList);
+        when(alertRepository.findByProject_IdOrderByDateDesc(project.getId())).thenReturn(alertList);
 
         // When
-        List<Alert> alertsFound = alertsController.getAlerts(projectExternalId);
+        List<Alert> alertsFound = alertsController.getAlerts(project.getExternalId());
 
         // Then
         int expectedNumberOfAlertsFound = 1;
@@ -124,25 +101,10 @@ public class AlertsControllerTest {
     @Test
     public void setViewedStatusForAlerts() {
         // Given
-        // Project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
+        Project project = domainObjectsBuilder.buildProject();
 
         // Alerts setup
-        Long alertId = 2L;
-        String idElement = "id";
-        String name = "Duplication";
-        AlertType alertType = AlertType.METRIC;
-        float value = 0.4f;
-        float threshold = 0.5f;
-        String category = "category";
-        Date date = new Date();
-        AlertStatus alertStatus = AlertStatus.NEW;
-        Alert alert = new Alert(idElement, name, alertType, value, threshold, category, date, alertStatus, true, project);
-        alert.setId(alertId);
-
+        Alert alert = domainObjectsBuilder.buildAlert(project);
         List<Alert> alertList = new ArrayList<>();
         alertList.add(alert);
 
@@ -151,18 +113,16 @@ public class AlertsControllerTest {
 
         // Then
         List<Long> alertIds = new ArrayList<>();
-        alertIds.add(alertId);
+        alertIds.add(alert.getId());
         verify(alertRepository, times(1)).setViewedStatusFor(alertIds);
     }
 
     @Test
     public void countNewAlerts() throws ProjectNotFoundException {
         // Given
-        // project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
+        Project project = domainObjectsBuilder.buildProject();
+        String projectExternalId = project.getExternalId();
+        Long projectId = project.getId();
         when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
 
         // alerts setup
