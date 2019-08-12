@@ -116,4 +116,25 @@ public class DomainObjectsBuilder {
 
         return qualityRequirementPattern;
     }
+
+    public Decision buildDecision (Project project, DecisionType type) {
+        Long decisionId = 2L;
+        DecisionType decisionType = type;
+        Date date = new Date();
+        String rationale = "Very important";
+        int patternId = 100;
+        Decision decision = new Decision(decisionType, date, null, rationale, patternId, project);
+        decision.setId(decisionId);
+        return decision;
+    }
+
+    public QualityRequirement buildQualityRequirement (Alert alert, Decision decision) {
+        String requirement = "The ratio of files without duplications should be at least 0.8";
+        String description = "The ratio of files without duplications should be at least the given value";
+        String goal = "Improve the quality of the source code";
+        String qrBacklogUrl =  "https://backlog.example/issue/999";
+        QualityRequirement qualityRequirement = new QualityRequirement(requirement, description, goal, alert, decision, null);
+        qualityRequirement.setBacklogUrl(qrBacklogUrl);
+        return qualityRequirement;
+    }
 }

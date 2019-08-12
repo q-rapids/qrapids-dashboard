@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
 import com.upc.gessi.qrapids.app.domain.controllers.AlertsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QRPatternsController;
+import com.upc.gessi.qrapids.app.domain.controllers.QualityRequirementController;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
@@ -73,6 +74,9 @@ public class Alerts {
     @Autowired
     QRPatternsController qrPatternsController;
 
+    @Autowired
+    QualityRequirementController qualityRequirementController;
+
     @GetMapping("/api/alerts")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj) {
@@ -129,14 +133,13 @@ public class Alerts {
     @GetMapping("/api/alerts/{id}/decision")
     @ResponseStatus(HttpStatus.OK)
     public DTOAlertDecision getAlertDecision(@PathVariable String id) {
-        Optional<Alert> alertOptional = ari.findById(Long.parseLong(id));
-        if (alertOptional.isPresent()) {
-            Alert alert = alertOptional.get();
+        try {
+            Alert alert = alertsController.getAlertById(Long.parseLong(id));
             Decision decision = alert.getDecision();
             DTOAlertDecision alertDecision = new DTOAlertDecision();
             switch (decision.getType()) {
                 case ADD:
-                    QualityRequirement qr = qrRepository.findByDecisionId(decision.getId());
+                    QualityRequirement qr = qualityRequirementController.getQualityRequirementForDecision(decision);
                     alertDecision.setQrGoal(qr.getGoal());
                     alertDecision.setQrRequirement(qr.getRequirement());
                     alertDecision.setQrDescription(qr.getDescription());
@@ -145,9 +148,7 @@ public class Alerts {
                     alertDecision.setDecisionRationale(decision.getRationale());
                     break;
                 case IGNORE:
-                    QRGenerator qrGenerator = qrGeneratorFactory.getQRGenerator();
-                    qr.models.Alert alertModel = new qr.models.Alert(alert.getId_element(), alert.getName(), Type.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), null);
-                    List<QualityRequirementPattern> qrPatternsList = qrGenerator.generateQRs(alertModel);
+                    List<QualityRequirementPattern> qrPatternsList = qrPatternsController.getPatternsForAlert(alert);
                     QualityRequirementPattern qrPatternIgnored = null;
                     for (QualityRequirementPattern qrPattern : qrPatternsList) {
                         if (qrPattern.getId() == decision.getPatternId()) {
@@ -166,7 +167,7 @@ public class Alerts {
                     break;
             }
             return alertDecision;
-        } else {
+        } catch (AlertNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
         }
     }

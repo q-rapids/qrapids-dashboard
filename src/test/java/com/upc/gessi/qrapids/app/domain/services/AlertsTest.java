@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
 import com.upc.gessi.qrapids.app.domain.controllers.AlertsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QRPatternsController;
+import com.upc.gessi.qrapids.app.domain.controllers.QualityRequirementController;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
@@ -89,6 +90,9 @@ public class AlertsTest {
 
     @Mock
     private QRPatternsController qrPatternsDomainController;
+
+    @Mock
+    private QualityRequirementController qualityRequirementDomainController;
 
     @InjectMocks
     private Alerts alertsController;
@@ -333,52 +337,28 @@ public class AlertsTest {
 
     @Test
     public void getAlertDecision() throws Exception {
-        // Alert setup
-        Long alertId = 1L;
-        String idElement = "id";
-        String name = "Duplication";
-        AlertType alertType = AlertType.METRIC;
-        Double value = 0.4;
-        Double threshold = 0.5;
-        String category = "category";
-        Date date = new Date();
-        AlertStatus alertStatus = AlertStatus.NEW;
-        boolean hasReq = true;
-        Alert alert = new Alert(idElement, name, alertType, value.floatValue(), threshold.floatValue(), category, date, alertStatus, hasReq, null);
-        alert.setId(alertId);
-
-        Long decisionId = 2L;
-        DecisionType decisionType = DecisionType.ADD;
-        String rationale = "Very important";
-        int patternId = 100;
-        Decision decision = new Decision(decisionType, date, null, rationale, patternId, null);
-        decision.setId(decisionId);
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Alert alert = domainObjectsBuilder.buildAlert(project);
+        Decision decision = domainObjectsBuilder.buildDecision(project, DecisionType.ADD);
         alert.setDecision(decision);
+        when(alertsDomainController.getAlertById(alert.getId())).thenReturn(alert);
 
-        when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
-
-        // Requirement setup
-        String requirement = "The ratio of files without duplications should be at least 0.8";
-        String description = "The ratio of files without duplications should be at least the given value";
-        String goal = "Improve the quality of the source code";
-        String qrBacklogUrl =  "https://backlog.example/issue/999";
-        QualityRequirement qualityRequirement = new QualityRequirement(requirement, description, goal, alert, decision, null);
-        qualityRequirement.setBacklogUrl(qrBacklogUrl);
-
-        when(qrRepository.findByDecisionId(decisionId)).thenReturn(qualityRequirement);
+        QualityRequirement qualityRequirement = domainObjectsBuilder.buildQualityRequirement(alert, decision);
+        when(qualityRequirementDomainController.getQualityRequirementForDecision(decision)).thenReturn(qualityRequirement);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/alerts/{id}/decision", alertId);
+                .get("/api/alerts/{id}/decision", alert.getId());
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.qrGoal", is(goal)))
-                .andExpect(jsonPath("$.qrRequirement", is(requirement)))
-                .andExpect(jsonPath("$.qrDescription", is(description)))
-                .andExpect(jsonPath("$.qrBacklogUrl", is(qrBacklogUrl)))
-                .andExpect(jsonPath("$.decisionType", is(decisionType.toString())))
-                .andExpect(jsonPath("$.decisionRationale", is(rationale)))
+                .andExpect(jsonPath("$.qrGoal", is(qualityRequirement.getGoal())))
+                .andExpect(jsonPath("$.qrRequirement", is(qualityRequirement.getRequirement())))
+                .andExpect(jsonPath("$.qrDescription", is(qualityRequirement.getDescription())))
+                .andExpect(jsonPath("$.qrBacklogUrl", is(qualityRequirement.getBacklogUrl())))
+                .andExpect(jsonPath("$.decisionType", is(decision.getType().toString())))
+                .andExpect(jsonPath("$.decisionRationale", is(decision.getRationale())))
                 .andDo(document("alerts/get-decision",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -403,17 +383,17 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(alertRepository, times(1)).findById(alertId);
-        verifyNoMoreInteractions(alertRepository);
+        verify(alertsDomainController, times(1)).getAlertById(alert.getId());
+        verifyNoMoreInteractions(alertsDomainController);
 
-        verify(qrRepository, times(1)).findByDecisionId(decisionId);
-        verifyNoMoreInteractions(qrRepository);
+        verify(qualityRequirementDomainController, times(1)).getQualityRequirementForDecision(decision);
+        verifyNoMoreInteractions(qrPatternsDomainController);
     }
 
     @Test
     public void getAlertDecisionAlertNotFound() throws Exception {
-        Long alertId = 1L;
-        when(alertRepository.findById(alertId)).thenReturn(Optional.empty());
+        long alertId = 1L;
+        when(alertsDomainController.getAlertById(alertId)).thenThrow(new AlertNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
