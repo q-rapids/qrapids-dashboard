@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
@@ -12,6 +13,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import static org.junit.Assert.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -31,6 +34,9 @@ public class QualityRequirementControllerTest {
     @Mock
     private AlertRepository alertRepository;
 
+    @Mock
+    private Backlog backlog;
+
     @InjectMocks
     private QualityRequirementController qualityRequirementController;
 
@@ -46,7 +52,7 @@ public class QualityRequirementControllerTest {
         Alert alert = domainObjectsBuilder.buildAlert(project);
         Decision decision = domainObjectsBuilder.buildDecision(project, DecisionType.ADD);
         alert.setDecision(decision);
-        QualityRequirement qualityRequirement = domainObjectsBuilder.buildQualityRequirement(alert, decision);
+        QualityRequirement qualityRequirement = domainObjectsBuilder.buildQualityRequirement(alert, decision, project);
         when(qrRepository.findByDecisionId(decision.getId())).thenReturn(qualityRequirement);
 
         // When
@@ -83,7 +89,7 @@ public class QualityRequirementControllerTest {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Alert alert = domainObjectsBuilder.buildAlert(project);
-        String rationale = "Very important";
+        String rationale = "User comments";
         int patternId = 100;
         when(decisionRepository.save(any(Decision.class))).then(returnsFirstArg());
 
@@ -103,5 +109,108 @@ public class QualityRequirementControllerTest {
         Alert alertSaved = alertArgumentCaptor.getValue();
         assertEquals(AlertStatus.RESOLVED, alertSaved.getStatus());
         assertEquals(decisionSaved, alertSaved.getDecision());
+    }
+
+    @Test
+    public void addQualityRequirement() {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        String rationale = "User comments";
+        int patternId = 100;
+        String requirement = "The ratio of files without duplications should be at least 0.8";
+        String description = "The ratio of files without duplications should be at least the given value";
+        String goal = "Improve the quality of the source code";
+        when(decisionRepository.save(any(Decision.class))).then(returnsFirstArg());
+        when(backlog.postNewQualityRequirement(any(QualityRequirement.class))).then(returnsFirstArg());
+
+        // When
+        QualityRequirement qualityRequirement = qualityRequirementController.addQualityRequirement(requirement, description, goal, rationale, patternId, null, project);
+
+        // Then
+        assertEquals(requirement, qualityRequirement.getRequirement());
+        assertEquals(description, qualityRequirement.getDescription());
+        assertEquals(goal, qualityRequirement.getGoal());
+        assertEquals(DecisionType.ADD, qualityRequirement.getDecision().getType());
+        assertEquals(rationale, qualityRequirement.getDecision().getRationale());
+        assertEquals(patternId, qualityRequirement.getDecision().getPatternId());
+
+        verify(decisionRepository, times(1)).save(any(Decision.class));
+        verifyNoMoreInteractions(decisionRepository);
+
+        verify(qrRepository, times(2)).save(any(QualityRequirement.class));
+        verifyNoMoreInteractions(qrRepository);
+
+        verify(backlog, times(1)).postNewQualityRequirement(any(QualityRequirement.class));
+        verifyNoMoreInteractions(backlog);
+    }
+
+    @Test(expected = HttpClientErrorException.class)
+    public void addQualityRequirementBacklogError () {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        String rationale = "User comments";
+        int patternId = 100;
+        String requirement = "The ratio of files without duplications should be at least 0.8";
+        String description = "The ratio of files without duplications should be at least the given value";
+        String goal = "Improve the quality of the source code";
+        when(decisionRepository.save(any(Decision.class))).then(returnsFirstArg());
+        when(backlog.postNewQualityRequirement(any(QualityRequirement.class))).thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        // Throw
+        qualityRequirementController.addQualityRequirement(requirement, description, goal, rationale, patternId, null, project);
+    }
+
+    @Test
+    public void addQualityRequirementForAlert() {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Alert alert = domainObjectsBuilder.buildAlert(project);
+        String rationale = "User comments";
+        int patternId = 100;
+        String requirement = "The ratio of files without duplications should be at least 0.8";
+        String description = "The ratio of files without duplications should be at least the given value";
+        String goal = "Improve the quality of the source code";
+        when(decisionRepository.save(any(Decision.class))).then(returnsFirstArg());
+        when(backlog.postNewQualityRequirement(any(QualityRequirement.class))).then(returnsFirstArg());
+
+        // When
+        QualityRequirement qualityRequirement = qualityRequirementController.addQualityRequirementForAlert(requirement, description, goal, rationale, patternId, alert, null, project);
+
+        // Then
+        assertEquals(requirement, qualityRequirement.getRequirement());
+        assertEquals(description, qualityRequirement.getDescription());
+        assertEquals(goal, qualityRequirement.getGoal());
+        assertEquals(DecisionType.ADD, qualityRequirement.getDecision().getType());
+        assertEquals(rationale, qualityRequirement.getDecision().getRationale());
+        assertEquals(patternId, qualityRequirement.getDecision().getPatternId());
+
+        verify(decisionRepository, times(1)).save(any(Decision.class));
+        verifyNoMoreInteractions(decisionRepository);
+
+        verify(qrRepository, times(2)).save(any(QualityRequirement.class));
+        verifyNoMoreInteractions(qrRepository);
+
+        verify(backlog, times(1)).postNewQualityRequirement(any(QualityRequirement.class));
+        verifyNoMoreInteractions(backlog);
+
+        verify(alertRepository, times(1)).save(any(Alert.class));
+        verifyNoMoreInteractions(alertRepository);
+    }
+
+    @Test(expected = HttpClientErrorException.class)
+    public void addQualityRequirementForAlertBacklogError() {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Alert alert = domainObjectsBuilder.buildAlert(project);
+        String rationale = "User comments";
+        int patternId = 100;
+        String requirement = "The ratio of files without duplications should be at least 0.8";
+        String description = "The ratio of files without duplications should be at least the given value";
+        String goal = "Improve the quality of the source code";
+        when(decisionRepository.save(any(Decision.class))).then(returnsFirstArg());
+        when(backlog.postNewQualityRequirement(any(QualityRequirement.class))).thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        // When
+        qualityRequirementController.addQualityRequirementForAlert(requirement, description, goal, rationale, patternId, alert, null, project);
     }
 }

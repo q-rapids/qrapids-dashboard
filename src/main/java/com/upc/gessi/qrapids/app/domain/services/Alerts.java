@@ -223,8 +223,11 @@ public class Alerts {
             String description = request.getParameter("description");
             String goal = request.getParameter("goal");
 
-            QualityRequirement qualityRequirement = addQR(requirement, description, goal, rationale, patternId, id, user, prj);
-            DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
+            Project project = projectsController.findProjectByExternalId(prj);
+            Alert alert = alertsController.getAlertById(Long.parseLong(id));
+            QualityRequirement qualityRequirement = qualityRequirementController.addQualityRequirementForAlert(requirement, description, goal, rationale, Integer.parseInt(patternId), alert, user, project);
+
+            return new DTOQualityRequirement(
                     qualityRequirement.getId(),
                     new java.sql.Date(qualityRequirement.getDecision().getDate().getTime()),
                     qualityRequirement.getRequirement(),
@@ -232,12 +235,13 @@ public class Alerts {
                     qualityRequirement.getGoal(),
                     qualityRequirement.getBacklogId(),
                     qualityRequirement.getBacklogUrl());
-            return dtoQualityRequirement;
         } catch (HttpClientErrorException e1) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error when saving the quality requirement in the backlog");
         } catch (AlertNotFoundException e2) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
-        } catch (Exception e3) {
+        } catch (ProjectNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        }catch (Exception e3) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
         }
     }
@@ -258,8 +262,10 @@ public class Alerts {
             String description = request.getParameter("description");
             String goal = request.getParameter("goal");
 
-            QualityRequirement qualityRequirement = addQR(requirement, description, goal, rationale, patternId, null, user, prj);
-            DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
+            Project project = projectsController.findProjectByExternalId(prj);
+            QualityRequirement qualityRequirement = qualityRequirementController.addQualityRequirement(requirement, description, goal, rationale, Integer.parseInt(patternId), user, project);
+
+            return new DTOQualityRequirement(
                     qualityRequirement.getId(),
                     new java.sql.Date(qualityRequirement.getDecision().getDate().getTime()),
                     qualityRequirement.getRequirement(),
@@ -267,39 +273,13 @@ public class Alerts {
                     qualityRequirement.getGoal(),
                     qualityRequirement.getBacklogId(),
                     qualityRequirement.getBacklogUrl());
-            return dtoQualityRequirement;
-        } catch (HttpClientErrorException e1) {
+        } catch (ProjectNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        }catch (HttpClientErrorException e1) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error when saving the quality requirement in the backlog");
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
         }
-    }
-
-    private QualityRequirement addQR (String requirement, String description, String goal, String rationale, String patternId, String alertId, AppUser user, String prj) throws AlertNotFoundException {
-        Project project = projectRepository.findByExternalId(prj);
-        Decision decisionAux = new Decision(DecisionType.ADD, new Date(), user, rationale, Integer.valueOf(patternId), project);
-        Decision decision = decisionRepository.save(decisionAux);
-
-        Alert alert = null;
-        if (alertId != null) {
-            Optional<Alert> alertOptional = ari.findById(Long.parseLong(alertId));
-            if (alertOptional.isPresent()) {
-                alert = alertOptional.get();
-                alert.setDecision(decision);
-                alert.setStatus(AlertStatus.RESOLVED);
-                ari.save(alert);
-            } else {
-                throw new AlertNotFoundException();
-            }
-        }
-
-        QualityRequirement newQualityRequirement = new QualityRequirement(requirement, description, goal, alert, decision, project);
-        qrRepository.save(newQualityRequirement);
-
-        newQualityRequirement = backlog.postNewQualityRequirement(newQualityRequirement);
-        qrRepository.save(newQualityRequirement);
-
-        return newQualityRequirement;
     }
 
     @GetMapping("/api/qr")
