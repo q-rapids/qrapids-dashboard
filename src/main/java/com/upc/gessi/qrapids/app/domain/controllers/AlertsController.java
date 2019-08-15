@@ -4,9 +4,7 @@ import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AlertStatus;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.exceptions.AlertNotFoundException;
-import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -17,9 +15,6 @@ import java.util.Optional;
 
 @Service
 public class AlertsController {
-
-    @Autowired
-    private ProjectRepository projectRepository;
 
     @Autowired
     private AlertRepository alertRepository;
@@ -33,13 +28,8 @@ public class AlertsController {
         }
     }
 
-    public List<Alert> getAlerts(String projectExternalId) throws ProjectNotFoundException {
-        Project project = projectRepository.findByExternalId(projectExternalId);
-        if (project != null) {
-            return alertRepository.findByProject_IdOrderByDateDesc(project.getId());
-        } else {
-            throw new ProjectNotFoundException();
-        }
+    public List<Alert> getAlerts(Project project) {
+        return alertRepository.findByProject_IdOrderByDateDesc(project.getId());
     }
 
     public void setViewedStatusForAlerts(List<Alert> alerts) {
@@ -51,14 +41,9 @@ public class AlertsController {
             alertRepository.setViewedStatusFor(alertIds);
     }
 
-    public Pair<Long, Long> countNewAlerts(String projectExternalId) throws ProjectNotFoundException {
-        Project project = projectRepository.findByExternalId(projectExternalId);
-        if (project != null) {
-            long newAlerts = alertRepository.countByProject_IdAndStatus(project.getId(), AlertStatus.NEW);
-            long newAlertsWithQR = alertRepository.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(project.getId(), AlertStatus.NEW);
-            return Pair.of(newAlerts, newAlertsWithQR);
-        } else {
-            throw new ProjectNotFoundException();
-        }
+    public Pair<Long, Long> countNewAlerts(Project project) {
+        long newAlerts = alertRepository.countByProject_IdAndStatus(project.getId(), AlertStatus.NEW);
+        long newAlertsWithQR = alertRepository.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(project.getId(), AlertStatus.NEW);
+        return Pair.of(newAlerts, newAlertsWithQR);
     }
 }

@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
 import com.upc.gessi.qrapids.app.domain.controllers.AlertsController;
+import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QRPatternsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityRequirementController;
 import com.upc.gessi.qrapids.app.domain.models.*;
@@ -66,22 +67,26 @@ public class Alerts {
     String pabreUrl;
 
     @Autowired
-    QRGeneratorFactory qrGeneratorFactory;
+    private QRGeneratorFactory qrGeneratorFactory;
 
     @Autowired
-    AlertsController alertsController;
+    private AlertsController alertsController;
 
     @Autowired
-    QRPatternsController qrPatternsController;
+    private QRPatternsController qrPatternsController;
 
     @Autowired
-    QualityRequirementController qualityRequirementController;
+    private QualityRequirementController qualityRequirementController;
+
+    @Autowired
+    private ProjectsController projectsController;
 
     @GetMapping("/api/alerts")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj) {
         try {
-            List<Alert> alerts = alertsController.getAlerts(prj);
+            Project project = projectsController.findProjectByExternalId(prj);
+            List<Alert> alerts = alertsController.getAlerts(project);
             alertsController.setViewedStatusForAlerts(alerts);
 
             List<DTOAlert> dtoAlerts = new ArrayList<>();
@@ -99,7 +104,8 @@ public class Alerts {
     @ResponseStatus(HttpStatus.OK)
     public DTONewAlerts countNewAlerts(@RequestParam(value = "prj") String prj) {
         try {
-            Pair<Long, Long> newAlerts = alertsController.countNewAlerts(prj);
+            Project project = projectsController.findProjectByExternalId(prj);
+            Pair<Long, Long> newAlerts = alertsController.countNewAlerts(project);
             return new DTONewAlerts(newAlerts.getFirst(), newAlerts.getSecond());
         } catch (ProjectNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
@@ -178,7 +184,9 @@ public class Alerts {
         String rationale = request.getParameter("rationale");
         String patternId = request.getParameter("patternId");
         try {
-            ignoreQR(rationale, patternId, id, prj);
+            Alert alert = alertsController.getAlertById(Long.parseLong(id));
+            Project project = projectsController.findProjectByExternalId(prj);
+            qualityRequirementController.ignoreQualityRequirementForAlert(project, alert, rationale, Integer.parseInt(patternId));
         } catch (ProjectNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (AlertNotFoundException e) {
@@ -192,33 +200,10 @@ public class Alerts {
         String rationale = request.getParameter("rationale");
         String patternId = request.getParameter("patternId");
         try {
-            ignoreQR(rationale, patternId, null, prj);
+            Project project = projectsController.findProjectByExternalId(prj);
+            qualityRequirementController.ignoreQualityRequirement(project, rationale, Integer.parseInt(patternId));
         } catch (ProjectNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
-        } catch (AlertNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
-        }
-    }
-
-    private void ignoreQR (String rationale, String patternId, String alertId, String prj) throws ProjectNotFoundException, AlertNotFoundException {
-        Project project = projectRepository.findByExternalId(prj);
-        if (project != null) {
-            Decision decisionAux = new Decision(DecisionType.IGNORE, new Date(), null, rationale, Integer.valueOf(patternId), project);
-            Decision decision = decisionRepository.save(decisionAux);
-
-            if (alertId != null) {
-                Optional<Alert> alertOptional = ari.findById(Long.parseLong(alertId));
-                if (alertOptional.isPresent()) {
-                    Alert alert = alertOptional.get();
-                    alert.setDecision(decision);
-                    alert.setStatus(AlertStatus.RESOLVED);
-                    ari.save(alert);
-                } else {
-                    throw new AlertNotFoundException();
-                }
-            }
-        } else {
-            throw new ProjectNotFoundException();
         }
     }
 

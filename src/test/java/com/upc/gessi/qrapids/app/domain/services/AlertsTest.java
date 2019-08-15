@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
 import com.upc.gessi.qrapids.app.domain.controllers.AlertsController;
+import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QRPatternsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityRequirementController;
 import com.upc.gessi.qrapids.app.domain.models.*;
@@ -86,6 +87,9 @@ public class AlertsTest {
     private SimpMessagingTemplate simpleMessagingTemplate;
 
     @Mock
+    private ProjectsController projectsDomainController;
+
+    @Mock
     private AlertsController alertsDomainController;
 
     @Mock
@@ -111,11 +115,12 @@ public class AlertsTest {
     public void getAllAlerts() throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         Alert alert = domainObjectsBuilder.buildAlert(project);
         List<Alert> alertList = new ArrayList<>();
         alertList.add(alert);
-        when(alertsDomainController.getAlerts(project.getExternalId())).thenReturn(alertList);
+        when(alertsDomainController.getAlerts(project)).thenReturn(alertList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -169,7 +174,7 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(alertsDomainController, times(1)).getAlerts(project.getExternalId());
+        verify(alertsDomainController, times(1)).getAlerts(project);
         verify(alertsDomainController, times(1)).setViewedStatusForAlerts(alertList);
         verifyNoMoreInteractions(alertsDomainController);
     }
@@ -178,7 +183,7 @@ public class AlertsTest {
     public void getAllAlertsWrongProject() throws Exception {
         // Given
         String projectExternalId = "test";
-        when(alertsDomainController.getAlerts(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -191,20 +196,24 @@ public class AlertsTest {
                 .andDo(document("alerts/get-all-wrong-project",
                         preprocessResponse(prettyPrint())
                 ));
+
+        // Verify mock interactions
+        verifyZeroInteractions(alertsDomainController);
     }
 
     @Test
     public void countNewAlerts() throws Exception {
         // Given
-        String projectExternalId = "test";
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
         Long newAlerts = 2L;
         Long newAlertWithQR = 1L;
-        when(alertsDomainController.countNewAlerts(projectExternalId)).thenReturn(Pair.of(newAlerts, newAlertWithQR));
+        when(alertsDomainController.countNewAlerts(project)).thenReturn(Pair.of(newAlerts, newAlertWithQR));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/alerts/countNew")
-                .param("prj", projectExternalId);
+                .param("prj", project.getExternalId());
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -225,7 +234,7 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(alertsDomainController, times(1)).countNewAlerts(projectExternalId);
+        verify(alertsDomainController, times(1)).countNewAlerts(project);
         verifyNoMoreInteractions(alertsDomainController);
     }
 
@@ -233,7 +242,7 @@ public class AlertsTest {
     public void countNewAlertsWrongProject() throws Exception {
         // Given
         String projectExternalId = "test";
-        when(alertsDomainController.countNewAlerts(projectExternalId)).thenThrow(new ProjectNotFoundException());
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -246,6 +255,12 @@ public class AlertsTest {
                 .andDo(document("alerts/count-new-wrong-project",
                         preprocessResponse(prettyPrint())
                 ));
+
+        // Verify mock interactions
+        verify(projectsDomainController, times(1)).findProjectByExternalId(projectExternalId);
+        verifyNoMoreInteractions(projectsDomainController);
+
+        verifyZeroInteractions(alertsDomainController);
     }
 
     @Test
@@ -333,6 +348,9 @@ public class AlertsTest {
                 .andDo(document("alerts/get-qr-patterns-alert-not-found",
                         preprocessResponse(prettyPrint())
                 ));
+
+        // Verify mock interactions
+        verifyZeroInteractions(qrPatternsDomainController);
     }
 
     @Test
@@ -405,47 +423,26 @@ public class AlertsTest {
                 .andDo(document("alerts/get-decision-alert-not-found",
                         preprocessResponse(prettyPrint())
                 ));
+
+        // Verify mock interactions
+        verifyZeroInteractions(qualityRequirementDomainController);
+        verifyZeroInteractions(qrPatternsDomainController);
     }
 
     @Test
     public void ignoreAlert() throws Exception {
-        // project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
-
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
-
-        // Decision setup
-        DecisionType decisionType = DecisionType.IGNORE;
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
+        Alert alert = domainObjectsBuilder.buildAlert(project);
+        when(alertsDomainController.getAlertById(alert.getId())).thenReturn(alert);
         String rationale = "Not important";
         int patternId = 100;
-        Date date = new Date();
-        Decision decision = new Decision(decisionType, date, null, rationale, patternId, null);
-
-        when(decisionRepository.save(ArgumentMatchers.any(Decision.class))).thenReturn(decision);
-
-        // Alert setup
-        Long alertId = 2L;
-        String idElement = "id";
-        String name = "Duplication";
-        AlertType alertType = AlertType.METRIC;
-        Double value = 0.4;
-        Double threshold = 0.5;
-        String category = "category";
-        AlertStatus alertStatus = AlertStatus.NEW;
-        boolean hasReq = true;
-        Alert alert = new Alert(idElement, name, alertType, value.floatValue(), threshold.floatValue(), category, date, alertStatus, hasReq, null);
-        alert.setId(alertId);
-
-        when(alertRepository.findById(alertId)).thenReturn(Optional.of(alert));
-        when(alertRepository.save(ArgumentMatchers.any(Alert.class))).thenReturn(alert);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .post("/api/alerts/{id}/qr/ignore", alertId)
-                .param("prj", projectExternalId)
+                .post("/api/alerts/{id}/qr/ignore", alert.getId())
+                .param("prj", project.getExternalId())
                 .param("rationale", rationale)
                 .param("patternId", String.valueOf(patternId));
 
@@ -469,26 +466,23 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
+        verify(projectsDomainController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsDomainController);
 
-        verify(decisionRepository, times(1)).save(ArgumentMatchers.any(Decision.class));
-        verifyNoMoreInteractions(decisionRepository);
+        verify(alertsDomainController, times(1)).getAlertById(alert.getId());
+        verifyNoMoreInteractions(alertsDomainController);
 
-        verify(alertRepository, times(1)).findById(alertId);
-        verify(alertRepository, times(1)).save(ArgumentMatchers.any(Alert.class));
-        verifyNoMoreInteractions(alertRepository);
+        verify(qualityRequirementDomainController, times(1)).ignoreQualityRequirementForAlert(project, alert, rationale, patternId);
+        verifyNoMoreInteractions(qualityRequirementDomainController);
     }
 
     @Test
     public void ignoreAlertWrongProject() throws Exception {
         String projectExternalId = "test";
-
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
-
         Long alertId = 2L;
         String rationale = "Not important";
         int patternId = 100;
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -503,36 +497,24 @@ public class AlertsTest {
                 .andDo(document("alerts/ignore-qr-wrong-project",
                         preprocessResponse(prettyPrint())
                 ));
+
+        // Verify mock interactions
+        verifyZeroInteractions(qualityRequirementDomainController);
     }
 
     @Test
     public void ignoreAlertNotFound() throws Exception {
-        // project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
-
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
-
-        // Decision setup
-        DecisionType decisionType = DecisionType.IGNORE;
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        long alertId = 2L;
+        when(alertsDomainController.getAlertById(alertId)).thenThrow(new AlertNotFoundException());
         String rationale = "Not important";
         int patternId = 100;
-        Date date = new Date();
-        Decision decision = new Decision(decisionType, date, null, rationale, patternId, null);
-
-        when(decisionRepository.save(ArgumentMatchers.any(Decision.class))).thenReturn(decision);
-
-        // Alert setup
-        Long alertId = 2L;
-
-        when(alertRepository.findById(alertId)).thenReturn(Optional.empty());
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
                 .post("/api/alerts/{id}/qr/ignore", alertId)
-                .param("prj", projectExternalId)
+                .param("prj", project.getExternalId())
                 .param("rationale", rationale)
                 .param("patternId", String.valueOf(patternId));
 
@@ -542,31 +524,25 @@ public class AlertsTest {
                 .andDo(document("alerts/ignore-qr-alert-not-found",
                         preprocessResponse(prettyPrint())
                 ));
+
+        // Verify mock interactions
+        verifyZeroInteractions(projectsDomainController);
+        verifyZeroInteractions(qualityRequirementDomainController);
     }
 
     @Test
     public void ignoreQR() throws Exception {
-        // project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
-
-        // Decision setup
-        DecisionType decisionType = DecisionType.IGNORE;
         String rationale = "Not important";
         int patternId = 100;
-        Date date = new Date();
-        Decision decision = new Decision(decisionType, date, null, rationale, patternId, null);
-
-        when(decisionRepository.save(ArgumentMatchers.any(Decision.class))).thenReturn(decision);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/api/qr/ignore")
-                .param("prj", projectExternalId)
+                .param("prj", project.getExternalId())
                 .param("rationale", rationale)
                 .param("patternId", String.valueOf(patternId));
 
@@ -586,18 +562,18 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
+        verify(projectsDomainController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsDomainController);
 
-        verify(decisionRepository, times(1)).save(ArgumentMatchers.any(Decision.class));
-        verifyNoMoreInteractions(decisionRepository);
+        verify(qualityRequirementDomainController, times(1)).ignoreQualityRequirement(project, rationale, patternId);
+        verifyNoMoreInteractions(qualityRequirementDomainController);
     }
 
     @Test
     public void ignoreQRWrongProject() throws Exception {
+        // Given
         String projectExternalId = "test";
-
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
         String rationale = "Not important";
         int patternId = 100;
@@ -615,6 +591,9 @@ public class AlertsTest {
                 .andDo(document("qrs/ignore-qr-wrong-project",
                         preprocessResponse(prettyPrint())
                 ));
+
+        // Verify mock interactions
+        verifyZeroInteractions(qualityRequirementDomainController);
     }
 
     @Test

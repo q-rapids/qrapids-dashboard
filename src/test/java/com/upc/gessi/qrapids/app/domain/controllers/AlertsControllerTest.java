@@ -6,7 +6,6 @@ import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.exceptions.AlertNotFoundException;
-import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +28,6 @@ public class AlertsControllerTest {
     private DomainObjectsBuilder domainObjectsBuilder;
 
     @Mock
-    private ProjectRepository projectRepository;
-
-    @Mock
     private AlertRepository alertRepository;
 
     @InjectMocks
@@ -46,8 +42,6 @@ public class AlertsControllerTest {
     public void getAlertById() throws AlertNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
-
-        // Alerts setup
         Alert alert = domainObjectsBuilder.buildAlert(project);
         when(alertRepository.findById(alert.getId())).thenReturn(Optional.of(alert));
 
@@ -69,18 +63,16 @@ public class AlertsControllerTest {
     }
 
     @Test
-    public void getAlerts() throws ProjectNotFoundException {
+    public void getAlerts() {
         // Given
         Project project = domainObjectsBuilder.buildProject();
-        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
-
         Alert alert = domainObjectsBuilder.buildAlert(project);
         List<Alert> alertList = new ArrayList<>();
         alertList.add(alert);
         when(alertRepository.findByProject_IdOrderByDateDesc(project.getId())).thenReturn(alertList);
 
         // When
-        List<Alert> alertsFound = alertsController.getAlerts(project.getExternalId());
+        List<Alert> alertsFound = alertsController.getAlerts(project);
 
         // Then
         int expectedNumberOfAlertsFound = 1;
@@ -88,22 +80,10 @@ public class AlertsControllerTest {
         assertEquals(alert, alertsFound.get(0));
     }
 
-    @Test(expected = ProjectNotFoundException.class)
-    public void getAlertsProjectNotFound() throws ProjectNotFoundException {
-        // Given
-        String projectExternalId = "missingProject";
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
-
-        // Throws
-        alertsController.getAlerts(projectExternalId);
-    }
-
     @Test
     public void setViewedStatusForAlerts() {
         // Given
         Project project = domainObjectsBuilder.buildProject();
-
-        // Alerts setup
         Alert alert = domainObjectsBuilder.buildAlert(project);
         List<Alert> alertList = new ArrayList<>();
         alertList.add(alert);
@@ -118,12 +98,10 @@ public class AlertsControllerTest {
     }
 
     @Test
-    public void countNewAlerts() throws ProjectNotFoundException {
+    public void countNewAlerts() {
         // Given
         Project project = domainObjectsBuilder.buildProject();
-        String projectExternalId = project.getExternalId();
         Long projectId = project.getId();
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
 
         // alerts setup
         Long newAlerts = 2L;
@@ -132,27 +110,14 @@ public class AlertsControllerTest {
         when(alertRepository.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(projectId, AlertStatus.NEW)).thenReturn(newAlertWithQR);
 
         // When
-        Pair<Long, Long> newAlertsFound = alertsController.countNewAlerts(projectExternalId);
+        Pair<Long, Long> newAlertsFound = alertsController.countNewAlerts(project);
 
         // Then
         assertEquals(newAlerts, newAlertsFound.getFirst());
         assertEquals(newAlertWithQR, newAlertsFound.getSecond());
 
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
-
         verify(alertRepository, times(1)).countByProject_IdAndStatus(projectId, AlertStatus.NEW);
         verify(alertRepository, times(1)).countByProject_IdAndReqAssociatIsTrueAndStatusEquals(projectId, AlertStatus.NEW);
         verifyNoMoreInteractions(alertRepository);
-    }
-
-    @Test(expected = ProjectNotFoundException.class)
-    public void countNewAlertsProjectNotFound () throws ProjectNotFoundException {
-        // Given
-        String projectExternalId = "missingProject";
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
-
-        // Throws
-        alertsController.countNewAlerts(projectExternalId);
     }
 }
