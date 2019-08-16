@@ -379,9 +379,9 @@ public class Alerts {
 
     @GetMapping("/api/qrPatterns/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public QualityRequirementPattern getQRPattern (@PathVariable String id) {
-        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
-        return gen.getQRPattern(Long.parseLong(id));
+    public DTOQRPattern getQRPattern (@PathVariable String id) {
+        QualityRequirementPattern qualityRequirementPattern = qrPatternsController.getOnePattern(Long.parseLong(id));
+        return mapQualityRequirementPatternToDTOQRPattern(qualityRequirementPattern);
     }
 
     @GetMapping("/api/qrPatterns/{id}/metric")

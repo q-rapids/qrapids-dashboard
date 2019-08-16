@@ -108,4 +108,26 @@ public class QRPatternsControllerTest {
         verify(qrGenerator, times(1)).getAllQRPatterns();
         verifyNoMoreInteractions(qrGenerator);
     }
+
+    @Test
+    public void getOnePattern() {
+        // Given
+        QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
+
+        QRGenerator qrGenerator = mock(QRGenerator.class);
+        when(qrGenerator.getQRPattern(qualityRequirementPattern.getId())).thenReturn(qualityRequirementPattern);
+        when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
+
+        // When
+        QualityRequirementPattern qualityRequirementPatternFound = qrPatternsController.getOnePattern(qualityRequirementPattern.getId().longValue());
+
+        // Then
+        assertEquals(qualityRequirementPattern, qualityRequirementPatternFound);
+
+        verify(qrGeneratorFactory, times(1)).getQRGenerator();
+        verifyNoMoreInteractions(qrGeneratorFactory);
+
+        verify(qrGenerator, times(1)).getQRPattern(qualityRequirementPattern.getId().longValue());
+        verifyNoMoreInteractions(qrGenerator);
+    }
 }

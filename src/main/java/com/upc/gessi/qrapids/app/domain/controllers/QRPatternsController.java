@@ -32,4 +32,9 @@ public class QRPatternsController {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getAllQRPatterns();
     }
+
+    public QualityRequirementPattern getOnePattern (Long id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getQRPattern(id);
+    }
 }
