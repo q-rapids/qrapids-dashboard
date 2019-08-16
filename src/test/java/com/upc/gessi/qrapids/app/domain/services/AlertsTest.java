@@ -1481,7 +1481,7 @@ public class AlertsTest {
     public void getQRPattern() throws Exception {
         // Given
         QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
-        when(qrPatternsDomainController.getOnePattern(qualityRequirementPattern.getId().longValue())).thenReturn(qualityRequirementPattern);
+        when(qrPatternsDomainController.getOnePattern(qualityRequirementPattern.getId())).thenReturn(qualityRequirementPattern);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1531,23 +1531,15 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(qrPatternsDomainController, times(1)).getOnePattern(qualityRequirementPattern.getId().longValue());
+        verify(qrPatternsDomainController, times(1)).getOnePattern(qualityRequirementPattern.getId());
         verifyNoMoreInteractions(qrPatternsDomainController);
     }
 
     @Test
     public void getMetricsForQRPattern() throws Exception {
         Integer patternId = 1;
-        List<Integer> patternIdList = new ArrayList<>();
-        patternIdList.add(patternId);
-
         String metric = "comments";
-        Map<Integer, String> metrics = new HashMap<>();
-        metrics.put(patternId, metric);
-
-        QRGenerator qrGenerator = mock(QRGenerator.class);
-        when(qrGenerator.getMetricsForPatterns(patternIdList)).thenReturn(metrics);
-        when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
+        when(qrPatternsDomainController.getMetricForPattern(patternId)).thenReturn(metric);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1570,10 +1562,7 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(qrGenerator, times(1)).getMetricsForPatterns(patternIdList);
-        verifyNoMoreInteractions(qrGenerator);
-
-        verify(qrGeneratorFactory, times(1)).getQRGenerator();
-        verifyNoMoreInteractions(qrGeneratorFactory);
+        verify(qrPatternsDomainController, times(1)).getMetricForPattern(patternId);
+        verifyNoMoreInteractions(qrPatternsDomainController);
     }
 }

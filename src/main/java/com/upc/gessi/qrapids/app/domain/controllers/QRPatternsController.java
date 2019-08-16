@@ -8,6 +8,7 @@ import qr.QRGenerator;
 import qr.models.QualityRequirementPattern;
 import qr.models.enumerations.Type;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,8 +34,15 @@ public class QRPatternsController {
         return gen.getAllQRPatterns();
     }
 
-    public QualityRequirementPattern getOnePattern (Long id) {
+    public QualityRequirementPattern getOnePattern (Integer id) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
-        return gen.getQRPattern(id);
+        return gen.getQRPattern(id.longValue());
+    }
+
+    public String getMetricForPattern (Integer id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        List<Integer> ids = new ArrayList<>();
+        ids.add(id);
+        return gen.getMetricsForPatterns(ids).get(id);
     }
 }

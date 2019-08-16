@@ -380,19 +380,14 @@ public class Alerts {
     @GetMapping("/api/qrPatterns/{id}")
     @ResponseStatus(HttpStatus.OK)
     public DTOQRPattern getQRPattern (@PathVariable String id) {
-        QualityRequirementPattern qualityRequirementPattern = qrPatternsController.getOnePattern(Long.parseLong(id));
+        QualityRequirementPattern qualityRequirementPattern = qrPatternsController.getOnePattern(Integer.parseInt(id));
         return mapQualityRequirementPatternToDTOQRPattern(qualityRequirementPattern);
     }
 
     @GetMapping("/api/qrPatterns/{id}/metric")
     @ResponseStatus(HttpStatus.OK)
     public Map<String, String> getMetricsForQRPattern (@PathVariable String id) {
-        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
-        List<Integer> ids = new ArrayList<>();
-        Integer patternId = Integer.parseInt(id);
-        ids.add(patternId);
-        String metric = gen.getMetricsForPatterns(ids).get(patternId);
-
+        String metric = qrPatternsController.getMetricForPattern(Integer.parseInt(id));
         Map<String, String> object = new HashMap<>();
         object.put("metric", metric);
         return object;

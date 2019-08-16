@@ -15,7 +15,9 @@ import qr.QRGenerator;
 import qr.models.QualityRequirementPattern;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -119,7 +121,7 @@ public class QRPatternsControllerTest {
         when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
 
         // When
-        QualityRequirementPattern qualityRequirementPatternFound = qrPatternsController.getOnePattern(qualityRequirementPattern.getId().longValue());
+        QualityRequirementPattern qualityRequirementPatternFound = qrPatternsController.getOnePattern(qualityRequirementPattern.getId());
 
         // Then
         assertEquals(qualityRequirementPattern, qualityRequirementPatternFound);
@@ -129,5 +131,27 @@ public class QRPatternsControllerTest {
 
         verify(qrGenerator, times(1)).getQRPattern(qualityRequirementPattern.getId().longValue());
         verifyNoMoreInteractions(qrGenerator);
+    }
+
+    @Test
+    public void getMetricForPattern() {
+        // Given
+        Integer patternId = 1;
+        List<Integer> patternIdList = new ArrayList<>();
+        patternIdList.add(patternId);
+
+        String metric = "comments";
+        Map<Integer, String> metrics = new HashMap<>();
+        metrics.put(patternId, metric);
+
+        QRGenerator qrGenerator = mock(QRGenerator.class);
+        when(qrGenerator.getMetricsForPatterns(patternIdList)).thenReturn(metrics);
+        when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
+
+        // When
+        String metricFound = qrPatternsController.getMetricForPattern(patternId);
+
+        // Then
+        assertEquals(metric, metricFound);
     }
 }
