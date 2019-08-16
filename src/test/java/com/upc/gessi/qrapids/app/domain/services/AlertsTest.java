@@ -958,79 +958,44 @@ public class AlertsTest {
 
     @Test
     public void getQRs() throws Exception {
-        // project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        String backlogId = "1";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setBacklogId(backlogId);
-        project.setId(projectId);
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
-
-        // Alert setup
-        Long alertId = 2L;
-        String idElement = "id";
-        String name = "Duplication";
-        AlertType alertType = AlertType.METRIC;
-        Double value = 0.4;
-        Double threshold = 0.5;
-        String category = "category";
-        Date date = new Date();
-        AlertStatus alertStatus = AlertStatus.NEW;
-        boolean hasReq = true;
-        Alert alert = new Alert(idElement, name, alertType, value.floatValue(), threshold.floatValue(), category, date, alertStatus, hasReq, null);
-        alert.setId(alertId);
-
-        // Decision setup
-        DecisionType decisionType = DecisionType.ADD;
-        String rationale = "Not important";
-        int patternId = 100;
-        Decision decision = new Decision(decisionType, date, null, rationale, patternId, null);
-
-        // Requirement setup
-        Long requirementId = 3L;
-        String requirement = "The ratio of files without duplications should be at least 0.8";
-        String description = "The ratio of files without duplications should be at least the given value";
-        String goal = "Improve the quality of the source code";
-        String qrBacklogUrl =  "https://backlog.example/issue/999";
-        String qrBacklogId = "ID-999";
-        QualityRequirement qualityRequirement = new QualityRequirement(requirement, description, goal, alert, decision, project);
-        qualityRequirement.setId(requirementId);
-        qualityRequirement.setBacklogUrl(qrBacklogUrl);
-        qualityRequirement.setBacklogId(qrBacklogId);
+        Alert alert = domainObjectsBuilder.buildAlert(project);
+        Decision decision = domainObjectsBuilder.buildDecision(project, DecisionType.ADD);
+        QualityRequirement qualityRequirement = domainObjectsBuilder.buildQualityRequirement(alert, decision, project);
 
         List<QualityRequirement> qualityRequirementList = new ArrayList<>();
         qualityRequirementList.add(qualityRequirement);
 
-        when(qrRepository.findByProjectIdOrderByDecision_DateDesc(projectId)).thenReturn(qualityRequirementList);
+        when(qualityRequirementDomainController.getAllQualityRequirementsForProject(project)).thenReturn(qualityRequirementList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/qr")
-                .param("prj", projectExternalId);
+                .param("prj", project.getExternalId());
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(requirementId.intValue())))
-                .andExpect(jsonPath("$[0].date", is(date.getTime())))
-                .andExpect(jsonPath("$[0].requirement", is(requirement)))
-                .andExpect(jsonPath("$[0].description", is(description)))
-                .andExpect(jsonPath("$[0].goal", is(goal)))
-                .andExpect(jsonPath("$[0].backlogId", is(qrBacklogId)))
-                .andExpect(jsonPath("$[0].backlogUrl", is(qrBacklogUrl)))
-                .andExpect(jsonPath("$[0].backlogProjectId", is(backlogId)))
-                .andExpect(jsonPath("$[0].alert.id", is(alertId.intValue())))
-                .andExpect(jsonPath("$[0].alert.id_element", is(idElement)))
-                .andExpect(jsonPath("$[0].alert.name", is(name)))
-                .andExpect(jsonPath("$[0].alert.type", is(alertType.toString())))
-                .andExpect(jsonPath("$[0].alert.value", is(value)))
-                .andExpect(jsonPath("$[0].alert.threshold", is(threshold)))
-                .andExpect(jsonPath("$[0].alert.category", is(category)))
-                .andExpect(jsonPath("$[0].alert.date", is(date.getTime())))
-                .andExpect(jsonPath("$[0].alert.status", is(alertStatus.toString())))
-                .andExpect(jsonPath("$[0].alert.reqAssociat", is(hasReq)))
+                .andExpect(jsonPath("$[0].id", is(qualityRequirement.getId().intValue())))
+                .andExpect(jsonPath("$[0].date", is(decision.getDate().getTime())))
+                .andExpect(jsonPath("$[0].requirement", is(qualityRequirement.getRequirement())))
+                .andExpect(jsonPath("$[0].description", is(qualityRequirement.getDescription())))
+                .andExpect(jsonPath("$[0].goal", is(qualityRequirement.getGoal())))
+                .andExpect(jsonPath("$[0].backlogId", is(qualityRequirement.getBacklogId())))
+                .andExpect(jsonPath("$[0].backlogUrl", is(qualityRequirement.getBacklogUrl())))
+                .andExpect(jsonPath("$[0].backlogProjectId", is(project.getBacklogId())))
+                .andExpect(jsonPath("$[0].alert.id", is(alert.getId().intValue())))
+                .andExpect(jsonPath("$[0].alert.id_element", is(alert.getId_element())))
+                .andExpect(jsonPath("$[0].alert.name", is(alert.getName())))
+                .andExpect(jsonPath("$[0].alert.type", is(alert.getType().toString())))
+                .andExpect(jsonPath("$[0].alert.value", is(HelperFunctions.getFloatAsDouble(alert.getValue()))))
+                .andExpect(jsonPath("$[0].alert.threshold", is(HelperFunctions.getFloatAsDouble(alert.getThreshold()))))
+                .andExpect(jsonPath("$[0].alert.category", is(alert.getCategory())))
+                .andExpect(jsonPath("$[0].alert.date", is(alert.getDate().getTime())))
+                .andExpect(jsonPath("$[0].alert.status", is(alert.getStatus().toString())))
+                .andExpect(jsonPath("$[0].alert.reqAssociat", is(alert.isReqAssociat())))
                 .andExpect(jsonPath("$[0].alert.artefacts", is(nullValue())))
                 .andDo(document("qrs/get-all-qrs",
                         preprocessRequest(prettyPrint()),
@@ -1082,18 +1047,18 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
+        verify(projectsDomainController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsDomainController);
 
-        verify(qrRepository, times(1)).findByProjectIdOrderByDecision_DateDesc(projectId);
-        verifyNoMoreInteractions(qrRepository);
+        verify(qualityRequirementDomainController, times(1)).getAllQualityRequirementsForProject(project);
+        verifyNoMoreInteractions(qualityRequirementDomainController);
     }
 
     @Test
     public void getQRsWrongProject () throws Exception {
+        // Given
         String projectExternalId = "test";
-
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1107,37 +1072,35 @@ public class AlertsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
                 ));
+
+        // Verify mock interactions
+        verify(projectsDomainController, times(1)).findProjectByExternalId(projectExternalId);
+        verifyNoMoreInteractions(projectsDomainController);
+
+        verifyZeroInteractions(qualityRequirementDomainController);
     }
 
     @Test
     public void notifyAlert() throws Exception {
-        // QRGeneration setup
-        QRGenerator qrGenerator = mock(QRGenerator.class);
-        when(qrGenerator.existsQRPattern(ArgumentMatchers.any(qr.models.Alert.class))).thenReturn(true);
-        when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
-
-        // project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        String backlogId = "1";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setBacklogId(backlogId);
-        project.setId(projectId);
-
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
-
-        // Alert setup
-        when(alertRepository.save(ArgumentMatchers.any(Alert.class))).thenReturn(null);
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         // Perform request
+        String id = "duplication";
+        String name = "Duplication";
+        String type = "METRIC";
+        float value = 0.4f;
+        float threshold = 0.5f;
+        String category = "duplication";
         Map<String, String> element = new HashMap<>();
-        element.put("id", "duplication");
-        element.put("name", "Duplication");
-        element.put("type", "METRIC");
-        element.put("value", "0.4");
-        element.put("threshold", "0.5");
-        element.put("category", "duplication");
-        element.put("project_id", "test");
+        element.put("id", id);
+        element.put("name", name);
+        element.put("type", type);
+        element.put("value", Float.toString(value));
+        element.put("threshold", Float.toString(threshold));
+        element.put("category", category);
+        element.put("project_id", project.getExternalId());
         Map<String, Map<String, String>> body = new HashMap<>();
         body.put("element", element);
 
@@ -1175,17 +1138,11 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(qrGenerator, times(1)).existsQRPattern(ArgumentMatchers.any(qr.models.Alert.class));
-        verifyNoMoreInteractions(qrGenerator);
+        verify(projectsDomainController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsDomainController);
 
-        verify(qrGeneratorFactory, times(1)).getQRGenerator();
-        verifyNoMoreInteractions(qrGeneratorFactory);
-
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
-
-        verify(alertRepository, times(1)).save(ArgumentMatchers.any(Alert.class));
-        verifyNoMoreInteractions(alertRepository);
+        verify(alertsDomainController, times(1)).createAlert(id, name, AlertType.valueOf(type), value, threshold, category, project);
+        verifyNoMoreInteractions(alertsDomainController);
 
         verify(simpleMessagingTemplate, times(1)).convertAndSend(eq("/queue/notify"), ArgumentMatchers.any(Notification.class));
         verifyNoMoreInteractions(simpleMessagingTemplate);
@@ -1193,33 +1150,25 @@ public class AlertsTest {
 
     @Test
     public void createAlert() throws Exception {
-        // QRGeneration setup
-        QRGenerator qrGenerator = mock(QRGenerator.class);
-        when(qrGenerator.existsQRPattern(ArgumentMatchers.any(qr.models.Alert.class))).thenReturn(true);
-        when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
-
-        // project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        String backlogId = "1";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setBacklogId(backlogId);
-        project.setId(projectId);
-
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
-
-        // Alert setup
-        when(alertRepository.save(ArgumentMatchers.any(Alert.class))).thenReturn(null);
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         // Perform request
+        String id = "duplication";
+        String name = "Duplication";
+        String type = "METRIC";
+        float value = 0.4f;
+        float threshold = 0.5f;
+        String category = "duplication";
         Map<String, String> element = new HashMap<>();
-        element.put("id", "duplication");
-        element.put("name", "Duplication");
-        element.put("type", "METRIC");
-        element.put("value", "0.4");
-        element.put("threshold", "0.5");
-        element.put("category", "duplication");
-        element.put("project_id", "test");
+        element.put("id", id);
+        element.put("name", name);
+        element.put("type", type);
+        element.put("value", Float.toString(value));
+        element.put("threshold", Float.toString(threshold));
+        element.put("category", category);
+        element.put("project_id", project.getExternalId());
         Map<String, Map<String, String>> body = new HashMap<>();
         body.put("element", element);
 
@@ -1257,17 +1206,11 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(qrGenerator, times(1)).existsQRPattern(ArgumentMatchers.any(qr.models.Alert.class));
-        verifyNoMoreInteractions(qrGenerator);
+        verify(projectsDomainController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsDomainController);
 
-        verify(qrGeneratorFactory, times(1)).getQRGenerator();
-        verifyNoMoreInteractions(qrGeneratorFactory);
-
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
-
-        verify(alertRepository, times(1)).save(ArgumentMatchers.any(Alert.class));
-        verifyNoMoreInteractions(alertRepository);
+        verify(alertsDomainController, times(1)).createAlert(id, name, AlertType.valueOf(type), value, threshold, category, project);
+        verifyNoMoreInteractions(alertsDomainController);
 
         verify(simpleMessagingTemplate, times(1)).convertAndSend(eq("/queue/notify"), ArgumentMatchers.any(Notification.class));
         verifyNoMoreInteractions(simpleMessagingTemplate);
@@ -1395,6 +1338,86 @@ public class AlertsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
                 ));
+    }
+
+    @Test
+    public void notifyAlertProjectNotFound () throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenThrow(new ProjectNotFoundException());
+
+        // Perform request
+        Map<String, String> element = new HashMap<>();
+        element.put("id", "duplication");
+        element.put("name", "Duplication");
+        element.put("type", "METRIC");
+        element.put("value", "0.4");
+        element.put("threshold", "0.5");
+        element.put("category", "duplication");
+        element.put("project_id", "test");
+        Map<String, Map<String, String>> body = new HashMap<>();
+        body.put("element", element);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+        String bodyJson = objectWriter.writeValueAsString(body);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/notifyAlert")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(bodyJson);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andDo(document("alerts/notify-alert-project-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verifyZeroInteractions(alertsDomainController);
+    }
+
+    @Test
+    public void addAlertProjectNotFound () throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenThrow(new ProjectNotFoundException());
+
+        // Perform request
+        Map<String, String> element = new HashMap<>();
+        element.put("id", "duplication");
+        element.put("name", "Duplication");
+        element.put("type", "METRIC");
+        element.put("value", "0.4");
+        element.put("threshold", "0.5");
+        element.put("category", "duplication");
+        element.put("project_id", "test");
+        Map<String, Map<String, String>> body = new HashMap<>();
+        body.put("element", element);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter objectWriter = mapper.writer().withDefaultPrettyPrinter();
+        String bodyJson = objectWriter.writeValueAsString(body);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/alerts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(bodyJson);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andDo(document("alerts/add-alert-project-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verifyZeroInteractions(alertsDomainController);
     }
 
     @Test

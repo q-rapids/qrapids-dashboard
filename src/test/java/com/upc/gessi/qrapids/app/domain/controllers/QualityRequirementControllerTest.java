@@ -46,6 +46,11 @@ public class QualityRequirementControllerTest {
     }
 
     @Test
+    public void getAllQualityRequirementsForProject() {
+
+    }
+
+    @Test
     public void getQualityRequirementForDecision() {
         // Given
         Project project = domainObjectsBuilder.buildProject();

@@ -285,10 +285,10 @@ public class Alerts {
     @GetMapping("/api/qr")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOQualityRequirement> getQRs(@RequestParam(value = "prj") String prj) {
-        Project project = projectRepository.findByExternalId(prj);
-        if (project != null) {
+        try {
+            Project project = projectsController.findProjectByExternalId(prj);
+            List<QualityRequirement> qualityRequirements = qualityRequirementController.getAllQualityRequirementsForProject(project);
             List<DTOQualityRequirement> dtoQualityRequirements = new ArrayList<>();
-            List<QualityRequirement> qualityRequirements = qrRepository.findByProjectIdOrderByDecision_DateDesc(project.getId());
             for (QualityRequirement qualityRequirement : qualityRequirements) {
                 DTOQualityRequirement dtoQualityRequirement = new DTOQualityRequirement(
                         qualityRequirement.getId(),
@@ -321,55 +321,26 @@ public class Alerts {
                 dtoQualityRequirements.add(dtoQualityRequirement);
             }
             return dtoQualityRequirements;
-        } else {
+        } catch (ProjectNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         }
     }
 
 
+    // Legacy
     @PostMapping("/api/notifyAlert")
     @ResponseStatus(HttpStatus.OK)
-    public void notify(@RequestBody Map<String, Map<String, String>> requestBody) throws Exception {
-        Map<String, String> element = requestBody.get("element");
-
-        String id = element.get("id");
-        String name = element.get("name");
-        String typeString = element.get("type");
-        String valueString = element.get("value");
-        String thresholdString = element.get("threshold");
-        String category = element.get("category");
-        String prj = element.get("project_id");
-
-        if (id != null && name != null && typeString != null && valueString != null && thresholdString != null && category != null && prj != null) {
-            try {
-                Type type = Type.valueOf(typeString);
-                float value = Float.parseFloat(valueString);
-                float threshold = Float.parseFloat(thresholdString);
-
-                qr.models.Alert alert = new qr.models.Alert(id, name, type, value, threshold, category, null);
-
-                QRGenerator qrGenerator = qrGeneratorFactory.getQRGenerator();
-                boolean existsQR = qrGenerator.existsQRPattern(alert);
-                Project project = projectRepository.findByExternalId(prj);
-                Alert al = new Alert(alert.getId_element(), alert.getName(), AlertType.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), new Date(), AlertStatus.NEW, existsQR, project);
-                ari.save(al);
-                smt.convertAndSend(
-                        "/queue/notify",
-                        new Notification("New Alert")
-                );
-            }
-            catch (IllegalArgumentException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more arguments have the wrong type");
-            }
-        }
-        else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more attributes are missing in the request body");
-        }
+    public void newAlertLegacy(@RequestBody Map<String, Map<String, String>> requestBody) {
+        createAlert(requestBody);
     }
 
     @PostMapping("/api/alerts")
     @ResponseStatus(HttpStatus.CREATED)
     public void newAlert(@RequestBody Map<String, Map<String, String>> requestBody) {
+        createAlert(requestBody);
+    }
+
+    private void createAlert (Map<String, Map<String, String>> requestBody) {
         Map<String, String> element = requestBody.get("element");
 
         String id = element.get("id");
@@ -382,27 +353,23 @@ public class Alerts {
 
         if (id != null && name != null && typeString != null && valueString != null && thresholdString != null && category != null && prj != null) {
             try {
-                Type type = Type.valueOf(typeString);
+                AlertType type = AlertType.valueOf(typeString);
                 float value = Float.parseFloat(valueString);
                 float threshold = Float.parseFloat(thresholdString);
 
-                qr.models.Alert alert = new qr.models.Alert(id, name, type, value, threshold, category, null);
+                Project project = projectsController.findProjectByExternalId(prj);
+                alertsController.createAlert(id, name, type, value, threshold, category, project);
 
-                QRGenerator qrGenerator = qrGeneratorFactory.getQRGenerator();
-                boolean existsQR = qrGenerator.existsQRPattern(alert);
-                Project project = projectRepository.findByExternalId(prj);
-                Alert al = new Alert(alert.getId_element(), alert.getName(), AlertType.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), new Date(), AlertStatus.NEW, existsQR, project);
-                ari.save(al);
                 smt.convertAndSend(
                         "/queue/notify",
                         new Notification("New Alert")
                 );
-            }
-            catch (IllegalArgumentException e) {
+            } catch (ProjectNotFoundException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            } catch (IllegalArgumentException e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more arguments have the wrong type");
             }
-        }
-        else {
+        } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more attributes are missing in the request body");
         }
     }

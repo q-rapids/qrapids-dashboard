@@ -120,4 +120,9 @@ public class AlertsControllerTest {
         verify(alertRepository, times(1)).countByProject_IdAndReqAssociatIsTrueAndStatusEquals(projectId, AlertStatus.NEW);
         verifyNoMoreInteractions(alertRepository);
     }
+
+    @Test
+    public void createAlert() {
+
+    }
 }

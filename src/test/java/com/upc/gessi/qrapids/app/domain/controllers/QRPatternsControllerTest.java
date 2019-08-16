@@ -65,4 +65,9 @@ public class QRPatternsControllerTest {
         verify(qrGenerator, times(1)).generateQRs(ArgumentMatchers.any(qr.models.Alert.class));
         verifyNoMoreInteractions(qrGenerator);
     }
+
+    @Test
+    public void existsPatternForAlert() {
+
+    }
 }

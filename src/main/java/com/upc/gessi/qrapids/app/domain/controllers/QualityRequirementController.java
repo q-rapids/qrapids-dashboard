@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Date;
+import java.util.List;
 
 public class QualityRequirementController {
 
@@ -23,6 +24,10 @@ public class QualityRequirementController {
 
     @Autowired
     private Backlog backlog;
+
+    public List<QualityRequirement> getAllQualityRequirementsForProject(Project project) {
+        return qrRepository.findByProjectIdOrderByDecision_DateDesc(project.getId());
+    }
 
     public QualityRequirement getQualityRequirementForDecision (Decision decision) {
         return qrRepository.findByDecisionId(decision.getId());

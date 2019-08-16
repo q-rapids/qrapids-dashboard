@@ -21,4 +21,10 @@ public class QRPatternsController {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.generateQRs(alertModel);
     }
+
+    public boolean existsPatternForAlert (Alert alert) {
+        qr.models.Alert alertModel = new qr.models.Alert(alert.getId_element(), alert.getName(), Type.valueOf(alert.getType().toString()), alert.getValue(), alert.getThreshold(), alert.getCategory(), null);
+        QRGenerator qrGenerator = qrGeneratorFactory.getQRGenerator();
+        return qrGenerator.existsQRPattern(alertModel);
+    }
 }
