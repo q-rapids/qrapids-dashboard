@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AlertStatus;
+import com.upc.gessi.qrapids.app.domain.models.AlertType;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
@@ -10,6 +11,7 @@ import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -29,6 +32,9 @@ public class AlertsControllerTest {
 
     @Mock
     private AlertRepository alertRepository;
+
+    @Mock
+    private QRPatternsController qrPatternsController;
 
     @InjectMocks
     private AlertsController alertsController;
@@ -123,6 +129,33 @@ public class AlertsControllerTest {
 
     @Test
     public void createAlert() {
+        // Given
+        String id = "duplication";
+        String name = "Duplication";
+        AlertType type = AlertType.METRIC;
+        float value = 0.4f;
+        float threshold = 0.5f;
+        String category = "duplication";
+        Project project = domainObjectsBuilder.buildProject();
+        when(qrPatternsController.existsPatternForAlert(any(Alert.class))).thenReturn(true);
 
+        // When
+        alertsController.createAlert(id, name, type, value, threshold, category, project);
+
+        // Then
+        verify(qrPatternsController, times(1)).existsPatternForAlert(any(Alert.class));
+
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(id, alertSaved.getId_element());
+        assertEquals(name, alertSaved.getName());
+        assertEquals(type, alertSaved.getType());
+        assertEquals(value, alertSaved.getValue(), 0f);
+        assertEquals(threshold, alertSaved.getThreshold(), 0f);
+        assertEquals(category, alertSaved.getCategory());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertTrue(alertSaved.isReqAssociat());
+        assertEquals(project, alertSaved.getProject());
     }
 }

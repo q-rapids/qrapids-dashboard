@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,7 +43,6 @@ public class QRPatternsControllerTest {
         Project project = domainObjectsBuilder.buildProject();
         Alert alert = domainObjectsBuilder.buildAlert(project);
 
-        // Requirement pattern setup
         QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
         List<QualityRequirementPattern> qualityRequirementPatternList = new ArrayList<>();
         qualityRequirementPatternList.add(qualityRequirementPattern);
@@ -68,6 +68,44 @@ public class QRPatternsControllerTest {
 
     @Test
     public void existsPatternForAlert() {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Alert alert = domainObjectsBuilder.buildAlert(project);
 
+        QRGenerator qrGenerator = mock(QRGenerator.class);
+        when(qrGenerator.existsQRPattern(any())).thenReturn(true);
+        when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
+
+        // When
+        boolean exists = qrPatternsController.existsPatternForAlert(alert);
+
+        // Then
+        assertTrue(exists);
+    }
+
+    @Test
+    public void getAllPatterns() {
+        // Given
+        QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
+        List<QualityRequirementPattern> qualityRequirementPatternList = new ArrayList<>();
+        qualityRequirementPatternList.add(qualityRequirementPattern);
+
+        QRGenerator qrGenerator = mock(QRGenerator.class);
+        when(qrGenerator.getAllQRPatterns()).thenReturn(qualityRequirementPatternList);
+        when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
+
+        // When
+        List<QualityRequirementPattern> qualityRequirementPatternsFound = qrPatternsController.getAllPatterns();
+
+        // Then
+        int expectedQRPatternsFound = 1;
+        assertEquals(expectedQRPatternsFound, qualityRequirementPatternsFound.size());
+        assertEquals(qualityRequirementPatternList.get(0), qualityRequirementPatternsFound.get(0));
+
+        verify(qrGeneratorFactory, times(1)).getQRGenerator();
+        verifyNoMoreInteractions(qrGeneratorFactory);
+
+        verify(qrGenerator, times(1)).getAllQRPatterns();
+        verifyNoMoreInteractions(qrGenerator);
     }
 }

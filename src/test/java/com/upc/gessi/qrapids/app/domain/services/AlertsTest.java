@@ -1422,28 +1422,11 @@ public class AlertsTest {
 
     @Test
     public void getAllQRPatterns() throws Exception {
-        // Requirement setup
-        String formText = "The ratio of files without duplications should be at least %value%";
-        FixedPart fixedPart = new FixedPart(formText);
-        String formName = "Duplications";
-        String formDescription = "The ratio of files without duplications should be at least the given value";
-        String formComments = "No comments";
-        Form form = new Form(formName, formDescription, formComments, fixedPart);
-        List<Form> formList = new ArrayList<>();
-        formList.add(form);
-        Integer requirementId = 1;
-        String requirementName = "Duplications";
-        String requirementComments = "No comments";
-        String requirementDescription = "No description";
-        String requirementGoal = "Improve the quality of the source code";
-        String requirementCostFunction = "No cost function";
-        QualityRequirementPattern qualityRequirementPattern = new QualityRequirementPattern(requirementId, requirementName, requirementComments, requirementDescription, requirementGoal, formList, requirementCostFunction);
+        // Given
+        QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
         List<QualityRequirementPattern> qualityRequirementPatternList = new ArrayList<>();
         qualityRequirementPatternList.add(qualityRequirementPattern);
-
-        QRGenerator qrGenerator = mock(QRGenerator.class);
-        when(qrGenerator.getAllQRPatterns()).thenReturn(qualityRequirementPatternList);
-        when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
+        when(qrPatternsDomainController.getAllPatterns()).thenReturn(qualityRequirementPatternList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1452,16 +1435,16 @@ public class AlertsTest {
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(requirementId)))
-                .andExpect(jsonPath("$[0].name", is(requirementName)))
-                .andExpect(jsonPath("$[0].comments", is(requirementComments)))
-                .andExpect(jsonPath("$[0].description", is(requirementDescription)))
-                .andExpect(jsonPath("$[0].goal", is(requirementGoal)))
-                .andExpect(jsonPath("$[0].forms[0].name", is(formName)))
-                .andExpect(jsonPath("$[0].forms[0].description", is(formDescription)))
-                .andExpect(jsonPath("$[0].forms[0].comments", is(formComments)))
-                .andExpect(jsonPath("$[0].forms[0].fixedPart.formText", is(formText)))
-                .andExpect(jsonPath("$[0].costFunction", is(requirementCostFunction)))
+                .andExpect(jsonPath("$[0].id", is(qualityRequirementPattern.getId())))
+                .andExpect(jsonPath("$[0].name", is(qualityRequirementPattern.getName())))
+                .andExpect(jsonPath("$[0].comments", is(qualityRequirementPattern.getComments())))
+                .andExpect(jsonPath("$[0].description", is(qualityRequirementPattern.getDescription())))
+                .andExpect(jsonPath("$[0].goal", is(qualityRequirementPattern.getGoal())))
+                .andExpect(jsonPath("$[0].forms[0].name", is(qualityRequirementPattern.getForms().get(0).getName())))
+                .andExpect(jsonPath("$[0].forms[0].description", is(qualityRequirementPattern.getForms().get(0).getDescription())))
+                .andExpect(jsonPath("$[0].forms[0].comments", is(qualityRequirementPattern.getForms().get(0).getComments())))
+                .andExpect(jsonPath("$[0].forms[0].fixedPart.formText", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getFormText())))
+                .andExpect(jsonPath("$[0].costFunction", is(qualityRequirementPattern.getCostFunction())))
                 .andDo(document("qrs/get-all-qr-patterns",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1490,11 +1473,8 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(qrGeneratorFactory, times(1)).getQRGenerator();
-        verifyNoMoreInteractions(qrGeneratorFactory);
-
-        verify(qrGenerator, times(1)).getAllQRPatterns();
-        verifyNoMoreInteractions(qrGenerator);
+        verify(qrPatternsDomainController, times(1)).getAllPatterns();
+        verifyNoMoreInteractions(qrPatternsDomainController);
     }
 
     @Test

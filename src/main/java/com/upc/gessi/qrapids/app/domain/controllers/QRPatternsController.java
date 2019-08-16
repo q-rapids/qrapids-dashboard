@@ -27,4 +27,9 @@ public class QRPatternsController {
         QRGenerator qrGenerator = qrGeneratorFactory.getQRGenerator();
         return qrGenerator.existsQRPattern(alertModel);
     }
+
+    public List<QualityRequirementPattern> getAllPatterns () {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getAllQRPatterns();
+    }
 }

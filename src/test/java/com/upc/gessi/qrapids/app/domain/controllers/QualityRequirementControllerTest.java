@@ -16,6 +16,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
@@ -47,7 +50,25 @@ public class QualityRequirementControllerTest {
 
     @Test
     public void getAllQualityRequirementsForProject() {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Alert alert = domainObjectsBuilder.buildAlert(project);
+        Decision decision = domainObjectsBuilder.buildDecision(project, DecisionType.ADD);
+        alert.setDecision(decision);
+        QualityRequirement qualityRequirement1 = domainObjectsBuilder.buildQualityRequirement(alert, decision, project);
+        QualityRequirement qualityRequirement2 = domainObjectsBuilder.buildQualityRequirement(alert, decision, project);
+        List<QualityRequirement> qualityRequirementList = new ArrayList<>();
+        qualityRequirementList.add(qualityRequirement1);
+        qualityRequirementList.add(qualityRequirement2);
+        when(qrRepository.findByProjectIdOrderByDecision_DateDesc(project.getId())).thenReturn(qualityRequirementList);
 
+        // When
+        List<QualityRequirement> qualityRequirementListFound = qualityRequirementController.getAllQualityRequirementsForProject(project);
+
+        // Then
+        assertEquals(qualityRequirementList.size(), qualityRequirementListFound.size());
+        assertEquals(qualityRequirementList.get(0), qualityRequirementListFound.get(0));
+        assertEquals(qualityRequirementList.get(1), qualityRequirementListFound.get(1));
     }
 
     @Test

@@ -120,15 +120,7 @@ public class Alerts {
             Alert alert = alertsController.getAlertById(Long.parseLong(id));
             List<QualityRequirementPattern> qrPatternList = qrPatternsController.getPatternsForAlert(alert);
             for (QualityRequirementPattern qrPattern : qrPatternList) {
-                List<DTOQRForm> dtoQRFormList = new ArrayList<>();
-                for(Form form : qrPattern.getForms()) {
-                    FixedPart fixedPart = form.getFixedPart();
-                    DTOQRFixedPart dtoQRFixedPart = new DTOQRFixedPart(fixedPart.getFormText());
-                    DTOQRForm dtoQRForm = new DTOQRForm(form.getName(), form.getDescription(), form.getComments(), dtoQRFixedPart);
-                    dtoQRFormList.add(dtoQRForm);
-                }
-                DTOQRPattern dtoQRPattern = new DTOQRPattern(qrPattern.getId(), qrPattern.getName(), qrPattern.getComments(), qrPattern.getDescription(), qrPattern.getGoal(), dtoQRFormList, qrPattern.getCostFunction());
-                dtoQRPatternList.add(dtoQRPattern);
+                dtoQRPatternList.add(mapQualityRequirementPatternToDTOQRPattern(qrPattern));
             }
             return dtoQRPatternList;
         } catch (AlertNotFoundException e) {
@@ -376,9 +368,13 @@ public class Alerts {
 
     @GetMapping("/api/qrPatterns")
     @ResponseStatus(HttpStatus.OK)
-    public List<QualityRequirementPattern> getAllQRPatterns () {
-        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
-        return gen.getAllQRPatterns();
+    public List<DTOQRPattern> getAllQRPatterns () {
+        List<QualityRequirementPattern> qualityRequirementPatternList = qrPatternsController.getAllPatterns();
+        List<DTOQRPattern> dtoQRPatternList = new ArrayList<>();
+        for (QualityRequirementPattern qrPattern : qualityRequirementPatternList) {
+            dtoQRPatternList.add(mapQualityRequirementPatternToDTOQRPattern(qrPattern));
+        }
+        return dtoQRPatternList;
     }
 
     @GetMapping("/api/qrPatterns/{id}")
@@ -400,6 +396,17 @@ public class Alerts {
         Map<String, String> object = new HashMap<>();
         object.put("metric", metric);
         return object;
+    }
+
+    private DTOQRPattern mapQualityRequirementPatternToDTOQRPattern (QualityRequirementPattern qrPattern) {
+        List<DTOQRForm> dtoQRFormList = new ArrayList<>();
+        for(Form form : qrPattern.getForms()) {
+            FixedPart fixedPart = form.getFixedPart();
+            DTOQRFixedPart dtoQRFixedPart = new DTOQRFixedPart(fixedPart.getFormText());
+            DTOQRForm dtoQRForm = new DTOQRForm(form.getName(), form.getDescription(), form.getComments(), dtoQRFixedPart);
+            dtoQRFormList.add(dtoQRForm);
+        }
+        return new DTOQRPattern(qrPattern.getId(), qrPattern.getName(), qrPattern.getComments(), qrPattern.getDescription(), qrPattern.getGoal(), dtoQRFormList, qrPattern.getCostFunction());
     }
 
 }
