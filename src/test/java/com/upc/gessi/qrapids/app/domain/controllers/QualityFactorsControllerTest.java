@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,25 @@ public class QualityFactorsControllerTest {
 
         // When
         List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId);
+
+        // Then
+        assertEquals(dtoQualityFactorList.size(), dtoQualityFactorListFound.size());
+        assertEquals(dtoQualityFactor, dtoQualityFactorListFound.get(0));
+    }
+
+    @Test
+    public void getAllFactorsWithMetricsHistoricalEvaluation() throws IOException {
+        // Given
+        DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
+        dtoQualityFactorList.add(dtoQualityFactor);
+        String projectExternalId = "test";
+        LocalDate from = dtoQualityFactor.getMetrics().get(0).getDate().minusDays(7);
+        LocalDate to = dtoQualityFactor.getMetrics().get(0).getDate();
+        when(qmaQualityFactors.HistoricalData(null, from, to, projectExternalId)).thenReturn(dtoQualityFactorList);
+
+        // When
+        List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, from, to);
 
         // Then
         assertEquals(dtoQualityFactorList.size(), dtoQualityFactorListFound.size());
