@@ -143,7 +143,7 @@ public class FactorsService {
             for (DTOMetric metric : metrics) {
                 metricsMap.put(metric.getId(), metric.getValue());
             }
-            return qmaSimulation.simulateQualityFactors(metricsMap, prj, LocalDate.parse(date));
+            return qualityFactorsController.simulate(metricsMap, prj, LocalDate.parse(date));
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
