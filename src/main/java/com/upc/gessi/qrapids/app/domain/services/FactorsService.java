@@ -3,10 +3,8 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
-import com.upc.gessi.qrapids.app.domain.models.QFCategory;
-import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
+import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
-import com.upc.gessi.qrapids.app.dto.DTOFactorCategory;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -17,7 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,13 +32,13 @@ public class FactorsService {
     private Forecast qmaf;
 
     @Autowired
-    private QFCategoryRepository qfCategoryRepository;
+    private QualityFactorsController qualityFactorsController;
 
     @GetMapping("/api/qualityFactors/metrics/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOQualityFactor> getQualityFactorsEvaluations(@RequestParam(value = "prj") String prj) {
         try {
-            return qmaqf.CurrentEvaluation(null, prj);
+            return qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

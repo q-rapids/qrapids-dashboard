@@ -1,9 +1,7 @@
 package com.upc.gessi.qrapids.app.testHelpers;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
-import com.upc.gessi.qrapids.app.dto.DTODecisionQualityRequirement;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
-import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
+import com.upc.gessi.qrapids.app.dto.*;
 import org.springframework.data.util.Pair;
 import qr.models.FixedPart;
 import qr.models.Form;
@@ -169,5 +167,21 @@ public class DomainObjectsBuilder {
                 null,
                 null,
                 null);
+    }
+
+    public DTOQualityFactor buildDTOQualityFactor () {
+        String metricId = "fasttests";
+        String metricName = "Fast Tests";
+        String metricDescription = "Percentage of tests under the testing duration threshold";
+        float metricValue = 0.8f;
+        LocalDate evaluationDate = LocalDate.now();
+        String metricRationale = "parameters: {...}, formula: ...";
+        DTOMetric dtoMetric = new DTOMetric(metricId, metricName, metricDescription, null, metricRationale, evaluationDate, metricValue);
+        List<DTOMetric> dtoMetricList = new ArrayList<>();
+        dtoMetricList.add(dtoMetric);
+
+        String factorId = "testingperformance";
+        String factorName = "Testing Performance";
+        return new DTOQualityFactor(factorId, factorName, dtoMetricList);
     }
 }

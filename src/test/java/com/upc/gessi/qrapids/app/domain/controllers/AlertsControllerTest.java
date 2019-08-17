@@ -5,7 +5,6 @@ import com.upc.gessi.qrapids.app.domain.models.AlertStatus;
 import com.upc.gessi.qrapids.app.domain.models.AlertType;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
