@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.testHelpers;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
+import com.upc.gessi.qrapids.app.dto.DTODecisionQualityRequirement;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import org.springframework.data.util.Pair;
@@ -106,7 +107,7 @@ public class DomainObjectsBuilder {
         Form form = new Form(formName, formDescription, formComments, fixedPart);
         List<Form> formList = new ArrayList<>();
         formList.add(form);
-        Integer requirementId = 1;
+        Integer requirementId = 100;
         String requirementName = "Duplications";
         String requirementComments = "No comments";
         String requirementDescription = "No description";
@@ -140,5 +141,33 @@ public class DomainObjectsBuilder {
         qualityRequirement.setBacklogUrl(qrBacklogUrl);
         qualityRequirement.setBacklogId(qrBacklogId);
         return qualityRequirement;
+    }
+
+    public DTODecisionQualityRequirement buildDecisionWithQualityRequirement (QualityRequirement qualityRequirement) {
+        return new DTODecisionQualityRequirement(qualityRequirement.getDecision().getId(),
+                qualityRequirement.getDecision().getType(),
+                qualityRequirement.getDecision().getDate(),
+                null,
+                qualityRequirement.getDecision().getRationale(),
+                qualityRequirement.getDecision().getPatternId(),
+                qualityRequirement.getRequirement(),
+                qualityRequirement.getDescription(),
+                qualityRequirement.getGoal(),
+                qualityRequirement.getBacklogId(),
+                qualityRequirement.getBacklogUrl());
+    }
+
+    public DTODecisionQualityRequirement buildDecisionWithoutQualityRequirement (Decision decision) {
+        return new DTODecisionQualityRequirement(decision.getId(),
+                decision.getType(),
+                decision.getDate(),
+                null,
+                decision.getRationale(),
+                decision.getPatternId(),
+                null,
+                null,
+                null,
+                null,
+                null);
     }
 }

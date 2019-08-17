@@ -9,7 +9,9 @@ import qr.models.QualityRequirementPattern;
 import qr.models.enumerations.Type;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class QRPatternsController {
@@ -44,5 +46,10 @@ public class QRPatternsController {
         List<Integer> ids = new ArrayList<>();
         ids.add(id);
         return gen.getMetricsForPatterns(ids).get(id);
+    }
+
+    public Map<Integer, String> getMetricsForPatterns (List<Integer> ids) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getMetricsForPatterns(ids);
     }
 }

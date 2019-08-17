@@ -1,14 +1,14 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
-import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
+import com.upc.gessi.qrapids.app.domain.controllers.DecisionsController;
+import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.models.Decision;
 import com.upc.gessi.qrapids.app.domain.models.DecisionType;
 import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
+import com.upc.gessi.qrapids.app.domain.models.QualityRequirement;
 import com.upc.gessi.qrapids.app.dto.DTODecisionQualityRequirement;
-import org.apache.tomcat.jni.Local;
+import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,23 +20,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import qr.QRGenerator;
-import qr.models.FixedPart;
-import qr.models.Form;
-import qr.models.QualityRequirementPattern;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -46,22 +38,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class DecisionsTest {
 
+    private DomainObjectsBuilder domainObjectsBuilder;
+
     private MockMvc mockMvc;
 
     @Rule
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     @Mock
-    private ProjectRepository projectRepository;
+    private ProjectsController projectsDomainController;
 
     @Mock
-    private QRGeneratorFactory qrGeneratorFactory;
-
-    @Mock
-    private QRRepository qrRepository;
-
-    @Mock
-    private DecisionRepository decisionRepository;
+    private DecisionsController decisionsDomainController;
 
     @InjectMocks
     private Decisions decisionsController;
@@ -73,91 +61,47 @@ public class DecisionsTest {
                 .standaloneSetup(decisionsController)
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
+        domainObjectsBuilder = new DomainObjectsBuilder();
     }
 
     @Test
     public void getDecisions() throws Exception {
-        // project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
-        // Requirement pattern setup
-        String formText = "The ratio of files without duplications should be at least %value%";
-        FixedPart fixedPart = new FixedPart(formText);
-        String formName = "Duplications";
-        String formDescription = "The ratio of files without duplications should be at least the given value";
-        String formComments = "No comments";
-        Form form = new Form(formName, formDescription, formComments, fixedPart);
-        List<Form> formList = new ArrayList<>();
-        formList.add(form);
-        Integer requirementId = 1;
-        String requirementName = "Duplications";
-        String requirementComments = "No comments";
-        String requirementDescription = "No description";
-        String requirementGoal = "Improve the quality of the source code";
-        String requirementCostFunction = "No cost function";
-        QualityRequirementPattern qualityRequirementPattern = new QualityRequirementPattern(requirementId, requirementName, requirementComments, requirementDescription, requirementGoal, formList, requirementCostFunction);
-        List<QualityRequirementPattern> qualityRequirementPatternList = new ArrayList<>();
-        qualityRequirementPatternList.add(qualityRequirementPattern);
-
-        QRGenerator qrGenerator = mock(QRGenerator.class);
-        when(qrGenerator.getAllQRPatterns()).thenReturn(qualityRequirementPatternList);
-
-        Integer patternId = 1;
-        List<Integer> patternIdList = new ArrayList<>();
-        patternIdList.add(patternId);
-
-        String metric = "duplication";
-        Map<Integer, String> metrics = new HashMap<>();
-        metrics.put(patternId, metric);
-
-        when(qrGenerator.getMetricsForPatterns(patternIdList)).thenReturn(metrics);
-
-        when(qrGeneratorFactory.getQRGenerator()).thenReturn(qrGenerator);
-
-        // QR setup
-        Long decisionId = 2L;
-        DecisionType decisionType = DecisionType.ADD;
-        String rationale = "Not important";
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = format.parse("2019-07-15");
-        String requirement = "The ratio of files without duplications should be at least 0.8";
-        String description = "The ratio of files without duplications should be at least the given value";
-        String goal = "Improve the quality of the source code";
-        String qrBacklogUrl =  "https://backlog.example/issue/999";
-        String qrBacklogId = "ID-999";
-        DTODecisionQualityRequirement dtoDecisionQualityRequirement = new DTODecisionQualityRequirement(decisionId, decisionType, date, null, rationale, patternId, requirement, description, goal, qrBacklogId, qrBacklogUrl);
+        Decision decision = domainObjectsBuilder.buildDecision(project, DecisionType.ADD);
+        QualityRequirement qualityRequirement = domainObjectsBuilder.buildQualityRequirement(null, decision, project);
+        DTODecisionQualityRequirement dtoDecisionQualityRequirement = domainObjectsBuilder.buildDecisionWithQualityRequirement(qualityRequirement);
+        String metric = "duplications";
+        dtoDecisionQualityRequirement.setElementId(metric);
         List<DTODecisionQualityRequirement> dtoDecisionQualityRequirementList = new ArrayList<>();
         dtoDecisionQualityRequirementList.add(dtoDecisionQualityRequirement);
-
-        when(qrRepository.getAllDecisionsAndQRsByProject_Id(eq(projectId), any(Date.class), any(Date.class))).thenReturn(dtoDecisionQualityRequirementList);
+        when(decisionsDomainController.getAllDecisionsWithQRByProjectAndDates(eq(project), any(), any())).thenReturn(dtoDecisionQualityRequirementList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/decisions")
-                .param("prj", projectExternalId)
+                .param("prj", project.getExternalId())
                 .param("qrs", "true")
-                .param("from", "2019-07-07")
-                .param("to", "2019-07-31");
+                .param("from", "2019-07-15")
+                .param("to", "2019-08-01");
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(decisionId.intValue())))
-                .andExpect(jsonPath("$[0].type", is(decisionType.toString())))
-                .andExpect(jsonPath("$[0].date", is(date.getTime())))
+                .andExpect(jsonPath("$[0].id", is(decision.getId().intValue())))
+                .andExpect(jsonPath("$[0].type", is(decision.getType().toString())))
+                .andExpect(jsonPath("$[0].date", is(decision.getDate().getTime())))
                 .andExpect(jsonPath("$[0].author", is(nullValue())))
-                .andExpect(jsonPath("$[0].rationale", is(rationale)))
-                .andExpect(jsonPath("$[0].patternId", is(patternId)))
+                .andExpect(jsonPath("$[0].rationale", is(decision.getRationale())))
+                .andExpect(jsonPath("$[0].patternId", is(decision.getPatternId())))
                 .andExpect(jsonPath("$[0].elementId", is(metric)))
-                .andExpect(jsonPath("$[0].requirement", is(requirement)))
-                .andExpect(jsonPath("$[0].description", is(description)))
-                .andExpect(jsonPath("$[0].goal", is(goal)))
-                .andExpect(jsonPath("$[0].backlogId", is(qrBacklogId)))
-                .andExpect(jsonPath("$[0].backlogUrl", is(qrBacklogUrl)))
+                .andExpect(jsonPath("$[0].requirement", is(qualityRequirement.getRequirement())))
+                .andExpect(jsonPath("$[0].description", is(qualityRequirement.getDescription())))
+                .andExpect(jsonPath("$[0].goal", is(qualityRequirement.getGoal())))
+                .andExpect(jsonPath("$[0].backlogId", is(qualityRequirement.getBacklogId())))
+                .andExpect(jsonPath("$[0].backlogUrl", is(qualityRequirement.getBacklogUrl())))
                 .andDo(document("decisions/get-all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -202,42 +146,53 @@ public class DecisionsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
+        verify(projectsDomainController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsDomainController);
 
-        verify(qrGeneratorFactory, times(1)).getQRGenerator();
-        verifyNoMoreInteractions(qrGeneratorFactory);
-
-        verify(qrGenerator, times(1)).getAllQRPatterns();
-        verify(qrGenerator, times(1)).getMetricsForPatterns(patternIdList);
-        verifyNoMoreInteractions(qrGenerator);
-
-        verify(qrRepository, times(1)).getAllDecisionsAndQRsByProject_Id(eq(projectId), any(Date.class), any(Date.class));
-        verifyNoMoreInteractions(qrRepository);
+        verify(decisionsDomainController, times(1)).getAllDecisionsWithQRByProjectAndDates(eq(project), any(), any());
+        verifyNoMoreInteractions(decisionsDomainController);
     }
 
     @Test
     public void getDecisionsWithoutQRs() throws Exception {
-        // project setup
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        Project project = new Project(projectExternalId, "Test", "", null, true);
-        project.setId(projectId);
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
-
-        // Decision setup
-        Long decisionId = 2L;
-        DecisionType decisionType = DecisionType.ADD;
-        String rationale = "Not important";
-        Date date = new Date();
-        int patternId = 1;
-        Decision decision = new Decision(decisionType, date, null, rationale, patternId, project);
-        decision.setId(decisionId);
+        Decision decision = domainObjectsBuilder.buildDecision(project, DecisionType.ADD);
         List<Decision> decisionList = new ArrayList<>();
         decisionList.add(decision);
+        when(decisionsDomainController.getAllDecisionsByProject(project)).thenReturn(decisionList);
 
-        when(decisionRepository.findByProject_Id(projectId)).thenReturn(decisionList);
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/decisions")
+                .param("prj", project.getExternalId());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(decision.getId().intValue())))
+                .andExpect(jsonPath("$[0].type", is(decision.getType().toString())))
+                .andExpect(jsonPath("$[0].date", is(decision.getDate().getTime())))
+                .andExpect(jsonPath("$[0].author", is("")))
+                .andExpect(jsonPath("$[0].rationale", is(decision.getRationale())))
+                .andExpect(jsonPath("$[0].patternId", is(decision.getPatternId())))
+                .andExpect(jsonPath("$[0].elementId", is(nullValue())));
+
+        // Verify mock interactions
+        verify(projectsDomainController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsDomainController);
+
+        verify(decisionsDomainController, times(1)).getAllDecisionsByProject(project);
+        verifyNoMoreInteractions(decisionsDomainController);
+    }
+
+    @Test
+    public void getDecisionsProjectNotFound () throws Exception {
+        // Given
+        String projectExternalId = "missingProject";
+        when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -245,21 +200,14 @@ public class DecisionsTest {
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(decisionId.intValue())))
-                .andExpect(jsonPath("$[0].type", is(decisionType.toString())))
-                .andExpect(jsonPath("$[0].date", is(date.getTime())))
-                .andExpect(jsonPath("$[0].author", is("")))
-                .andExpect(jsonPath("$[0].rationale", is(rationale)))
-                .andExpect(jsonPath("$[0].patternId", is(patternId)))
-                .andExpect(jsonPath("$[0].elementId", is(nullValue())));
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(is("The project identifier does not exist")))
+                .andDo(document("decisions/get-all-project-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
 
         // Verify mock interactions
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
-
-        verify(decisionRepository, times(1)).findByProject_Id(projectId);
-        verifyNoMoreInteractions(decisionRepository);
+        verifyZeroInteractions(decisionsDomainController);
     }
 }
