@@ -184,4 +184,17 @@ public class DomainObjectsBuilder {
         String factorName = "Testing Performance";
         return new DTOQualityFactor(factorId, factorName, dtoMetricList);
     }
+
+    public DTOFactor buildDTOFactor () {
+        String factorId = "testingperformance";
+        String factorName = "Testing Performance";
+        String factorDescription = "Performance of the tests";
+        float factorValue = 0.8f;
+        LocalDate evaluationDate = LocalDate.now();
+        String factorRationale = "parameters: {...}, formula: ...";
+        String strategicIndicator = "processperformance";
+        List<String> strategicIndicatorsList = new ArrayList<>();
+        strategicIndicatorsList.add(strategicIndicator);
+        return new DTOFactor(factorId, factorName, factorDescription, factorValue, evaluationDate, null, factorRationale, strategicIndicatorsList);
+    }
 }

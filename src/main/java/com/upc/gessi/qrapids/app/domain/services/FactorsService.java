@@ -50,7 +50,7 @@ public class FactorsService {
     @ResponseStatus(HttpStatus.OK)
     public DTOFactor getSingleFactorEvaluation (@RequestParam("prj") String prj, @PathVariable String id) {
         try {
-            return qmaqf.SingleCurrentEvaluation(id, prj);
+            return qualityFactorsController.getSingleFactorEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

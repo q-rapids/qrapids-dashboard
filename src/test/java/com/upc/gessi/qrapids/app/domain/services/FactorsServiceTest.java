@@ -83,7 +83,7 @@ public class FactorsServiceTest {
 
     @Test
     public void getQualityFactorsEvaluations() throws Exception {
-        // Factor setup
+        // Given
         DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
         List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
         dtoQualityFactorList.add(dtoQualityFactor);
@@ -159,40 +159,31 @@ public class FactorsServiceTest {
 
     @Test
     public void getSingleFactorEvaluation() throws Exception {
-        String factorId = "testingperformance";
-        String factorName = "Testing Performance";
-        String factorDescription = "Performance of the tests";
-        Double factorValue = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String factorRationale = "parameters: {...}, formula: ...";
-        String strategicIndicator = "processperformance";
-        List<String> strategicIndicatorsList = new ArrayList<>();
-        strategicIndicatorsList.add(strategicIndicator);
-        DTOFactor dtoFactor = new DTOFactor(factorId, factorName, factorDescription, factorValue.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
+        // Given
+        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
         String projectExternalId = "test";
-        when(qmaQualityFactors.SingleCurrentEvaluation(factorId, projectExternalId)).thenReturn(dtoFactor);
+        when(qualityFactorsDomainController.getSingleFactorEvaluation(dtoFactor.getId(), projectExternalId)).thenReturn(dtoFactor);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/qualityFactors/{id}", factorId)
+                .get("/api/qualityFactors/{id}", dtoFactor.getId())
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(factorId)))
-                .andExpect(jsonPath("$.name", is(factorName)))
-                .andExpect(jsonPath("$.description", is(factorDescription)))
-                .andExpect(jsonPath("$.value", is(factorValue)))
-                .andExpect(jsonPath("$.value_description", is(String.format("%.2f", factorValue))))
-                .andExpect(jsonPath("$.date[0]", is(evaluationDate.getYear())))
-                .andExpect(jsonPath("$.date[1]", is(evaluationDate.getMonthValue())))
-                .andExpect(jsonPath("$.date[2]", is(evaluationDate.getDayOfMonth())))
+                .andExpect(jsonPath("$.id", is(dtoFactor.getId())))
+                .andExpect(jsonPath("$.name", is(dtoFactor.getName())))
+                .andExpect(jsonPath("$.description", is(dtoFactor.getDescription())))
+                .andExpect(jsonPath("$.value", is(HelperFunctions.getFloatAsDouble(dtoFactor.getValue()))))
+                .andExpect(jsonPath("$.value_description", is(String.format("%.2f", dtoFactor.getValue()))))
+                .andExpect(jsonPath("$.date[0]", is(dtoFactor.getDate().getYear())))
+                .andExpect(jsonPath("$.date[1]", is(dtoFactor.getDate().getMonthValue())))
+                .andExpect(jsonPath("$.date[2]", is(dtoFactor.getDate().getDayOfMonth())))
                 .andExpect(jsonPath("$.datasource", is(nullValue())))
-                .andExpect(jsonPath("$.rationale", is(factorRationale)))
+                .andExpect(jsonPath("$.rationale", is(dtoFactor.getRationale())))
                 .andExpect(jsonPath("$.forecastingError", is(nullValue())))
-                .andExpect(jsonPath("$.strategicIndicators[0]", is(strategicIndicatorsList.get(0))))
-                .andExpect(jsonPath("$.formattedDate", is(evaluationDate.toString())))
+                .andExpect(jsonPath("$.strategicIndicators[0]", is(dtoFactor.getStrategicIndicators().get(0))))
+                .andExpect(jsonPath("$.formattedDate", is(dtoFactor.getDate().toString())))
                 .andDo(document("qf/single",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -230,8 +221,8 @@ public class FactorsServiceTest {
 
 
         // Verify mock interactions
-        verify(qmaQualityFactors, times(1)).SingleCurrentEvaluation(factorId, projectExternalId);
-        verifyNoMoreInteractions(qmaQualityFactors);
+        verify(qualityFactorsDomainController, times(1)).getSingleFactorEvaluation(dtoFactor.getId(), projectExternalId);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
     @Test

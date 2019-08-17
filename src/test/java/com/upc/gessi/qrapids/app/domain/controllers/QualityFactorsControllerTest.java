@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
+import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
@@ -34,7 +35,21 @@ public class QualityFactorsControllerTest {
     }
 
     @Test
-    public void getAllFactorsCurrentEvaluation() throws IOException {
+    public void getSingleFactorEvaluation() throws IOException {
+        // Given
+        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
+        String projectExternalId = "test";
+        when(qmaQualityFactors.SingleCurrentEvaluation(dtoFactor.getId(), projectExternalId)).thenReturn(dtoFactor);
+
+        // When
+        DTOFactor dtoFactorFound = qualityFactorsController.getSingleFactorEvaluation(dtoFactor.getId(), projectExternalId);
+
+        // Then
+        assertEquals(dtoFactor, dtoFactorFound);
+    }
+
+    @Test
+    public void getAllFactorsWithMetricsCurrentEvaluation() throws IOException {
         // Given
         DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
         List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
