@@ -100,7 +100,7 @@ public class FactorsService {
     @ResponseStatus(HttpStatus.OK)
     public List<DTOFactor> getAllQualityFactors(@RequestParam(value = "prj") String prj) {
         try {
-            return qmaqf.getAllFactors(prj);
+            return qualityFactorsController.getAllFactorsEvaluation(prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

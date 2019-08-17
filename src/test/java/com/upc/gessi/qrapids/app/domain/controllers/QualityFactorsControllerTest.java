@@ -50,6 +50,23 @@ public class QualityFactorsControllerTest {
     }
 
     @Test
+    public void getAllFactorsEvaluation() throws IOException {
+        // Given
+        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
+        List<DTOFactor> dtoFactorList = new ArrayList<>();
+        dtoFactorList.add(dtoFactor);
+        String projectExternalId = "test";
+        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
+
+        // When
+        List<DTOFactor> dtoFactorListFound = qualityFactorsController.getAllFactorsEvaluation(projectExternalId);
+
+        // Then
+        assertEquals(dtoFactorList.size(), dtoFactorListFound.size());
+        assertEquals(dtoFactor, dtoFactorListFound.get(0));
+    }
+
+    @Test
     public void getAllFactorsWithMetricsCurrentEvaluation() throws IOException {
         // Given
         DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();

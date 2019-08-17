@@ -16,8 +16,12 @@ public class QualityFactorsController {
     @Autowired
     private QMAQualityFactors qmaQualityFactors;
 
-    public DTOFactor getSingleFactorEvaluation (String factorId, String projectExternalId) throws IOException {
+    public DTOFactor getSingleFactorEvaluation(String factorId, String projectExternalId) throws IOException {
         return qmaQualityFactors.SingleCurrentEvaluation(factorId, projectExternalId);
+    }
+
+    public List<DTOFactor> getAllFactorsEvaluation(String projectExternalId) throws IOException {
+        return qmaQualityFactors.getAllFactors(projectExternalId);
     }
 
     public List<DTOQualityFactor> getAllFactorsWithMetricsCurrentEvaluation(String projectExternalId) throws IOException {

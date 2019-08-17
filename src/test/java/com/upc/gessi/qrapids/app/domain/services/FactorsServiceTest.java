@@ -503,21 +503,12 @@ public class FactorsServiceTest {
 
     @Test
     public void getAllQualityFactors() throws Exception {
-        String factorId = "testingperformance";
-        String factorName = "Testing Performance";
-        String factorDescription = "Performance of the tests";
-        Double factorValue = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String factorRationale = "parameters: {...}, formula: ...";
-        String strategicIndicator = "processperformance";
-        List<String> strategicIndicatorsList = new ArrayList<>();
-        strategicIndicatorsList.add(strategicIndicator);
-        DTOFactor dtoFactor = new DTOFactor(factorId, factorName, factorDescription, factorValue.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+        // Given
+        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
         List<DTOFactor> dtoFactorList = new ArrayList<>();
         dtoFactorList.add(dtoFactor);
-
         String projectExternalId = "test";
-        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
+        when(qualityFactorsDomainController.getAllFactorsEvaluation(projectExternalId)).thenReturn(dtoFactorList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -527,19 +518,19 @@ public class FactorsServiceTest {
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(factorId)))
-                .andExpect(jsonPath("$[0].name", is(factorName)))
-                .andExpect(jsonPath("$[0].description", is(factorDescription)))
-                .andExpect(jsonPath("$[0].value", is(factorValue)))
-                .andExpect(jsonPath("$[0].value_description", is(String.format("%.2f", factorValue))))
-                .andExpect(jsonPath("$[0].date[0]", is(evaluationDate.getYear())))
-                .andExpect(jsonPath("$[0].date[1]", is(evaluationDate.getMonthValue())))
-                .andExpect(jsonPath("$[0].date[2]", is(evaluationDate.getDayOfMonth())))
+                .andExpect(jsonPath("$[0].id", is(dtoFactor.getId())))
+                .andExpect(jsonPath("$[0].name", is(dtoFactor.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoFactor.getDescription())))
+                .andExpect(jsonPath("$[0].value", is(HelperFunctions.getFloatAsDouble(dtoFactor.getValue()))))
+                .andExpect(jsonPath("$[0].value_description", is(String.format("%.2f", dtoFactor.getValue()))))
+                .andExpect(jsonPath("$[0].date[0]", is(dtoFactor.getDate().getYear())))
+                .andExpect(jsonPath("$[0].date[1]", is(dtoFactor.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].date[2]", is(dtoFactor.getDate().getDayOfMonth())))
                 .andExpect(jsonPath("$[0].datasource", is(nullValue())))
-                .andExpect(jsonPath("$[0].rationale", is(factorRationale)))
+                .andExpect(jsonPath("$[0].rationale", is(dtoFactor.getRationale())))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
-                .andExpect(jsonPath("$[0].strategicIndicators[0]", is(strategicIndicatorsList.get(0))))
-                .andExpect(jsonPath("$[0].formattedDate", is(evaluationDate.toString())))
+                .andExpect(jsonPath("$[0].strategicIndicators[0]", is(dtoFactor.getStrategicIndicators().get(0))))
+                .andExpect(jsonPath("$[0].formattedDate", is(dtoFactor.getDate().toString())))
                 .andDo(document("qf/all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -573,8 +564,8 @@ public class FactorsServiceTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
-        verifyNoMoreInteractions(qmaQualityFactors);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsEvaluation(projectExternalId);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
     @Test
