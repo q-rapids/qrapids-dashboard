@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
@@ -26,6 +27,9 @@ public class QualityFactorsControllerTest {
 
     @Mock
     private QMAQualityFactors qmaQualityFactors;
+
+    @Mock
+    private Forecast qmaForecast;
 
     @InjectMocks
     private QualityFactorsController qualityFactorsController;
@@ -100,5 +104,29 @@ public class QualityFactorsControllerTest {
         // Then
         assertEquals(dtoQualityFactorList.size(), dtoQualityFactorListFound.size());
         assertEquals(dtoQualityFactor, dtoQualityFactorListFound.get(0));
+    }
+
+    @Test
+    public void getAllFactorsWithMetricsPrediction() throws IOException {
+        // Given
+        DTOQualityFactor dtoQualityFactorCurrentEvaluation = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTOQualityFactor> currentEvaluation = new ArrayList<>();
+        currentEvaluation.add(dtoQualityFactorCurrentEvaluation);
+
+        DTOQualityFactor dtoQualityFactorPrediction = domainObjectsBuilder.buildDTOQualityFactorForPrediction();
+        List<DTOQualityFactor> prediction = new ArrayList<>();
+        prediction.add(dtoQualityFactorPrediction);
+        String technique = "PROPHET";
+        String freq = "7";
+        String horizon = "7";
+        String projectExternalId = "test";
+        when(qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, projectExternalId)).thenReturn(prediction);
+
+        // When
+        List<DTOQualityFactor> predictionFound = qualityFactorsController.getAllFactorsWithMetricsPrediction(currentEvaluation, technique, freq, horizon, projectExternalId);
+
+        // Then
+        assertEquals(prediction.size(), predictionFound.size());
+        assertEquals(dtoQualityFactorPrediction, predictionFound.get(0));
     }
 }

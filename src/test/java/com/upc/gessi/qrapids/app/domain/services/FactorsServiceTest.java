@@ -569,37 +569,16 @@ public class FactorsServiceTest {
     }
 
     @Test
-    public void getQualityFactorsPredicitionData() throws Exception {
-        // Factor setup
-        String metricId = "fasttests";
-        String metricName = "Fast Tests";
-        String metricDescription = "Percentage of tests under the testing duration threshold";
-        String metricDataSource = "Forecast";
-        Double metricValue = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String metricRationale = "Forecast";
-        DTOMetric dtoMetric = new DTOMetric(metricId, metricName, metricDescription, metricDataSource, metricRationale, evaluationDate, metricValue.floatValue());
-        Double first80 = 0.97473043;
-        Double second80 = 0.9745246;
-        Pair<Float, Float> confidence80 = Pair.of(first80.floatValue(), second80.floatValue());
-        dtoMetric.setConfidence80(confidence80);
-        Double first95 = 0.9747849;
-        Double second95 = 0.97447014;
-        Pair<Float, Float> confidence95 = Pair.of(first95.floatValue(), second95.floatValue());
-        dtoMetric.setConfidence95(confidence95);
-        List<DTOMetric> dtoMetricList = new ArrayList<>();
-        dtoMetricList.add(dtoMetric);
-
-        String factorId = "testingperformance";
-        String factorName = "Testing Performance";
-        DTOQualityFactor dtoQualityFactor = new DTOQualityFactor(factorId, factorName, dtoMetricList);
+    public void getQualityFactorsPrediction() throws Exception {
+        DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactorForPrediction();
         List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
         dtoQualityFactorList.add(dtoQualityFactor);
-
         String projectExternalId = "test";
+        String freq = "7";
         String horizon = "7";
         String technique = "PROPHET";
-        when(forecast.ForecastFactor(anyList(), eq(technique), eq("7"), eq(horizon), eq(projectExternalId))).thenReturn(dtoQualityFactorList);
+        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoQualityFactorList);
+        when(qualityFactorsDomainController.getAllFactorsWithMetricsPrediction(dtoQualityFactorList, technique, freq, horizon, projectExternalId)).thenReturn(dtoQualityFactorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -611,22 +590,22 @@ public class FactorsServiceTest {
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(factorId)))
-                .andExpect(jsonPath("$[0].name", is(factorName)))
-                .andExpect(jsonPath("$[0].metrics[0].id", is(metricId)))
-                .andExpect(jsonPath("$[0].metrics[0].name", is(metricName)))
-                .andExpect(jsonPath("$[0].metrics[0].description", is(metricDescription)))
-                .andExpect(jsonPath("$[0].metrics[0].value", is(metricValue)))
-                .andExpect(jsonPath("$[0].metrics[0].value_description", is(String.format("%.2f", metricValue))))
-                .andExpect(jsonPath("$[0].metrics[0].date[0]", is(evaluationDate.getYear())))
-                .andExpect(jsonPath("$[0].metrics[0].date[1]", is(evaluationDate.getMonthValue())))
-                .andExpect(jsonPath("$[0].metrics[0].date[2]", is(evaluationDate.getDayOfMonth())))
-                .andExpect(jsonPath("$[0].metrics[0].datasource", is(metricDataSource)))
-                .andExpect(jsonPath("$[0].metrics[0].rationale", is(metricRationale)))
-                .andExpect(jsonPath("$[0].metrics[0].confidence80.first", is(first80)))
-                .andExpect(jsonPath("$[0].metrics[0].confidence80.second", is(second80)))
-                .andExpect(jsonPath("$[0].metrics[0].confidence95.first", is(first95)))
-                .andExpect(jsonPath("$[0].metrics[0].confidence95.second", is(second95)))
+                .andExpect(jsonPath("$[0].id", is(dtoQualityFactor.getId())))
+                .andExpect(jsonPath("$[0].name", is(dtoQualityFactor.getName())))
+                .andExpect(jsonPath("$[0].metrics[0].id", is(dtoQualityFactor.getMetrics().get(0).getId())))
+                .andExpect(jsonPath("$[0].metrics[0].name", is(dtoQualityFactor.getMetrics().get(0).getName())))
+                .andExpect(jsonPath("$[0].metrics[0].description", is(dtoQualityFactor.getMetrics().get(0).getDescription())))
+                .andExpect(jsonPath("$[0].metrics[0].value", is(HelperFunctions.getFloatAsDouble(dtoQualityFactor.getMetrics().get(0).getValue()))))
+                .andExpect(jsonPath("$[0].metrics[0].value_description", is(String.format("%.2f", dtoQualityFactor.getMetrics().get(0).getValue()))))
+                .andExpect(jsonPath("$[0].metrics[0].date[0]", is(dtoQualityFactor.getMetrics().get(0).getDate().getYear())))
+                .andExpect(jsonPath("$[0].metrics[0].date[1]", is(dtoQualityFactor.getMetrics().get(0).getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].metrics[0].date[2]", is(dtoQualityFactor.getMetrics().get(0).getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].metrics[0].datasource", is(dtoQualityFactor.getMetrics().get(0).getDatasource())))
+                .andExpect(jsonPath("$[0].metrics[0].rationale", is(dtoQualityFactor.getMetrics().get(0).getRationale())))
+                .andExpect(jsonPath("$[0].metrics[0].confidence80.first", is(HelperFunctions.getFloatAsDouble(dtoQualityFactor.getMetrics().get(0).getConfidence80().getFirst()))))
+                .andExpect(jsonPath("$[0].metrics[0].confidence80.second", is(HelperFunctions.getFloatAsDouble(dtoQualityFactor.getMetrics().get(0).getConfidence80().getSecond()))))
+                .andExpect(jsonPath("$[0].metrics[0].confidence95.first", is(HelperFunctions.getFloatAsDouble(dtoQualityFactor.getMetrics().get(0).getConfidence95().getFirst()))))
+                .andExpect(jsonPath("$[0].metrics[0].confidence95.second", is(HelperFunctions.getFloatAsDouble(dtoQualityFactor.getMetrics().get(0).getConfidence95().getSecond()))))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
                 .andDo(document("qf/prediction",
                         preprocessRequest(prettyPrint()),
@@ -679,7 +658,8 @@ public class FactorsServiceTest {
                 ));
 
         // Verify mock interactions
-        verify(forecast, times(1)).ForecastFactor(anyList(), eq(technique), eq("7"), eq(horizon), eq(projectExternalId));
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsPrediction(dtoQualityFactorList, technique, freq, horizon, projectExternalId);
         verifyNoMoreInteractions(forecast);
     }
 

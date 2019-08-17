@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
@@ -16,6 +17,9 @@ public class QualityFactorsController {
     @Autowired
     private QMAQualityFactors qmaQualityFactors;
 
+    @Autowired
+    private Forecast qmaForecast;
+
     public DTOFactor getSingleFactorEvaluation(String factorId, String projectExternalId) throws IOException {
         return qmaQualityFactors.SingleCurrentEvaluation(factorId, projectExternalId);
     }
@@ -30,6 +34,10 @@ public class QualityFactorsController {
 
     public List<DTOQualityFactor> getAllFactorsWithMetricsHistoricalEvaluation(String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException {
         return qmaQualityFactors.HistoricalData(null, dateFrom, dateTo, projectExternalId);
+    }
+
+    public List<DTOQualityFactor> getAllFactorsWithMetricsPrediction(List<DTOQualityFactor> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException {
+        return qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 
 }

@@ -124,9 +124,10 @@ public class FactorsService {
     @GetMapping("/api/qualityFactors/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    List<DTOQualityFactor> getQualityFactorsPredicitionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
+    List<DTOQualityFactor> getQualityFactorsPrediction(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
-            return qmaf.ForecastFactor(qmaqf.CurrentEvaluation(null, prj), technique, "7", horizon, prj);
+            List<DTOQualityFactor> currentEvaluation = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
+            return qualityFactorsController.getAllFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

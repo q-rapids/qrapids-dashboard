@@ -185,6 +185,31 @@ public class DomainObjectsBuilder {
         return new DTOQualityFactor(factorId, factorName, dtoMetricList);
     }
 
+    public DTOQualityFactor buildDTOQualityFactorForPrediction () {
+        String metricId = "fasttests";
+        String metricName = "Fast Tests";
+        String metricDescription = "Percentage of tests under the testing duration threshold";
+        String metricDataSource = "Forecast";
+        Double metricValue = 0.8;
+        LocalDate evaluationDate = LocalDate.now();
+        String metricRationale = "Forecast";
+        DTOMetric dtoMetric = new DTOMetric(metricId, metricName, metricDescription, metricDataSource, metricRationale, evaluationDate, metricValue.floatValue());
+        Double first80 = 0.97473043;
+        Double second80 = 0.9745246;
+        Pair<Float, Float> confidence80 = Pair.of(first80.floatValue(), second80.floatValue());
+        dtoMetric.setConfidence80(confidence80);
+        Double first95 = 0.9747849;
+        Double second95 = 0.97447014;
+        Pair<Float, Float> confidence95 = Pair.of(first95.floatValue(), second95.floatValue());
+        dtoMetric.setConfidence95(confidence95);
+        List<DTOMetric> dtoMetricList = new ArrayList<>();
+        dtoMetricList.add(dtoMetric);
+
+        String factorId = "testingperformance";
+        String factorName = "Testing Performance";
+        return new DTOQualityFactor(factorId, factorName, dtoMetricList);
+    }
+
     public DTOFactor buildDTOFactor () {
         String factorId = "testingperformance";
         String factorName = "Testing Performance";
