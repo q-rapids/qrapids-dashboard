@@ -37,6 +37,10 @@ public class QualityFactorsController {
         return qmaQualityFactors.CurrentEvaluation(null, projectExternalId);
     }
 
+    public List<DTOQualityFactor> getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(String strategicIndicatorId, String projectExternalId) throws IOException {
+        return qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId);
+    }
+
     public List<DTOQualityFactor> getAllFactorsWithMetricsHistoricalEvaluation(String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException {
         return qmaQualityFactors.HistoricalData(null, dateFrom, dateTo, projectExternalId);
     }

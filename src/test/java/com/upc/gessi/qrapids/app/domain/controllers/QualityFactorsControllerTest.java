@@ -94,6 +94,24 @@ public class QualityFactorsControllerTest {
     }
 
     @Test
+    public void getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation() throws IOException {
+        // Given
+        DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
+        dtoQualityFactorList.add(dtoQualityFactor);
+        String strategicIndicatorId = "processperformance";
+        String projectExternalId = "test";
+        when(qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId)).thenReturn(dtoQualityFactorList);
+
+        // When
+        List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(strategicIndicatorId, projectExternalId);
+
+        // Then
+        assertEquals(dtoQualityFactorList.size(), dtoQualityFactorListFound.size());
+        assertEquals(dtoQualityFactor, dtoQualityFactorListFound.get(0));
+    }
+
+    @Test
     public void getAllFactorsWithMetricsHistoricalEvaluation() throws IOException {
         // Given
         DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();

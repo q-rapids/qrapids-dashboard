@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
@@ -39,6 +40,9 @@ public class StrategicIndicators {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
+    private QualityFactorsController qualityFactorsController;
+
     @GetMapping("/api/strategicIndicators/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsEvaluation(@RequestParam(value = "prj") String prj) {
@@ -67,20 +71,6 @@ public class StrategicIndicators {
         }
     }
 
-    @GetMapping("/api/strategicIndicators/historical")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
-        try {
-            return qmasi.HistoricalData(LocalDate.parse(from), LocalDate.parse(to), prj);
-        } catch (ElasticsearchStatusException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
-        } catch (CategoriesException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
-        }
-    }
-
     @GetMapping("/api/strategicIndicators/qualityFactors/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedStrategicIndicator> getDetailedSI(@RequestParam(value = "prj", required=false) String prj) {
@@ -100,6 +90,32 @@ public class StrategicIndicators {
             return qmadsi.CurrentEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/current")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOQualityFactor> getQualityFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(@RequestParam(value = "prj") String prj, @PathVariable String id) {
+        try {
+            return qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/strategicIndicators/historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
+        try {
+            return qmasi.HistoricalData(LocalDate.parse(from), LocalDate.parse(to), prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (CategoriesException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
