@@ -71,19 +71,6 @@ public class FactorsService {
         }
     }
 
-    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/historical")
-    @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody
-    List<DTOQualityFactor> getQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
-        try {
-            return qmaqf.HistoricalData(id, LocalDate.parse(from), LocalDate.parse(to), prj);
-        } catch (ElasticsearchStatusException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
-        }
-    }
-
     @GetMapping("/api/qualityFactors")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOFactor> getAllQualityFactors(@RequestParam(value = "prj") String prj) {

@@ -145,6 +145,19 @@ public class StrategicIndicators {
         }
     }
 
+    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/historical")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    List<DTOQualityFactor> getQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
+        try {
+            return qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/prediction")
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {

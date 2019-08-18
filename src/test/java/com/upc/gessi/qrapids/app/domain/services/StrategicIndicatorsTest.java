@@ -1464,6 +1464,94 @@ public class StrategicIndicatorsTest {
     }
 
     @Test
+    public void getQualityFactorsHistoricalDataForOneStrategicIndicator() throws Exception {
+        // Given
+        DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
+        dtoQualityFactorList.add(dtoQualityFactor);
+
+        String strategicIndicatorId = "processperformance";
+        String projectExternalId = "test";
+        LocalDate from = dtoQualityFactor.getMetrics().get(0).getDate().minusDays(7);
+        LocalDate to = dtoQualityFactor.getMetrics().get(0).getDate();
+        when(qualityFactorsDomainController.getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(strategicIndicatorId, projectExternalId, from, to)).thenReturn(dtoQualityFactorList);
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/strategicIndicators/{id}/qualityFactors/metrics/historical", strategicIndicatorId)
+                .param("prj", projectExternalId)
+                .param("from", from.toString())
+                .param("to", to.toString());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(dtoQualityFactor.getId())))
+                .andExpect(jsonPath("$[0].name", is(dtoQualityFactor.getName())))
+                .andExpect(jsonPath("$[0].metrics[0].id", is(dtoQualityFactor.getMetrics().get(0).getId())))
+                .andExpect(jsonPath("$[0].metrics[0].name", is(dtoQualityFactor.getMetrics().get(0).getName())))
+                .andExpect(jsonPath("$[0].metrics[0].description", is(dtoQualityFactor.getMetrics().get(0).getDescription())))
+                .andExpect(jsonPath("$[0].metrics[0].value", is(HelperFunctions.getFloatAsDouble(dtoQualityFactor.getMetrics().get(0).getValue()))))
+                .andExpect(jsonPath("$[0].metrics[0].value_description", is(String.format("%.2f", dtoQualityFactor.getMetrics().get(0).getValue()))))
+                .andExpect(jsonPath("$[0].metrics[0].date[0]", is(dtoQualityFactor.getMetrics().get(0).getDate().getYear())))
+                .andExpect(jsonPath("$[0].metrics[0].date[1]", is(dtoQualityFactor.getMetrics().get(0).getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].metrics[0].date[2]", is(dtoQualityFactor.getMetrics().get(0).getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].metrics[0].datasource", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].rationale", is(dtoQualityFactor.getMetrics().get(0).getRationale())))
+                .andExpect(jsonPath("$[0].metrics[0].confidence80", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].confidence95", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
+                .andDo(document("qf/historical-si",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic indicator identifier")),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("from")
+                                        .description("Starting date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("to")
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].metrics")
+                                        .description("List with all the quality factor metrics"),
+                                fieldWithPath("[].metrics[].id")
+                                        .description("Metric identifier"),
+                                fieldWithPath("[].metrics[].name")
+                                        .description("Metric name"),
+                                fieldWithPath("[].metrics[].description")
+                                        .description("Metric description"),
+                                fieldWithPath("[].metrics[].value")
+                                        .description("Metric value"),
+                                fieldWithPath("[].metrics[].value_description")
+                                        .description("Metric readable value"),
+                                fieldWithPath("[].metrics[].date")
+                                        .description("Metric evaluation date"),
+                                fieldWithPath("[].metrics[].datasource")
+                                        .description("Metric source of data"),
+                                fieldWithPath("[].metrics[].rationale")
+                                        .description("Metric evaluation rationale"),
+                                fieldWithPath("[].metrics[].confidence80")
+                                        .description("Metric forecasting 80% confidence interval"),
+                                fieldWithPath("[].metrics[].confidence95")
+                                        .description("Metric forecasting 95% confidence interval"),
+                                fieldWithPath("[].metrics[].forecastingError")
+                                        .description("Description of forecasting errors")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(strategicIndicatorId, projectExternalId, from, to);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
     public void getAllStrategicIndicators () throws Exception {
         Long projectId = 1L;
         String projectExternalId = "test";
