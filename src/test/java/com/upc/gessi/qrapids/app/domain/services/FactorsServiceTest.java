@@ -3,11 +3,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
-import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
@@ -50,18 +46,6 @@ public class FactorsServiceTest {
 
     @Rule
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
-
-    @Mock
-    private QMAQualityFactors qmaQualityFactors;
-
-    @Mock
-    private QMASimulation qmaSimulation;
-
-    @Mock
-    private Forecast forecast;
-
-    @Mock
-    private QFCategoryRepository qfCategoryRepository;
 
     @Mock
     private QualityFactorsController qualityFactorsDomainController;

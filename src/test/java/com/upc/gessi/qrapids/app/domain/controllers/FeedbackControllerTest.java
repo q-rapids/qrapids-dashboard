@@ -12,22 +12,24 @@ import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FeedFactorControllerTest {
+public class FeedbackControllerTest {
 
     private DomainObjectsBuilder domainObjectsBuilder;
 
@@ -47,11 +49,79 @@ public class FeedFactorControllerTest {
     private QMAStrategicIndicators qmaStrategicIndicators;
 
     @InjectMocks
-    private FeedFactorController feedFactorController;
+    private FeedbackController feedbackController;
 
     @Before
     public void setUp () {
         domainObjectsBuilder = new DomainObjectsBuilder();
+    }
+
+    @Test
+    public void saveFeedbackForStrategicIndicator() throws ParseException {
+        // Given
+        Long strategicIndicatorId = 1L;
+        float value = 0.75f;
+        float oldValue = 0.6f;
+        Feedback feedback = new Feedback(strategicIndicatorId, Date.valueOf("2019-08-01"), "-1", null, value, oldValue);
+
+        List<String> factorIds = new ArrayList<>();
+        String factor1Id = "factor1";
+        factorIds.add(factor1Id);
+        String factor2Id = "factor2";
+        factorIds.add(factor2Id);
+        String factor3Id = "factor3";
+        factorIds.add(factor3Id);
+
+        List<String> factorNames = new ArrayList<>();
+        String factor1Name = "Factor 1";
+        factorNames.add(factor1Name);
+        String factor2Name = "Factor 2";
+        factorNames.add(factor2Name);
+        String factor3Name = "Factor 3";
+        factorNames.add(factor3Name);
+
+        List<Float> factorValues = new ArrayList<>();
+        Float factor1Value = 0.8f;
+        factorValues.add(factor1Value);
+        Float factor2Value = 0.7f;
+        factorValues.add(factor2Value);
+        Float factor3Value = 0.6f;
+        factorValues.add(factor3Value);
+
+        List<String> factorEvaluationDates = new ArrayList<>();
+        String factor1Date = "2019-07-07";
+        factorEvaluationDates.add(factor1Date);
+        String factor2Date = "2019-07-06";
+        factorEvaluationDates.add(factor2Date);
+        String factor3Date = "2019-07-05";
+        factorEvaluationDates.add(factor3Date);
+
+        // When
+        feedbackController.saveFeedbackForStrategicIndicator(feedback, factorIds, factorNames, factorValues, factorEvaluationDates);
+
+        // Then
+        verify(feedbackRepository, times(1)).save(feedback);
+
+        ArgumentCaptor<FeedbackValues> feedbackValuesArgumentCaptor = ArgumentCaptor.forClass(FeedbackValues.class);
+        verify(feedbackValueRepository, times(3)).save(feedbackValuesArgumentCaptor.capture());
+
+        FeedbackValues feedbackValues1 = feedbackValuesArgumentCaptor.getAllValues().get(0);
+        assertEquals(factor1Id, feedbackValues1.getFactorId());
+        assertEquals(factor1Name, feedbackValues1.getFactorName());
+        assertEquals(factor1Value, feedbackValues1.getFactorValue(), 0f);
+        assertEquals(factor1Date, feedbackValues1.getEvaluationDate().toString());
+
+        FeedbackValues feedbackValues2 = feedbackValuesArgumentCaptor.getAllValues().get(1);
+        assertEquals(factor2Id, feedbackValues2.getFactorId());
+        assertEquals(factor2Name, feedbackValues2.getFactorName());
+        assertEquals(factor2Value, feedbackValues2.getFactorValue(), 0f);
+        assertEquals(factor2Date, feedbackValues2.getEvaluationDate().toString());
+
+        FeedbackValues feedbackValues3 = feedbackValuesArgumentCaptor.getAllValues().get(2);
+        assertEquals(factor3Id, feedbackValues3.getFactorId());
+        assertEquals(factor3Name, feedbackValues3.getFactorName());
+        assertEquals(factor3Value, feedbackValues3.getFactorValue(), 0f);
+        assertEquals(factor3Date, feedbackValues3.getEvaluationDate().toString());
     }
 
     @Test
@@ -91,7 +161,7 @@ public class FeedFactorControllerTest {
         when(feedbackValueRepository.findAllBySiIdAndFeedbackDate(strategicIndicatorId, feedbackDate)).thenReturn(feedbackValuesList);
 
         // When
-        List<FeedbackFactors> feedbackFactorsList = feedFactorController.getFeedbackReport(strategicIndicatorId);
+        List<FeedbackFactors> feedbackFactorsList = feedbackController.getFeedbackReport(strategicIndicatorId);
 
         // Then
         int expectedNumberOfFeedbackFactors = 1;

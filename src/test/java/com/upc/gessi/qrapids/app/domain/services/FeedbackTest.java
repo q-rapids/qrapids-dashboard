@@ -1,14 +1,14 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 import com.google.gson.Gson;
-import com.upc.gessi.qrapids.app.domain.controllers.FeedFactorController;
+import com.upc.gessi.qrapids.app.domain.controllers.FeedbackController;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
-import com.upc.gessi.qrapids.app.domain.models.FeedbackValues;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -26,13 +26,14 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,7 +51,7 @@ public class FeedbackTest {
     FeedbackValueRepository feedbackValueRepository;
 
     @Mock
-    FeedFactorController feedFactorController;
+    FeedbackController feedbackDomainController;
 
     @InjectMocks
     private Feedback feedbackController;
@@ -102,10 +103,6 @@ public class FeedbackTest {
         String factor3Date = "2019-07-05";
         factorEvaluationDates.add(factor3Date);
 
-        when(feedbackRepository.save(any(com.upc.gessi.qrapids.app.domain.models.Feedback.class))).thenReturn(null);
-
-        when(feedbackValueRepository.save(any(FeedbackValues.class))).thenReturn(null);
-
         // Perform request
         Gson gson = new Gson();
         Map<String, String> feedback = new HashMap<>();
@@ -147,11 +144,32 @@ public class FeedbackTest {
                 ));
 
         // Verify mock interactions
-        verify(feedbackRepository, times(1)).save(any(com.upc.gessi.qrapids.app.domain.models.Feedback.class));
-        verifyNoMoreInteractions(feedbackRepository);
+        ArgumentCaptor<com.upc.gessi.qrapids.app.domain.models.Feedback> feedbackArgumentCaptor = ArgumentCaptor.forClass(com.upc.gessi.qrapids.app.domain.models.Feedback.class);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<String>> factorIdsArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<String>> factorNamesArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Float>> factorValuesArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<String>> factorEvaluationDatesArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(feedbackDomainController, times(1)).saveFeedbackForStrategicIndicator(feedbackArgumentCaptor.capture(), factorIdsArgumentCaptor.capture(), factorNamesArgumentCaptor.capture(), factorValuesArgumentCaptor.capture(), factorEvaluationDatesArgumentCaptor.capture());
 
-        verify(feedbackValueRepository, times(3)).save(any(FeedbackValues.class));
-        verifyNoMoreInteractions(feedbackValueRepository);
+        assertEquals(factor1Id, factorIdsArgumentCaptor.getValue().get(0));
+        assertEquals(factor2Id, factorIdsArgumentCaptor.getValue().get(1));
+        assertEquals(factor3Id, factorIdsArgumentCaptor.getValue().get(2));
+
+        assertEquals(factor1Name, factorNamesArgumentCaptor.getValue().get(0));
+        assertEquals(factor2Name, factorNamesArgumentCaptor.getValue().get(1));
+        assertEquals(factor3Name, factorNamesArgumentCaptor.getValue().get(2));
+
+        assertEquals(factor1Value, factorValuesArgumentCaptor.getValue().get(0));
+        assertEquals(factor2Value, factorValuesArgumentCaptor.getValue().get(1));
+        assertEquals(factor3Value, factorValuesArgumentCaptor.getValue().get(2));
+
+        assertEquals(factor1Date, factorEvaluationDatesArgumentCaptor.getValue().get(0));
+        assertEquals(factor2Date, factorEvaluationDatesArgumentCaptor.getValue().get(1));
+        assertEquals(factor3Date, factorEvaluationDatesArgumentCaptor.getValue().get(2));
     }
 
     @Test
@@ -174,6 +192,8 @@ public class FeedbackTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
                 ));
+
+        verifyZeroInteractions(feedbackDomainController);
     }
 
     @Test
@@ -265,7 +285,7 @@ public class FeedbackTest {
         List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
         feedbackFactorsList.add(feedbackFactors);
 
-        when(feedFactorController.getFeedbackReport(strategicIndicatorId)).thenReturn(feedbackFactorsList);
+        when(feedbackDomainController.getFeedbackReport(strategicIndicatorId)).thenReturn(feedbackFactorsList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -326,7 +346,7 @@ public class FeedbackTest {
                 ));
 
         // Verify mock interactions
-        verify(feedFactorController, times(1)).getFeedbackReport(strategicIndicatorId);
-        verifyNoMoreInteractions(feedFactorController);
+        verify(feedbackDomainController, times(1)).getFeedbackReport(strategicIndicatorId);
+        verifyNoMoreInteractions(feedbackDomainController);
     }
 }
