@@ -9,7 +9,6 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
-import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
@@ -19,7 +18,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -386,7 +384,7 @@ public class FactorsServiceTest {
         String horizon = "7";
         String technique = "PROPHET";
         when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoQualityFactorList);
-        when(qualityFactorsDomainController.getAllFactorsWithMetricsPrediction(dtoQualityFactorList, technique, freq, horizon, projectExternalId)).thenReturn(dtoQualityFactorList);
+        when(qualityFactorsDomainController.getFactorsWithMetricsPrediction(dtoQualityFactorList, technique, freq, horizon, projectExternalId)).thenReturn(dtoQualityFactorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -467,127 +465,7 @@ public class FactorsServiceTest {
 
         // Verify mock interactions
         verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId);
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsPrediction(dtoQualityFactorList, technique, freq, horizon, projectExternalId);
-        verifyNoMoreInteractions(forecast);
-    }
-
-    @Test
-    public void getQualityFactorsPredicitionDataForOneStrategicIndicator() throws Exception {
-        // Factor setup
-        String metricId = "fasttests";
-        String metricName = "Fast Tests";
-        String metricDescription = "Percentage of tests under the testing duration threshold";
-        String metricDataSource = "Forecast";
-        Double metricValue = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String metricRationale = "Forecast";
-        DTOMetric dtoMetric = new DTOMetric(metricId, metricName, metricDescription, metricDataSource, metricRationale, evaluationDate, metricValue.floatValue());
-        Double first80 = 0.97473043;
-        Double second80 = 0.9745246;
-        Pair<Float, Float> confidence80 = Pair.of(first80.floatValue(), second80.floatValue());
-        dtoMetric.setConfidence80(confidence80);
-        Double first95 = 0.9747849;
-        Double second95 = 0.97447014;
-        Pair<Float, Float> confidence95 = Pair.of(first95.floatValue(), second95.floatValue());
-        dtoMetric.setConfidence95(confidence95);
-        List<DTOMetric> dtoMetricList = new ArrayList<>();
-        dtoMetricList.add(dtoMetric);
-
-        String factorId = "testingperformance";
-        String factorName = "Testing Performance";
-        DTOQualityFactor dtoQualityFactor = new DTOQualityFactor(factorId, factorName, dtoMetricList);
-        List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
-        dtoQualityFactorList.add(dtoQualityFactor);
-
-        String strategicIndicatorId = "processperformance";
-        String projectExternalId = "test";
-        String horizon = "7";
-        String technique = "PROPHET";
-        when(forecast.ForecastFactor(anyList(), eq(technique), eq("7"), eq(horizon), eq(projectExternalId))).thenReturn(dtoQualityFactorList);
-
-        // Perform request
-        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/strategicIndicators/{id}/qualityFactors/metrics/prediction", strategicIndicatorId)
-                .param("prj", projectExternalId)
-                .param("technique", technique)
-                .param("horizon", horizon);
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id", is(factorId)))
-                .andExpect(jsonPath("$[0].name", is(factorName)))
-                .andExpect(jsonPath("$[0].metrics[0].id", is(metricId)))
-                .andExpect(jsonPath("$[0].metrics[0].name", is(metricName)))
-                .andExpect(jsonPath("$[0].metrics[0].description", is(metricDescription)))
-                .andExpect(jsonPath("$[0].metrics[0].value", is(metricValue)))
-                .andExpect(jsonPath("$[0].metrics[0].value_description", is(String.format("%.2f", metricValue))))
-                .andExpect(jsonPath("$[0].metrics[0].date[0]", is(evaluationDate.getYear())))
-                .andExpect(jsonPath("$[0].metrics[0].date[1]", is(evaluationDate.getMonthValue())))
-                .andExpect(jsonPath("$[0].metrics[0].date[2]", is(evaluationDate.getDayOfMonth())))
-                .andExpect(jsonPath("$[0].metrics[0].datasource", is(metricDataSource)))
-                .andExpect(jsonPath("$[0].metrics[0].rationale", is(metricRationale)))
-                .andExpect(jsonPath("$[0].metrics[0].confidence80.first", is(first80)))
-                .andExpect(jsonPath("$[0].metrics[0].confidence80.second", is(second80)))
-                .andExpect(jsonPath("$[0].metrics[0].confidence95.first", is(first95)))
-                .andExpect(jsonPath("$[0].metrics[0].confidence95.second", is(second95)))
-                .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
-                .andDo(document("qf/prediction-si",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        pathParameters(
-                                parameterWithName("id")
-                                        .description("Strategic indicator identifier")),
-                        requestParameters(
-                                parameterWithName("prj")
-                                        .description("Project external identifier"),
-                                parameterWithName("technique")
-                                        .description("Forecasting technique"),
-                                parameterWithName("horizon")
-                                        .description("Amount of days that the prediction will cover")),
-                        responseFields(
-                                fieldWithPath("[].id")
-                                        .description("Quality factor identifier"),
-                                fieldWithPath("[].name")
-                                        .description("Quality factor name"),
-                                fieldWithPath("[].metrics")
-                                        .description("List with all the quality factor metrics"),
-                                fieldWithPath("[].metrics[].id")
-                                        .description("Metric identifier"),
-                                fieldWithPath("[].metrics[].name")
-                                        .description("Metric name"),
-                                fieldWithPath("[].metrics[].description")
-                                        .description("Metric description"),
-                                fieldWithPath("[].metrics[].value")
-                                        .description("Metric value"),
-                                fieldWithPath("[].metrics[].value_description")
-                                        .description("Metric readable value"),
-                                fieldWithPath("[].metrics[].date")
-                                        .description("Metric evaluation date"),
-                                fieldWithPath("[].metrics[].datasource")
-                                        .description("Metric source of data"),
-                                fieldWithPath("[].metrics[].rationale")
-                                        .description("Metric evaluation rationale"),
-                                fieldWithPath("[].metrics[].confidence80")
-                                        .description("Metric forecasting 80% confidence interval"),
-                                fieldWithPath("[].metrics[].confidence80.first")
-                                        .description("Metric forecasting 80% confidence interval higher values"),
-                                fieldWithPath("[].metrics[].confidence80.second")
-                                        .description("Metric forecasting 80% confidence interval lower values"),
-                                fieldWithPath("[].metrics[].confidence95")
-                                        .description("Metric forecasting 95% confidence interval"),
-                                fieldWithPath("[].metrics[].confidence95.first")
-                                        .description("Metric forecasting 95% confidence interval higher values"),
-                                fieldWithPath("[].metrics[].confidence95.second")
-                                        .description("Metric forecasting 95% confidence interval lower values"),
-                                fieldWithPath("[].metrics[].forecastingError")
-                                        .description("Description of forecasting errors")
-                        )
-                ));
-
-        // Verify mock interactions
-        verify(forecast, times(1)).ForecastFactor(anyList(), eq(technique), eq("7"), eq(horizon), eq(projectExternalId));
-        verifyNoMoreInteractions(forecast);
+        verify(qualityFactorsDomainController, times(1)).getFactorsWithMetricsPrediction(dtoQualityFactorList, technique, freq, horizon, projectExternalId);
     }
 
     @Test

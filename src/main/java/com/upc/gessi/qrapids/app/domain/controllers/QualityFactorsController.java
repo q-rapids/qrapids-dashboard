@@ -49,7 +49,7 @@ public class QualityFactorsController {
         return qmaQualityFactors.HistoricalData(strategicIndicatorId, dateFrom, dateTo, projectExternalId);
     }
 
-    public List<DTOQualityFactor> getAllFactorsWithMetricsPrediction(List<DTOQualityFactor> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException {
+    public List<DTOQualityFactor> getFactorsWithMetricsPrediction(List<DTOQualityFactor> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException {
         return qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 

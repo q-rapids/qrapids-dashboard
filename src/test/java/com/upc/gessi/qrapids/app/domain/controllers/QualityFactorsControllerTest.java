@@ -167,7 +167,7 @@ public class QualityFactorsControllerTest {
         when(qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, projectExternalId)).thenReturn(prediction);
 
         // When
-        List<DTOQualityFactor> predictionFound = qualityFactorsController.getAllFactorsWithMetricsPrediction(currentEvaluation, technique, freq, horizon, projectExternalId);
+        List<DTOQualityFactor> predictionFound = qualityFactorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, freq, horizon, projectExternalId);
 
         // Then
         assertEquals(prediction.size(), predictionFound.size());

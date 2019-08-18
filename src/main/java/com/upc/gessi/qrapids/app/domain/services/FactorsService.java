@@ -1,8 +1,5 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
-import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
@@ -21,15 +18,6 @@ import java.util.Map;
 
 @RestController
 public class FactorsService {
-
-    @Autowired
-    private QMAQualityFactors qmaqf;
-
-    @Autowired
-    private QMASimulation qmaSimulation;
-
-    @Autowired
-    private Forecast qmaf;
 
     @Autowired
     private QualityFactorsController qualityFactorsController;
@@ -83,26 +71,12 @@ public class FactorsService {
         }
     }
 
-    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/prediction")
-    @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody
-    List<DTOQualityFactor> getQualityFactorsPredicitionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
-        try {
-            return qmaf.ForecastFactor(qmaqf.CurrentEvaluation(id, prj), technique, "7", horizon, prj);
-        } catch (ElasticsearchStatusException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
-        }
-    }
-
     @GetMapping("/api/qualityFactors/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody
-    List<DTOQualityFactor> getQualityFactorsPrediction(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
+    public List<DTOQualityFactor> getQualityFactorsPrediction(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
             List<DTOQualityFactor> currentEvaluation = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
-            return qualityFactorsController.getAllFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
+            return qualityFactorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

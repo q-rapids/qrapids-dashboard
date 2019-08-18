@@ -158,11 +158,11 @@ public class StrategicIndicators {
         }
     }
 
-    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/prediction")
+    @GetMapping("/api/strategicIndicators/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
         try {
-            return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(id, prj), technique, "7", horizon, prj);
+            return qmaf.ForecastSI(technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         }
@@ -178,13 +178,26 @@ public class StrategicIndicators {
         }
     }
 
-    @GetMapping("/api/strategicIndicators/prediction")
+    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
+    public List<DTODetailedStrategicIndicator> getQualityFactorsPredicitionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
         try {
-            return qmaf.ForecastSI(technique, "7", horizon, prj);
+            return qmaf.ForecastDSI(qmadsi.CurrentEvaluation(id, prj), technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        }
+    }
+
+    @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/prediction")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOQualityFactor> getQualityFactorsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
+        try {
+            List<DTOQualityFactor> currentEvaluation = qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj);
+            return qualityFactorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 
