@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
+import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +24,14 @@ public class Metrics {
     @Autowired
     private Forecast qmaf;
 
+    @Autowired
+    private MetricsController metricsController;
+
     @RequestMapping("/api/metrics/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOMetric> getMetricsEvaluations(@RequestParam(value = "prj") String prj) throws IOException {
         try {
-            return qmam.CurrentEvaluation(null, prj);
+            return metricsController.getAllMetricsCurrentEvaluation(prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

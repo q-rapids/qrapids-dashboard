@@ -2,7 +2,9 @@ package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
+import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
+import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.junit.After;
 import org.junit.Before;
@@ -48,11 +50,14 @@ public class MetricsTest {
     @Mock
     Forecast forecast;
 
+    @Mock
+    private MetricsController metricsDomainController;
+
     @InjectMocks
     private Metrics metricsController;
 
     private String projectExternalId;
-    DTOMetric dtoMetric;
+    private DTOMetric dtoMetric;
     private List<DTOMetric> dtoMetricList = new ArrayList<>();
 
     @Before
@@ -63,15 +68,10 @@ public class MetricsTest {
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
 
-        projectExternalId = "test";
+        DomainObjectsBuilder domainObjectsBuilder = new DomainObjectsBuilder();
 
-        String metricId = "fasttests";
-        String metricName = "Fast Tests";
-        String metricDescription = "Percentage of tests under the testing duration threshold";
-        Double metricValue = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String metricRationale = "parameters: {...}, formula: ...";
-        dtoMetric = new DTOMetric(metricId, metricName, metricDescription, null, metricRationale, evaluationDate, metricValue.floatValue());
+        projectExternalId = "test";
+        dtoMetric = domainObjectsBuilder.buildDTOMetric();
         dtoMetricList.add(dtoMetric);
     }
 
@@ -83,7 +83,7 @@ public class MetricsTest {
 
     @Test
     public void getMetricsEvaluations() throws Exception {
-        when(qmaMetrics.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoMetricList);
+        when(metricsDomainController.getAllMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoMetricList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -138,8 +138,8 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaMetrics, times(1)).CurrentEvaluation(null, projectExternalId);
-        verifyNoMoreInteractions(qmaMetrics);
+        verify(metricsDomainController, times(1)).getAllMetricsCurrentEvaluation(projectExternalId);
+        verifyNoMoreInteractions(metricsDomainController);
     }
 
     @Test

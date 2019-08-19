@@ -222,4 +222,14 @@ public class DomainObjectsBuilder {
         strategicIndicatorsList.add(strategicIndicator);
         return new DTOFactor(factorId, factorName, factorDescription, factorValue, evaluationDate, null, factorRationale, strategicIndicatorsList);
     }
+
+    public DTOMetric buildDTOMetric () {
+        String metricId = "fasttests";
+        String metricName = "Fast Tests";
+        String metricDescription = "Percentage of tests under the testing duration threshold";
+        float metricValue = 0.8f;
+        LocalDate evaluationDate = LocalDate.now();
+        String metricRationale = "parameters: {...}, formula: ...";
+        return new DTOMetric(metricId, metricName, metricDescription, null, metricRationale, evaluationDate, metricValue);
+    }
 }
