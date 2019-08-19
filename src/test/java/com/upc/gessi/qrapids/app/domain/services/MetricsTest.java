@@ -345,7 +345,7 @@ public class MetricsTest {
         String factorId = "testingperformance";
         String dateFrom = "2019-07-07";
         String dateTo = "2019-07-15";
-        when(qmaMetrics.HistoricalData(factorId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo), projectExternalId)).thenReturn(dtoMetricList);
+        when(metricsDomainController.getMetricsForQualityFactorHistoricalEvaluation(factorId, projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))).thenReturn(dtoMetricList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -409,8 +409,8 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaMetrics, times(1)).HistoricalData(factorId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo), projectExternalId);
-        verifyNoMoreInteractions(qmaMetrics);
+        verify(metricsDomainController, times(1)).getMetricsForQualityFactorHistoricalEvaluation(factorId, projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo));
+        verifyNoMoreInteractions(metricsDomainController);
     }
 
     @Test

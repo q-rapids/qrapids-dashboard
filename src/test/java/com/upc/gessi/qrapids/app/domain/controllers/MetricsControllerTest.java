@@ -101,4 +101,24 @@ public class MetricsControllerTest {
         assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
         assertEquals(dtoMetric, dtoMetricListFound.get(0));
     }
+
+    @Test
+    public void getMetricsForQualityFactorHistoricalEvaluation() throws IOException {
+        // Given
+        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetric> dtoMetricList = new ArrayList<>();
+        dtoMetricList.add(dtoMetric);
+        String factorId = "testingperformance";
+        String projectExternalId = "test";
+        LocalDate from = LocalDate.parse("2019-08-01");
+        LocalDate to = LocalDate.parse("2019-08-31");
+        when(qmaMetrics.HistoricalData(factorId, from, to, projectExternalId)).thenReturn(dtoMetricList);
+
+        // When
+        List<DTOMetric> dtoMetricListFound = metricsController.getMetricsForQualityFactorHistoricalEvaluation(factorId, projectExternalId, from, to);
+
+        // Then
+        assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
+        assertEquals(dtoMetric, dtoMetricListFound.get(0));
+    }
 }

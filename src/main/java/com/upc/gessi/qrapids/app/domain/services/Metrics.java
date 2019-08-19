@@ -77,9 +77,9 @@ public class Metrics {
 
     @RequestMapping("/api/qualityFactors/{id}/metrics/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetric> getMetricsHistoricalData(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) throws IOException {
+    public List<DTOMetric> getMetricsHistoricalDataForQualityFactor(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
-            return qmam.HistoricalData(id, LocalDate.parse(from), LocalDate.parse(to), prj);
+            return metricsController.getMetricsForQualityFactorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

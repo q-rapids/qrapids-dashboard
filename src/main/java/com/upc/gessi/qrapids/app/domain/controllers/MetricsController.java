@@ -32,4 +32,8 @@ public class MetricsController {
         return qmaMetrics.HistoricalData(null, from, to, projectExternalId);
     }
 
+    public List<DTOMetric> getMetricsForQualityFactorHistoricalEvaluation (String qualityFactorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+        return qmaMetrics.HistoricalData(qualityFactorId, from, to, projectExternalId);
+    }
+
 }
