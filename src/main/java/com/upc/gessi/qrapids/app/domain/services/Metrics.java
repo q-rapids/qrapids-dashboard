@@ -29,7 +29,7 @@ public class Metrics {
 
     @RequestMapping("/api/metrics/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetric> getMetricsEvaluations(@RequestParam(value = "prj") String prj) throws IOException {
+    public List<DTOMetric> getMetricsEvaluations(@RequestParam(value = "prj") String prj) {
         try {
             return metricsController.getAllMetricsCurrentEvaluation(prj);
         } catch (ElasticsearchStatusException e) {
@@ -41,9 +41,9 @@ public class Metrics {
 
     @RequestMapping("/api/metrics/{id}/current")
     @ResponseStatus(HttpStatus.OK)
-    public DTOMetric getSingleMetricEvaluation(@RequestParam("prj") String prj, @PathVariable String id) throws IOException {
+    public DTOMetric getSingleMetricEvaluation(@RequestParam("prj") String prj, @PathVariable String id) {
         try {
-            return qmam.SingleCurrentEvaluation(id, prj);
+            return metricsController.getSingleMetricCurrentEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

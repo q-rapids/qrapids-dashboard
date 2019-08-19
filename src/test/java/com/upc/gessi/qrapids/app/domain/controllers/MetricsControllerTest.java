@@ -49,4 +49,18 @@ public class MetricsControllerTest {
         assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
         assertEquals(dtoMetric, dtoMetricListFound.get(0));
     }
+
+    @Test
+    public void getSingleMetricCurrentEvaluation() throws IOException {
+        // Given
+        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
+        String projectExternalId = "test";
+        when(qmaMetrics.SingleCurrentEvaluation(dtoMetric.getId(), projectExternalId)).thenReturn(dtoMetric);
+
+        // When
+        DTOMetric dtoMetricFound = metricsController.getSingleMetricCurrentEvaluation(dtoMetric.getId(), projectExternalId);
+
+        // Then
+        assertEquals(dtoMetric, dtoMetricFound);
+    }
 }

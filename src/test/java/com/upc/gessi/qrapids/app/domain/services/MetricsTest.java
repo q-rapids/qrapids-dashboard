@@ -144,7 +144,7 @@ public class MetricsTest {
 
     @Test
     public void getSingleMetricEvaluation() throws Exception {
-        when(qmaMetrics.SingleCurrentEvaluation(dtoMetric.getId(), projectExternalId)).thenReturn(dtoMetric);
+        when(metricsDomainController.getSingleMetricCurrentEvaluation(dtoMetric.getId(), projectExternalId)).thenReturn(dtoMetric);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -202,8 +202,8 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaMetrics, times(1)).SingleCurrentEvaluation(dtoMetric.getId(), projectExternalId);
-        verifyNoMoreInteractions(qmaMetrics);
+        verify(metricsDomainController, times(1)).getSingleMetricCurrentEvaluation(dtoMetric.getId(), projectExternalId);
+        verifyNoMoreInteractions(metricsDomainController);
     }
 
     @Test
