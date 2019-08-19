@@ -1,8 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
-import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,17 +18,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,10 +36,7 @@ public class ProjectsTest {
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     @Mock
-    private QMAProjects qmaProjects;
-
-    @Mock
-    private ProjectRepository projectRepository;
+    private ProjectsController projectsDomainController;
 
     @InjectMocks
     private Projects projectsController;
@@ -68,9 +59,7 @@ public class ProjectsTest {
         projectsList.add(project2);
         String project3 = "project3";
         projectsList.add(project3);
-        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
-
-        when(projectRepository.findByExternalId(any(String.class))).thenReturn(null);
+        when(projectsController.importProjects()).thenReturn(projectsList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -90,17 +79,12 @@ public class ProjectsTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaProjects, times(1)).getAssessedProjects();
-        verifyNoMoreInteractions(qmaProjects);
-
-        verify(projectRepository, times(3)).findByExternalId(any(String.class));
-        verify(projectRepository, times(3)).save(any(Project.class));
-        verifyNoMoreInteractions(projectRepository);
+        verify(projectsDomainController, times(1)).importProjectsAndUpdateDatabase();
     }
 
     @Test
     public void getProjectsCategoriesConflict() throws Exception {
-        when(qmaProjects.getAssessedProjects()).thenThrow(new CategoriesException());
+        when(projectsDomainController.importProjectsAndUpdateDatabase()).thenThrow(new CategoriesException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -114,13 +98,12 @@ public class ProjectsTest {
                         preprocessResponse(prettyPrint())));
 
         // Verify mock interactions
-        verify(qmaProjects, times(1)).getAssessedProjects();
-        verifyNoMoreInteractions(qmaProjects);
+        verify(projectsDomainController, times(1)).importProjectsAndUpdateDatabase();
     }
 
     @Test
     public void getProjectsWithReadError() throws Exception {
-        when(qmaProjects.getAssessedProjects()).thenThrow(new IOException());
+        when(projectsDomainController.importProjectsAndUpdateDatabase()).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -134,7 +117,6 @@ public class ProjectsTest {
                         preprocessResponse(prettyPrint())));
 
         // Verify mock interactions
-        verify(qmaProjects, times(1)).getAssessedProjects();
-        verifyNoMoreInteractions(qmaProjects);
+        verify(projectsDomainController, times(1)).importProjectsAndUpdateDatabase();
     }
 }

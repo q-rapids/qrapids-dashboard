@@ -1,8 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
-import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,33 +16,17 @@ import java.util.List;
 public class Projects {
 
     @Autowired
-    private QMAProjects qmaPrj;
-
-    @Autowired
-	private ProjectRepository projectRep;
+    private ProjectsController projectsController;
 
     @GetMapping("/api/projects/import")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> getPrj() {
-        List<String> projectsES;
+    public List<String> importProjects() {
     	try {
-            projectsES = qmaPrj.getAssessedProjects();
+            return projectsController.importProjectsAndUpdateDatabase();
         } catch (CategoriesException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
         }
-
-        //Update DB
-		for (int i=0; i < projectsES.size(); ++i) {
-			Project p = projectRep.findByExternalId(projectsES.get(i));
-			if (p == null) {
-                byte[] bytes = null;
-				p = new Project(projectsES.get(i), projectsES.get(i), "No description specified", bytes, true);
-				projectRep.save(p);
-			}
-		}
-		
-		return projectsES;
     }
 }
