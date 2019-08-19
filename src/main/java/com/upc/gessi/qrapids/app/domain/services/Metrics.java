@@ -101,9 +101,10 @@ public class Metrics {
 
     @RequestMapping("/api/qualityFactors/{id}/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetric> getMetricsPredicitionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) throws IOException {
+    public List<DTOMetric> getMetricsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
         try {
-            return qmaf.ForecastMetric(qmam.CurrentEvaluation(id, prj), technique, "7", horizon, prj);
+            List<DTOMetric> currentEvaluation = metricsController.getMetricsForQualityFactorCurrentEvaluation(id, prj);
+            return metricsController.getMetricsPrediction(currentEvaluation, prj, technique, "7", horizon);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

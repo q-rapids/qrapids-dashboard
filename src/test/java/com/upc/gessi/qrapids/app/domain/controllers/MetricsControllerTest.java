@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
@@ -9,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.util.Pair;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -25,6 +27,9 @@ public class MetricsControllerTest {
 
     @Mock
     private QMAMetrics qmaMetrics;
+
+    @Mock
+    private Forecast qmaForecast;
 
     @InjectMocks
     private MetricsController metricsController;
@@ -135,6 +140,38 @@ public class MetricsControllerTest {
 
         // When
         List<DTOMetric> dtoMetricListFound = metricsController.getMetricsForQualityFactorHistoricalEvaluation(factorId, projectExternalId, from, to);
+
+        // Then
+        assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
+        assertEquals(dtoMetric, dtoMetricListFound.get(0));
+    }
+
+    @Test
+    public void getMetricsPrediction() throws IOException {
+        // Given
+        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
+        dtoMetric.setDatasource("Forecast");
+        dtoMetric.setRationale("Forecast");
+        float first80 = 0.97473043f;
+        float second80 = 0.9745246f;
+        Pair<Float, Float> confidence80 = Pair.of(first80, second80);
+        dtoMetric.setConfidence80(confidence80);
+        float first95 = 0.9747849f;
+        float second95 = 0.97447014f;
+        Pair<Float, Float> confidence95 = Pair.of(first95, second95);
+        dtoMetric.setConfidence95(confidence95);
+        List<DTOMetric> dtoMetricList = new ArrayList<>();
+        dtoMetricList.add(dtoMetric);
+
+        String projectExternalId = "test";
+        String technique = "PROPHET";
+        String freq = "7";
+        String horizon = "7";
+
+        when(qmaForecast.ForecastMetric(dtoMetricList, technique, freq, horizon, projectExternalId)).thenReturn(dtoMetricList);
+
+        // When
+        List<DTOMetric> dtoMetricListFound = metricsController.getMetricsPrediction(dtoMetricList, projectExternalId, technique, freq, horizon);
 
         // Then
         assertEquals(dtoMetricList.size(), dtoMetricListFound.size());

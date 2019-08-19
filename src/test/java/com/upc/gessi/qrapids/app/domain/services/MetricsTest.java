@@ -83,6 +83,7 @@ public class MetricsTest {
 
     @Test
     public void getMetricsEvaluations() throws Exception {
+        // Given
         when(metricsDomainController.getAllMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoMetricList);
 
         // Perform request
@@ -144,6 +145,7 @@ public class MetricsTest {
 
     @Test
     public void getSingleMetricEvaluation() throws Exception {
+        // Given
         when(metricsDomainController.getSingleMetricCurrentEvaluation(dtoMetric.getId(), projectExternalId)).thenReturn(dtoMetric);
 
         // Perform request
@@ -208,6 +210,7 @@ public class MetricsTest {
 
     @Test
     public void getMetricsEvaluationForQF() throws Exception {
+        // Given
         String factorId = "testingperformance";
         when(metricsDomainController.getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId)).thenReturn(dtoMetricList);
 
@@ -273,6 +276,7 @@ public class MetricsTest {
 
     @Test
     public void getMetricsHistoricalData() throws Exception {
+        // Given
         String dateFrom = "2019-07-07";
         String dateTo = "2019-07-15";
         when(metricsDomainController.getAllMetricsHistoricalEvaluation(projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))).thenReturn(dtoMetricList);
@@ -342,6 +346,7 @@ public class MetricsTest {
 
     @Test
     public void getMetricsHistoricalDataForQF() throws Exception {
+        // Given
         String factorId = "testingperformance";
         String dateFrom = "2019-07-07";
         String dateTo = "2019-07-15";
@@ -415,6 +420,7 @@ public class MetricsTest {
 
     @Test
     public void getHistoricalDataForMetric() throws Exception {
+        // Given
         String dateFrom = "2019-07-07";
         String dateTo = "2019-07-15";
         when(metricsDomainController.getSingleMetricHistoricalEvaluation(dtoMetric.getId(), projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))).thenReturn(dtoMetricList);
@@ -486,7 +492,11 @@ public class MetricsTest {
     }
 
     @Test
-    public void getMetricsPredicitionDataForQF() throws Exception {
+    public void getMetricsPredictionDataForQF() throws Exception {
+        // Given
+        String factorId = "testingperformance";
+        when(metricsDomainController.getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId)).thenReturn(dtoMetricList);
+
         dtoMetric.setDatasource("Forecast");
         dtoMetric.setRationale("Forecast");
         Double first80 = 0.97473043;
@@ -498,12 +508,11 @@ public class MetricsTest {
         Pair<Float, Float> confidence95 = Pair.of(first95.floatValue(), second95.floatValue());
         dtoMetric.setConfidence95(confidence95);
 
-        String factorId = "testingperformance";
         String technique = "PROPHET";
         String freq = "7";
         String horizon = "7";
 
-        when(forecast.ForecastMetric(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId))).thenReturn(dtoMetricList);
+        when(metricsDomainController.getMetricsPrediction(dtoMetricList, projectExternalId, technique, freq, horizon)).thenReturn(dtoMetricList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -577,8 +586,9 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(forecast, times(1)).ForecastMetric(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
-        verifyNoMoreInteractions(forecast);
+        verify(metricsDomainController, times(1)).getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId);
+        verify(metricsDomainController, times(1)).getMetricsPrediction(dtoMetricList, projectExternalId, technique, freq, horizon);
+        verifyNoMoreInteractions(metricsDomainController);
     }
 
     @Test

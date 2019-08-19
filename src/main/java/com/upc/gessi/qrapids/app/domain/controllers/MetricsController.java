@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -15,6 +16,9 @@ public class MetricsController {
 
     @Autowired
     private QMAMetrics qmaMetrics;
+
+    @Autowired
+    private Forecast qmaForecast;
 
     public List<DTOMetric> getAllMetricsCurrentEvaluation (String projectExternalId) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.CurrentEvaluation(null, projectExternalId);
@@ -38,6 +42,10 @@ public class MetricsController {
 
     public List<DTOMetric> getMetricsForQualityFactorHistoricalEvaluation (String qualityFactorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.HistoricalData(qualityFactorId, from, to, projectExternalId);
+    }
+
+    public List<DTOMetric> getMetricsPrediction (List<DTOMetric> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, ElasticsearchStatusException {
+        return qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 
 }
