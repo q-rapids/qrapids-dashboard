@@ -592,7 +592,7 @@ public class MetricsTest {
     }
 
     @Test
-    public void getMetricsPredicitionData() throws Exception {
+    public void getMetricsPredictionData() throws Exception {
         dtoMetric.setDatasource("Forecast");
         dtoMetric.setRationale("Forecast");
         Double first80 = 0.97473043;
@@ -608,7 +608,8 @@ public class MetricsTest {
         String freq = "7";
         String horizon = "7";
 
-        when(forecast.ForecastMetric(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId))).thenReturn(dtoMetricList);
+        when(metricsDomainController.getAllMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoMetricList);
+        when(metricsDomainController.getMetricsPrediction(dtoMetricList, projectExternalId, technique, freq, horizon)).thenReturn(dtoMetricList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -679,7 +680,8 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(forecast, times(1)).ForecastMetric(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
-        verifyNoMoreInteractions(forecast);
+        verify(metricsDomainController, times(1)).getAllMetricsCurrentEvaluation(projectExternalId);
+        verify(metricsDomainController, times(1)).getMetricsPrediction(dtoMetricList, projectExternalId, technique, freq, horizon);
+        verifyNoMoreInteractions(metricsDomainController);
     }
 }
