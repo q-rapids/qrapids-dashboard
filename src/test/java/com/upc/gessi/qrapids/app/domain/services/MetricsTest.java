@@ -417,7 +417,7 @@ public class MetricsTest {
     public void getHistoricalDataForMetric() throws Exception {
         String dateFrom = "2019-07-07";
         String dateTo = "2019-07-15";
-        when(qmaMetrics.SingleHistoricalData(dtoMetric.getId(), LocalDate.parse(dateFrom), LocalDate.parse(dateTo), projectExternalId)).thenReturn(dtoMetricList);
+        when(metricsDomainController.getSingleMetricHistoricalEvaluation(dtoMetric.getId(), projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))).thenReturn(dtoMetricList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -481,8 +481,8 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaMetrics, times(1)).SingleHistoricalData(dtoMetric.getId(), LocalDate.parse(dateFrom), LocalDate.parse(dateTo), projectExternalId);
-        verifyNoMoreInteractions(qmaMetrics);
+        verify(metricsDomainController, times(1)).getSingleMetricHistoricalEvaluation(dtoMetric.getId(), projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo));
+        verifyNoMoreInteractions(metricsDomainController);
     }
 
     @Test

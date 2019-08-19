@@ -28,6 +28,10 @@ public class MetricsController {
         return qmaMetrics.CurrentEvaluation(qualityFactorId, projectExternalId);
     }
 
+    public List<DTOMetric> getSingleMetricHistoricalEvaluation (String metricId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+        return qmaMetrics.SingleHistoricalData(metricId, from, to, projectExternalId);
+    }
+
     public List<DTOMetric> getAllMetricsHistoricalEvaluation (String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.HistoricalData(null, from, to, projectExternalId);
     }

@@ -84,6 +84,25 @@ public class MetricsControllerTest {
     }
 
     @Test
+    public void getSingleMetricHistoricalEvaluation() throws IOException {
+        // Given
+        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetric> dtoMetricList = new ArrayList<>();
+        dtoMetricList.add(dtoMetric);
+        String projectExternalId = "test";
+        LocalDate from = LocalDate.parse("2019-08-01");
+        LocalDate to = LocalDate.parse("2019-08-31");
+        when(qmaMetrics.SingleHistoricalData(dtoMetric.getId(), from, to, projectExternalId)).thenReturn(dtoMetricList);
+
+        // When
+        List<DTOMetric> dtoMetricListFound = metricsController.getSingleMetricHistoricalEvaluation(dtoMetric.getId(), projectExternalId, from, to);
+
+        // Then
+        assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
+        assertEquals(dtoMetric, dtoMetricListFound.get(0));
+    }
+
+    @Test
     public void getAllMetricsHistoricalEvaluation() throws IOException {
         // Given
         DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
