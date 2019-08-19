@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
+import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
@@ -21,6 +22,9 @@ public class FactorsService {
 
     @Autowired
     private QualityFactorsController qualityFactorsController;
+
+    @Autowired
+    private MetricsController metricsController;
 
     @GetMapping("/api/qualityFactors/metrics/current")
     @ResponseStatus(HttpStatus.OK)
@@ -93,6 +97,43 @@ public class FactorsService {
                 metricsMap.put(metric.getId(), metric.getValue());
             }
             return qualityFactorsController.simulate(metricsMap, prj, LocalDate.parse(date));
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping("/api/qualityFactors/{id}/metrics/current")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOMetric> getMetricsCurrentEvaluationForQualityFactor(@RequestParam(value = "prj") String prj, @PathVariable String id) {
+        try {
+            return metricsController.getMetricsForQualityFactorCurrentEvaluation(id, prj);
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping("/api/qualityFactors/{id}/metrics/historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOMetric> getMetricsHistoricalDataForQualityFactor(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
+        try {
+            return metricsController.getMetricsForQualityFactorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
+        } catch (ElasticsearchStatusException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    @RequestMapping("/api/qualityFactors/{id}/metrics/prediction")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOMetric> getMetricsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
+        try {
+            List<DTOMetric> currentEvaluation = metricsController.getMetricsForQualityFactorCurrentEvaluation(id, prj);
+            return metricsController.getMetricsPrediction(currentEvaluation, prj, technique, "7", horizon);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
