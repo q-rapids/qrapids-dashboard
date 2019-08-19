@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -25,6 +26,10 @@ public class MetricsController {
 
     public List<DTOMetric> getMetricsForQualityFactorCurrentEvaluation (String qualityFactorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.CurrentEvaluation(qualityFactorId, projectExternalId);
+    }
+
+    public List<DTOMetric> getAllMetricsHistoricalEvaluation (String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+        return qmaMetrics.HistoricalData(null, from, to, projectExternalId);
     }
 
 }
