@@ -53,9 +53,9 @@ public class Metrics {
 
     @RequestMapping("/api/qualityFactors/{id}/metrics/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetric> getMetricsEvaluation(@RequestParam(value = "prj") String prj, @PathVariable String id) throws IOException {
+    public List<DTOMetric> getMetricsCurrentEvaluationForQualityFactor(@RequestParam(value = "prj") String prj, @PathVariable String id) {
         try {
-            return qmam.CurrentEvaluation(id, prj);
+            return metricsController.getMetricsForQualityFactorCurrentEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

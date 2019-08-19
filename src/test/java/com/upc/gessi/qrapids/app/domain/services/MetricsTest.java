@@ -209,7 +209,7 @@ public class MetricsTest {
     @Test
     public void getMetricsEvaluationForQF() throws Exception {
         String factorId = "testingperformance";
-        when(qmaMetrics.CurrentEvaluation(factorId, projectExternalId)).thenReturn(dtoMetricList);
+        when(metricsDomainController.getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId)).thenReturn(dtoMetricList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -267,8 +267,8 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaMetrics, times(1)).CurrentEvaluation(factorId, projectExternalId);
-        verifyNoMoreInteractions(qmaMetrics);
+        verify(metricsDomainController, times(1)).getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId);
+        verifyNoMoreInteractions(metricsDomainController);
     }
 
     @Test

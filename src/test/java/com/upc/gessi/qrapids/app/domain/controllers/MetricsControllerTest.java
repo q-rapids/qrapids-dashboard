@@ -63,4 +63,22 @@ public class MetricsControllerTest {
         // Then
         assertEquals(dtoMetric, dtoMetricFound);
     }
+
+    @Test
+    public void getMetricsForQualityFactorCurrentEvaluation() throws IOException {
+        // Given
+        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetric> dtoMetricList = new ArrayList<>();
+        dtoMetricList.add(dtoMetric);
+        String projectExternalId = "test";
+        String factorId = "testingperformance";
+        when(qmaMetrics.CurrentEvaluation(factorId, projectExternalId)).thenReturn(dtoMetricList);
+
+        // When
+        List<DTOMetric> dtoMetricListFound = metricsController.getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId);
+
+        // Then
+        assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
+        assertEquals(dtoMetric, dtoMetricListFound.get(0));
+    }
 }

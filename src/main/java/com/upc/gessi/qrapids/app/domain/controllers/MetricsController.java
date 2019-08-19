@@ -23,4 +23,8 @@ public class MetricsController {
         return qmaMetrics.SingleCurrentEvaluation(metricId, projectExternalId);
     }
 
+    public List<DTOMetric> getMetricsForQualityFactorCurrentEvaluation (String qualityFactorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
+        return qmaMetrics.CurrentEvaluation(qualityFactorId, projectExternalId);
+    }
+
 }
