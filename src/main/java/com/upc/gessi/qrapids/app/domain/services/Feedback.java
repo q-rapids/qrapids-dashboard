@@ -6,7 +6,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.FeedbackController;
 import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
-import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
+import com.upc.gessi.qrapids.app.dto.DTOFeedback;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,15 +17,13 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 
 @RestController
 public class Feedback {
-
-    @Autowired
-    private FeedbackRepository fRep;
 
     @Autowired
     private FeedbackController feedbackController;
@@ -61,13 +59,18 @@ public class Feedback {
         }
     }
 
-    @GetMapping("/api/strategicIndicator/{id}/feedback")
+    @GetMapping("/api/strategicIndicators/{id}/feedback")
     @ResponseStatus(HttpStatus.OK)
-    public List<com.upc.gessi.qrapids.app.domain.models.Feedback> getFeedback(@PathVariable Long id) {
-            return fRep.findAllBySiId(id);
+    public List<DTOFeedback> getFeedback(@PathVariable Long id) {
+        List<com.upc.gessi.qrapids.app.domain.models.Feedback> feedbackList = feedbackController.getFeedbackForStrategicIndicator(id);
+        List<DTOFeedback> dtoFeedbackList = new ArrayList<>();
+        for (com.upc.gessi.qrapids.app.domain.models.Feedback feedback : feedbackList) {
+            dtoFeedbackList.add(new DTOFeedback(feedback.getSiId(), feedback.getDate().toString(), feedback.getAuthor(), feedback.getOldvalue(), feedback.getNewvalue()));
+        }
+        return dtoFeedbackList;
     }
 
-    @RequestMapping("/api/strategicIndicator/{id}/feedbackReport")
+    @RequestMapping("/api/strategicIndicators/{id}/feedbackReport")
     @ResponseStatus(HttpStatus.OK)
     public List<FeedbackFactors> getFeedbackReport(@PathVariable Long id) throws IOException, CategoriesException {
         return feedbackController.getFeedbackReport(id);

@@ -207,21 +207,20 @@ public class FeedbackTest {
         com.upc.gessi.qrapids.app.domain.models.Feedback feedback = new com.upc.gessi.qrapids.app.domain.models.Feedback(strategicIndicatorId, date, null, null, newValue.floatValue(), oldValue.floatValue());
         List<com.upc.gessi.qrapids.app.domain.models.Feedback> feedbackList = new ArrayList<>();
         feedbackList.add(feedback);
-        when(feedbackRepository.findAllBySiId(strategicIndicatorId)).thenReturn(feedbackList);
+        when(feedbackDomainController.getFeedbackForStrategicIndicator(strategicIndicatorId)).thenReturn(feedbackList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/strategicIndicator/{id}/feedback", strategicIndicatorId);
+                .get("/api/strategicIndicators/{id}/feedback", strategicIndicatorId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].siId", is(strategicIndicatorId.intValue())))
-                .andExpect(jsonPath("$[0].date", is(date.getTime())))
+                .andExpect(jsonPath("$[0].strategicIndicatorId", is(strategicIndicatorId.intValue())))
+                .andExpect(jsonPath("$[0].date", is(date.toString())))
                 .andExpect(jsonPath("$[0].author", is(nullValue())))
-                .andExpect(jsonPath("$[0].appUser", is(nullValue())))
-                .andExpect(jsonPath("$[0].newvalue", is(newValue)))
-                .andExpect(jsonPath("$[0].oldvalue", is(oldValue)))
+                .andExpect(jsonPath("$[0].newValue", is(newValue)))
+                .andExpect(jsonPath("$[0].oldValue", is(oldValue)))
                 .andDo(document("feedback/get-feedback",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -230,24 +229,22 @@ public class FeedbackTest {
                                         .description("Strategic indicator identifier")
                         ),
                         responseFields(
-                                fieldWithPath("[].siId")
+                                fieldWithPath("[].strategicIndicatorId")
                                         .description("Strategic indicator identifier"),
                                 fieldWithPath("[].date")
                                         .description("Feedback creation date"),
                                 fieldWithPath("[].author")
                                         .description("Feedback creator name"),
-                                fieldWithPath("[].appUser")
-                                        .description("Feedback creator user"),
-                                fieldWithPath("[].newvalue")
+                                fieldWithPath("[].newValue")
                                         .description("New strategic indicator value"),
-                                fieldWithPath("[].oldvalue")
+                                fieldWithPath("[].oldValue")
                                         .description("Old strategic indicator value")
                         )
                 ));
 
         // Verify mock interactions
-        verify(feedbackRepository, times(1)).findAllBySiId(strategicIndicatorId);
-        verifyNoMoreInteractions(feedbackRepository);
+        verify(feedbackDomainController, times(1)).getFeedbackForStrategicIndicator(strategicIndicatorId);
+        verifyNoMoreInteractions(feedbackDomainController);
     }
 
     @Test
@@ -289,7 +286,7 @@ public class FeedbackTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/strategicIndicator/{id}/feedbackReport", strategicIndicatorId);
+                .get("/api/strategicIndicators/{id}/feedbackReport", strategicIndicatorId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())

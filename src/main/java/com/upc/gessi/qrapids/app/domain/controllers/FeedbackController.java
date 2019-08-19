@@ -52,6 +52,10 @@ public class FeedbackController {
         }
     }
 
+    public List<Feedback> getFeedbackForStrategicIndicator (Long strategicIndicatorId) {
+        return feedbackRepository.findAllBySiId(strategicIndicatorId);
+    }
+
     public List<FeedbackFactors> getFeedbackReport(Long strategicIndicatorId) throws IOException, CategoriesException {
         List<Feedback> feedbackList = feedbackRepository.findAllBySiId(strategicIndicatorId);
         Optional<Strategic_Indicator> strategicIndicatorOptional = strategicIndicatorRepository.findById(strategicIndicatorId);
