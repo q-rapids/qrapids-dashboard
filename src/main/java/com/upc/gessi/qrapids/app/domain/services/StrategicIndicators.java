@@ -13,6 +13,7 @@ import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -243,6 +244,10 @@ public class StrategicIndicators {
     @DeleteMapping("/api/strategicIndicators/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteSI (@PathVariable Long id) {
-        siRep.deleteById(id);
+        try {
+            strategicIndicatorsController.deleteStrategicIndicator(id);
+        } catch (StrategicIndicatorNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Strategic indicator not found");
+        }
     }
 }

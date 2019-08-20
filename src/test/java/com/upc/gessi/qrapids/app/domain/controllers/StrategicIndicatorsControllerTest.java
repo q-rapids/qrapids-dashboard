@@ -10,6 +10,7 @@ import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +28,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StrategicIndicatorsControllerTest {
@@ -69,6 +70,31 @@ public class StrategicIndicatorsControllerTest {
         // Then
         assertEquals(strategicIndicatorList.size(), strategicIndicatorListFound.size());
         assertEquals(strategicIndicator, strategicIndicatorListFound.get(0));
+    }
+
+    @Test
+    public void deleteStrategicIndicator() throws StrategicIndicatorNotFoundException {
+        // Given
+        Long strategicIndicatorId = 1L;
+        when(strategicIndicatorRepository.existsById(strategicIndicatorId)).thenReturn(true);
+
+        // When
+        strategicIndicatorsController.deleteStrategicIndicator(strategicIndicatorId);
+
+        // Then
+        verify(strategicIndicatorRepository, times(1)).existsById(strategicIndicatorId);
+        verify(strategicIndicatorRepository, times(1)).deleteById(strategicIndicatorId);
+        verifyNoMoreInteractions(strategicIndicatorRepository);
+    }
+
+    @Test(expected = StrategicIndicatorNotFoundException.class)
+    public void deleteStrategicIndicatorNotFound() throws StrategicIndicatorNotFoundException {
+        // Given
+        Long strategicIndicatorId = 1L;
+        when(strategicIndicatorRepository.existsById(strategicIndicatorId)).thenReturn(false);
+
+        // Throw
+        strategicIndicatorsController.deleteStrategicIndicator(strategicIndicatorId);
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.junit.After;
@@ -1717,7 +1718,23 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorRepository, times(1)).deleteById(strategicIndicatorId);
+        verify(strategicIndicatorsDomainController, times(1)).deleteStrategicIndicator(strategicIndicatorId);
+    }
+
+    @Test
+    public void deleteOneStrategicIndicatorNotFound() throws Exception {
+        Long strategicIndicatorId = 1L;
+        doThrow(new StrategicIndicatorNotFoundException()).when(strategicIndicatorsDomainController).deleteStrategicIndicator(strategicIndicatorId);
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .delete("/api/strategicIndicators/{id}", strategicIndicatorId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isNotFound());
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).deleteStrategicIndicator(strategicIndicatorId);
     }
 
 }

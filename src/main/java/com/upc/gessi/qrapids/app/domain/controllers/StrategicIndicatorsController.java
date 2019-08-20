@@ -9,6 +9,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.Strategi
 import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,14 @@ public class StrategicIndicatorsController {
 
     public List<Strategic_Indicator> getStrategicIndicatorsByProject (Project project) {
         return strategicIndicatorRepository.findByProject_Id(project.getId());
+    }
+
+    public void deleteStrategicIndicator (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {
+        if (strategicIndicatorRepository.existsById(strategicIndicatorId)) {
+            strategicIndicatorRepository.deleteById(strategicIndicatorId);
+        } else {
+            throw new StrategicIndicatorNotFoundException();
+        }
     }
 
     public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsCurrentEvaluation (String projectExternalId) throws IOException, CategoriesException, ElasticsearchStatusException {
