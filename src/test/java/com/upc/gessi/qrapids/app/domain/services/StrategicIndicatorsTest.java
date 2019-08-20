@@ -559,7 +559,8 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getDetailedStrategicIndicatorsCurrentEvaluation() throws Exception {
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
+        // Given
+        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -643,13 +644,13 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaDetailedStrategicIndicators, times(1)).CurrentEvaluation(null, projectExternalId);
-        verifyNoMoreInteractions(qmaDetailedStrategicIndicators);
+        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
     public void getDetailedStrategicIndicatorsCurrentEvaluationReadError() throws Exception {
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders

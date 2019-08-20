@@ -79,7 +79,7 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedStrategicIndicator> getDetailedSI(@RequestParam(value = "prj", required=false) String prj) {
         try {
-            return qmadsi.CurrentEvaluation(null, prj);
+            return strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
