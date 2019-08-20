@@ -77,7 +77,7 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/qualityFactors/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicator> getDetailedSI(@RequestParam(value = "prj", required=false) String prj) {
+    public List<DTODetailedStrategicIndicator> getDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj) {
         try {
             return strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj);
         } catch (ElasticsearchStatusException e) {
@@ -89,9 +89,9 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicator> getDetailedSIbyID(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id) {
+    public List<DTODetailedStrategicIndicator> getSingleDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id) {
         try {
-            return qmadsi.CurrentEvaluation(id, prj);
+            return strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {

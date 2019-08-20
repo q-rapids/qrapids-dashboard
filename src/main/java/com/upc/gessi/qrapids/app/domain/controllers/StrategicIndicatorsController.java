@@ -33,4 +33,8 @@ public class StrategicIndicatorsController {
         return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId);
     }
 
+    public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorCurrentEvaluation (String strategicIndicatorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
+        return qmaDetailedStrategicIndicators.CurrentEvaluation(strategicIndicatorId, projectExternalId);
+    }
+
 }
