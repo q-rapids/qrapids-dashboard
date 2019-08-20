@@ -1122,8 +1122,8 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getDetailedStrategicIndicatorsPrediction(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
         verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getDetailedStrategicIndicatorsPrediction(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
@@ -1135,7 +1135,7 @@ public class StrategicIndicatorsTest {
         String technique = "PROPHET";
         String horizon = "7";
         String freq = "7";
-        when(forecast.ForecastDSI(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId))).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(strategicIndicatorsDomainController.getDetailedStrategicIndicatorsPrediction(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId))).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1228,8 +1228,9 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(forecast, times(1)).ForecastDSI(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
-        verifyNoMoreInteractions(forecast);
+        verify(strategicIndicatorsDomainController, times(1)).getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getDetailedStrategicIndicatorsPrediction(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
