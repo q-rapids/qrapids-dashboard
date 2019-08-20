@@ -175,4 +175,34 @@ public class StrategicIndicatorsControllerTest {
         assertEquals(dtoDetailedStrategicIndicatorList.size(), dtoDetailedStrategicIndicatorListFound.size());
         assertEquals(dtoDetailedStrategicIndicator, dtoDetailedStrategicIndicatorListFound.get(0));
     }
+
+    @Test
+    public void getSingleDetailedStrategicIndicatorsHistoricalEvaluation() throws IOException {
+        // Given
+        String projectExternalId = "test";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+
+        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
+        List<DTOFactor> dtoFactorList = new ArrayList<>();
+        dtoFactorList.add(dtoFactor);
+        DTODetailedStrategicIndicator dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicator(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorList);
+        dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactor.getValue(), "Good"));
+
+        List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
+        dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
+
+        String from = "2019-07-07";
+        LocalDate fromDate = LocalDate.parse(from);
+        String to = "2019-07-15";
+        LocalDate toDate = LocalDate.parse(to);
+        when(qmaDetailedStrategicIndicators.HistoricalData(dtoDetailedStrategicIndicator.getId(), fromDate, toDate, projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
+
+        // When
+        List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorListFound = strategicIndicatorsController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, fromDate, toDate);
+
+        // Then
+        assertEquals(dtoDetailedStrategicIndicatorList.size(), dtoDetailedStrategicIndicatorListFound.size());
+        assertEquals(dtoDetailedStrategicIndicator, dtoDetailedStrategicIndicatorListFound.get(0));
+    }
 }

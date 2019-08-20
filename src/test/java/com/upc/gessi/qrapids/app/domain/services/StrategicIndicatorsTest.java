@@ -904,7 +904,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(qmaDetailedStrategicIndicators.HistoricalData(dtoDetailedStrategicIndicator.getId(), fromDate, toDate, projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(strategicIndicatorsDomainController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, fromDate, toDate)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -997,7 +997,7 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaDetailedStrategicIndicators, times(1)).HistoricalData(dtoDetailedStrategicIndicator.getId(), fromDate, toDate, projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getSingleDetailedStrategicIndicatorsHistoricalEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, fromDate, toDate);
         verifyNoMoreInteractions(qmaDetailedStrategicIndicators);
     }
 
@@ -1007,7 +1007,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(qmaDetailedStrategicIndicators.HistoricalData(dtoDetailedStrategicIndicator.getId(), fromDate, toDate, projectExternalId)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, fromDate, toDate)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
