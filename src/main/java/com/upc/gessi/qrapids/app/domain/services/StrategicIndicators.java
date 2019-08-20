@@ -129,7 +129,7 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedStrategicIndicator> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
-            return qmadsi.HistoricalData(null, LocalDate.parse(from), LocalDate.parse(to), prj);
+            return strategicIndicatorsController.getAllDetailedStrategicIndicatorsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
