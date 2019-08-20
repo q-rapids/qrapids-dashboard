@@ -1025,14 +1025,14 @@ public class StrategicIndicatorsTest {
     }
 
     @Test
-    public void getDetailedStrategicIndicatorPredicitionData() throws Exception {
+    public void getDetailedStrategicIndicatorPredictionData() throws Exception {
         dtoFactor.setDatasource("Forecast");
         dtoFactor.setRationale("Forecast");
 
         String technique = "PROPHET";
         String horizon = "7";
         String freq = "7";
-        when(forecast.ForecastDSI(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId))).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(strategicIndicatorsDomainController.getDetailedStrategicIndicatorsPrediction(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId))).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1122,8 +1122,9 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(forecast, times(1)).ForecastDSI(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
-        verifyNoMoreInteractions(forecast);
+        verify(strategicIndicatorsDomainController, times(1)).getDetailedStrategicIndicatorsPrediction(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
+        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test

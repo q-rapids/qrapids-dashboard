@@ -54,7 +54,11 @@ public class StrategicIndicatorsController {
         return qmaDetailedStrategicIndicators.HistoricalData(strategicIndicatorId, from, to, projectExternalId);
     }
 
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction (String technique, String freq, String horizon, String projectExternalId) throws IOException {
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction (String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException {
         return qmaForecast.ForecastSI(technique, freq, horizon, projectExternalId);
+    }
+
+    public List<DTODetailedStrategicIndicator> getDetailedStrategicIndicatorsPrediction (List<DTODetailedStrategicIndicator> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException {
+        return qmaForecast.ForecastDSI(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 }

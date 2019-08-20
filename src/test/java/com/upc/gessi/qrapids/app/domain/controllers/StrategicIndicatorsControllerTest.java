@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -228,5 +230,35 @@ public class StrategicIndicatorsControllerTest {
         // Then
         assertEquals(dtoStrategicIndicatorEvaluationList.size(), dtoStrategicIndicatorEvaluationListFound.size());
         assertEquals(dtoStrategicIndicatorEvaluation, dtoStrategicIndicatorEvaluationListFound.get(0));
+    }
+
+    @Test
+    public void getDetailedStrategicIndicatorsPrediction() throws IOException {
+        // Given
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+
+        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
+        List<DTOFactor> dtoFactorList = new ArrayList<>();
+        dtoFactorList.add(dtoFactor);
+        DTODetailedStrategicIndicator dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicator(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorList);
+        dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactor.getValue(), "Good"));
+
+        List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
+        dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
+
+        String projectExternalId = "test";
+        String technique = "PROPHET";
+        String horizon = "7";
+        String freq = "7";
+
+        when(qmaForecast.ForecastDSI(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId))).thenReturn(dtoDetailedStrategicIndicatorList);
+
+        // When
+        List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorListFound = strategicIndicatorsController.getDetailedStrategicIndicatorsPrediction(dtoDetailedStrategicIndicatorList, technique, freq, horizon, projectExternalId);
+
+        // Then
+        assertEquals(dtoDetailedStrategicIndicatorList.size(), dtoDetailedStrategicIndicatorListFound.size());
+        assertEquals(dtoDetailedStrategicIndicator, dtoDetailedStrategicIndicatorListFound.get(0));
     }
 }
