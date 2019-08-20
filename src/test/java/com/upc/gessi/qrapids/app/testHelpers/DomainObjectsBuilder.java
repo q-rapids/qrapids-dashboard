@@ -232,4 +232,48 @@ public class DomainObjectsBuilder {
         String metricRationale = "parameters: {...}, formula: ...";
         return new DTOMetric(metricId, metricName, metricDescription, null, metricRationale, evaluationDate, metricValue);
     }
+
+    public DTOStrategicIndicatorEvaluation buildDTOStrategicIndicatorEvaluation () {
+        List<DTOSIAssesment> dtoSIAssessmentList = new ArrayList<>();
+
+        Long assessment1Id = 10L;
+        String assessment1Label = "Good";
+        Float assessment1Value = null;
+        String assessment1Color = "#00ff00";
+        Float assessment1UpperThreshold = 0.66f;
+        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssesment1);
+
+        Long assessment2Id = 11L;
+        String assessment2Label = "Neutral";
+        Float assessment2Value = null;
+        String assessment2Color = "#ff8000";
+        Float assessment2UpperThreshold = 0.33f;
+        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssesment2);
+
+        Long assessment3Id = 11L;
+        String assessment3Label = "Bad";
+        Float assessment3Value = null;
+        String assessment3Color = "#ff0000";
+        Float assessment3UpperThreshold = 0f;
+        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssesment3);
+
+        String strategicIndicatorId = "processperformance";
+        Long strategicIndicatorDbId = 1L;
+        String strategicIndicatorName = "Process Performance";
+        String strategicIndicatorDescription = "Performance of the processes involved in the development";
+        Float strategicIndicatorValue = 0.8f;
+        String strategicIndicatorCategory = "Good";
+        Pair<Float, String> strategicIndicatorValuePair = Pair.of(strategicIndicatorValue, strategicIndicatorCategory);
+        String dateString = "2019-07-07";
+        LocalDate date = LocalDate.parse(dateString);
+        String datasource = "Q-Rapdis Dashboard";
+        String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
+        dtoStrategicIndicatorEvaluation.setHasFeedback(false);
+        dtoStrategicIndicatorEvaluation.setForecastingError(null);
+        return dtoStrategicIndicatorEvaluation;
+    }
 }

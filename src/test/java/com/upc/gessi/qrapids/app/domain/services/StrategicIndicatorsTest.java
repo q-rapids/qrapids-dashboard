@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
@@ -72,6 +73,9 @@ public class StrategicIndicatorsTest {
     @Mock
     private QualityFactorsController qualityFactorsDomainController;
 
+    @Mock
+    private StrategicIndicatorsController strategicIndicatorsDomainController;
+
     @InjectMocks
     private StrategicIndicators strategicIndicatorsController;
 
@@ -96,65 +100,16 @@ public class StrategicIndicatorsTest {
 
         projectExternalId = "test";
 
-        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
-
-        Long assessment1Id = 10L;
-        String assessment1Label = "Good";
-        Float assessment1Value = null;
-        String assessment1Color = "#00ff00";
-        Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment1);
-
-        Long assessment2Id = 11L;
-        String assessment2Label = "Neutral";
-        Float assessment2Value = null;
-        String assessment2Color = "#ff8000";
-        Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment2);
-
-        Long assessment3Id = 11L;
-        String assessment3Label = "Bad";
-        Float assessment3Value = null;
-        String assessment3Color = "#ff0000";
-        Float assessment3UpperThreshold = 0f;
-        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment3);
-
-        String strategicIndicatorId = "blocking";
-        Long strategicIndicatorDbId = 1L;
-        String strategicIndicatorName = "Blocking";
-        String strategicIndicatorDescription = "Blocking elements";
-        Float strategicIndicatorValue = 0.8f;
-        String strategicIndicatorCategory = "Good";
-        Pair<Float, String> strategicIndicatorValuePair = Pair.of(strategicIndicatorValue, strategicIndicatorCategory);
-        String dateString = "2019-07-07";
-        LocalDate date = LocalDate.parse(dateString);
-        String datasource = "Q-Rapdis Dashboard";
-        String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssesmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
-        dtoStrategicIndicatorEvaluation.setHasFeedback(false);
-        dtoStrategicIndicatorEvaluation.setForecastingError(null);
-
+        dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
         dtoStrategicIndicatorEvaluationList.add(dtoStrategicIndicatorEvaluation);
 
-        String factorId = "blockingcode";
-        String factorName = "Blocking code";
-        String factorDescription = "Technical debt in software code in terms of rule violations";
-        Float factorValue = 0.8f;
-        LocalDate evaluationDate = LocalDate.parse(dateString);
-        String factorRationale = "parameters: {...}, formula: ...";
-        String strategicIndicator = "blocking";
-        List<String> strategicIndicatorsList = new ArrayList<>();
-        strategicIndicatorsList.add(strategicIndicator);
-        dtoFactor = new DTOFactor(factorId, factorName, factorDescription, factorValue, evaluationDate, null, factorRationale, strategicIndicatorsList);
+        dtoFactor = domainObjectsBuilder.buildDTOFactor();
         List<DTOFactor> dtoFactorList = new ArrayList<>();
         dtoFactorList.add(dtoFactor);
 
-        dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicator(strategicIndicatorId, strategicIndicatorName, dtoFactorList);
-        dtoDetailedStrategicIndicator.setDate(date);
-        dtoDetailedStrategicIndicator.setValue(Pair.of(factorValue, "Good"));
+        dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicator(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorList);
+        dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactor.getValue(), "Good"));
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
     }
 
@@ -166,7 +121,7 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsCurrentEvaluation() throws Exception {
-        when(qmaStrategicIndicators.CurrentEvaluation(projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -262,13 +217,13 @@ public class StrategicIndicatorsTest {
 
 
         // Verify mock interactions
-        verify(qmaStrategicIndicators, times(1)).CurrentEvaluation(projectExternalId);
-        verifyNoMoreInteractions(qmaStrategicIndicators);
+        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
     public void getStrategicIndicatorsCurrentEvaluationCategoriesConflict() throws Exception {
-        when(qmaStrategicIndicators.CurrentEvaluation(projectExternalId)).thenThrow(new CategoriesException());
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenThrow(new CategoriesException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -285,7 +240,7 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsCurrentEvaluationReadError() throws Exception {
-        when(qmaStrategicIndicators.CurrentEvaluation(projectExternalId)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders

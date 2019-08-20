@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
@@ -43,11 +44,14 @@ public class StrategicIndicators {
     @Autowired
     private QualityFactorsController qualityFactorsController;
 
+    @Autowired
+    private StrategicIndicatorsController strategicIndicatorsController;
+
     @GetMapping("/api/strategicIndicators/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsEvaluation(@RequestParam(value = "prj") String prj) {
         try {
-            return qmasi.CurrentEvaluation(prj);
+            return strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (CategoriesException e) {
@@ -224,29 +228,4 @@ public class StrategicIndicators {
     public void deleteSI (@PathVariable Long id) {
         siRep.deleteById(id);
     }
-
-    /*private List<DTOStrategicIndicatorEvaluation> mergeData(List<DTOStrategicIndicatorEvaluation> apiEval, List<Strategic_Indicator> dbEval) {
-        boolean found = false;
-        String lastSIid = "";
-        for (Iterator<DTOStrategicIndicatorEvaluation> itAPI = apiEval.iterator(); itAPI.hasNext();) {
-            DTOStrategicIndicatorEvaluation itemAPI = itAPI.next();
-            found = false;
-            if (lastSIid.equals(itemAPI.getId())) {
-                found = true;
-            } else {
-                lastSIid = itemAPI.getId();
-            }
-            for (Iterator<Strategic_Indicator> itDB = dbEval.iterator(); itDB.hasNext() && !found;) {
-                Strategic_Indicator itemDB = itDB.next();
-                if (itemAPI.getId().equals(itemDB.getName().replaceAll("\\s+","").toLowerCase())) {
-                    itemAPI.setLowerThreshold(0.33f);
-                    itemAPI.setUpperThreshold(0.66f);
-                    itemAPI.setTarget(0.5f);
-                    itDB.remove();
-                    found = true;
-                }
-            }
-        }
-        return apiEval;
-    }*/
 }
