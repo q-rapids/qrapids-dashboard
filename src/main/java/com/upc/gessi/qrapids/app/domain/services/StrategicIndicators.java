@@ -115,7 +115,7 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
-            return qmasi.HistoricalData(LocalDate.parse(from), LocalDate.parse(to), prj);
+            return strategicIndicatorsController.getAllStrategicIndicatorsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (CategoriesException e) {

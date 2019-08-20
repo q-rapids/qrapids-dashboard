@@ -16,6 +16,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.util.Pair;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,5 +123,26 @@ public class StrategicIndicatorsControllerTest {
         // Then
         assertEquals(dtoDetailedStrategicIndicatorList.size(), dtoDetailedStrategicIndicatorListFound.size());
         assertEquals(dtoDetailedStrategicIndicator, dtoDetailedStrategicIndicatorListFound.get(0));
+    }
+
+    @Test
+    public void getAllStrategicIndicatorsHistoricalEvaluation() throws IOException, CategoriesException {
+        // Given
+        String projectExternalId = "test";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();
+        dtoStrategicIndicatorEvaluationList.add(dtoStrategicIndicatorEvaluation);
+        String from = "2019-07-07";
+        LocalDate fromDate = LocalDate.parse(from);
+        String to = "2019-07-15";
+        LocalDate toDate = LocalDate.parse(to);
+        when(qmaStrategicIndicators.HistoricalData(fromDate, toDate, projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
+
+        // When
+        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationListFound = strategicIndicatorsController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate);
+
+        // Then
+        assertEquals(dtoStrategicIndicatorEvaluationList.size(), dtoStrategicIndicatorEvaluationListFound.size());
+        assertEquals(dtoStrategicIndicatorEvaluation, dtoStrategicIndicatorEvaluationListFound.get(0));
     }
 }

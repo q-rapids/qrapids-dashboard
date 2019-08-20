@@ -405,7 +405,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(qmaStrategicIndicators.HistoricalData(fromDate, toDate, projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -507,8 +507,8 @@ public class StrategicIndicatorsTest {
 
 
         // Verify mock interactions
-        verify(qmaStrategicIndicators, times(1)).HistoricalData(fromDate, toDate, projectExternalId);
-        verifyNoMoreInteractions(qmaStrategicIndicators);
+        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
@@ -517,7 +517,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(qmaStrategicIndicators.HistoricalData(fromDate, toDate, projectExternalId)).thenThrow(new CategoriesException());
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenThrow(new CategoriesException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -540,7 +540,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(qmaStrategicIndicators.HistoricalData(fromDate, toDate, projectExternalId)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
