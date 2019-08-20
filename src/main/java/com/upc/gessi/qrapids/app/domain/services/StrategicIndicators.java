@@ -164,11 +164,13 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
-            return qmaf.ForecastSI(technique, "7", horizon, prj);
+            return strategicIndicatorsController.getStrategicIndicatorsPrediction(technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 

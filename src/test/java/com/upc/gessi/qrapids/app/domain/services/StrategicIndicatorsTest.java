@@ -1240,7 +1240,7 @@ public class StrategicIndicatorsTest {
         String technique = "PROPHET";
         String horizon = "7";
         String freq = "7";
-        when(forecast.ForecastSI(technique, freq, horizon, projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
+        when(strategicIndicatorsDomainController.getStrategicIndicatorsPrediction(technique, freq, horizon, projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1341,8 +1341,8 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(forecast, times(1)).ForecastSI(technique, freq, horizon, projectExternalId);
-        verifyNoMoreInteractions(forecast);
+        verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorsPrediction(technique, freq, horizon, projectExternalId);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test

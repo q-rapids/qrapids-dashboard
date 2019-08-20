@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
@@ -33,6 +34,9 @@ public class StrategicIndicatorsControllerTest {
 
     @Mock
     private QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
+
+    @Mock
+    private Forecast qmaForecast;
 
     @InjectMocks
     private StrategicIndicatorsController strategicIndicatorsController;
@@ -204,5 +208,25 @@ public class StrategicIndicatorsControllerTest {
         // Then
         assertEquals(dtoDetailedStrategicIndicatorList.size(), dtoDetailedStrategicIndicatorListFound.size());
         assertEquals(dtoDetailedStrategicIndicator, dtoDetailedStrategicIndicatorListFound.get(0));
+    }
+
+    @Test
+    public void getStrategicIndicatorsPrediction() throws IOException {
+        // Given
+        String projectExternalId = "test";
+        String technique = "PROPHET";
+        String horizon = "7";
+        String freq = "7";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();
+        dtoStrategicIndicatorEvaluationList.add(dtoStrategicIndicatorEvaluation);
+        when(qmaForecast.ForecastSI(technique, freq, horizon, projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
+
+        // When
+        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationListFound = strategicIndicatorsController.getStrategicIndicatorsPrediction(technique, freq, horizon, projectExternalId);
+
+        // Then
+        assertEquals(dtoStrategicIndicatorEvaluationList.size(), dtoStrategicIndicatorEvaluationListFound.size());
+        assertEquals(dtoStrategicIndicatorEvaluation, dtoStrategicIndicatorEvaluationListFound.get(0));
     }
 }

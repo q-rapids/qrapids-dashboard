@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
@@ -18,6 +19,9 @@ public class StrategicIndicatorsController {
 
     @Autowired
     private QMAStrategicIndicators qmaStrategicIndicators;
+
+    @Autowired
+    private Forecast qmaForecast;
 
     @Autowired
     private QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
@@ -48,5 +52,9 @@ public class StrategicIndicatorsController {
 
     public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorsHistoricalEvaluation (String strategicIndicatorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
         return qmaDetailedStrategicIndicators.HistoricalData(strategicIndicatorId, from, to, projectExternalId);
+    }
+
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction (String technique, String freq, String horizon, String projectExternalId) throws IOException {
+        return qmaForecast.ForecastSI(technique, freq, horizon, projectExternalId);
     }
 }
