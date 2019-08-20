@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.Project;
@@ -75,6 +76,9 @@ public class StrategicIndicatorsTest {
 
     @Mock
     private StrategicIndicatorsController strategicIndicatorsDomainController;
+
+    @Mock
+    private ProjectsController projectsController;
 
     @InjectMocks
     private StrategicIndicators strategicIndicatorsController;
@@ -1625,7 +1629,7 @@ public class StrategicIndicatorsTest {
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
 
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
+        when(projectsController.findProjectByExternalId(projectExternalId)).thenReturn(project);
 
         Long strategicIndicatorId = 1L;
         String strategicIndicatorExternalId = "productquality";
@@ -1644,7 +1648,7 @@ public class StrategicIndicatorsTest {
         List<Strategic_Indicator> strategicIndicatorList = new ArrayList<>();
         strategicIndicatorList.add(strategicIndicator);
 
-        when(strategicIndicatorRepository.findByProject_Id(projectId)).thenReturn(strategicIndicatorList);
+        when(strategicIndicatorsDomainController.getStrategicIndicatorsByProject(project)).thenReturn(strategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1687,11 +1691,11 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectRepository);
+        verify(projectsController, times(1)).findProjectByExternalId(projectExternalId);
+        verifyNoMoreInteractions(projectsController);
 
-        verify(strategicIndicatorRepository, times(1)).findByProject_Id(projectId);
-        verifyNoMoreInteractions(strategicIndicatorRepository);
+        verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorsByProject(project);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test

@@ -3,6 +3,9 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
@@ -32,6 +35,9 @@ public class StrategicIndicatorsControllerTest {
     private DomainObjectsBuilder domainObjectsBuilder;
 
     @Mock
+    private StrategicIndicatorRepository strategicIndicatorRepository;
+
+    @Mock
     private QMAStrategicIndicators qmaStrategicIndicators;
 
     @Mock
@@ -46,6 +52,23 @@ public class StrategicIndicatorsControllerTest {
     @Before
     public void setUp() {
         domainObjectsBuilder = new DomainObjectsBuilder();
+    }
+
+    @Test
+    public void getStrategicIndicatorsByProject() {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
+        List<Strategic_Indicator> strategicIndicatorList = new ArrayList<>();
+        strategicIndicatorList.add(strategicIndicator);
+        when(strategicIndicatorRepository.findByProject_Id(project.getId())).thenReturn(strategicIndicatorList);
+
+        // When
+        List<Strategic_Indicator> strategicIndicatorListFound = strategicIndicatorsController.getStrategicIndicatorsByProject(project);
+
+        // Then
+        assertEquals(strategicIndicatorList.size(), strategicIndicatorListFound.size());
+        assertEquals(strategicIndicator, strategicIndicatorListFound.get(0));
     }
 
     @Test

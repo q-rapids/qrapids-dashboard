@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.Project;
@@ -11,6 +12,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,6 +48,9 @@ public class StrategicIndicators {
 
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
+
+    @Autowired
+    private ProjectsController projectsController;
 
     @GetMapping("/api/strategicIndicators/current")
     @ResponseStatus(HttpStatus.OK)
@@ -216,19 +221,23 @@ public class StrategicIndicators {
     @GetMapping("/api/strategicIndicators")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOSI> getAllStrategicIndicators (@RequestParam(value = "prj") String prj) {
-        Project project = projectRepository.findByExternalId(prj);
-        List<Strategic_Indicator> strategic_indicators = siRep.findByProject_Id(project.getId());
-        List<DTOSI> dtosis = new ArrayList<>();
-        for (Strategic_Indicator strategic_indicator : strategic_indicators) {
-            DTOSI dtosi = new DTOSI(strategic_indicator.getId(),
-                    strategic_indicator.getExternalId(),
-                    strategic_indicator.getName(),
-                    strategic_indicator.getDescription(),
-                    strategic_indicator.getNetwork(),
-                    strategic_indicator.getQuality_factors());
-            dtosis.add(dtosi);
+        try {
+            Project project = projectsController.findProjectByExternalId(prj);
+            List<Strategic_Indicator> strategic_indicators = strategicIndicatorsController.getStrategicIndicatorsByProject(project);
+            List<DTOSI> dtoSIList = new ArrayList<>();
+            for (Strategic_Indicator strategic_indicator : strategic_indicators) {
+                DTOSI dtosi = new DTOSI(strategic_indicator.getId(),
+                        strategic_indicator.getExternalId(),
+                        strategic_indicator.getName(),
+                        strategic_indicator.getDescription(),
+                        strategic_indicator.getNetwork(),
+                        strategic_indicator.getQuality_factors());
+                dtoSIList.add(dtosi);
+            }
+            return dtoSIList;
+        } catch (ProjectNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         }
-        return dtosis;
     }
 
     @DeleteMapping("/api/strategicIndicators/{id}")
