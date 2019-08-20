@@ -121,6 +121,7 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsCurrentEvaluation() throws Exception {
+        // Given
         when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         // Perform request
@@ -223,6 +224,7 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsCurrentEvaluationCategoriesConflict() throws Exception {
+        // Given
         when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenThrow(new CategoriesException());
 
         // Perform request
@@ -240,6 +242,7 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getStrategicIndicatorsCurrentEvaluationReadError() throws Exception {
+        // Given
         when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenThrow(new IOException());
 
         // Perform request
@@ -257,7 +260,8 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getSingleStrategicIndicatorCurrentEvaluation() throws Exception {
-        when(qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, dtoStrategicIndicatorEvaluation.getId())).thenReturn(dtoStrategicIndicatorEvaluation);
+        // Given
+        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluation);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -355,13 +359,14 @@ public class StrategicIndicatorsTest {
 
 
         // Verify mock interactions
-        verify(qmaStrategicIndicators, times(1)).SingleCurrentEvaluation(projectExternalId, dtoStrategicIndicatorEvaluation.getId());
-        verifyNoMoreInteractions(qmaStrategicIndicators);
+        verify(strategicIndicatorsDomainController, times(1)).getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
     public void getSingleStrategicIndicatorCurrentEvaluationCategoriesConflict() throws Exception {
-        when(qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, dtoStrategicIndicatorEvaluation.getId())).thenThrow(new CategoriesException());
+        // Given
+        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId)).thenThrow(new CategoriesException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -378,7 +383,8 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getSingleStrategicIndicatorCurrentEvaluationReadError() throws Exception {
-        when(qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, dtoStrategicIndicatorEvaluation.getId())).thenThrow(new IOException());
+        // Given
+        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders

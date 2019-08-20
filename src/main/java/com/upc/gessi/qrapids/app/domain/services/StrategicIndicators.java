@@ -65,7 +65,7 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorEvaluation(@RequestParam("prj") String prj, @PathVariable String id) {
         try {
-            return qmasi.SingleCurrentEvaluation(prj, id);
+            return strategicIndicatorsController.getSingleStrategicIndicatorsCurrentEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (CategoriesException e) {
