@@ -276,4 +276,31 @@ public class DomainObjectsBuilder {
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
         return dtoStrategicIndicatorEvaluation;
     }
+
+    public List<SICategory> buildSICategoryList () {
+        Long strategicIndicatorGoodCategoryId = 10L;
+        String strategicIndicatorGoodCategoryName = "Good";
+        String strategicIndicatorGoodCategoryColor = "#00ff00";
+        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
+        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
+
+        Long strategicIndicatorNeutralCategoryId = 11L;
+        String strategicIndicatorNeutralCategoryName = "Neutral";
+        String strategicIndicatorNeutralCategoryColor = "#ff8000";
+        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
+        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
+
+        Long strategicIndicatorBadCategoryId = 12L;
+        String strategicIndicatorBadCategoryName = "Bad";
+        String strategicIndicatorBadCategoryColor = "#ff0000";
+        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
+        siBadCategory.setId(strategicIndicatorBadCategoryId);
+
+        List<SICategory> siCategoryList = new ArrayList<>();
+        siCategoryList.add(siGoodCategory);
+        siCategoryList.add(siNeutralCategory);
+        siCategoryList.add(siBadCategory);
+
+        return siCategoryList;
+    }
 }

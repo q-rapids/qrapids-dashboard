@@ -4,7 +4,9 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,6 +36,9 @@ public class StrategicIndicatorsController {
     @Autowired
     private QMADetailedStrategicIndicators qmaDetailedStrategicIndicators;
 
+    @Autowired
+    private SICategoryRepository strategicIndicatorCategoryRepository;
+
     public List<Strategic_Indicator> getStrategicIndicatorsByProject (Project project) {
         return strategicIndicatorRepository.findByProject_Id(project.getId());
     }
@@ -43,6 +49,13 @@ public class StrategicIndicatorsController {
         } else {
             throw new StrategicIndicatorNotFoundException();
         }
+    }
+
+    public List<SICategory> getStrategicIndicatorCategories () {
+        List<SICategory> strategicIndicatorCategoriesList = new ArrayList<>();
+        Iterable<SICategory> strategicIndicatorCategoriesIterable = strategicIndicatorCategoryRepository.findAll();
+        strategicIndicatorCategoriesIterable.forEach(strategicIndicatorCategoriesList::add);
+        return strategicIndicatorCategoriesList;
     }
 
     public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsCurrentEvaluation (String projectExternalId) throws IOException, CategoriesException, ElasticsearchStatusException {

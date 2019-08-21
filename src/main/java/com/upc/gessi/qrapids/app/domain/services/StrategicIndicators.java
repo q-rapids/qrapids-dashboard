@@ -1,17 +1,13 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
-import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
-import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
-import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -28,21 +24,6 @@ import java.util.List;
 
 @RestController
 public class StrategicIndicators {
-
-    @Autowired
-    private QMAStrategicIndicators qmasi;
-
-    @Autowired
-    private QMADetailedStrategicIndicators qmadsi;
-
-    @Autowired
-    private StrategicIndicatorRepository siRep;
-
-    @Autowired
-    private Forecast qmaf;
-
-    @Autowired
-    private ProjectRepository projectRepository;
 
     @Autowired
     private QualityFactorsController qualityFactorsController;
@@ -249,5 +230,16 @@ public class StrategicIndicators {
         } catch (StrategicIndicatorNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Strategic indicator not found");
         }
+    }
+
+    @GetMapping("/api/strategicIndicators/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOCategory> getSICategories () {
+        List<SICategory> siCategoryList = strategicIndicatorsController.getStrategicIndicatorCategories();
+        List<DTOCategory> dtoCategoryList = new ArrayList<>();
+        for (SICategory siCategory : siCategoryList) {
+            dtoCategoryList.add(new DTOCategory(siCategory.getId(), siCategory.getName(), siCategory.getColor()));
+        }
+        return dtoCategoryList;
     }
 }

@@ -112,63 +112,6 @@ public class UtilTest {
     }
 
     @Test
-    public void getStrategicIndicatorsCategories () throws Exception {
-        Long strategicIndicatorGoodCategoryId = 10L;
-        String strategicIndicatorGoodCategoryName = "Good";
-        String strategicIndicatorGoodCategoryColor = "#00ff00";
-        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
-        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
-
-        Long strategicIndicatorNeutralCategoryId = 11L;
-        String strategicIndicatorNeutralCategoryName = "Neutral";
-        String strategicIndicatorNeutralCategoryColor = "#ff8000";
-        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
-        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
-
-        Long strategicIndicatorBadCategoryId = 12L;
-        String strategicIndicatorBadCategoryName = "Bad";
-        String strategicIndicatorBadCategoryColor = "#ff0000";
-        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
-        siBadCategory.setId(strategicIndicatorBadCategoryId);
-
-        List<SICategory> siCategoryList = new ArrayList<>();
-        siCategoryList.add(siGoodCategory);
-        siCategoryList.add(siNeutralCategory);
-        siCategoryList.add(siBadCategory);
-
-        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
-
-        // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/strategicIndicators/categories");
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id", is(strategicIndicatorGoodCategoryId.intValue())))
-                .andExpect(jsonPath("$[0].name", is(strategicIndicatorGoodCategoryName)))
-                .andExpect(jsonPath("$[0].color", is(strategicIndicatorGoodCategoryColor)))
-                .andExpect(jsonPath("$[1].id", is(strategicIndicatorNeutralCategoryId.intValue())))
-                .andExpect(jsonPath("$[1].name", is(strategicIndicatorNeutralCategoryName)))
-                .andExpect(jsonPath("$[1].color", is(strategicIndicatorNeutralCategoryColor)))
-                .andExpect(jsonPath("$[2].id", is(strategicIndicatorBadCategoryId.intValue())))
-                .andExpect(jsonPath("$[2].name", is(strategicIndicatorBadCategoryName)))
-                .andExpect(jsonPath("$[2].color", is(strategicIndicatorBadCategoryColor)))
-                .andDo(document("si/categories",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("[].id")
-                                        .description("Category identifier"),
-                                fieldWithPath("[].name")
-                                        .description("Category name"),
-                                fieldWithPath("[].color")
-                                        .description("Category hexadecimal color")
-                        )
-                ));
-    }
-
-    @Test
     public void newStrategicIndicatorsCategories () throws Exception {
         String strategicIndicatorGoodCategoryName = "Good";
         String strategicIndicatorGoodCategoryColor = "#00ff00";

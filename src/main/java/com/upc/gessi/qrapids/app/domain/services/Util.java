@@ -108,17 +108,6 @@ public class Util {
     @Autowired
     private Backlog backlog;
 
-    @GetMapping("/api/strategicIndicators/categories")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOCategory> getSICategories () {
-        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
-        List<DTOCategory> dtoCategoryList = new ArrayList<>();
-        for (SICategory siCategory : siCategoryIterable) {
-            dtoCategoryList.add(new DTOCategory(siCategory.getId(), siCategory.getName(), siCategory.getColor()));
-        }
-        return dtoCategoryList;
-    }
-
     @PostMapping("/api/strategicIndicators/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newSICategories (@RequestBody List<Map<String, String>> categories) {

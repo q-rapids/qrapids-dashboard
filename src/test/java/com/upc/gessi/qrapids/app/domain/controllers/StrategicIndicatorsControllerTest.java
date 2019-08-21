@@ -4,7 +4,9 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
@@ -46,6 +48,9 @@ public class StrategicIndicatorsControllerTest {
 
     @Mock
     private Forecast qmaForecast;
+
+    @Mock
+    private SICategoryRepository siCategoryRepository;
 
     @InjectMocks
     private StrategicIndicatorsController strategicIndicatorsController;
@@ -95,6 +100,22 @@ public class StrategicIndicatorsControllerTest {
 
         // Throw
         strategicIndicatorsController.deleteStrategicIndicator(strategicIndicatorId);
+    }
+
+    @Test
+    public void getStrategicIndicatorCategories() {
+        // Given
+        List<SICategory> siCategoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+
+        // When
+        List<SICategory> siCategoryListFound = strategicIndicatorsController.getStrategicIndicatorCategories();
+
+        // Then
+        assertEquals(siCategoryList.size(), siCategoryListFound.size());
+        assertEquals(siCategoryList.get(0), siCategoryListFound.get(0));
+        assertEquals(siCategoryList.get(1), siCategoryListFound.get(1));
+        assertEquals(siCategoryList.get(2), siCategoryListFound.get(2));
     }
 
     @Test

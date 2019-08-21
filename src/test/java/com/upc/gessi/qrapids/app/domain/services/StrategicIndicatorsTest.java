@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
@@ -1735,6 +1736,46 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).deleteStrategicIndicator(strategicIndicatorId);
+    }
+
+    @Test
+    public void getStrategicIndicatorsCategories () throws Exception {
+        // Given
+        List<SICategory> siCategoryList = domainObjectsBuilder.buildSICategoryList();
+        when(strategicIndicatorsDomainController.getStrategicIndicatorCategories()).thenReturn(siCategoryList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators/categories");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].id", is(siCategoryList.get(0).getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(siCategoryList.get(0).getName())))
+                .andExpect(jsonPath("$[0].color", is(siCategoryList.get(0).getColor())))
+                .andExpect(jsonPath("$[1].id", is(siCategoryList.get(1).getId().intValue())))
+                .andExpect(jsonPath("$[1].name", is(siCategoryList.get(1).getName())))
+                .andExpect(jsonPath("$[1].color", is(siCategoryList.get(1).getColor())))
+                .andExpect(jsonPath("$[2].id", is(siCategoryList.get(2).getId().intValue())))
+                .andExpect(jsonPath("$[2].name", is(siCategoryList.get(2).getName())))
+                .andExpect(jsonPath("$[2].color", is(siCategoryList.get(2).getColor())))
+                .andDo(document("si/categories",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Category identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Category name"),
+                                fieldWithPath("[].color")
+                                        .description("Category hexadecimal color")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorCategories();
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
 }
