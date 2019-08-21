@@ -3,6 +3,8 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
+import com.upc.gessi.qrapids.app.domain.models.QFCategory;
+import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
@@ -36,6 +38,9 @@ public class QualityFactorsControllerTest {
 
     @Mock
     private QMASimulation qmaSimulation;
+
+    @Mock
+    private QFCategoryRepository factorCategoryRepository;
 
     @InjectMocks
     private QualityFactorsController qualityFactorsController;
@@ -202,5 +207,21 @@ public class QualityFactorsControllerTest {
         // Then
         assertEquals(dtoFactorList.size(), factorsSimulationList.size());
         assertEquals(dtoFactor, factorsSimulationList.get(0));
+    }
+
+    @Test
+    public void getFactorCategories() {
+        // Given
+        List<QFCategory> factorCategoryList = domainObjectsBuilder.buildFactorCategoryList();
+        when(factorCategoryRepository.findAll()).thenReturn(factorCategoryList);
+
+        // When
+        List<QFCategory> factorCategoryListFound = qualityFactorsController.getFactorCategories();
+
+        // Then
+        assertEquals(factorCategoryList.size(), factorCategoryListFound.size());
+        assertEquals(factorCategoryList.get(0), factorCategoryListFound.get(0));
+        assertEquals(factorCategoryList.get(1), factorCategoryListFound.get(1));
+        assertEquals(factorCategoryList.get(2), factorCategoryListFound.get(2));
     }
 }

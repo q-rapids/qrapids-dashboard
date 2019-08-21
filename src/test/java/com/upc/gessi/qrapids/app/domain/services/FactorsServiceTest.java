@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
@@ -67,6 +68,51 @@ public class FactorsServiceTest {
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
         domainObjectsBuilder = new DomainObjectsBuilder();
+    }
+
+    @Test
+    public void getFactorsCategories () throws Exception {
+        // Given
+        List<QFCategory> factorCategoryList = domainObjectsBuilder.buildFactorCategoryList();
+        when(qualityFactorsDomainController.getFactorCategories()).thenReturn(factorCategoryList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors/categories");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].id", is(factorCategoryList.get(0).getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(factorCategoryList.get(0).getName())))
+                .andExpect(jsonPath("$[0].color", is(factorCategoryList.get(0).getColor())))
+                .andExpect(jsonPath("$[0].upperThreshold", is(HelperFunctions.getFloatAsDouble(factorCategoryList.get(0).getUpperThreshold()))))
+                .andExpect(jsonPath("$[1].id", is(factorCategoryList.get(1).getId().intValue())))
+                .andExpect(jsonPath("$[1].name", is(factorCategoryList.get(1).getName())))
+                .andExpect(jsonPath("$[1].color", is(factorCategoryList.get(1).getColor())))
+                .andExpect(jsonPath("$[1].upperThreshold", is(HelperFunctions.getFloatAsDouble(factorCategoryList.get(1).getUpperThreshold()))))
+                .andExpect(jsonPath("$[2].id", is(factorCategoryList.get(2).getId().intValue())))
+                .andExpect(jsonPath("$[2].name", is(factorCategoryList.get(2).getName())))
+                .andExpect(jsonPath("$[2].color", is(factorCategoryList.get(2).getColor())))
+                .andExpect(jsonPath("$[2].upperThreshold", is(HelperFunctions.getFloatAsDouble(factorCategoryList.get(2).getUpperThreshold()))))
+                .andDo(document("qf/categories",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Category identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Category name"),
+                                fieldWithPath("[].color")
+                                        .description("Category hexadecimal color"),
+                                fieldWithPath("[].upperThreshold")
+                                        .description("Category upper threshold")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).getFactorCategories();
+        verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
     @Test

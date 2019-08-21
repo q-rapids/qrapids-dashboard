@@ -108,19 +108,6 @@ public class Util {
     @Autowired
     private Backlog backlog;
 
-    @GetMapping("/api/qualityFactors/categories")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOCategoryThreshold> getFactorCategories () {
-        Iterable<QFCategory> categoryIterable = QFCatRep.findAll();
-        List<QFCategory> factorCategoryList = new ArrayList<>();
-        categoryIterable.forEach(factorCategoryList::add);
-        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
-        for (QFCategory qfCategory : factorCategoryList) {
-            dtoCategoryList.add(new DTOCategoryThreshold(qfCategory.getId(), qfCategory.getName(), qfCategory.getColor(), qfCategory.getUpperThreshold()));
-        }
-        return dtoCategoryList;
-    }
-
     @PostMapping("/api/qualityFactors/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newFactorCategories (@RequestBody List<Map<String, String>> categories) {

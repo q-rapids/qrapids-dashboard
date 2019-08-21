@@ -328,4 +328,34 @@ public class DomainObjectsBuilder {
 
         return strategicIndicatorCategoriesList;
     }
+
+    public List<QFCategory> buildFactorCategoryList () {
+        Long factorGoodCategoryId = 10L;
+        String factorGoodCategoryName = "Good";
+        String factorGoodCategoryColor = "#00ff00";
+        float factorGoodCategoryUpperThreshold = 1f;
+        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
+        factorGoodCategory.setId(factorGoodCategoryId);
+
+        Long factorNeutralCategoryId = 11L;
+        String factorNeutralCategoryName = "Neutral";
+        String factorNeutralCategoryColor = "#ff8000";
+        float factorNeutralCategoryUpperThreshold = 0.67f;
+        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
+        factorNeutralCategory.setId(factorNeutralCategoryId);
+
+        Long factorBadCategoryId = 12L;
+        String factorBadCategoryName = "Bad";
+        String factorBadCategoryColor = "#ff0000";
+        float factorBadCategoryUpperThreshold = 0.33f;
+        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
+        factorBadCategory.setId(factorBadCategoryId);
+
+        List<QFCategory> factorCategoryList = new ArrayList<>();
+        factorCategoryList.add(factorGoodCategory);
+        factorCategoryList.add(factorNeutralCategory);
+        factorCategoryList.add(factorBadCategory);
+
+        return factorCategoryList;
+    }
 }

@@ -3,6 +3,8 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
+import com.upc.gessi.qrapids.app.domain.models.QFCategory;
+import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +27,16 @@ public class QualityFactorsController {
 
     @Autowired
     private QMASimulation qmaSimulation;
+
+    @Autowired
+    private QFCategoryRepository factorCategoryRepository;
+
+    public List<QFCategory> getFactorCategories () {
+        List<QFCategory> factorCategoriesList = new ArrayList<>();
+        Iterable<QFCategory> factorCategoriesIterable = factorCategoryRepository.findAll();
+        factorCategoriesIterable.forEach(factorCategoriesList::add);
+        return factorCategoriesList;
+    }
 
     public DTOFactor getSingleFactorEvaluation(String factorId, String projectExternalId) throws IOException {
         return qmaQualityFactors.SingleCurrentEvaluation(factorId, projectExternalId);

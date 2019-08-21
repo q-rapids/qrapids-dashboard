@@ -2,6 +2,8 @@ package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.models.QFCategory;
+import com.upc.gessi.qrapids.app.dto.DTOCategoryThreshold;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
@@ -13,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +28,17 @@ public class FactorsService {
 
     @Autowired
     private MetricsController metricsController;
+
+    @GetMapping("/api/qualityFactors/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOCategoryThreshold> getFactorCategories () {
+        List<QFCategory> factorCategoryList = qualityFactorsController.getFactorCategories();
+        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+        for (QFCategory factorCategory : factorCategoryList) {
+            dtoCategoryList.add(new DTOCategoryThreshold(factorCategory.getId(), factorCategory.getName(), factorCategory.getColor(), factorCategory.getUpperThreshold()));
+        }
+        return dtoCategoryList;
+    }
 
     @GetMapping("/api/qualityFactors/metrics/current")
     @ResponseStatus(HttpStatus.OK)
