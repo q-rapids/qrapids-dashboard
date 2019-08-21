@@ -18,7 +18,6 @@ import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
-import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -109,71 +108,6 @@ public class UtilTest {
                 .standaloneSetup(utilController)
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
-    }
-
-    @Test
-    public void getMetricsCategories () throws Exception {
-        Long metricGoodCategoryId = 10L;
-        String metricGoodCategoryName = "Good";
-        String metricGoodCategoryColor = "#00ff00";
-        float metricGoodCategoryUpperThreshold = 1f;
-        MetricCategory metricGoodCategory = new MetricCategory(metricGoodCategoryName, metricGoodCategoryColor, metricGoodCategoryUpperThreshold);
-        metricGoodCategory.setId(metricGoodCategoryId);
-
-        Long metricNeutralCategoryId = 11L;
-        String metricNeutralCategoryName = "Neutral";
-        String metricNeutralCategoryColor = "#ff8000";
-        float metricNeutralCategoryUpperThreshold = 0.67f;
-        MetricCategory metricNeutralCategory = new MetricCategory(metricNeutralCategoryName, metricNeutralCategoryColor, metricNeutralCategoryUpperThreshold);
-        metricNeutralCategory.setId(metricNeutralCategoryId);
-
-        Long metricBadCategoryId = 12L;
-        String metricBadCategoryName = "Bad";
-        String metricBadCategoryColor = "#ff0000";
-        float metricBadCategoryUpperThreshold = 0.33f;
-        MetricCategory metricBadCategory = new MetricCategory(metricBadCategoryName, metricBadCategoryColor, metricBadCategoryUpperThreshold);
-        metricBadCategory.setId(metricBadCategoryId);
-
-        List<MetricCategory> metricCategoryList = new ArrayList<>();
-        metricCategoryList.add(metricGoodCategory);
-        metricCategoryList.add(metricNeutralCategory);
-        metricCategoryList.add(metricBadCategory);
-
-        when(metricRepository.findAll()).thenReturn(metricCategoryList);
-
-        // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/metrics/categories");
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id", is(metricGoodCategoryId.intValue())))
-                .andExpect(jsonPath("$[0].name", is(metricGoodCategoryName)))
-                .andExpect(jsonPath("$[0].color", is(metricGoodCategoryColor)))
-                .andExpect(jsonPath("$[0].upperThreshold", is(HelperFunctions.getFloatAsDouble(metricGoodCategoryUpperThreshold))))
-                .andExpect(jsonPath("$[1].id", is(metricNeutralCategoryId.intValue())))
-                .andExpect(jsonPath("$[1].name", is(metricNeutralCategoryName)))
-                .andExpect(jsonPath("$[1].color", is(metricNeutralCategoryColor)))
-                .andExpect(jsonPath("$[1].upperThreshold", is(HelperFunctions.getFloatAsDouble(metricNeutralCategoryUpperThreshold))))
-                .andExpect(jsonPath("$[2].id", is(metricBadCategoryId.intValue())))
-                .andExpect(jsonPath("$[2].name", is(metricBadCategoryName)))
-                .andExpect(jsonPath("$[2].color", is(metricBadCategoryColor)))
-                .andExpect(jsonPath("$[2].upperThreshold", is(HelperFunctions.getFloatAsDouble(metricBadCategoryUpperThreshold))))
-                .andDo(document("metrics/categories",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        responseFields(
-                                fieldWithPath("[].id")
-                                        .description("Category identifier"),
-                                fieldWithPath("[].name")
-                                        .description("Category name"),
-                                fieldWithPath("[].color")
-                                        .description("Category hexadecimal color"),
-                                fieldWithPath("[].upperThreshold")
-                                        .description("Category upper threshold")
-                        )
-                ));
     }
 
     @Test

@@ -391,4 +391,34 @@ public class DomainObjectsBuilder {
 
         return factorCategoriesList;
     }
+
+    public List<MetricCategory> buildMetricCategoryList () {
+        Long metricGoodCategoryId = 10L;
+        String metricGoodCategoryName = "Good";
+        String metricGoodCategoryColor = "#00ff00";
+        float metricGoodCategoryUpperThreshold = 1f;
+        MetricCategory metricGoodCategory = new MetricCategory(metricGoodCategoryName, metricGoodCategoryColor, metricGoodCategoryUpperThreshold);
+        metricGoodCategory.setId(metricGoodCategoryId);
+
+        Long metricNeutralCategoryId = 11L;
+        String metricNeutralCategoryName = "Neutral";
+        String metricNeutralCategoryColor = "#ff8000";
+        float metricNeutralCategoryUpperThreshold = 0.67f;
+        MetricCategory metricNeutralCategory = new MetricCategory(metricNeutralCategoryName, metricNeutralCategoryColor, metricNeutralCategoryUpperThreshold);
+        metricNeutralCategory.setId(metricNeutralCategoryId);
+
+        Long metricBadCategoryId = 12L;
+        String metricBadCategoryName = "Bad";
+        String metricBadCategoryColor = "#ff0000";
+        float metricBadCategoryUpperThreshold = 0.33f;
+        MetricCategory metricBadCategory = new MetricCategory(metricBadCategoryName, metricBadCategoryColor, metricBadCategoryUpperThreshold);
+        metricBadCategory.setId(metricBadCategoryId);
+
+        List<MetricCategory> metricCategoryList = new ArrayList<>();
+        metricCategoryList.add(metricGoodCategory);
+        metricCategoryList.add(metricNeutralCategory);
+        metricCategoryList.add(metricBadCategory);
+
+        return metricCategoryList;
+    }
 }

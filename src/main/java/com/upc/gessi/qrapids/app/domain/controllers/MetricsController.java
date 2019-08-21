@@ -2,6 +2,8 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
+import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
+import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricRepository;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,6 +22,16 @@ public class MetricsController {
 
     @Autowired
     private Forecast qmaForecast;
+
+    @Autowired
+    private MetricRepository metricRepository;
+
+    public List<MetricCategory> getMetricCategories () {
+        List<MetricCategory> metricCategoryList = new ArrayList<>();
+        Iterable<MetricCategory> metricCategoryIterable = metricRepository.findAll();
+        metricCategoryIterable.forEach(metricCategoryList::add);
+        return metricCategoryList;
+    }
 
     public List<DTOMetric> getAllMetricsCurrentEvaluation (String projectExternalId) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.CurrentEvaluation(null, projectExternalId);

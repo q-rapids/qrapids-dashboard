@@ -2,6 +2,8 @@ package com.upc.gessi.qrapids.app.domain.services;
 
 
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
+import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
+import com.upc.gessi.qrapids.app.dto.DTOCategoryThreshold;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -18,6 +21,17 @@ public class Metrics {
 
     @Autowired
     private MetricsController metricsController;
+
+    @GetMapping("/api/metrics/categories")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOCategoryThreshold> getMetricCategories () {
+        Iterable<MetricCategory> metricCategoryList = metricsController.getMetricCategories();
+        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
+        for (MetricCategory metricCategory : metricCategoryList) {
+            dtoCategoryList.add(new DTOCategoryThreshold(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold()));
+        }
+        return dtoCategoryList;
+    }
 
     @RequestMapping("/api/metrics/current")
     @ResponseStatus(HttpStatus.OK)

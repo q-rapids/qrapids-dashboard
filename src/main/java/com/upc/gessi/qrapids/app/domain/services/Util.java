@@ -108,17 +108,6 @@ public class Util {
     @Autowired
     private Backlog backlog;
 
-    @GetMapping("/api/metrics/categories")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOCategoryThreshold> getMetricCategories () {
-        Iterable<MetricCategory> metricCategoryList = metricRepository.findAll();
-        List<DTOCategoryThreshold> dtoCategoryList = new ArrayList<>();
-        for (MetricCategory metricCategory : metricCategoryList) {
-            dtoCategoryList.add(new DTOCategoryThreshold(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold()));
-        }
-        return dtoCategoryList;
-    }
-
     @PostMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public void newMetricsCategories (@RequestBody List<Map<String, String>> categories) {

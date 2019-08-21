@@ -2,6 +2,8 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
+import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
+import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricRepository;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
@@ -31,12 +33,31 @@ public class MetricsControllerTest {
     @Mock
     private Forecast qmaForecast;
 
+    @Mock
+    private MetricRepository metricRepository;
+
     @InjectMocks
     private MetricsController metricsController;
 
     @Before
     public void setUp () {
         domainObjectsBuilder = new DomainObjectsBuilder();
+    }
+
+    @Test
+    public void getMetricCategories() {
+        // Given
+        List<MetricCategory> metricCategoryList = domainObjectsBuilder.buildMetricCategoryList();
+        when(metricRepository.findAll()).thenReturn(metricCategoryList);
+
+        // When
+        List<MetricCategory> metricCategoryListFound = metricsController.getMetricCategories();
+
+        // Then
+        assertEquals(metricCategoryList.size(), metricCategoryListFound.size());
+        assertEquals(metricCategoryList.get(0), metricCategoryListFound.get(0));
+        assertEquals(metricCategoryList.get(1), metricCategoryListFound.get(1));
+        assertEquals(metricCategoryList.get(2), metricCategoryListFound.get(2));
     }
 
     @Test
