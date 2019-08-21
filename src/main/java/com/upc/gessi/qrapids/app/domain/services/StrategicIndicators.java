@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -241,5 +242,15 @@ public class StrategicIndicators {
             dtoCategoryList.add(new DTOCategory(siCategory.getId(), siCategory.getName(), siCategory.getColor()));
         }
         return dtoCategoryList;
+    }
+
+    @PostMapping("/api/strategicIndicators/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newSICategories (@RequestBody List<Map<String, String>> categories) {
+        try {
+            strategicIndicatorsController.newStrategicIndicatorCategories(categories);
+        } catch (CategoriesException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
+        }
     }
 }

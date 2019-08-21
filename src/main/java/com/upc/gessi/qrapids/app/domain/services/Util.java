@@ -108,17 +108,6 @@ public class Util {
     @Autowired
     private Backlog backlog;
 
-    @PostMapping("/api/strategicIndicators/categories")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void newSICategories (@RequestBody List<Map<String, String>> categories) {
-        if (categories.size() > 1) {
-            qmasi.deleteAllCategories();
-            qmasi.newCategories(categories);
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
-        }
-    }
-
     @GetMapping("/api/qualityFactors/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOCategoryThreshold> getFactorCategories () {

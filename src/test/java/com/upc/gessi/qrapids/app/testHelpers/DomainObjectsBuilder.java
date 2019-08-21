@@ -8,9 +8,7 @@ import qr.models.Form;
 import qr.models.QualityRequirementPattern;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class DomainObjectsBuilder {
 
@@ -302,5 +300,32 @@ public class DomainObjectsBuilder {
         siCategoryList.add(siBadCategory);
 
         return siCategoryList;
+    }
+
+    public List<Map<String, String>> buildRawSICategoryList () {
+        String strategicIndicatorGoodCategoryName = "Good";
+        String strategicIndicatorGoodCategoryColor = "#00ff00";
+        Map<String, String> strategicIndicatorGoodCategory = new HashMap<>();
+        strategicIndicatorGoodCategory.put("name", strategicIndicatorGoodCategoryName);
+        strategicIndicatorGoodCategory.put("color", strategicIndicatorGoodCategoryColor);
+
+        String strategicIndicatorNeutralCategoryName = "Neutral";
+        String strategicIndicatorNeutralCategoryColor = "#ff8000";
+        Map<String, String> strategicIndicatorNeutralCategory = new HashMap<>();
+        strategicIndicatorNeutralCategory.put("name", strategicIndicatorNeutralCategoryName);
+        strategicIndicatorNeutralCategory.put("color", strategicIndicatorNeutralCategoryColor);
+
+        String strategicIndicatorBadCategoryName = "Bad";
+        String strategicIndicatorBadCategoryColor = "#ff0000";
+        Map<String, String> strategicIndicatorBadCategory = new HashMap<>();
+        strategicIndicatorBadCategory.put("name", strategicIndicatorBadCategoryName);
+        strategicIndicatorBadCategory.put("color", strategicIndicatorBadCategoryColor);
+
+        List<Map<String, String>> strategicIndicatorCategoriesList = new ArrayList<>();
+        strategicIndicatorCategoriesList.add(strategicIndicatorGoodCategory);
+        strategicIndicatorCategoriesList.add(strategicIndicatorNeutralCategory);
+        strategicIndicatorCategoriesList.add(strategicIndicatorBadCategory);
+
+        return strategicIndicatorCategoriesList;
     }
 }

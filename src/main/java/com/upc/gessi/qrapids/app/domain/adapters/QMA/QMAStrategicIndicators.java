@@ -1,26 +1,23 @@
 package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 
-import DTOs.StrategicIndicatorEvaluationDTO;
 import DTOs.EstimationEvaluationDTO;
-import DTOs.QuadrupletDTO;
 import DTOs.EvaluationDTO;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.upc.gessi.qrapids.app.domain.models.Feedback;
-import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
-import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import DTOs.QuadrupletDTO;
+import DTOs.StrategicIndicatorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.domain.services.Util;
-import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.domain.models.Feedback;
+import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.domain.models.SICategory;
-
-import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.services.Util;
+import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
+import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import evaluation.StrategicIndicator;
-import org.springframework.data.util.Pair;
 import org.elasticsearch.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -28,7 +25,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class QMAStrategicIndicators {
@@ -79,21 +75,6 @@ public class QMAStrategicIndicators {
         result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
 
         return result;
-    }
-
-    public void newCategories(List<Map<String, String>> categories) {
-        if (SICatRep.count() == 0) {
-            for (Map<String, String> c : categories) {
-                SICategory sic = new SICategory();
-                sic.setName(c.get("name"));
-                sic.setColor(c.get("color"));
-                SICatRep.save(sic);
-            }
-        }
-    }
-
-    public void deleteAllCategories(){
-        SICatRep.deleteAll();
     }
 
     public boolean isCategoriesEmpty() {

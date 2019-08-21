@@ -17,6 +17,7 @@ import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -116,6 +118,39 @@ public class StrategicIndicatorsControllerTest {
         assertEquals(siCategoryList.get(0), siCategoryListFound.get(0));
         assertEquals(siCategoryList.get(1), siCategoryListFound.get(1));
         assertEquals(siCategoryList.get(2), siCategoryListFound.get(2));
+    }
+
+    @Test
+    public void newStrategicIndicatorCategories() throws CategoriesException {
+        // Given
+        List<Map<String, String>> categories = domainObjectsBuilder.buildRawSICategoryList();
+
+        // When
+        strategicIndicatorsController.newStrategicIndicatorCategories(categories);
+
+        // Then
+        verify(siCategoryRepository, times(1)).deleteAll();
+
+        ArgumentCaptor<SICategory> siCategoryArgumentCaptor = ArgumentCaptor.forClass(SICategory.class);
+        verify(siCategoryRepository, times(3)).save(siCategoryArgumentCaptor.capture());
+        List<SICategory> siCategoryListSaved = siCategoryArgumentCaptor.getAllValues();
+        assertEquals(categories.get(0).get("name"), siCategoryListSaved.get(0).getName());
+        assertEquals(categories.get(0).get("color"), siCategoryListSaved.get(0).getColor());
+        assertEquals(categories.get(1).get("name"), siCategoryListSaved.get(1).getName());
+        assertEquals(categories.get(1).get("color"), siCategoryListSaved.get(1).getColor());
+        assertEquals(categories.get(2).get("name"), siCategoryListSaved.get(2).getName());
+        assertEquals(categories.get(2).get("color"), siCategoryListSaved.get(2).getColor());
+    }
+
+    @Test(expected = CategoriesException.class)
+    public void newStrategicIndicatorCategoriesNotEnough() throws CategoriesException {
+        // Given
+        List<Map<String, String>> categories = domainObjectsBuilder.buildRawSICategoryList();
+        categories.remove(2);
+        categories.remove(1);
+
+        // Throw
+        strategicIndicatorsController.newStrategicIndicatorCategories(categories);
     }
 
     @Test

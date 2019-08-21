@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class StrategicIndicatorsController {
@@ -56,6 +57,20 @@ public class StrategicIndicatorsController {
         Iterable<SICategory> strategicIndicatorCategoriesIterable = strategicIndicatorCategoryRepository.findAll();
         strategicIndicatorCategoriesIterable.forEach(strategicIndicatorCategoriesList::add);
         return strategicIndicatorCategoriesList;
+    }
+
+    public void newStrategicIndicatorCategories (List<Map<String, String>> categories) throws CategoriesException {
+        if (categories.size() > 1) {
+            strategicIndicatorCategoryRepository.deleteAll();
+            for (Map<String, String> c : categories) {
+                SICategory sic = new SICategory();
+                sic.setName(c.get("name"));
+                sic.setColor(c.get("color"));
+                strategicIndicatorCategoryRepository.save(sic);
+            }
+        } else {
+            throw new CategoriesException();
+        }
     }
 
     public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsCurrentEvaluation (String projectExternalId) throws IOException, CategoriesException, ElasticsearchStatusException {
