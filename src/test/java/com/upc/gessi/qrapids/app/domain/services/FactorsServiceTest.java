@@ -3,12 +3,14 @@ package com.upc.gessi.qrapids.app.domain.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.junit.Before;
@@ -113,6 +115,61 @@ public class FactorsServiceTest {
         // Verify mock interactions
         verify(qualityFactorsDomainController, times(1)).getFactorCategories();
         verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void newFactorsCategories () throws Exception {
+        // Given
+        List<Map<String, String>> factorCategoriesList = domainObjectsBuilder.buildRawFactorCategoryList();
+
+        // Perform request
+        Gson gson = new Gson();
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/qualityFactors/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(factorCategoriesList));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated())
+                .andDo(document("qf/categories-new",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("[].name")
+                                        .description("Quality factors category name"),
+                                fieldWithPath("[].color")
+                                        .description("Quality factors category color"),
+                                fieldWithPath("[].upperThreshold")
+                                        .description("Quality factors category upper threshold"))
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).newFactorCategories(factorCategoriesList);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void newFactorsCategoriesNotEnough () throws Exception {
+        // Given
+        List<Map<String, String>> factorCategoriesList = domainObjectsBuilder.buildRawSICategoryList();
+        factorCategoriesList.remove(2);
+        factorCategoriesList.remove(1);
+        doThrow(new CategoriesException()).when(qualityFactorsDomainController).newFactorCategories(factorCategoriesList);
+
+        //Perform request
+        Gson gson = new Gson();
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/qualityFactors/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(factorCategoriesList));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason("Not enough categories"))
+                .andDo(document("qf/categories-new-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test

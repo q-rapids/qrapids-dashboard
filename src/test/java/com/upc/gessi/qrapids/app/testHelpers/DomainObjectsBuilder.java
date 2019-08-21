@@ -358,4 +358,37 @@ public class DomainObjectsBuilder {
 
         return factorCategoryList;
     }
+
+    public List<Map<String,String>> buildRawFactorCategoryList () {
+        String factorGoodCategoryName = "Good";
+        String factorGoodCategoryColor = "#00ff00";
+        float factorGoodCategoryUpperThreshold = 1.0f;
+        Map<String, String> factorGoodCategory = new HashMap<>();
+        factorGoodCategory.put("name", factorGoodCategoryName);
+        factorGoodCategory.put("color", factorGoodCategoryColor);
+        factorGoodCategory.put("upperThreshold", Float.toString(factorGoodCategoryUpperThreshold));
+
+        String factorNeutralCategoryName = "Neutral";
+        String factorNeutralCategoryColor = "#ff8000";
+        float factorNeutralCategoryUpperThreshold = 0.67f;
+        Map<String, String> factorNeutralCategory = new HashMap<>();
+        factorNeutralCategory.put("name", factorNeutralCategoryName);
+        factorNeutralCategory.put("color", factorNeutralCategoryColor);
+        factorNeutralCategory.put("upperThreshold", Float.toString(factorNeutralCategoryUpperThreshold));
+
+        String factorBadCategoryName = "Bad";
+        String factorBadCategoryColor = "#ff0000";
+        float factorBadCategoryUpperThreshold = 0.33f;
+        Map<String, String> factorBadCategory = new HashMap<>();
+        factorBadCategory.put("name", factorBadCategoryName);
+        factorBadCategory.put("color", factorBadCategoryColor);
+        factorBadCategory.put("upperThreshold", Float.toString(factorBadCategoryUpperThreshold));
+
+        List<Map<String, String>> factorCategoriesList = new ArrayList<>();
+        factorCategoriesList.add(factorGoodCategory);
+        factorCategoriesList.add(factorNeutralCategory);
+        factorCategoriesList.add(factorBadCategory);
+
+        return factorCategoriesList;
+    }
 }

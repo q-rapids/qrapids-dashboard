@@ -3,13 +3,10 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.EvaluationDTO;
 import DTOs.FactorEvaluationDTO;
 import DTOs.FactorMetricEvaluationDTO;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
+import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
-import com.upc.gessi.qrapids.app.domain.models.QFCategory;
-import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import evaluation.Factor;
 import evaluation.StrategicIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +17,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class QMAQualityFactors {
@@ -63,23 +59,6 @@ public class QMAQualityFactors {
         qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(evals);
 
         return qf;
-    }
-
-    public void newCategories(List<Map<String, String>> categories) {
-        if (QFCatRep.count() == 0) {
-            for (Map<String, String> c : categories) {
-                QFCategory sic = new QFCategory();
-                sic.setName(c.get("name"));
-                sic.setColor(c.get("color"));
-                Float upperThreshold = Float.valueOf(c.get("upperThreshold"));
-                sic.setUpperThreshold(upperThreshold/100f);
-                QFCatRep.save(sic);
-            }
-        }
-    }
-
-    public void deleteAllCategories(){
-        QFCatRep.deleteAll();
     }
 
     public boolean isCategoriesEmpty() {

@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,22 @@ public class QualityFactorsController {
         Iterable<QFCategory> factorCategoriesIterable = factorCategoryRepository.findAll();
         factorCategoriesIterable.forEach(factorCategoriesList::add);
         return factorCategoriesList;
+    }
+
+    public void newFactorCategories(List<Map<String, String>> categories) throws CategoriesException {
+        if (categories.size() > 1) {
+            factorCategoryRepository.deleteAll();
+            for (Map<String, String> c : categories) {
+                QFCategory sic = new QFCategory();
+                sic.setName(c.get("name"));
+                sic.setColor(c.get("color"));
+                Float upperThreshold = Float.valueOf(c.get("upperThreshold"));
+                sic.setUpperThreshold(upperThreshold / 100f);
+                factorCategoryRepository.save(sic);
+            }
+        } else {
+            throw new CategoriesException();
+        }
     }
 
     public DTOFactor getSingleFactorEvaluation(String factorId, String projectExternalId) throws IOException {
@@ -69,5 +86,4 @@ public class QualityFactorsController {
     public List<DTOFactor> simulate (Map<String, Float> metricsValue, String projectExternalId, LocalDate date) throws IOException {
         return qmaSimulation.simulateQualityFactors(metricsValue, projectExternalId, date);
     }
-
 }

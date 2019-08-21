@@ -7,10 +7,12 @@ import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QualityFactorsControllerTest {
@@ -48,6 +50,58 @@ public class QualityFactorsControllerTest {
     @Before
     public void setUp() {
         domainObjectsBuilder = new DomainObjectsBuilder();
+    }
+
+    @Test
+    public void getFactorCategories() {
+        // Given
+        List<QFCategory> factorCategoryList = domainObjectsBuilder.buildFactorCategoryList();
+        when(factorCategoryRepository.findAll()).thenReturn(factorCategoryList);
+
+        // When
+        List<QFCategory> factorCategoryListFound = qualityFactorsController.getFactorCategories();
+
+        // Then
+        assertEquals(factorCategoryList.size(), factorCategoryListFound.size());
+        assertEquals(factorCategoryList.get(0), factorCategoryListFound.get(0));
+        assertEquals(factorCategoryList.get(1), factorCategoryListFound.get(1));
+        assertEquals(factorCategoryList.get(2), factorCategoryListFound.get(2));
+    }
+
+    @Test
+    public void newFactorCategories() throws CategoriesException {
+        // Given
+        List<Map<String, String>> categories = domainObjectsBuilder.buildRawFactorCategoryList();
+
+        // When
+        qualityFactorsController.newFactorCategories(categories);
+
+        // Then
+        verify(factorCategoryRepository, times(1)).deleteAll();
+
+        ArgumentCaptor<QFCategory> factorCategoryArgumentCaptor = ArgumentCaptor.forClass(QFCategory.class);
+        verify(factorCategoryRepository, times(3)).save(factorCategoryArgumentCaptor.capture());
+        List<QFCategory> factorCategoryListSaved = factorCategoryArgumentCaptor.getAllValues();
+        assertEquals(categories.get(0).get("name"), factorCategoryListSaved.get(0).getName());
+        assertEquals(categories.get(0).get("color"), factorCategoryListSaved.get(0).getColor());
+        assertEquals(Float.parseFloat(categories.get(0).get("upperThreshold")) / 100f, factorCategoryListSaved.get(0).getUpperThreshold(), 0f);
+        assertEquals(categories.get(1).get("name"), factorCategoryListSaved.get(1).getName());
+        assertEquals(categories.get(1).get("color"), factorCategoryListSaved.get(1).getColor());
+        assertEquals(Float.parseFloat(categories.get(1).get("upperThreshold")) / 100f, factorCategoryListSaved.get(1).getUpperThreshold(), 0f);
+        assertEquals(categories.get(2).get("name"), factorCategoryListSaved.get(2).getName());
+        assertEquals(categories.get(2).get("color"), factorCategoryListSaved.get(2).getColor());
+        assertEquals(Float.parseFloat(categories.get(2).get("upperThreshold")) / 100f, factorCategoryListSaved.get(2).getUpperThreshold(), 0f);
+    }
+
+    @Test(expected = CategoriesException.class)
+    public void newFactorCategoriesNotEnough() throws CategoriesException {
+        // Given
+        List<Map<String, String>> categories = domainObjectsBuilder.buildRawSICategoryList();
+        categories.remove(2);
+        categories.remove(1);
+
+        // Throw
+        qualityFactorsController.newFactorCategories(categories);
     }
 
     @Test
@@ -207,21 +261,5 @@ public class QualityFactorsControllerTest {
         // Then
         assertEquals(dtoFactorList.size(), factorsSimulationList.size());
         assertEquals(dtoFactor, factorsSimulationList.get(0));
-    }
-
-    @Test
-    public void getFactorCategories() {
-        // Given
-        List<QFCategory> factorCategoryList = domainObjectsBuilder.buildFactorCategoryList();
-        when(factorCategoryRepository.findAll()).thenReturn(factorCategoryList);
-
-        // When
-        List<QFCategory> factorCategoryListFound = qualityFactorsController.getFactorCategories();
-
-        // Then
-        assertEquals(factorCategoryList.size(), factorCategoryListFound.size());
-        assertEquals(factorCategoryList.get(0), factorCategoryListFound.get(0));
-        assertEquals(factorCategoryList.get(1), factorCategoryListFound.get(1));
-        assertEquals(factorCategoryList.get(2), factorCategoryListFound.get(2));
     }
 }

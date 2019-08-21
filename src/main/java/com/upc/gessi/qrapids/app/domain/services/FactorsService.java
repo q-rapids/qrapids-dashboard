@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.dto.DTOCategoryThreshold;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,16 @@ public class FactorsService {
             dtoCategoryList.add(new DTOCategoryThreshold(factorCategory.getId(), factorCategory.getName(), factorCategory.getColor(), factorCategory.getUpperThreshold()));
         }
         return dtoCategoryList;
+    }
+
+    @PostMapping("/api/qualityFactors/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newFactorCategories (@RequestBody List<Map<String, String>> categories) {
+        try {
+            qualityFactorsController.newFactorCategories(categories);
+        } catch (CategoriesException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
+        }
     }
 
     @GetMapping("/api/qualityFactors/metrics/current")

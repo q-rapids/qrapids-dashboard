@@ -108,17 +108,6 @@ public class Util {
     @Autowired
     private Backlog backlog;
 
-    @PostMapping("/api/qualityFactors/categories")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void newFactorCategories (@RequestBody List<Map<String, String>> categories) {
-        if (categories.size() > 1) {
-            qmaqf.deleteAllCategories();
-            qmaqf.newCategories(categories);
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
-        }
-    }
-
     @GetMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOCategoryThreshold> getMetricCategories () {
