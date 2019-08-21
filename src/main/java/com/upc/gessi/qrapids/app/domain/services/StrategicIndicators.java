@@ -223,6 +223,22 @@ public class StrategicIndicators {
         }
     }
 
+    @GetMapping("/api/strategicIndicators/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public DTOSI getSI(@PathVariable Long id) {
+        try {
+            Strategic_Indicator strategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
+            return new DTOSI(strategicIndicator.getId(),
+                    strategicIndicator.getExternalId(),
+                    strategicIndicator.getName(),
+                    strategicIndicator.getDescription(),
+                    strategicIndicator.getNetwork(),
+                    strategicIndicator.getQuality_factors());
+        } catch (StrategicIndicatorNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Strategic indicator not found");
+        }
+    }
+
     @DeleteMapping("/api/strategicIndicators/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteSI (@PathVariable Long id) {

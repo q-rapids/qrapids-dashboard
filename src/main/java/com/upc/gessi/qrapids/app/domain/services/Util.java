@@ -123,24 +123,6 @@ public class Util {
         }
     }
 
-    @GetMapping("/api/strategicIndicators/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public DTOSI getSI(@PathVariable Long id) {
-        Optional<Strategic_Indicator> strategicIndicatorOptional = siRep.findById(id);
-        if (strategicIndicatorOptional.isPresent()) {
-            Strategic_Indicator strategicIndicator = strategicIndicatorOptional.get();
-            DTOSI dtosi = new DTOSI(strategicIndicator.getId(),
-                    strategicIndicator.getExternalId(),
-                    strategicIndicator.getName(),
-                    strategicIndicator.getDescription(),
-                    strategicIndicator.getNetwork(),
-                    strategicIndicator.getQuality_factors());
-            return dtosi;
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Strategic indicator not found");
-        }
-    }
-
     @PutMapping("/api/strategicIndicators/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void editSI(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "network", required = false) MultipartFile network) {

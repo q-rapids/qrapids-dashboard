@@ -20,6 +20,7 @@ import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,6 +37,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -1702,6 +1704,72 @@ public class StrategicIndicatorsTest {
 
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorsByProject(project);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
+    @Test
+    public void getStrategicIndicator() throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
+        File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
+        strategicIndicator.setNetwork(IOUtils.toByteArray(networkFile.toURI()));
+        when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicator.getId())).thenReturn(strategicIndicator);
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/strategicIndicators/{id}", strategicIndicator.getId());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(strategicIndicator.getId().intValue())))
+                .andExpect(jsonPath("$.externalId", is(strategicIndicator.getExternalId())))
+                .andExpect(jsonPath("$.name", is(strategicIndicator.getName())))
+                .andExpect(jsonPath("$.description", is(strategicIndicator.getDescription())))
+                .andExpect(jsonPath("$.network", is(notNullValue())))
+                .andExpect(jsonPath("$.qualityFactors", hasSize(3)))
+                .andExpect(jsonPath("$.qualityFactors[0]", is(strategicIndicator.getQuality_factors().get(0))))
+                .andExpect(jsonPath("$.qualityFactors[1]", is(strategicIndicator.getQuality_factors().get(1))))
+                .andExpect(jsonPath("$.qualityFactors[2]", is(strategicIndicator.getQuality_factors().get(2))))
+                .andDo(document("si/get-one",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Strategic indicator identifier")),
+                        responseFields(
+                                fieldWithPath("id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("externalId")
+                                        .description("Strategic indicator external identifier"),
+                                fieldWithPath("name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("network")
+                                        .description("Strategic indicator bayesian network"),
+                                fieldWithPath("qualityFactors")
+                                        .description("Strategic indicator quality factors identifiers list"))
+                ));
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
+    @Test
+    public void getMissingStrategicIndicator() throws Exception {
+        Long strategicIndicatorId = 2L;
+        when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicatorId)).thenThrow(new StrategicIndicatorNotFoundException());
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators/{id}", strategicIndicatorId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isNotFound())
+                .andDo(document("si/get-one-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test

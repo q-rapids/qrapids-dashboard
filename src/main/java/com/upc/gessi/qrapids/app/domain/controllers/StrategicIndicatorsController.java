@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class StrategicIndicatorsController {
@@ -42,6 +43,15 @@ public class StrategicIndicatorsController {
 
     public List<Strategic_Indicator> getStrategicIndicatorsByProject (Project project) {
         return strategicIndicatorRepository.findByProject_Id(project.getId());
+    }
+
+    public Strategic_Indicator getStrategicIndicatorById (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {
+        Optional<Strategic_Indicator> strategicIndicatorOptional = strategicIndicatorRepository.findById(strategicIndicatorId);
+        if (strategicIndicatorOptional.isPresent()) {
+            return strategicIndicatorOptional.get();
+        } else {
+            throw new StrategicIndicatorNotFoundException();
+        }
     }
 
     public void deleteStrategicIndicator (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {

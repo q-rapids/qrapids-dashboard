@@ -29,7 +29,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.JUnitRestDocumentation;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -525,92 +524,6 @@ public class UtilTest {
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
         verifyNoMoreInteractions(qmaRelations);
-    }
-
-    @Test
-    public void getStrategicIndicator() throws Exception {
-        Long projectId = 1L;
-        String projectExternalId = "test";
-        String projectName = "Test";
-        String projectDescription = "Test project";
-        String projectBacklogId = "prj-1";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
-        project.setId(projectId);
-        project.setBacklogId(projectBacklogId);
-
-        Long strategicIndicatorId = 1L;
-        String strategicIndicatorExternalId = "productquality";
-        String strategicIndicatorName = "Product Quality";
-        String strategicIndicatorDescription = "Quality of the product built";
-        File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "codequality";
-        qualityFactors.add(factor1);
-        String factor2 = "softwarestability";
-        qualityFactors.add(factor2);
-        String factor3 = "testingstatus";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, IOUtils.toByteArray(networkFile.toURI()), qualityFactors, project);
-        strategicIndicator.setId(strategicIndicatorId);
-
-        when(strategicIndicatorRepository.existsById(strategicIndicatorId)).thenReturn(true);
-        when(strategicIndicatorRepository.findById(strategicIndicatorId)).thenReturn(Optional.of(strategicIndicator));
-
-        // Perform request
-        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/strategicIndicators/{id}", strategicIndicatorId);
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(strategicIndicatorId.intValue())))
-                .andExpect(jsonPath("$.externalId", is(strategicIndicatorExternalId)))
-                .andExpect(jsonPath("$.name", is(strategicIndicatorName)))
-                .andExpect(jsonPath("$.description", is(strategicIndicatorDescription)))
-                .andExpect(jsonPath("$.network", is(notNullValue())))
-                .andExpect(jsonPath("$.qualityFactors", hasSize(3)))
-                .andExpect(jsonPath("$.qualityFactors[0]", is(factor1)))
-                .andExpect(jsonPath("$.qualityFactors[1]", is(factor2)))
-                .andExpect(jsonPath("$.qualityFactors[2]", is(factor3)))
-                .andDo(document("si/get-one",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        pathParameters(
-                                parameterWithName("id")
-                                        .description("Strategic indicator identifier")),
-                        responseFields(
-                                fieldWithPath("id")
-                                        .description("Strategic indicator identifier"),
-                                fieldWithPath("externalId")
-                                        .description("Strategic indicator external identifier"),
-                                fieldWithPath("name")
-                                        .description("Strategic indicator name"),
-                                fieldWithPath("description")
-                                        .description("Strategic indicator description"),
-                                fieldWithPath("network")
-                                        .description("Strategic indicator bayesian network"),
-                                fieldWithPath("qualityFactors")
-                                        .description("Strategic indicator quality factors identifiers list"))
-                ));
-
-        // Verify mock interactions
-        verify(strategicIndicatorRepository, times(1)).findById(strategicIndicatorId);
-        verifyNoMoreInteractions(strategicIndicatorRepository);
-    }
-
-    @Test
-    public void getMissingStrategicIndicator() throws Exception {
-        Long strategicIndicatorId = 2L;
-        when(strategicIndicatorRepository.existsById(strategicIndicatorId)).thenReturn(false);
-
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/strategicIndicators/{id}", strategicIndicatorId);
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isNotFound())
-                .andDo(document("si/get-one-not-found",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
     }
 
     @Test

@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -77,6 +78,30 @@ public class StrategicIndicatorsControllerTest {
         // Then
         assertEquals(strategicIndicatorList.size(), strategicIndicatorListFound.size());
         assertEquals(strategicIndicator, strategicIndicatorListFound.get(0));
+    }
+
+    @Test
+    public void getStrategicIndicatorById() throws StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
+        when(strategicIndicatorRepository.findById(strategicIndicator.getId())).thenReturn(Optional.of(strategicIndicator));
+
+        // When
+        Strategic_Indicator strategicIndicatorFound = strategicIndicatorsController.getStrategicIndicatorById(strategicIndicator.getId());
+
+        // Then
+        assertEquals(strategicIndicator, strategicIndicatorFound);
+    }
+
+    @Test(expected = StrategicIndicatorNotFoundException.class)
+    public void getStrategicIndicatorByIdNotFound() throws StrategicIndicatorNotFoundException {
+        // Given
+        Long strategicIndicatorId = 2L;
+        when(strategicIndicatorRepository.findById(strategicIndicatorId)).thenReturn(Optional.empty());
+
+        // Throw
+        strategicIndicatorsController.getStrategicIndicatorById(strategicIndicatorId);
     }
 
     @Test
