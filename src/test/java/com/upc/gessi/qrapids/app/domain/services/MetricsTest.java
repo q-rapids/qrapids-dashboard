@@ -1,8 +1,10 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
+import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
 import org.junit.After;
@@ -13,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.util.Pair;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,14 +26,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,6 +55,7 @@ public class MetricsTest {
     private DTOMetric dtoMetric;
     private List<DTOMetric> dtoMetricList = new ArrayList<>();
     private List<MetricCategory> metricCategoryList = new ArrayList<>();
+    private List<Map<String, String>> metricRawCategoriesList = new ArrayList<>();
 
     @Before
     public void setUp() {
@@ -67,6 +71,7 @@ public class MetricsTest {
         dtoMetric = domainObjectsBuilder.buildDTOMetric();
         dtoMetricList.add(dtoMetric);
         metricCategoryList = domainObjectsBuilder.buildMetricCategoryList();
+        metricRawCategoriesList = domainObjectsBuilder.buildRawMetricCategoryList();
     }
 
     @After
@@ -115,6 +120,61 @@ public class MetricsTest {
 
         // Verify mock interactions
         verify(metricsDomainController, times(1)).getMetricCategories();
+    }
+
+    @Test
+    public void newMetricsCategories () throws Exception {
+        // Perform request
+        Gson gson = new Gson();
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/metrics/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(metricRawCategoriesList));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated())
+                .andDo(document("metrics/categories-new",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("[].name")
+                                        .description("Metrics category name"),
+                                fieldWithPath("[].color")
+                                        .description("Metrics category color"),
+                                fieldWithPath("[].upperThreshold")
+                                        .description("Metrics category upper threshold"))
+                ));
+
+        // Verify mock interactions
+        verify(metricsDomainController, times(1)).newMetricCategories(metricRawCategoriesList);
+        verifyNoMoreInteractions(metricsDomainController);
+    }
+
+    @Test
+    public void newMetricsCategoriesNotEnough () throws Exception {
+        // Give
+        metricRawCategoriesList.remove(2);
+        metricRawCategoriesList.remove(1);
+        doThrow(new CategoriesException()).when(metricsDomainController).newMetricCategories(metricRawCategoriesList);
+
+        // Perform request
+        Gson gson = new Gson();
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/metrics/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gson.toJson(metricRawCategoriesList));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(is("Not enough categories")))
+                .andDo(document("metrics/categories-new-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(metricsDomainController, times(1)).newMetricCategories(metricRawCategoriesList);
+        verifyNoMoreInteractions(metricsDomainController);
     }
 
     @Test

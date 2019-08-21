@@ -421,4 +421,37 @@ public class DomainObjectsBuilder {
 
         return metricCategoryList;
     }
+
+    public List<Map<String, String>> buildRawMetricCategoryList () {
+        String metricGoodCategoryName = "Good";
+        String metricGoodCategoryColor = "#00ff00";
+        float metricGoodCategoryUpperThreshold = 1.0f;
+        Map<String, String> metricGoodCategory = new HashMap<>();
+        metricGoodCategory.put("name", metricGoodCategoryName);
+        metricGoodCategory.put("color", metricGoodCategoryColor);
+        metricGoodCategory.put("upperThreshold", Float.toString(metricGoodCategoryUpperThreshold));
+
+        String metricNeutralCategoryName = "Neutral";
+        String metricNeutralCategoryColor = "#ff8000";
+        float metricNeutralCategoryUpperThreshold = 0.67f;
+        Map<String, String> metricNeutralCategory = new HashMap<>();
+        metricNeutralCategory.put("name", metricNeutralCategoryName);
+        metricNeutralCategory.put("color", metricNeutralCategoryColor);
+        metricNeutralCategory.put("upperThreshold", Float.toString(metricNeutralCategoryUpperThreshold));
+
+        String metricBadCategoryName = "Bad";
+        String metricBadCategoryColor = "#ff0000";
+        float metricBadCategoryUpperThreshold = 0.33f;
+        Map<String, String> metricBadCategory = new HashMap<>();
+        metricBadCategory.put("name", metricBadCategoryName);
+        metricBadCategory.put("color", metricBadCategoryColor);
+        metricBadCategory.put("upperThreshold", Float.toString(metricBadCategoryUpperThreshold));
+
+        List<Map<String, String>> metricCategoriesList = new ArrayList<>();
+        metricCategoriesList.add(metricGoodCategory);
+        metricCategoriesList.add(metricNeutralCategory);
+        metricCategoriesList.add(metricBadCategory);
+
+        return metricCategoriesList;
+    }
 }

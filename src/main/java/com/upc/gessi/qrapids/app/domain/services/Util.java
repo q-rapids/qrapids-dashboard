@@ -8,9 +8,6 @@ import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
-import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
@@ -91,40 +88,13 @@ public class Util {
     private String forecastTechnique;
 
     @Autowired
-    private AlertRepository ari;
-
-    @Autowired
-    private DecisionRepository decisionRepository;
-
-    @Autowired
     private Forecast forecast;
 
     @Autowired
     private ProjectRepository projectRepository;
 
     @Autowired
-    private MetricRepository metricRepository;
-
-    @Autowired
     private Backlog backlog;
-
-    @PostMapping("/api/metrics/categories")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void newMetricsCategories (@RequestBody List<Map<String, String>> categories) {
-        if (categories.size() > 1) {
-            metricRepository.deleteAll();
-            for (Map<String, String> c : categories) {
-                MetricCategory metricCategory = new MetricCategory();
-                metricCategory.setName(c.get("name"));
-                metricCategory.setColor(c.get("color"));
-                float upperThreshold = Float.parseFloat(c.get("upperThreshold"));
-                metricCategory.setUpperThreshold(upperThreshold/100f);
-                metricRepository.save(metricCategory);
-            }
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
-        }
-    }
 
     @PostMapping("/api/strategicIndicators")
     @ResponseStatus(HttpStatus.CREATED)

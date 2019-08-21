@@ -5,8 +5,10 @@ import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
-import com.upc.gessi.qrapids.app.domain.models.*;
-import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricRepository;
+import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.QFCategory;
+import com.upc.gessi.qrapids.app.domain.models.SICategory;
+import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
@@ -24,7 +26,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.*;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.JUnitRestDocumentation;
@@ -47,7 +48,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -93,9 +95,6 @@ public class UtilTest {
     private ProjectRepository projectRepository;
 
     @Mock
-    private MetricRepository metricRepository;
-
-    @Mock
     private Backlog backlog;
 
     @InjectMocks
@@ -108,96 +107,6 @@ public class UtilTest {
                 .standaloneSetup(utilController)
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
-    }
-
-    @Test
-    public void newMetricsCategories () throws Exception {
-        String metricGoodCategoryName = "Good";
-        String metricGoodCategoryColor = "#00ff00";
-        Float metricGoodCategoryUpperThreshold = 1.0f;
-        Map<String, String> metricGoodCategory = new HashMap<>();
-        metricGoodCategory.put("name", metricGoodCategoryName);
-        metricGoodCategory.put("color", metricGoodCategoryColor);
-        metricGoodCategory.put("upperThreshold", metricGoodCategoryUpperThreshold.toString());
-
-        String metricNeutralCategoryName = "Neutral";
-        String metricNeutralCategoryColor = "#ff8000";
-        Float metricNeutralCategoryUpperThreshold = 0.67f;
-        Map<String, String> metricNeutralCategory = new HashMap<>();
-        metricNeutralCategory.put("name", metricNeutralCategoryName);
-        metricNeutralCategory.put("color", metricNeutralCategoryColor);
-        metricNeutralCategory.put("upperThreshold", metricNeutralCategoryUpperThreshold.toString());
-
-        String metricBadCategoryName = "Bad";
-        String metricBadCategoryColor = "#ff0000";
-        Float metricBadCategoryUpperThreshold = 0.33f;
-        Map<String, String> metricBadCategory = new HashMap<>();
-        metricBadCategory.put("name", metricBadCategoryName);
-        metricBadCategory.put("color", metricBadCategoryColor);
-        metricBadCategory.put("upperThreshold", metricBadCategoryUpperThreshold.toString());
-
-        List<Map<String, String>> metricCategoriesList = new ArrayList<>();
-        metricCategoriesList.add(metricGoodCategory);
-        metricCategoriesList.add(metricNeutralCategory);
-        metricCategoriesList.add(metricBadCategory);
-
-        // Perform request
-        Gson gson = new Gson();
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/metrics/categories")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(metricCategoriesList));
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isCreated())
-                .andDo(document("metrics/categories-new",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("[].name")
-                                        .description("Metrics category name"),
-                                fieldWithPath("[].color")
-                                        .description("Metrics category color"),
-                                fieldWithPath("[].upperThreshold")
-                                        .description("Metrics category upper threshold"))
-                ));
-
-        // Verify mock interactions
-        verify(metricRepository, times(1)).deleteAll();
-        verify(metricRepository, times(3)).save(ArgumentMatchers.any(MetricCategory.class));
-        verifyNoMoreInteractions(metricRepository);
-    }
-
-    @Test
-    public void newMetricsCategoriesNotEnough () throws Exception {
-        String metricGoodCategoryName = "Good";
-        String metricGoodCategoryColor = "#00ff00";
-        Float metricGoodCategoryUpperThreshold = 1.0f;
-        Map<String, String> metricGoodCategory = new HashMap<>();
-        metricGoodCategory.put("name", metricGoodCategoryName);
-        metricGoodCategory.put("color", metricGoodCategoryColor);
-        metricGoodCategory.put("upperThreshold", metricGoodCategoryUpperThreshold.toString());
-
-        List<Map<String, String>> metricCategoriesList = new ArrayList<>();
-        metricCategoriesList.add(metricGoodCategory);
-
-        // Perform request
-        Gson gson = new Gson();
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/api/metrics/categories")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(metricCategoriesList));
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(status().reason(is("Not enough categories")))
-                .andDo(document("metrics/categories-new-error",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
-
-        // Verify mock interactions
-        verifyNoMoreInteractions(metricRepository);
     }
 
     @Test

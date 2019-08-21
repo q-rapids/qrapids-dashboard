@@ -5,6 +5,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.dto.DTOCategoryThreshold;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class Metrics {
@@ -31,6 +33,16 @@ public class Metrics {
             dtoCategoryList.add(new DTOCategoryThreshold(metricCategory.getId(), metricCategory.getName(), metricCategory.getColor(), metricCategory.getUpperThreshold()));
         }
         return dtoCategoryList;
+    }
+
+    @PostMapping("/api/metrics/categories")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newMetricsCategories (@RequestBody List<Map<String, String>> categories) {
+        try {
+            metricsController.newMetricCategories(categories);
+        } catch (CategoriesException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
+        }
     }
 
     @RequestMapping("/api/metrics/current")

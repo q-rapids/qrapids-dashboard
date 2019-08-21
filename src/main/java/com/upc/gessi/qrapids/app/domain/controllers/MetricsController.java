@@ -3,8 +3,9 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
-import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
 import com.upc.gessi.qrapids.app.dto.DTOMetric;
+import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MetricsController {
@@ -24,13 +26,29 @@ public class MetricsController {
     private Forecast qmaForecast;
 
     @Autowired
-    private MetricRepository metricRepository;
+    private MetricCategoryRepository metricCategoryRepository;
 
     public List<MetricCategory> getMetricCategories () {
         List<MetricCategory> metricCategoryList = new ArrayList<>();
-        Iterable<MetricCategory> metricCategoryIterable = metricRepository.findAll();
+        Iterable<MetricCategory> metricCategoryIterable = metricCategoryRepository.findAll();
         metricCategoryIterable.forEach(metricCategoryList::add);
         return metricCategoryList;
+    }
+
+    public void newMetricCategories (List<Map<String, String>> categories) throws CategoriesException {
+        if (categories.size() > 1) {
+            metricCategoryRepository.deleteAll();
+            for (Map<String, String> c : categories) {
+                MetricCategory metricCategory = new MetricCategory();
+                metricCategory.setName(c.get("name"));
+                metricCategory.setColor(c.get("color"));
+                float upperThreshold = Float.parseFloat(c.get("upperThreshold"));
+                metricCategory.setUpperThreshold(upperThreshold/100f);
+                metricCategoryRepository.save(metricCategory);
+            }
+        } else {
+            throw new CategoriesException();
+        }
     }
 
     public List<DTOMetric> getAllMetricsCurrentEvaluation (String projectExternalId) throws IOException, ElasticsearchStatusException {
