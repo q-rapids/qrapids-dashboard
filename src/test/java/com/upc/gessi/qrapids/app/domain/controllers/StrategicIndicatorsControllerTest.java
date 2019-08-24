@@ -142,6 +142,26 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
+    public void editStrategicIndicator() throws IOException, StrategicIndicatorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
+        File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
+        when(strategicIndicatorRepository.findById(strategicIndicator.getId())).thenReturn(Optional.of(strategicIndicator));
+
+        // When
+        strategicIndicatorsController.editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(), strategicIndicator.getDescription(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getQuality_factors());
+
+        // Then
+        ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
+        verify(strategicIndicatorRepository, times(1)).save(argument.capture());
+        Strategic_Indicator strategicIndicatorSaved = argument.getValue();
+        assertEquals(strategicIndicator.getName(), strategicIndicatorSaved.getName());
+        assertEquals(strategicIndicator.getDescription(), strategicIndicatorSaved.getDescription());
+        assertEquals(strategicIndicator.getQuality_factors(), strategicIndicatorSaved.getQuality_factors());
+    }
+
+    @Test
     public void deleteStrategicIndicator() throws StrategicIndicatorNotFoundException {
         // Given
         Long strategicIndicatorId = 1L;

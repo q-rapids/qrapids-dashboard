@@ -7,14 +7,12 @@ import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.dto.*;
-import com.upc.gessi.qrapids.app.exceptions.AssessmentErrorException;
-import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
-import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
+import com.upc.gessi.qrapids.app.exceptions.*;
 import org.apache.commons.io.IOUtils;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,10 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -270,6 +265,55 @@ public class StrategicIndicators {
             }
         } catch (AssessmentErrorException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/api/strategicIndicators/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void editSI(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "network", required = false) MultipartFile network) {
+        try {
+            String name;
+            String description;
+            byte[] file = null;
+            List<String> qualityFactors;
+            try {
+                name = request.getParameter("name");
+                description = request.getParameter("description");
+                if (network != null) {
+                    file = IOUtils.toByteArray(network.getInputStream());
+                }
+                qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
+            } catch (Exception e) {
+                throw new MissingParametersException();
+            }
+            if (!name.equals("") && qualityFactors.size() > 0) {
+                Strategic_Indicator oldStrategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
+                strategicIndicatorsController.editStrategicIndicator(id, name, description, file, qualityFactors);
+
+                List<String> strategicIndicatorQualityFactors = oldStrategicIndicator.getQuality_factors();
+                boolean sameFactors = (strategicIndicatorQualityFactors.size() == qualityFactors.size());
+                int i = 0;
+                while (i < strategicIndicatorQualityFactors.size() && sameFactors) {
+                    if (qualityFactors.indexOf(strategicIndicatorQualityFactors.get(i)) == -1)
+                        sameFactors = false;
+                    i++;
+                }
+                if (!sameFactors) {
+                    if (!strategicIndicatorsController.assessStrategicIndicator(name)) {
+                        throw new AssessmentErrorException();
+                    }
+                }
+            }
+        } catch (MissingParametersException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing parameters in the request");
+        } catch (StrategicIndicatorNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Strategic Indicator not found");
+        } catch (AssessmentErrorException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Integrity violation: " + e.getMessage());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }

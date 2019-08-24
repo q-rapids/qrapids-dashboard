@@ -75,6 +75,16 @@ public class StrategicIndicatorsController {
         }
     }
 
+    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException {
+        Strategic_Indicator strategicIndicator = getStrategicIndicatorById(strategicIndicatorId);
+        if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
+        strategicIndicator.setName(name);
+        strategicIndicator.setDescription(description);
+        strategicIndicator.setQuality_factors(qualityFactors);
+        strategicIndicatorRepository.save(strategicIndicator);
+        return  strategicIndicator;
+    }
+
     public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) {
         Strategic_Indicator strategicIndicator = new Strategic_Indicator(name, description, file, qualityFactors, project);
         strategicIndicatorRepository.save(strategicIndicator);

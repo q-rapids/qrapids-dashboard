@@ -20,17 +20,12 @@ import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryReposi
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
-import com.upc.gessi.qrapids.app.exceptions.AssessmentErrorException;
-import com.upc.gessi.qrapids.app.exceptions.MissingParametersException;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +34,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.lang.Math.abs;
 
@@ -90,60 +88,6 @@ public class Util {
 
     @Autowired
     QualityFactorsController qualityFactorsController;
-
-    @PutMapping("/api/strategicIndicators/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void editSI(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "network", required = false) MultipartFile network) {
-        try {
-            String name;
-            String description;
-            byte[] file = null;
-            List<String> qualityFactors;
-            try {
-                name = request.getParameter("name");
-                description = request.getParameter("description");
-                if (network != null) {
-                    file = IOUtils.toByteArray(network.getInputStream());
-                }
-                qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
-            } catch (Exception e) {
-                throw new MissingParametersException();
-            }
-            if (!name.equals("") && qualityFactors.size() > 0) {
-                Optional<Strategic_Indicator> strategicIndicatorOptional = siRep.findById(id);
-                if (strategicIndicatorOptional.isPresent()) {
-                    Strategic_Indicator strategicIndicator = strategicIndicatorOptional.get();
-                    List<String> strategicIndicatorQualityFactors = strategicIndicator.getQuality_factors();
-                    boolean sameFactors = (strategicIndicatorQualityFactors.size() == qualityFactors.size());
-                    int i = 0;
-                    while (i < strategicIndicatorQualityFactors.size() && sameFactors) {
-                        if (qualityFactors.indexOf(strategicIndicatorQualityFactors.get(i)) == -1)
-                            sameFactors = false;
-                        i++;
-                    }
-
-                    if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
-                    strategicIndicator.setName(name);
-                    strategicIndicator.setDescription(description);
-                    strategicIndicator.setQuality_factors(qualityFactors);
-                    siRep.save(strategicIndicator);
-                    if (!sameFactors) {
-                        if (!strategicIndicatorsController.assessStrategicIndicator(name)) {
-                            throw new AssessmentErrorException();
-                        }
-                    }
-                }
-            }
-        } catch (MissingParametersException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing parameters in the request");
-        } catch (AssessmentErrorException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
-        } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Integrity violation: " + e.getMessage());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
-        }
-    }
 
     @GetMapping("/api/strategicIndicators/fetch")
     @ResponseStatus(HttpStatus.OK)
