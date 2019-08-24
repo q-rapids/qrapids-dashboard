@@ -11,17 +11,21 @@ import com.upc.gessi.qrapids.app.exceptions.AssessmentErrorException;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
+import org.apache.commons.io.IOUtils;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -242,6 +246,32 @@ public class StrategicIndicators {
                     strategicIndicator.getQuality_factors());
         } catch (StrategicIndicatorNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Strategic indicator not found");
+        }
+    }
+
+    @PostMapping("/api/strategicIndicators")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newSI(HttpServletRequest request, @RequestParam(value = "network", required = false) MultipartFile network) {
+        try {
+            String prj = request.getParameter("prj");
+            String name = request.getParameter("name");
+            String description = request.getParameter("description");
+            byte[] file = null;
+            if (network != null) {
+                file = IOUtils.toByteArray(network.getInputStream());
+            }
+            List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
+            if (!name.equals("") && qualityFactors.size() > 0) {
+                Project project = projectsController.findProjectByExternalId(prj);
+                strategicIndicatorsController.saveStrategicIndicator(name, description, file, qualityFactors, project);
+                if (!strategicIndicatorsController.assessStrategicIndicator(name)) {
+                    throw new AssessmentErrorException();
+                }
+            }
+        } catch (AssessmentErrorException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
 

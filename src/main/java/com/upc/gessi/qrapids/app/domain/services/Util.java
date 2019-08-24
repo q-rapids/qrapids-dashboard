@@ -91,33 +91,6 @@ public class Util {
     @Autowired
     QualityFactorsController qualityFactorsController;
 
-    @PostMapping("/api/strategicIndicators")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void newSI(HttpServletRequest request, @RequestParam(value = "network", required = false) MultipartFile network) {
-        try {
-            String prj = request.getParameter("prj");
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
-            byte[] file = null;
-            if (network != null) {
-                file = IOUtils.toByteArray(network.getInputStream());
-            }
-            List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
-            if (!name.equals("") && qualityFactors.size() > 0) {
-                Project project = projectRepository.findByExternalId(prj);
-                Strategic_Indicator newSI = new Strategic_Indicator(name, description, file, qualityFactors, project);
-                siRep.save(newSI);
-            }
-            if (!strategicIndicatorsController.assessStrategicIndicator(name)) {
-                throw new AssessmentErrorException();
-            }
-        } catch (AssessmentErrorException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
-        }
-    }
-
     @PutMapping("/api/strategicIndicators/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void editSI(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "network", required = false) MultipartFile network) {

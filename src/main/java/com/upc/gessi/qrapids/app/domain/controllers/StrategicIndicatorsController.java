@@ -75,6 +75,12 @@ public class StrategicIndicatorsController {
         }
     }
 
+    public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) {
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(name, description, file, qualityFactors, project);
+        strategicIndicatorRepository.save(strategicIndicator);
+        return strategicIndicator;
+    }
+
     public void deleteStrategicIndicator (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {
         if (strategicIndicatorRepository.existsById(strategicIndicatorId)) {
             strategicIndicatorRepository.deleteById(strategicIndicatorId);

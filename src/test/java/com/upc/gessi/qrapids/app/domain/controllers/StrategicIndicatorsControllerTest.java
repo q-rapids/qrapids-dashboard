@@ -24,7 +24,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.util.Pair;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,6 +120,25 @@ public class StrategicIndicatorsControllerTest {
 
         // Throw
         strategicIndicatorsController.getStrategicIndicatorById(strategicIndicatorId);
+    }
+
+    @Test
+    public void saveStrategicIndicator() throws IOException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
+        File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
+
+        // When
+        strategicIndicatorsController.saveStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getDescription(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getQuality_factors(), project);
+
+        // Then
+        ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
+        verify(strategicIndicatorRepository, times(1)).save(argument.capture());
+        Strategic_Indicator strategicIndicatorSaved = argument.getValue();
+        assertEquals(strategicIndicator.getName(), strategicIndicatorSaved.getName());
+        assertEquals(strategicIndicator.getDescription(), strategicIndicatorSaved.getDescription());
+        assertEquals(strategicIndicator.getQuality_factors(), strategicIndicatorSaved.getQuality_factors());
     }
 
     @Test

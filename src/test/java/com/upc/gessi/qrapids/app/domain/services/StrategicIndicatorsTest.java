@@ -30,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,6 +40,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,7 @@ import java.util.Map;
 
 import static com.upc.gessi.qrapids.app.testHelpers.HelperFunctions.getFloatAsDouble;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -1792,6 +1795,93 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).deleteStrategicIndicator(strategicIndicatorId);
+    }
+
+    @Test
+    public void newStrategicIndicator() throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
+
+        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
+        File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
+        MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
+
+        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName())).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/strategicIndicators")
+                .file(network)
+                .param("prj", projectExternalId)
+                .param("name", strategicIndicator.getName())
+                .param("description", strategicIndicator.getDescription())
+                .param("quality_factors", String.join(",", strategicIndicator.getQuality_factors()));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated())
+                .andDo(document("si/new",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("name")
+                                        .description("Product name"),
+                                parameterWithName("description")
+                                        .description("Product description"),
+                                parameterWithName("quality_factors")
+                                        .description("Comma separated values of the quality factors identifiers which belong to the strategic indicator")),
+                        requestParts(
+                                partWithName("network")
+                                        .description("Bayesian network file")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(projectsController, times(1)).findProjectByExternalId(projectExternalId);
+        verifyNoMoreInteractions(projectsController);
+
+        verify(strategicIndicatorsDomainController, times(1)).saveStrategicIndicator(eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getQuality_factors()), eq(project));
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName());
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
+    @Test
+    public void newStrategicIndicatorAssessmentError() throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
+
+        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
+        File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
+        MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
+
+        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName())).thenReturn(false);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/strategicIndicators")
+                .file(network)
+                .param("prj", projectExternalId)
+                .param("name", strategicIndicator.getName())
+                .param("description", strategicIndicator.getDescription())
+                .param("quality_factors", String.join(",", strategicIndicator.getQuality_factors()));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/new-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(projectsController, times(1)).findProjectByExternalId(projectExternalId);
+        verifyNoMoreInteractions(projectsController);
+
+        verify(strategicIndicatorsDomainController, times(1)).saveStrategicIndicator(eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getQuality_factors()), eq(project));
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName());
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
