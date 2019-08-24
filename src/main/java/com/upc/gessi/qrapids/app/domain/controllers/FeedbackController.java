@@ -6,7 +6,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.domain.services.Util;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
+import com.upc.gessi.qrapids.app.dto.DTOSIAssessment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,8 +130,8 @@ public class FeedbackController {
             for (DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation : csi) {
                 if (dtoStrategicIndicatorEvaluation.getId().equals(strategicIndicator.getExternalId())) {
                     oldCategory = dtoStrategicIndicatorEvaluation.getValue().getSecond();
-                    List<DTOSIAssesment> probabilities = dtoStrategicIndicatorEvaluation.getProbabilities();
-                    for (DTOSIAssesment probability : probabilities) {
+                    List<DTOSIAssessment> probabilities = dtoStrategicIndicatorEvaluation.getProbabilities();
+                    for (DTOSIAssessment probability : probabilities) {
                         if (probability.getLabel().equals(oldCategory)) {
                             oldCategoryColor = probability.getColor();
                         }

@@ -20,7 +20,7 @@ public class DTOStrategicIndicatorEvaluation {
     private String description;
     private Pair<Float, String> value;
     private String value_description;
-    private List<DTOSIAssesment> probabilities;
+    private List<DTOSIAssessment> probabilities;
     private LocalDate date;
     private String datasource;
     private String categories_description;
@@ -43,7 +43,7 @@ public class DTOStrategicIndicatorEvaluation {
      * @param dbId The parameter defines the database id of the Strategic Indicator
      * @param categories The parameter include the list of categories associated to the strategic indicator
      */
-    public DTOStrategicIndicatorEvaluation(String id, String name, String description, Pair<Float, String> value, List<DTOSIAssesment> probabilities, LocalDate date, String datasource, Long dbId, String categories, boolean hasBN) {
+    public DTOStrategicIndicatorEvaluation(String id, String name, String description, Pair<Float, String> value, List<DTOSIAssessment> probabilities, LocalDate date, String datasource, Long dbId, String categories, boolean hasBN) {
         setId(id);
         setName(name);
         setDescription(description);
@@ -117,11 +117,11 @@ public class DTOStrategicIndicatorEvaluation {
     }
 
 
-    public List<DTOSIAssesment> getProbabilities() {
+    public List<DTOSIAssessment> getProbabilities() {
         return probabilities;
     }
 
-    public void setProbabilities(List<DTOSIAssesment> probabilities) {
+    public void setProbabilities(List<DTOSIAssessment> probabilities) {
         this.probabilities = probabilities;
     }
 

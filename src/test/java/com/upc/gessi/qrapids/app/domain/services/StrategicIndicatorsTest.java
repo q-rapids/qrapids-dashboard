@@ -1906,4 +1906,79 @@ public class StrategicIndicatorsTest {
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
+    @Test
+    public void assesStrategicIndicators() throws Exception {
+        String projectExternalId = "test";
+
+        when(strategicIndicatorsDomainController.assessStrategicIndicators(projectExternalId, null)).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators/assess")
+                .param("prj", projectExternalId)
+                .param("train", "NONE");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("si/assess",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("train").description("Indicates if the forecasting models should be trained: " +
+                                        "NONE for no training, ONE for one method training and ALL for all methods training"))
+                ));
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicators(projectExternalId, null);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
+    @Test
+    public void assesStrategicIndicatorsNotCorrect() throws Exception {
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+
+        when(strategicIndicatorsDomainController.assessStrategicIndicators(projectExternalId, null)).thenReturn(false);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators/assess")
+                .param("prj", projectExternalId)
+                .param("train", "NONE");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/assess-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicators(projectExternalId, null);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
+    @Test
+    public void assesStrategicIndicatorsBadParam() throws Exception {
+        String projectExternalId = "test";
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators/assess")
+                .param("prj", projectExternalId)
+                .param("train", "NONE")
+                .param("from", "2019-15-03");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andDo(document("si/assess-param-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+    }
+
 }

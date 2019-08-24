@@ -7,17 +7,20 @@ import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.exceptions.AssessmentErrorException;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,9 @@ public class StrategicIndicators {
 
     @Autowired
     private ProjectsController projectsController;
+
+    @Value("${forecast.technique}")
+    private String forecastTechnique;
 
     @GetMapping("/api/strategicIndicators/current")
     @ResponseStatus(HttpStatus.OK)
@@ -267,6 +273,49 @@ public class StrategicIndicators {
             strategicIndicatorsController.newStrategicIndicatorCategories(categories);
         } catch (CategoriesException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
+        }
+    }
+
+    private enum TrainType {
+        NONE, ONE, ALL
+    }
+
+    @GetMapping("/api/strategicIndicators/assess")
+    @ResponseStatus(HttpStatus.OK)
+    public void assesStrategicIndicators(@RequestParam(value = "prj", required=false) String prj,
+                                         @RequestParam(value = "from", required=false) String from,
+                                         @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType) {
+        boolean correct = true;
+
+        try {
+
+            if (from != null && !from.isEmpty()) {
+                LocalDate dateFrom = LocalDate.parse(from, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                correct = strategicIndicatorsController.assessStrategicIndicators(prj, dateFrom);
+            }
+            else
+                correct = strategicIndicatorsController.assessStrategicIndicators(prj, null);
+
+            // Train forecast models
+            if (trainType != TrainType.NONE) {
+                String technique = null;
+                if (trainType == TrainType.ONE) {
+                    technique = forecastTechnique;
+                }
+                if (prj == null) {
+                    strategicIndicatorsController.trainForecastModelsAllProjects(technique);
+                } else {
+                    strategicIndicatorsController.trainForecastModelsSingleProject(prj, technique);
+                }
+            }
+
+            if (!correct) {
+                throw new AssessmentErrorException();
+            }
+        } catch (AssessmentErrorException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error in the request parameters");
         }
     }
 }

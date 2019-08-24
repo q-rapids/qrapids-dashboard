@@ -4,7 +4,7 @@ import com.upc.gessi.qrapids.QrapidsApplication;
 import com.upc.gessi.qrapids.app.domain.controllers.ProductsController;
 import com.upc.gessi.qrapids.app.dto.DTOProduct;
 import com.upc.gessi.qrapids.app.dto.DTOProject;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
+import com.upc.gessi.qrapids.app.dto.DTOSIAssessment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import org.junit.Before;
 import org.junit.Rule;
@@ -672,31 +672,31 @@ public class ProductControllerTest {
     public void getProductEvaluation() throws Exception {
         Long productId = 1L;
 
-        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
+        List<DTOSIAssessment> dtoSIAssessmentList = new ArrayList<>();
 
         Long assessment1Id = 10L;
         String assessment1Label = "Good";
         Float assessment1Value = null;
         String assessment1Color = "#00ff00";
         Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment1);
+        DTOSIAssessment dtoSIAssessment1 = new DTOSIAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssessment1);
 
         Long assessment2Id = 11L;
         String assessment2Label = "Neutral";
         Float assessment2Value = null;
         String assessment2Color = "#ff8000";
         Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment2);
+        DTOSIAssessment dtoSIAssessment2 = new DTOSIAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssessment2);
 
         Long assessment3Id = 11L;
         String assessment3Label = "Bad";
         Float assessment3Value = null;
         String assessment3Color = "#ff0000";
         Float assessment3UpperThreshold = 0f;
-        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment3);
+        DTOSIAssessment dtoSIAssessment3 = new DTOSIAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssessment3);
 
         String strategicIndicatorId = "blocking";
         Long strategicIndicatorDbId = 1L;
@@ -709,7 +709,7 @@ public class ProductControllerTest {
         LocalDate date = LocalDate.parse(dateString);
         String datasource = "Q-Rapdis Dashboard";
         String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssesmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
         dtoStrategicIndicatorEvaluation.setHasFeedback(false);
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
 
@@ -818,31 +818,31 @@ public class ProductControllerTest {
         Long productId = 1L;
         String projectName = "test";
 
-        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
+        List<DTOSIAssessment> dtoSIAssessmentList = new ArrayList<>();
 
         Long assessment1Id = 10L;
         String assessment1Label = "Good";
         Float assessment1Value = null;
         String assessment1Color = "#00ff00";
         Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment1);
+        DTOSIAssessment dtoSIAssessment1 = new DTOSIAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssessment1);
 
         Long assessment2Id = 11L;
         String assessment2Label = "Neutral";
         Float assessment2Value = null;
         String assessment2Color = "#ff8000";
         Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment2);
+        DTOSIAssessment dtoSIAssessment2 = new DTOSIAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssessment2);
 
         Long assessment3Id = 11L;
         String assessment3Label = "Bad";
         Float assessment3Value = null;
         String assessment3Color = "#ff0000";
         Float assessment3UpperThreshold = 0f;
-        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment3);
+        DTOSIAssessment dtoSIAssessment3 = new DTOSIAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssessment3);
 
         String strategicIndicatorId = "blocking";
         Long strategicIndicatorDbId = 1L;
@@ -855,7 +855,7 @@ public class ProductControllerTest {
         LocalDate date = LocalDate.parse(dateString);
         String datasource = "Q-Rapdis Dashboard";
         String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssesmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
         dtoStrategicIndicatorEvaluation.setHasFeedback(false);
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
 

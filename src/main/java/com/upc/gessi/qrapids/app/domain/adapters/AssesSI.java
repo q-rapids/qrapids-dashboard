@@ -2,9 +2,8 @@ package com.upc.gessi.qrapids.app.domain.adapters;
 
 import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.services.Util;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
+import com.upc.gessi.qrapids.app.dto.DTOSIAssessment;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
-import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.dto.assessmentSI.DTOAssessmentSI;
 import com.upc.gessi.qrapids.app.dto.assessmentSI.DTOCategorySI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ public class AssesSI {
     @Value("${assessSI.url}")
     private String url;
 
-    public List<DTOSIAssesment> AssesSI(String SIid, Map<String, String> mapFactors, File network) {
+    public List<DTOSIAssessment> AssesSI(String SIid, Map<String, String> mapFactors, File network) {
 
         mapFactors = new LinkedHashMap<>(mapFactors);
 
@@ -62,16 +61,16 @@ public class AssesSI {
             ResponseEntity<String> responseEntity = restTemplate.postForEntity(builder.build().encode().toUri(), requestEntity, String.class);
 
             HttpStatus statusCode = responseEntity.getStatusCode();
-            List<DTOSIAssesment> dtoSiAssesment;
+            List<DTOSIAssessment> dtoSiAssessment;
             if (statusCode == HttpStatus.OK) {
                 Gson gson = new Gson();
                 DTOAssessmentSI assessmentSI = gson.fromJson(responseEntity.getBody(), DTOAssessmentSI.class);
-                dtoSiAssesment = DTOAssessmentSItoDTOSIAssesment(assessmentSI.getProbsSICategories());
+                dtoSiAssessment = DTOAssessmentSItoDTOSIAssesment(assessmentSI.getProbsSICategories());
             }
             else {
-                dtoSiAssesment = new ArrayList<>();
+                dtoSiAssessment = new ArrayList<>();
             }
-            return dtoSiAssesment;
+            return dtoSiAssessment;
         } catch (Exception e) {
             return new ArrayList<>();
         }
@@ -99,11 +98,11 @@ public class AssesSI {
         }
     }
 
-    public List<DTOSIAssesment> DTOAssessmentSItoDTOSIAssesment(ArrayList<DTOCategorySI> catsEstimation) {
-        List<DTOSIAssesment> categories = util.getCategories();
+    public List<DTOSIAssessment> DTOAssessmentSItoDTOSIAssesment(ArrayList<DTOCategorySI> catsEstimation) {
+        List<DTOSIAssessment> categories = util.getCategories();
         if (catsEstimation.size() == categories.size()) {
             int i = 0;
-            for (DTOSIAssesment assesment : categories) {
+            for (DTOSIAssessment assesment : categories) {
                 if (assesment.getLabel().equals(catsEstimation.get(catsEstimation.size() - 1 - i).getIdSICategory())) {
                     assesment.setValue(catsEstimation.get(catsEstimation.size() - 1 - i).getProbSICategory());
                 }

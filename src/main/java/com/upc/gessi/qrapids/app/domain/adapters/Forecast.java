@@ -2,6 +2,8 @@ package com.upc.gessi.qrapids.app.domain.adapters;
 
 import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -46,6 +48,12 @@ public class Forecast {
 
     @Autowired
     private com.upc.gessi.qrapids.app.domain.services.Util util;
+
+    @Autowired
+    private QualityFactorsController qualityFactorsController;
+
+    @Autowired
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     @Autowired
     private StrategicIndicatorRepository siRep;
@@ -469,12 +477,12 @@ public class Forecast {
                 if (!factorHasForecastingError) factorHasForecastingError = (factor.getForecastingError() != null);
                 if (listSIFactors.containsKey(factor.getDate())) {
                     listSIFactors.get(factor.getDate()).add(factor);
-                    mapSIFactors.get(factor.getDate()).put(factor.getId(), util.getQFLabelFromValue(factor.getValue()));
+                    mapSIFactors.get(factor.getDate()).put(factor.getId(), qualityFactorsController.getFactorLabelFromValue(factor.getValue()));
                 } else {
                     listSIFactors.put(factor.getDate(), new ArrayList<>());
                     listSIFactors.get(factor.getDate()).add(factor);
                     mapSIFactors.put(factor.getDate(), new HashMap<>());
-                    mapSIFactors.get(factor.getDate()).put(factor.getId(), util.getQFLabelFromValue(factor.getValue()));
+                    mapSIFactors.get(factor.getDate()).put(factor.getId(), qualityFactorsController.getFactorLabelFromValue(factor.getValue()));
                 }
             }
             Strategic_Indicator si = null;
@@ -490,8 +498,8 @@ public class Forecast {
                     File tempFile = File.createTempFile("network", ".dne", null);
                     FileOutputStream fos = new FileOutputStream(tempFile);
                     fos.write(si.getNetwork());
-                    List<DTOSIAssesment> assessment = AssesSI.AssesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
-                    float value = util.getValueAndLabelFromCategories(assessment).getFirst();
+                    List<DTOSIAssessment> assessment = AssesSI.AssesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
+                    float value = strategicIndicatorsController.getValueAndLabelFromCategories(assessment).getFirst();
                     result.add(new DTOStrategicIndicatorEvaluation(dsi.getId(),
                             si.getName(),
                             si.getDescription(),

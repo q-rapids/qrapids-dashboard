@@ -4,6 +4,7 @@ import DTOs.Relations.RelationDTO;
 import DTOs.Relations.SourceRelationDTO;
 import DTOs.Relations.TargetRelationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.services.Util;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
@@ -28,6 +29,9 @@ public class QMARelations {
 
     @Autowired
     private Util util;
+
+    @Autowired
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     private static final String SI_TYPE = "strategic_indicators";
     private static final String FACTORS_TYPE = "factors";
@@ -119,7 +123,7 @@ public class QMARelations {
                 }
                 catch (NumberFormatException nfe) {
                     String label = strategicIndicator.getValue();
-                    Float value = util.getValueFromLabel(label);
+                    Float value = strategicIndicatorsController.getValueFromLabel(label);
                     String valueDescription = Util.buildDescriptiveLabelAndValue(Pair.of(value, label));
                     strategicIndicator.setValueDescription(valueDescription);
                     strategicIndicator.setColor(util.getColorFromLabel(label));

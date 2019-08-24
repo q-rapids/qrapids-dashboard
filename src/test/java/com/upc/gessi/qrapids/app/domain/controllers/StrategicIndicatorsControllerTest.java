@@ -1,16 +1,16 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMARelations;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
-import com.upc.gessi.qrapids.app.dto.DTOFactor;
-import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
+import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -54,6 +55,21 @@ public class StrategicIndicatorsControllerTest {
 
     @Mock
     private SICategoryRepository siCategoryRepository;
+
+    @Mock
+    private ProjectsController projectsController;
+
+    @Mock
+    private MetricsController metricsController;
+
+    @Mock
+    private QualityFactorsController qualityFactorsController;
+
+    @Mock
+    private AssesSI assesSI;
+
+    @Mock
+    private QMARelations qmaRelations;
 
     @InjectMocks
     private StrategicIndicatorsController strategicIndicatorsController;
@@ -390,5 +406,527 @@ public class StrategicIndicatorsControllerTest {
         // Then
         assertEquals(dtoDetailedStrategicIndicatorList.size(), dtoDetailedStrategicIndicatorListFound.size());
         assertEquals(dtoDetailedStrategicIndicator, dtoDetailedStrategicIndicatorListFound.get(0));
+    }
+
+    @Test
+    public void trainForecastModelsAllProjects() throws IOException, CategoriesException {
+        // Given
+        List<String> projectsList = new ArrayList<>();
+        String projectExternalId = "test";
+        projectsList.add(projectExternalId);
+
+        when(projectsController.getAllProjects()).thenReturn(projectsList);
+
+        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetric> dtoMetricList = new ArrayList<>();
+        dtoMetricList.add(dtoMetric);
+
+        when(metricsController.getAllMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoMetricList);
+
+        DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
+        dtoQualityFactorList.add(dtoQualityFactor);
+
+        when(qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoQualityFactorList);
+
+        String technique = "PROPHET";
+
+        // When
+        strategicIndicatorsController.trainForecastModelsAllProjects(technique);
+
+        // Then
+        verify(qmaForecast, times(1)).trainMetricForecast(dtoMetricList, "7", projectExternalId, technique);
+        verify(qmaForecast, times(1)).trainFactorForecast(dtoQualityFactorList, "7", projectExternalId, technique);
+    }
+
+    @Test
+    public void trainForecastModelsSingleProject() throws IOException {
+        // Given
+        String projectExternalId = "test";
+
+        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetric> dtoMetricList = new ArrayList<>();
+        dtoMetricList.add(dtoMetric);
+
+        when(metricsController.getAllMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoMetricList);
+
+        DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
+        dtoQualityFactorList.add(dtoQualityFactor);
+
+        when(qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoQualityFactorList);
+
+        String technique = "PROPHET";
+
+        // When
+        strategicIndicatorsController.trainForecastModelsSingleProject(projectExternalId, technique);
+
+        // Then
+        verify(qmaForecast, times(1)).trainMetricForecast(dtoMetricList, "7", projectExternalId, technique);
+        verify(qmaForecast, times(1)).trainFactorForecast(dtoQualityFactorList, "7", projectExternalId, technique);
+    }
+
+    @Test
+    public void assessStrategicIndicators() throws IOException, CategoriesException {
+        Project project = domainObjectsBuilder.buildProject();
+
+        DTOFactor dtoFactor1 = domainObjectsBuilder.buildDTOFactor();
+
+        String factor2Id = "developmentspeed";
+        String factor2Name = "Development Speed";
+        String factor2Description = "Time spent to add new value to the product";
+        float factor2Value = 0.7f;
+        DTOFactor dtoFactor2 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor2.setId(factor2Id);
+        dtoFactor2.setName(factor2Name);
+        dtoFactor2.setDescription(factor2Description);
+        dtoFactor2.setValue(factor2Value);
+
+        String factor3Id = "externalquality";
+        String factor3Name = "External Quality";
+        String factor3Description = "Quality perceived by the users";
+        float factor3Value = 0.6f;
+        DTOFactor dtoFactor3 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor3.setId(factor3Id);
+        dtoFactor3.setName(factor3Name);
+        dtoFactor3.setDescription(factor3Description);
+        dtoFactor3.setValue(factor3Value);
+
+        List<DTOFactor> dtoFactorList = new ArrayList<>();
+        dtoFactorList.add(dtoFactor1);
+        dtoFactorList.add(dtoFactor2);
+        dtoFactorList.add(dtoFactor3);
+
+        when(qualityFactorsController.getAllFactorsEvaluation(project.getExternalId())).thenReturn(dtoFactorList);
+
+        Long strategicIndicatorId = 1L;
+        String strategicIndicatorName = "Process Performance";
+        String strategicIndicatorDescription = "Performance levels of the processes involved in the project";
+        List<String> qualityFactors = new ArrayList<>();
+        String factor1 = "testingperformance";
+        qualityFactors.add(factor1);
+        String factor2 = "developmentspeed";
+        qualityFactors.add(factor2);
+        String factor3 = "externalquality";
+        qualityFactors.add(factor3);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+        strategicIndicator.setId(strategicIndicatorId);
+        List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
+        strategic_indicatorList.add(strategicIndicator);
+
+        when(strategicIndicatorRepository.findAll()).thenReturn(strategic_indicatorList);
+
+        when(qualityFactorsController.getFactorLabelFromValue(dtoFactor1.getValue())).thenReturn("Good");
+        when(qualityFactorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
+        when(qualityFactorsController.getFactorLabelFromValue(factor3Value)).thenReturn("Neutral");
+
+        List<Float> factorValuesList = new ArrayList<>();
+        factorValuesList.add(dtoFactor1.getValue());
+        factorValuesList.add(factor2Value);
+        factorValuesList.add(factor3Value);
+
+        int factorsNumber = factorValuesList.size();
+        Float factorsValuesSum = 0f;
+        for (Float factorValue : factorValuesList) {
+            factorsValuesSum += factorValue;
+        }
+        Float factorsAverageValue = factorsValuesSum / factorsNumber;
+
+        when(assesSI.AssesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
+
+        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(true);
+
+        List<Float> factorWeightsList = new ArrayList<>();
+        factorWeightsList.add(1f);
+        factorWeightsList.add(1f);
+        factorWeightsList.add(1f);
+        List<String> factorCategoryNamesList = new ArrayList<>();
+        factorCategoryNamesList.add("Good");
+        factorCategoryNamesList.add("Good");
+        factorCategoryNamesList.add("Neutral");
+
+        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(qualityFactors), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
+
+        // When
+        boolean correct = strategicIndicatorsController.assessStrategicIndicators(project.getExternalId(), null);
+
+        // Then
+        assertTrue(correct);
+
+        verify(qualityFactorsController, times(1)).setFactorStrategicIndicatorRelation(dtoFactorList, project.getExternalId());
+        verify(qualityFactorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
+        verify(qualityFactorsController, times(6)).getFactorLabelFromValue(anyFloat());
+        verifyNoMoreInteractions(qualityFactorsController);
+
+        verify(strategicIndicatorRepository, times(1)).findAll();
+        verifyNoMoreInteractions(strategicIndicatorRepository);
+
+        verify(assesSI, times(1)).AssesSI(factorValuesList, 3);
+        verifyNoMoreInteractions(assesSI);
+
+        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
+        verifyNoMoreInteractions(qmaStrategicIndicators);
+
+        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(qualityFactors), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
+        verifyNoMoreInteractions(qmaRelations);
+    }
+
+    @Test
+    public void assessStrategicIndicatorsNotCorrect() throws IOException, CategoriesException {
+        Project project = domainObjectsBuilder.buildProject();
+
+        DTOFactor dtoFactor1 = domainObjectsBuilder.buildDTOFactor();
+
+        String factor2Id = "developmentspeed";
+        String factor2Name = "Development Speed";
+        String factor2Description = "Time spent to add new value to the product";
+        float factor2Value = 0.7f;
+        DTOFactor dtoFactor2 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor2.setId(factor2Id);
+        dtoFactor2.setName(factor2Name);
+        dtoFactor2.setDescription(factor2Description);
+        dtoFactor2.setValue(factor2Value);
+
+        String factor3Id = "externalquality";
+        String factor3Name = "External Quality";
+        String factor3Description = "Quality perceived by the users";
+        float factor3Value = 0.6f;
+        DTOFactor dtoFactor3 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor3.setId(factor3Id);
+        dtoFactor3.setName(factor3Name);
+        dtoFactor3.setDescription(factor3Description);
+        dtoFactor3.setValue(factor3Value);
+
+        List<DTOFactor> dtoFactorList = new ArrayList<>();
+        dtoFactorList.add(dtoFactor1);
+        dtoFactorList.add(dtoFactor2);
+        dtoFactorList.add(dtoFactor3);
+
+        when(qualityFactorsController.getAllFactorsEvaluation(project.getExternalId())).thenReturn(dtoFactorList);
+
+        Long strategicIndicatorId = 1L;
+        String strategicIndicatorName = "Process Performance";
+        String strategicIndicatorDescription = "Performance levels of the processes involved in the project";
+        List<String> qualityFactors = new ArrayList<>();
+        String factor1 = "testingperformance";
+        qualityFactors.add(factor1);
+        String factor2 = "developmentspeed";
+        qualityFactors.add(factor2);
+        String factor3 = "externalquality";
+        qualityFactors.add(factor3);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+        strategicIndicator.setId(strategicIndicatorId);
+        List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
+        strategic_indicatorList.add(strategicIndicator);
+
+        when(strategicIndicatorRepository.findAll()).thenReturn(strategic_indicatorList);
+
+        when(qualityFactorsController.getFactorLabelFromValue(dtoFactor1.getValue())).thenReturn("Good");
+        when(qualityFactorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
+        when(qualityFactorsController.getFactorLabelFromValue(factor3Value)).thenReturn("Neutral");
+
+        List<Float> factorValuesList = new ArrayList<>();
+        factorValuesList.add(dtoFactor1.getValue());
+        factorValuesList.add(factor2Value);
+        factorValuesList.add(factor3Value);
+
+        int factorsNumber = factorValuesList.size();
+        Float factorsValuesSum = 0f;
+        for (Float factorValue : factorValuesList) {
+            factorsValuesSum += factorValue;
+        }
+        Float factorsAverageValue = factorsValuesSum / factorsNumber;
+
+        when(assesSI.AssesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
+
+        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
+
+        // When
+        boolean correct = strategicIndicatorsController.assessStrategicIndicators(project.getExternalId(), null);
+
+        // Then
+        assertFalse(correct);
+
+        verify(qualityFactorsController, times(1)).setFactorStrategicIndicatorRelation(dtoFactorList, project.getExternalId());
+        verify(qualityFactorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
+        verify(qualityFactorsController, times(3)).getFactorLabelFromValue(anyFloat());
+        verifyNoMoreInteractions(qualityFactorsController);
+
+        verify(strategicIndicatorRepository, times(1)).findAll();
+        verifyNoMoreInteractions(strategicIndicatorRepository);
+
+        verify(assesSI, times(1)).AssesSI(factorValuesList, 3);
+        verifyNoMoreInteractions(assesSI);
+
+        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
+        verifyNoMoreInteractions(qmaStrategicIndicators);
+
+        verifyZeroInteractions(qmaRelations);
+    }
+
+    @Test
+    public void assessStrategicIndicator () throws IOException, CategoriesException {
+        Project project = domainObjectsBuilder.buildProject();
+        List<String> projectList = new ArrayList<>();
+        projectList.add(project.getExternalId());
+        when(projectsController.getAllProjects()).thenReturn(projectList);
+
+        DTOFactor dtoFactor1 = domainObjectsBuilder.buildDTOFactor();
+
+        String factor2Id = "developmentspeed";
+        String factor2Name = "Development Speed";
+        String factor2Description = "Time spent to add new value to the product";
+        float factor2Value = 0.7f;
+        DTOFactor dtoFactor2 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor2.setId(factor2Id);
+        dtoFactor2.setName(factor2Name);
+        dtoFactor2.setDescription(factor2Description);
+        dtoFactor2.setValue(factor2Value);
+
+        String factor3Id = "externalquality";
+        String factor3Name = "External Quality";
+        String factor3Description = "Quality perceived by the users";
+        float factor3Value = 0.6f;
+        DTOFactor dtoFactor3 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor3.setId(factor3Id);
+        dtoFactor3.setName(factor3Name);
+        dtoFactor3.setDescription(factor3Description);
+        dtoFactor3.setValue(factor3Value);
+
+        List<DTOFactor> dtoFactorList = new ArrayList<>();
+        dtoFactorList.add(dtoFactor1);
+        dtoFactorList.add(dtoFactor2);
+        dtoFactorList.add(dtoFactor3);
+
+        when(qualityFactorsController.getAllFactorsEvaluation(project.getExternalId())).thenReturn(dtoFactorList);
+
+        Long strategicIndicatorId = 1L;
+        String strategicIndicatorName = "Process Performance";
+        String strategicIndicatorDescription = "Performance levels of the processes involved in the project";
+        List<String> qualityFactors = new ArrayList<>();
+        String factor1 = "testingperformance";
+        qualityFactors.add(factor1);
+        String factor2 = "developmentspeed";
+        qualityFactors.add(factor2);
+        String factor3 = "externalquality";
+        qualityFactors.add(factor3);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+        strategicIndicator.setId(strategicIndicatorId);
+
+        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
+
+        when(qualityFactorsController.getFactorLabelFromValue(dtoFactor1.getValue())).thenReturn("Good");
+        when(qualityFactorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
+        when(qualityFactorsController.getFactorLabelFromValue(factor3Value)).thenReturn("Neutral");
+
+        List<Float> factorValuesList = new ArrayList<>();
+        factorValuesList.add(dtoFactor1.getValue());
+        factorValuesList.add(factor2Value);
+        factorValuesList.add(factor3Value);
+
+        int factorsNumber = factorValuesList.size();
+        Float factorsValuesSum = 0f;
+        for (Float factorValue : factorValuesList) {
+            factorsValuesSum += factorValue;
+        }
+        Float factorsAverageValue = factorsValuesSum / factorsNumber;
+
+        when(assesSI.AssesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
+
+        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(true);
+
+        List<Float> factorWeightsList = new ArrayList<>();
+        factorWeightsList.add(1f);
+        factorWeightsList.add(1f);
+        factorWeightsList.add(1f);
+        List<String> factorCategoryNamesList = new ArrayList<>();
+        factorCategoryNamesList.add("Good");
+        factorCategoryNamesList.add("Good");
+        factorCategoryNamesList.add("Neutral");
+
+        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(qualityFactors), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
+
+        // When
+        boolean correct = strategicIndicatorsController.assessStrategicIndicator(strategicIndicator.getName());
+
+        // Then
+        assertTrue(correct);
+
+        verify(qualityFactorsController, times(1)).setFactorStrategicIndicatorRelation(dtoFactorList, project.getExternalId());
+        verify(qualityFactorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
+        verify(qualityFactorsController, times(6)).getFactorLabelFromValue(anyFloat());
+        verifyNoMoreInteractions(qualityFactorsController);
+
+        verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicator.getName());
+        verifyNoMoreInteractions(strategicIndicatorRepository);
+
+        verify(assesSI, times(1)).AssesSI(factorValuesList, 3);
+        verifyNoMoreInteractions(assesSI);
+
+        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
+        verifyNoMoreInteractions(qmaStrategicIndicators);
+
+        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(qualityFactors), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
+        verifyNoMoreInteractions(qmaRelations);
+    }
+
+    @Test
+    public void assessStrategicIndicatorNotCorrect () throws IOException, CategoriesException {
+        Project project = domainObjectsBuilder.buildProject();
+        List<String> projectList = new ArrayList<>();
+        projectList.add(project.getExternalId());
+        when(projectsController.getAllProjects()).thenReturn(projectList);
+
+        DTOFactor dtoFactor1 = domainObjectsBuilder.buildDTOFactor();
+
+        String factor2Id = "developmentspeed";
+        String factor2Name = "Development Speed";
+        String factor2Description = "Time spent to add new value to the product";
+        float factor2Value = 0.7f;
+        DTOFactor dtoFactor2 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor2.setId(factor2Id);
+        dtoFactor2.setName(factor2Name);
+        dtoFactor2.setDescription(factor2Description);
+        dtoFactor2.setValue(factor2Value);
+
+        String factor3Id = "externalquality";
+        String factor3Name = "External Quality";
+        String factor3Description = "Quality perceived by the users";
+        float factor3Value = 0.6f;
+        DTOFactor dtoFactor3 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor3.setId(factor3Id);
+        dtoFactor3.setName(factor3Name);
+        dtoFactor3.setDescription(factor3Description);
+        dtoFactor3.setValue(factor3Value);
+
+        List<DTOFactor> dtoFactorList = new ArrayList<>();
+        dtoFactorList.add(dtoFactor1);
+        dtoFactorList.add(dtoFactor2);
+        dtoFactorList.add(dtoFactor3);
+
+        when(qualityFactorsController.getAllFactorsEvaluation(project.getExternalId())).thenReturn(dtoFactorList);
+
+        Long strategicIndicatorId = 1L;
+        String strategicIndicatorName = "Process Performance";
+        String strategicIndicatorDescription = "Performance levels of the processes involved in the project";
+        List<String> qualityFactors = new ArrayList<>();
+        String factor1 = "testingperformance";
+        qualityFactors.add(factor1);
+        String factor2 = "developmentspeed";
+        qualityFactors.add(factor2);
+        String factor3 = "externalquality";
+        qualityFactors.add(factor3);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+        strategicIndicator.setId(strategicIndicatorId);
+
+        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
+
+        when(qualityFactorsController.getFactorLabelFromValue(dtoFactor1.getValue())).thenReturn("Good");
+        when(qualityFactorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
+        when(qualityFactorsController.getFactorLabelFromValue(factor3Value)).thenReturn("Neutral");
+
+        List<Float> factorValuesList = new ArrayList<>();
+        factorValuesList.add(dtoFactor1.getValue());
+        factorValuesList.add(factor2Value);
+        factorValuesList.add(factor3Value);
+
+        int factorsNumber = factorValuesList.size();
+        Float factorsValuesSum = 0f;
+        for (Float factorValue : factorValuesList) {
+            factorsValuesSum += factorValue;
+        }
+        Float factorsAverageValue = factorsValuesSum / factorsNumber;
+
+        when(assesSI.AssesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
+
+        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
+
+        // When
+        boolean correct = strategicIndicatorsController.assessStrategicIndicator(strategicIndicator.getName());
+
+        // Then
+        assertFalse(correct);
+
+        verify(qualityFactorsController, times(1)).setFactorStrategicIndicatorRelation(dtoFactorList, project.getExternalId());
+        verify(qualityFactorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
+        verify(qualityFactorsController, times(3)).getFactorLabelFromValue(anyFloat());
+        verifyNoMoreInteractions(qualityFactorsController);
+
+        verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicator.getName());
+        verifyNoMoreInteractions(strategicIndicatorRepository);
+
+        verify(assesSI, times(1)).AssesSI(factorValuesList, 3);
+        verifyNoMoreInteractions(assesSI);
+
+        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
+        verifyNoMoreInteractions(qmaStrategicIndicators);
+
+        verifyZeroInteractions(qmaRelations);
+    }
+
+    @Test
+    public void getValueAndLabelFromCategories() {
+        // Given
+        List<DTOSIAssessment> dtoSIAssessmentList = domainObjectsBuilder.buildDTOSIAssessmentList();
+
+        List<SICategory> categoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(categoryList);
+
+        // When
+        Pair<Float, String> valueLabelPair = strategicIndicatorsController.getValueAndLabelFromCategories(dtoSIAssessmentList);
+
+        // Then
+        float expectedValue = 0.83f;
+        String expectedLabel = "Good";
+        assertEquals(expectedValue, valueLabelPair.getFirst(), 0.01f);
+        assertEquals(expectedLabel, valueLabelPair.getSecond());
+    }
+
+    @Test
+    public void getValueFromLabelGood() {
+        // Given
+        List<SICategory> categoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(categoryList);
+
+        // When
+        float value = strategicIndicatorsController.getValueFromLabel("Good");
+
+        // Then
+        int categoryPosition = 3;
+        float categorySpan = 1f / categoryList.size();
+        float expectedValue = categorySpan * categoryPosition - categorySpan / 2f;
+        assertEquals(expectedValue, value, 0.000001f);
+    }
+
+    @Test
+    public void getValueFromLabelNeutral() {
+        // Given
+        List<SICategory> categoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(categoryList);
+
+        // When
+        float value = strategicIndicatorsController.getValueFromLabel("Neutral");
+
+        // Then
+        int categoryPosition = 2;
+        float categorySpan = 1f / categoryList.size();
+        float expectedValue = categorySpan * categoryPosition - categorySpan / 2f;
+        assertEquals(expectedValue, value, 0.000001f);
+    }
+
+    @Test
+    public void getValueFromLabelBad() {
+        // Given
+        List<SICategory> categoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(categoryList);
+
+        // When
+        float value = strategicIndicatorsController.getValueFromLabel("Bad");
+
+        // Then
+        int categoryPosition = 1;
+        float categorySpan = 1f / categoryList.size();
+        float expectedValue = categorySpan * categoryPosition - categorySpan / 2f;
+        assertEquals(expectedValue, value, 0.000001f);
     }
 }

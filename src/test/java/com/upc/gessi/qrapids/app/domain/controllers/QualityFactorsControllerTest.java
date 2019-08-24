@@ -19,10 +19,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -261,5 +258,53 @@ public class QualityFactorsControllerTest {
         // Then
         assertEquals(dtoFactorList.size(), factorsSimulationList.size());
         assertEquals(dtoFactor, factorsSimulationList.get(0));
+    }
+
+    @Test
+    public void getFactorLabelFromValueGood() {
+        // Given
+        List<QFCategory> qfCategoryList = domainObjectsBuilder.buildFactorCategoryList();
+        Collections.reverse(qfCategoryList);
+        when(factorCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(qfCategoryList);
+        float value = 0.8f;
+
+        // When
+        String label = qualityFactorsController.getFactorLabelFromValue(value);
+
+        // Then
+        String expectedLabel = "Good";
+        assertEquals(expectedLabel, label);
+    }
+
+    @Test
+    public void getFactorLabelFromValueNeutral() {
+        // Given
+        List<QFCategory> qfCategoryList = domainObjectsBuilder.buildFactorCategoryList();
+        Collections.reverse(qfCategoryList);
+        when(factorCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(qfCategoryList);
+        float value = 0.5f;
+
+        // When
+        String label = qualityFactorsController.getFactorLabelFromValue(value);
+
+        // Then
+        String expectedLabel = "Neutral";
+        assertEquals(expectedLabel, label);
+    }
+
+    @Test
+    public void getFactorLabelFromValueBad() {
+        // Given
+        List<QFCategory> qfCategoryList = domainObjectsBuilder.buildFactorCategoryList();
+        Collections.reverse(qfCategoryList);
+        when(factorCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(qfCategoryList);
+        float value = 0.2f;
+
+        // When
+        String label = qualityFactorsController.getFactorLabelFromValue(value);
+
+        // Then
+        String expectedLabel = "Bad";
+        assertEquals(expectedLabel, label);
     }
 }

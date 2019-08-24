@@ -28,8 +28,12 @@ public class ProjectsController {
         return project;
     }
 
+    public List<String> getAllProjects () throws IOException, CategoriesException {
+        return qmaProjects.getAssessedProjects();
+    }
+
     public List<String> importProjectsAndUpdateDatabase() throws IOException, CategoriesException {
-        List<String> projects = qmaProjects.getAssessedProjects();
+        List<String> projects = getAllProjects();
         updateDataBaseWithNewProjects(projects);
         return projects;
     }

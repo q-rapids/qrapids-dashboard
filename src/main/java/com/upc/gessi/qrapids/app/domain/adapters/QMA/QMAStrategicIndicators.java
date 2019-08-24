@@ -5,13 +5,14 @@ import DTOs.EvaluationDTO;
 import DTOs.QuadrupletDTO;
 import DTOs.StrategicIndicatorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.Feedback;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.domain.services.Util;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
+import com.upc.gessi.qrapids.app.dto.DTOSIAssessment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import evaluation.StrategicIndicator;
@@ -43,6 +44,9 @@ public class QMAStrategicIndicators {
 
     @Autowired
     private Util util;
+
+    @Autowired
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     public List<DTOStrategicIndicatorEvaluation> CurrentEvaluation(String prj) throws IOException, CategoriesException {
         List<DTOStrategicIndicatorEvaluation> result;
@@ -90,7 +94,7 @@ public class QMAStrategicIndicators {
                                               String strategicIndicatorDescription,
                                               Float value,
                                               LocalDate date,
-                                              List<DTOSIAssesment> assessment,
+                                              List<DTOSIAssessment> assessment,
                                               List<String> missingFactors,
                                               long dates_mismatch
                                               ) throws IOException {
@@ -143,7 +147,7 @@ public class QMAStrategicIndicators {
                 }
             }
             //get categories
-            List<DTOSIAssesment> categories = util.getCategories();
+            List<DTOSIAssessment> categories = util.getCategories();
 
             //bool that determines if the current SI has the estimation parameter
             if (element.getEstimation() == null || element.getEstimation().size() != element.getEvaluations().size())
@@ -162,7 +166,7 @@ public class QMAStrategicIndicators {
                 if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
                     int changed = 0;
                     int i = 0;
-                    for (DTOSIAssesment d : categories) {
+                    for (DTOSIAssessment d : categories) {
                         if (d.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
                             d.setValue(estimation.getEstimation().get(i).getThird());
                             d.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
@@ -175,7 +179,7 @@ public class QMAStrategicIndicators {
                 } else if (hasEstimation) throw new CategoriesException();
                 //calculate "fake" value if the SI has estimation
                 if (hasEstimation) {
-                    Float value = util.getValueAndLabelFromCategories(categories).getFirst();
+                    Float value = strategicIndicatorsController.getValueAndLabelFromCategories(categories).getFirst();
                     DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
                             element.getName(),
                             element.getDescription(),
@@ -211,9 +215,9 @@ public class QMAStrategicIndicators {
         return si;
     }
 
-    private EstimationEvaluationDTO ListDTOSIAssesmenttoEstimationEvaluationDTO(List<DTOSIAssesment> assessment) {
+    private EstimationEvaluationDTO ListDTOSIAssesmenttoEstimationEvaluationDTO(List<DTOSIAssessment> assessment) {
         List<QuadrupletDTO<Integer, String, Float, Float>> estimation = new ArrayList<>();
-        for (DTOSIAssesment dsa : assessment) {
+        for (DTOSIAssessment dsa : assessment) {
             estimation.add(new QuadrupletDTO<Integer, String, Float, Float>(dsa.getId() != null ? dsa.getId().intValue() : null, dsa.getLabel(), dsa.getValue(), dsa.getUpperThreshold()));
         }
         return new EstimationEvaluationDTO(estimation);

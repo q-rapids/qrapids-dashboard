@@ -6,7 +6,7 @@ package com.upc.gessi.qrapids.app.dto;
  * @author Oriol M./Lidia L.
  */
 
-public class DTOSIAssesment {
+public class DTOSIAssessment {
 
     private Long id;
     private String label;
@@ -14,7 +14,7 @@ public class DTOSIAssesment {
     private String color;
     private Float upperThreshold;
 
-    public DTOSIAssesment(Long id, String label, Float value, String color, Float upperThreshold) {
+    public DTOSIAssessment(Long id, String label, Float value, String color, Float upperThreshold) {
         this.id = id;
         this.label = label;
         this.value = value;

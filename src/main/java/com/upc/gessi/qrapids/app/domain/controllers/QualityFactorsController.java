@@ -71,6 +71,10 @@ public class QualityFactorsController {
         return qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId);
     }
 
+    public List<DTOFactor> getAllFactorsHistoricalEvaluation (String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException {
+        return qmaQualityFactors.getAllFactorsHistoricalData(projectExternalId, dateFrom, dateTo);
+    }
+
     public List<DTOQualityFactor> getAllFactorsWithMetricsHistoricalEvaluation(String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException {
         return qmaQualityFactors.HistoricalData(null, dateFrom, dateTo, projectExternalId);
     }
@@ -85,5 +89,20 @@ public class QualityFactorsController {
 
     public List<DTOFactor> simulate (Map<String, Float> metricsValue, String projectExternalId, LocalDate date) throws IOException {
         return qmaSimulation.simulateQualityFactors(metricsValue, projectExternalId, date);
+    }
+
+    public void setFactorStrategicIndicatorRelation (List<DTOFactor> factorList, String projectExternalId) throws IOException {
+        qmaQualityFactors.setFactorStrategicIndicatorRelation(factorList, projectExternalId);
+    }
+
+    public String getFactorLabelFromValue (Float f) {
+        List <QFCategory> QFCats = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
+        if (f != null) {
+            for (QFCategory qfcat : QFCats) {
+                if (f <= qfcat.getUpperThreshold())
+                    return qfcat.getName();
+            }
+        }
+        return "No Category";
     }
 }

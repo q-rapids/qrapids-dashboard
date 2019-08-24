@@ -5,8 +5,9 @@ import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
+import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
@@ -16,7 +17,6 @@ import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.Strategi
 import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOMilestone;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
@@ -96,6 +96,12 @@ public class UtilTest {
     @Mock
     private Backlog backlog;
 
+    @Mock
+    private StrategicIndicatorsController strategicIndicatorsController;
+
+    @Mock
+    private QualityFactorsController qualityFactorsController;
+
     @InjectMocks
     private Util utilController;
 
@@ -115,7 +121,7 @@ public class UtilTest {
         String projectExternalId = "test";
         projectsList.add(projectExternalId);
 
-        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
+        //when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
 
         String projectName = "Test";
         String projectDescription = "Test project";
@@ -139,144 +145,146 @@ public class UtilTest {
         Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
-        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
+        when(strategicIndicatorsController.assessStrategicIndicator(strategicIndicatorName)).thenReturn(true);
 
-        // Factors setup
-        String factor1Id = "codequality";
-        String factor1Name = "Code Quality";
-        String factor1Description = "Quality of the system code";
-        Double factor1Value = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String factorRationale = "parameters: {...}, formula: ...";
-        String strategicIndicatorExternalId = "productquality";
-        List<String> strategicIndicatorsList = new ArrayList<>();
-        strategicIndicatorsList.add(strategicIndicatorExternalId);
-        DTOFactor dtoFactor1 = new DTOFactor(factor1Id, factor1Name, factor1Description, factor1Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor2Id = "softwarestability";
-        String factor2Name = "Software Stability";
-        String factor2Description = "Critical issues in the system";
-        Double factor2Value = 0.7;
-        DTOFactor dtoFactor2 = new DTOFactor(factor2Id, factor2Name, factor2Description, factor2Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor3Id = "testingstatus";
-        String factor3Name = "Testing status";
-        String factor3Description = "Status of the tests";
-        Double factor3Value = 0.6;
-        DTOFactor dtoFactor3 = new DTOFactor(factor3Id, factor3Name, factor3Description, factor3Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        List<DTOFactor> dtoFactorList = new ArrayList<>();
-        dtoFactorList.add(dtoFactor1);
-        dtoFactorList.add(dtoFactor2);
-        dtoFactorList.add(dtoFactor3);
-
-        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
-
-        // Assessments setup
-        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
-
-        Long assessment1Id = 10L;
-        String assessment1Label = "Good";
-        Float assessment1Value = 0.5f;
-        String assessment1Color = "#00ff00";
-        Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment1);
-
-        Long assessment2Id = 11L;
-        String assessment2Label = "Neutral";
-        Float assessment2Value = 0.3f;
-        String assessment2Color = "#ff8000";
-        Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment2);
-
-        Long assessment3Id = 11L;
-        String assessment3Label = "Bad";
-        Float assessment3Value = 0.2f;
-        String assessment3Color = "#ff0000";
-        Float assessment3UpperThreshold = 0f;
-        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment3);
-
-        Map<String, String> mapFactors = new HashMap<>();
-        mapFactors.put(factor1Id, "Good");
-        mapFactors.put(factor2Id, "Good");
-        mapFactors.put(factor3Id, "Neutral");
-
-        // Factors categories setup
-        Long factorGoodCategoryId = 10L;
-        String factorGoodCategoryName = "Good";
-        String factorGoodCategoryColor = "#00ff00";
-        float factorGoodCategoryUpperThreshold = 1f;
-        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
-        factorGoodCategory.setId(factorGoodCategoryId);
-
-        Long factorNeutralCategoryId = 11L;
-        String factorNeutralCategoryName = "Neutral";
-        String factorNeutralCategoryColor = "#ff8000";
-        float factorNeutralCategoryUpperThreshold = 0.67f;
-        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
-        factorNeutralCategory.setId(factorNeutralCategoryId);
-
-        Long factorBadCategoryId = 12L;
-        String factorBadCategoryName = "Bad";
-        String factorBadCategoryColor = "#ff0000";
-        float factorBadCategoryUpperThreshold = 0.33f;
-        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
-        factorBadCategory.setId(factorBadCategoryId);
-
-        List<QFCategory> factorCategoryList = new ArrayList<>();
-        factorCategoryList.add(factorBadCategory);
-        factorCategoryList.add(factorNeutralCategory);
-        factorCategoryList.add(factorGoodCategory);
-
-        when(qfCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(factorCategoryList);
-
-        when(assesSI.AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class))).thenReturn(dtoSIAssesmentList);
-
-        // SI Categories setup
-        Long strategicIndicatorGoodCategoryId = 10L;
-        String strategicIndicatorGoodCategoryName = "Good";
-        String strategicIndicatorGoodCategoryColor = "#00ff00";
-        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
-        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
-
-        Long strategicIndicatorNeutralCategoryId = 11L;
-        String strategicIndicatorNeutralCategoryName = "Neutral";
-        String strategicIndicatorNeutralCategoryColor = "#ff8000";
-        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
-        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
-
-        Long strategicIndicatorBadCategoryId = 12L;
-        String strategicIndicatorBadCategoryName = "Bad";
-        String strategicIndicatorBadCategoryColor = "#ff0000";
-        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
-        siBadCategory.setId(strategicIndicatorBadCategoryId);
-
-        List<SICategory> siCategoryList = new ArrayList<>();
-        siCategoryList.add(siGoodCategory);
-        siCategoryList.add(siNeutralCategory);
-        siCategoryList.add(siBadCategory);
-
-        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
-
-        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L))).thenReturn(true);
-
-        List<Float> factorValuesList = new ArrayList<>();
-        factorValuesList.add(dtoFactor1.getValue());
-        factorValuesList.add(dtoFactor2.getValue());
-        factorValuesList.add(dtoFactor3.getValue());
-        List<Float> factorWeightsList = new ArrayList<>();
-        factorWeightsList.add(0f);
-        factorWeightsList.add(0f);
-        factorWeightsList.add(0f);
-        List<String> factorCategoryNamesList = new ArrayList<>();
-        factorCategoryNamesList.add("Good");
-        factorCategoryNamesList.add("Good");
-        factorCategoryNamesList.add("Neutral");
-
-        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(projectExternalId), eq(qualityFactors), eq(strategicIndicatorExternalId), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq("Good"))).thenReturn(true);
+//        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
+//
+//        // Factors setup
+//        String factor1Id = "codequality";
+//        String factor1Name = "Code Quality";
+//        String factor1Description = "Quality of the system code";
+//        Double factor1Value = 0.8;
+//        LocalDate evaluationDate = LocalDate.now();
+//        String factorRationale = "parameters: {...}, formula: ...";
+//        String strategicIndicatorExternalId = "productquality";
+//        List<String> strategicIndicatorsList = new ArrayList<>();
+//        strategicIndicatorsList.add(strategicIndicatorExternalId);
+//        DTOFactor dtoFactor1 = new DTOFactor(factor1Id, factor1Name, factor1Description, factor1Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        String factor2Id = "softwarestability";
+//        String factor2Name = "Software Stability";
+//        String factor2Description = "Critical issues in the system";
+//        Double factor2Value = 0.7;
+//        DTOFactor dtoFactor2 = new DTOFactor(factor2Id, factor2Name, factor2Description, factor2Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        String factor3Id = "testingstatus";
+//        String factor3Name = "Testing status";
+//        String factor3Description = "Status of the tests";
+//        Double factor3Value = 0.6;
+//        DTOFactor dtoFactor3 = new DTOFactor(factor3Id, factor3Name, factor3Description, factor3Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        List<DTOFactor> dtoFactorList = new ArrayList<>();
+//        dtoFactorList.add(dtoFactor1);
+//        dtoFactorList.add(dtoFactor2);
+//        dtoFactorList.add(dtoFactor3);
+//
+//        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
+//
+//        // Assessments setup
+//        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
+//
+//        Long assessment1Id = 10L;
+//        String assessment1Label = "Good";
+//        Float assessment1Value = 0.5f;
+//        String assessment1Color = "#00ff00";
+//        Float assessment1UpperThreshold = 0.66f;
+//        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment1);
+//
+//        Long assessment2Id = 11L;
+//        String assessment2Label = "Neutral";
+//        Float assessment2Value = 0.3f;
+//        String assessment2Color = "#ff8000";
+//        Float assessment2UpperThreshold = 0.33f;
+//        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment2);
+//
+//        Long assessment3Id = 11L;
+//        String assessment3Label = "Bad";
+//        Float assessment3Value = 0.2f;
+//        String assessment3Color = "#ff0000";
+//        Float assessment3UpperThreshold = 0f;
+//        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment3);
+//
+//        Map<String, String> mapFactors = new HashMap<>();
+//        mapFactors.put(factor1Id, "Good");
+//        mapFactors.put(factor2Id, "Good");
+//        mapFactors.put(factor3Id, "Neutral");
+//
+//        // Factors categories setup
+//        Long factorGoodCategoryId = 10L;
+//        String factorGoodCategoryName = "Good";
+//        String factorGoodCategoryColor = "#00ff00";
+//        float factorGoodCategoryUpperThreshold = 1f;
+//        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
+//        factorGoodCategory.setId(factorGoodCategoryId);
+//
+//        Long factorNeutralCategoryId = 11L;
+//        String factorNeutralCategoryName = "Neutral";
+//        String factorNeutralCategoryColor = "#ff8000";
+//        float factorNeutralCategoryUpperThreshold = 0.67f;
+//        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
+//        factorNeutralCategory.setId(factorNeutralCategoryId);
+//
+//        Long factorBadCategoryId = 12L;
+//        String factorBadCategoryName = "Bad";
+//        String factorBadCategoryColor = "#ff0000";
+//        float factorBadCategoryUpperThreshold = 0.33f;
+//        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
+//        factorBadCategory.setId(factorBadCategoryId);
+//
+//        List<QFCategory> factorCategoryList = new ArrayList<>();
+//        factorCategoryList.add(factorBadCategory);
+//        factorCategoryList.add(factorNeutralCategory);
+//        factorCategoryList.add(factorGoodCategory);
+//
+//        when(qfCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(factorCategoryList);
+//
+//        when(assesSI.AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class))).thenReturn(dtoSIAssesmentList);
+//
+//        // SI Categories setup
+//        Long strategicIndicatorGoodCategoryId = 10L;
+//        String strategicIndicatorGoodCategoryName = "Good";
+//        String strategicIndicatorGoodCategoryColor = "#00ff00";
+//        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
+//        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
+//
+//        Long strategicIndicatorNeutralCategoryId = 11L;
+//        String strategicIndicatorNeutralCategoryName = "Neutral";
+//        String strategicIndicatorNeutralCategoryColor = "#ff8000";
+//        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
+//        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
+//
+//        Long strategicIndicatorBadCategoryId = 12L;
+//        String strategicIndicatorBadCategoryName = "Bad";
+//        String strategicIndicatorBadCategoryColor = "#ff0000";
+//        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
+//        siBadCategory.setId(strategicIndicatorBadCategoryId);
+//
+//        List<SICategory> siCategoryList = new ArrayList<>();
+//        siCategoryList.add(siGoodCategory);
+//        siCategoryList.add(siNeutralCategory);
+//        siCategoryList.add(siBadCategory);
+//
+//        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+//
+//        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L))).thenReturn(true);
+//
+//        List<Float> factorValuesList = new ArrayList<>();
+//        factorValuesList.add(dtoFactor1.getValue());
+//        factorValuesList.add(dtoFactor2.getValue());
+//        factorValuesList.add(dtoFactor3.getValue());
+//        List<Float> factorWeightsList = new ArrayList<>();
+//        factorWeightsList.add(0f);
+//        factorWeightsList.add(0f);
+//        factorWeightsList.add(0f);
+//        List<String> factorCategoryNamesList = new ArrayList<>();
+//        factorCategoryNamesList.add("Good");
+//        factorCategoryNamesList.add("Good");
+//        factorCategoryNamesList.add("Neutral");
+//
+//        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(projectExternalId), eq(qualityFactors), eq(strategicIndicatorExternalId), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq("Good"))).thenReturn(true);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -308,28 +316,31 @@ public class UtilTest {
                 ));
 
         // Verify mock interactions
+        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
+
+        verifyNoMoreInteractions(projectRepository);
         ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
         verify(strategicIndicatorRepository, times(1)).save(argument.capture());
         Strategic_Indicator strategicIndicatorSaved = argument.getValue();
         assertEquals(strategicIndicatorName, strategicIndicatorSaved.getName());
         assertEquals(strategicIndicatorDescription, strategicIndicatorSaved.getDescription());
         assertEquals(qualityFactors, strategicIndicatorSaved.getQuality_factors());
-
-        verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(anyList(), eq(projectExternalId));
-        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
-        verifyNoMoreInteractions(qmaQualityFactors);
-
-        verify(qmaProjects, times(1)).getAssessedProjects();
-        verifyNoMoreInteractions(qmaProjects);
-
-        verify(assesSI, times(1)).AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class));
-        verifyNoMoreInteractions(assesSI);
-
-        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L));
-        verifyNoMoreInteractions(qmaStrategicIndicators);
-
-        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(projectExternalId), eq(qualityFactors), eq(strategicIndicatorExternalId), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq("Good"));
-        verifyNoMoreInteractions(qmaRelations);
+//
+//        verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(anyList(), eq(projectExternalId));
+//        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
+//        verifyNoMoreInteractions(qmaQualityFactors);
+//
+//        verify(qmaProjects, times(1)).getAssessedProjects();
+//        verifyNoMoreInteractions(qmaProjects);
+//
+//        verify(assesSI, times(1)).AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class));
+//        verifyNoMoreInteractions(assesSI);
+//
+//        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L));
+//        verifyNoMoreInteractions(qmaStrategicIndicators);
+//
+//        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(projectExternalId), eq(qualityFactors), eq(strategicIndicatorExternalId), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq("Good"));
+//        verifyNoMoreInteractions(qmaRelations);
     }
 
     @Test
@@ -363,134 +374,137 @@ public class UtilTest {
         Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, Files.readAllBytes(networkFile.toPath()), qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
-        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
+        when(strategicIndicatorsController.assessStrategicIndicator(projectName)).thenReturn(false);
 
-        // Factors setup
-        String factor1Id = "codequality";
-        String factor1Name = "Code Quality";
-        String factor1Description = "Quality of the system code";
-        Double factor1Value = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String factorRationale = "parameters: {...}, formula: ...";
-        String strategicIndicatorExternalId = "productquality";
-        List<String> strategicIndicatorsList = new ArrayList<>();
-        strategicIndicatorsList.add(strategicIndicatorExternalId);
-        DTOFactor dtoFactor1 = new DTOFactor(factor1Id, factor1Name, factor1Description, factor1Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor2Id = "softwarestability";
-        String factor2Name = "Software Stability";
-        String factor2Description = "Critical issues in the system";
-        Double factor2Value = 0.7;
-        DTOFactor dtoFactor2 = new DTOFactor(factor2Id, factor2Name, factor2Description, factor2Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor3Id = "testingstatus";
-        String factor3Name = "Testing status";
-        String factor3Description = "Status of the tests";
-        Double factor3Value = 0.6;
-        DTOFactor dtoFactor3 = new DTOFactor(factor3Id, factor3Name, factor3Description, factor3Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        List<DTOFactor> dtoFactorList = new ArrayList<>();
-        dtoFactorList.add(dtoFactor1);
-        dtoFactorList.add(dtoFactor2);
-        dtoFactorList.add(dtoFactor3);
-
-        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
-
-        // Assessments setup
-        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
-
-        Long assessment1Id = 10L;
-        String assessment1Label = "Good";
-        Float assessment1Value = 0.5f;
-        String assessment1Color = "#00ff00";
-        Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment1);
-
-        Long assessment2Id = 11L;
-        String assessment2Label = "Neutral";
-        Float assessment2Value = 0.3f;
-        String assessment2Color = "#ff8000";
-        Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment2);
-
-        Long assessment3Id = 11L;
-        String assessment3Label = "Bad";
-        Float assessment3Value = 0.2f;
-        String assessment3Color = "#ff0000";
-        Float assessment3UpperThreshold = 0f;
-        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment3);
-
-        Map<String, String> mapFactors = new HashMap<>();
-        mapFactors.put(factor1Id, "Good");
-        mapFactors.put(factor2Id, "Good");
-        mapFactors.put(factor3Id, "Neutral");
-
-        // Factors categories setup
-        Long factorGoodCategoryId = 10L;
-        String factorGoodCategoryName = "Good";
-        String factorGoodCategoryColor = "#00ff00";
-        float factorGoodCategoryUpperThreshold = 1f;
-        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
-        factorGoodCategory.setId(factorGoodCategoryId);
-
-        Long factorNeutralCategoryId = 11L;
-        String factorNeutralCategoryName = "Neutral";
-        String factorNeutralCategoryColor = "#ff8000";
-        float factorNeutralCategoryUpperThreshold = 0.67f;
-        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
-        factorNeutralCategory.setId(factorNeutralCategoryId);
-
-        Long factorBadCategoryId = 12L;
-        String factorBadCategoryName = "Bad";
-        String factorBadCategoryColor = "#ff0000";
-        float factorBadCategoryUpperThreshold = 0.33f;
-        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
-        factorBadCategory.setId(factorBadCategoryId);
-
-        List<QFCategory> factorCategoryList = new ArrayList<>();
-        factorCategoryList.add(factorBadCategory);
-        factorCategoryList.add(factorNeutralCategory);
-        factorCategoryList.add(factorGoodCategory);
-
-        when(qfCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(factorCategoryList);
-
-        when(assesSI.AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class))).thenReturn(dtoSIAssesmentList);
-
-        // SI Categories setup
-        Long strategicIndicatorGoodCategoryId = 10L;
-        String strategicIndicatorGoodCategoryName = "Good";
-        String strategicIndicatorGoodCategoryColor = "#00ff00";
-        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
-        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
-
-        Long strategicIndicatorNeutralCategoryId = 11L;
-        String strategicIndicatorNeutralCategoryName = "Neutral";
-        String strategicIndicatorNeutralCategoryColor = "#ff8000";
-        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
-        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
-
-        Long strategicIndicatorBadCategoryId = 12L;
-        String strategicIndicatorBadCategoryName = "Bad";
-        String strategicIndicatorBadCategoryColor = "#ff0000";
-        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
-        siBadCategory.setId(strategicIndicatorBadCategoryId);
-
-        List<SICategory> siCategoryList = new ArrayList<>();
-        siCategoryList.add(siGoodCategory);
-        siCategoryList.add(siNeutralCategory);
-        siCategoryList.add(siBadCategory);
-
-        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
-
-        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L))).thenReturn(false);
+//        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
+//
+//        // Factors setup
+//        String factor1Id = "codequality";
+//        String factor1Name = "Code Quality";
+//        String factor1Description = "Quality of the system code";
+//        Double factor1Value = 0.8;
+//        LocalDate evaluationDate = LocalDate.now();
+//        String factorRationale = "parameters: {...}, formula: ...";
+//        String strategicIndicatorExternalId = "productquality";
+//        List<String> strategicIndicatorsList = new ArrayList<>();
+//        strategicIndicatorsList.add(strategicIndicatorExternalId);
+//        DTOFactor dtoFactor1 = new DTOFactor(factor1Id, factor1Name, factor1Description, factor1Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        String factor2Id = "softwarestability";
+//        String factor2Name = "Software Stability";
+//        String factor2Description = "Critical issues in the system";
+//        Double factor2Value = 0.7;
+//        DTOFactor dtoFactor2 = new DTOFactor(factor2Id, factor2Name, factor2Description, factor2Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        String factor3Id = "testingstatus";
+//        String factor3Name = "Testing status";
+//        String factor3Description = "Status of the tests";
+//        Double factor3Value = 0.6;
+//        DTOFactor dtoFactor3 = new DTOFactor(factor3Id, factor3Name, factor3Description, factor3Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        List<DTOFactor> dtoFactorList = new ArrayList<>();
+//        dtoFactorList.add(dtoFactor1);
+//        dtoFactorList.add(dtoFactor2);
+//        dtoFactorList.add(dtoFactor3);
+//
+//        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
+//
+//        // Assessments setup
+//        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
+//
+//        Long assessment1Id = 10L;
+//        String assessment1Label = "Good";
+//        Float assessment1Value = 0.5f;
+//        String assessment1Color = "#00ff00";
+//        Float assessment1UpperThreshold = 0.66f;
+//        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment1);
+//
+//        Long assessment2Id = 11L;
+//        String assessment2Label = "Neutral";
+//        Float assessment2Value = 0.3f;
+//        String assessment2Color = "#ff8000";
+//        Float assessment2UpperThreshold = 0.33f;
+//        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment2);
+//
+//        Long assessment3Id = 11L;
+//        String assessment3Label = "Bad";
+//        Float assessment3Value = 0.2f;
+//        String assessment3Color = "#ff0000";
+//        Float assessment3UpperThreshold = 0f;
+//        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment3);
+//
+//        Map<String, String> mapFactors = new HashMap<>();
+//        mapFactors.put(factor1Id, "Good");
+//        mapFactors.put(factor2Id, "Good");
+//        mapFactors.put(factor3Id, "Neutral");
+//
+//        // Factors categories setup
+//        Long factorGoodCategoryId = 10L;
+//        String factorGoodCategoryName = "Good";
+//        String factorGoodCategoryColor = "#00ff00";
+//        float factorGoodCategoryUpperThreshold = 1f;
+//        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
+//        factorGoodCategory.setId(factorGoodCategoryId);
+//
+//        Long factorNeutralCategoryId = 11L;
+//        String factorNeutralCategoryName = "Neutral";
+//        String factorNeutralCategoryColor = "#ff8000";
+//        float factorNeutralCategoryUpperThreshold = 0.67f;
+//        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
+//        factorNeutralCategory.setId(factorNeutralCategoryId);
+//
+//        Long factorBadCategoryId = 12L;
+//        String factorBadCategoryName = "Bad";
+//        String factorBadCategoryColor = "#ff0000";
+//        float factorBadCategoryUpperThreshold = 0.33f;
+//        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
+//        factorBadCategory.setId(factorBadCategoryId);
+//
+//        List<QFCategory> factorCategoryList = new ArrayList<>();
+//        factorCategoryList.add(factorBadCategory);
+//        factorCategoryList.add(factorNeutralCategory);
+//        factorCategoryList.add(factorGoodCategory);
+//
+//        when(qfCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(factorCategoryList);
+//
+//        when(assesSI.AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class))).thenReturn(dtoSIAssesmentList);
+//
+//        // SI Categories setup
+//        Long strategicIndicatorGoodCategoryId = 10L;
+//        String strategicIndicatorGoodCategoryName = "Good";
+//        String strategicIndicatorGoodCategoryColor = "#00ff00";
+//        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
+//        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
+//
+//        Long strategicIndicatorNeutralCategoryId = 11L;
+//        String strategicIndicatorNeutralCategoryName = "Neutral";
+//        String strategicIndicatorNeutralCategoryColor = "#ff8000";
+//        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
+//        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
+//
+//        Long strategicIndicatorBadCategoryId = 12L;
+//        String strategicIndicatorBadCategoryName = "Bad";
+//        String strategicIndicatorBadCategoryColor = "#ff0000";
+//        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
+//        siBadCategory.setId(strategicIndicatorBadCategoryId);
+//
+//        List<SICategory> siCategoryList = new ArrayList<>();
+//        siCategoryList.add(siGoodCategory);
+//        siCategoryList.add(siNeutralCategory);
+//        siCategoryList.add(siBadCategory);
+//
+//        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+//
+//        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L))).thenReturn(false);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart("/api/strategicIndicators")
                 .file(network)
+                .param("prj", projectExternalId)
                 .param("name", strategicIndicatorName)
                 .param("description", strategicIndicatorDescription)
                 .param("quality_factors", String.join(",", qualityFactors));
@@ -503,6 +517,9 @@ public class UtilTest {
                 ));
 
         // Verify mock interactions
+        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
+        verifyNoMoreInteractions(projectRepository);
+
         ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
         verify(strategicIndicatorRepository, times(1)).save(argument.capture());
         Strategic_Indicator strategicIndicatorSaved = argument.getValue();
@@ -510,20 +527,27 @@ public class UtilTest {
         assertEquals(strategicIndicatorDescription, strategicIndicatorSaved.getDescription());
         assertEquals(qualityFactors, strategicIndicatorSaved.getQuality_factors());
 
-        verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(anyList(), eq(projectExternalId));
-        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
-        verifyNoMoreInteractions(qmaQualityFactors);
-
-        verify(qmaProjects, times(1)).getAssessedProjects();
-        verifyNoMoreInteractions(qmaProjects);
-
-        verify(assesSI, times(1)).AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class));
-        verifyNoMoreInteractions(assesSI);
-
-        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L));
-        verifyNoMoreInteractions(qmaStrategicIndicators);
-
-        verifyNoMoreInteractions(qmaRelations);
+//        ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
+//        verify(strategicIndicatorRepository, times(1)).save(argument.capture());
+//        Strategic_Indicator strategicIndicatorSaved = argument.getValue();
+//        assertEquals(strategicIndicatorName, strategicIndicatorSaved.getName());
+//        assertEquals(strategicIndicatorDescription, strategicIndicatorSaved.getDescription());
+//        assertEquals(qualityFactors, strategicIndicatorSaved.getQuality_factors());
+//
+//        verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(anyList(), eq(projectExternalId));
+//        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
+//        verifyNoMoreInteractions(qmaQualityFactors);
+//
+//        verify(qmaProjects, times(1)).getAssessedProjects();
+//        verifyNoMoreInteractions(qmaProjects);
+//
+//        verify(assesSI, times(1)).AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class));
+//        verifyNoMoreInteractions(assesSI);
+//
+//        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L));
+//        verifyNoMoreInteractions(qmaStrategicIndicators);
+//
+//        verifyNoMoreInteractions(qmaRelations);
     }
 
     @Test
@@ -548,6 +572,8 @@ public class UtilTest {
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.findById(strategicIndicatorId)).thenReturn(Optional.of(strategicIndicator));
+
+        when(strategicIndicatorsController.assessStrategicIndicator(strategicIndicatorName)).thenReturn(true);
 
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
 
@@ -596,7 +622,7 @@ public class UtilTest {
         String projectExternalId = "test";
         projectsList.add(projectExternalId);
 
-        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
+        //when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
 
         String projectName = "Test";
         String projectDescription = "Test project";
@@ -619,149 +645,151 @@ public class UtilTest {
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.findById(strategicIndicatorId)).thenReturn(Optional.of(strategicIndicator));
-        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
-
+//        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
+//
         List<String> newQualityFactors = new ArrayList<>();
         newQualityFactors.add("codequality");
         newQualityFactors.add("softwarestability");
         newQualityFactors.add("testingperformance");
 
-        // Factors setup
-        String factor1Id = "codequality";
-        String factor1Name = "Code Quality";
-        String factor1Description = "Quality of the system code";
-        Double factor1Value = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String factorRationale = "parameters: {...}, formula: ...";
-        String strategicIndicatorExternalId = "productquality";
-        List<String> strategicIndicatorsList = new ArrayList<>();
-        strategicIndicatorsList.add(strategicIndicatorExternalId);
-        DTOFactor dtoFactor1 = new DTOFactor(factor1Id, factor1Name, factor1Description, factor1Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor2Id = "softwarestability";
-        String factor2Name = "Software Stability";
-        String factor2Description = "Critical issues in the system";
-        Double factor2Value = 0.7;
-        DTOFactor dtoFactor2 = new DTOFactor(factor2Id, factor2Name, factor2Description, factor2Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor3Id = "testingperformance";
-        String factor3Name = "Testing Performance";
-        String factor3Description = "Performance of the tests";
-        Double factor3Value = 0.6;
-        DTOFactor dtoFactor3 = new DTOFactor(factor3Id, factor3Name, factor3Description, factor3Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        List<DTOFactor> dtoFactorList = new ArrayList<>();
-        dtoFactorList.add(dtoFactor1);
-        dtoFactorList.add(dtoFactor2);
-        dtoFactorList.add(dtoFactor3);
-
-        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
-
-        // Assessments setup
-        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
-
-        Long assessment1Id = 10L;
-        String assessment1Label = "Good";
-        Float assessment1Value = 0.5f;
-        String assessment1Color = "#00ff00";
-        Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment1);
-
-        Long assessment2Id = 11L;
-        String assessment2Label = "Neutral";
-        Float assessment2Value = 0.3f;
-        String assessment2Color = "#ff8000";
-        Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment2);
-
-        Long assessment3Id = 11L;
-        String assessment3Label = "Bad";
-        Float assessment3Value = 0.2f;
-        String assessment3Color = "#ff0000";
-        Float assessment3UpperThreshold = 0f;
-        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment3);
-
-        Map<String, String> mapFactors = new HashMap<>();
-        mapFactors.put(factor1Id, "Good");
-        mapFactors.put(factor2Id, "Good");
-        mapFactors.put(factor3Id, "Neutral");
-
-        // Factors categories setup
-        Long factorGoodCategoryId = 10L;
-        String factorGoodCategoryName = "Good";
-        String factorGoodCategoryColor = "#00ff00";
-        float factorGoodCategoryUpperThreshold = 1f;
-        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
-        factorGoodCategory.setId(factorGoodCategoryId);
-
-        Long factorNeutralCategoryId = 11L;
-        String factorNeutralCategoryName = "Neutral";
-        String factorNeutralCategoryColor = "#ff8000";
-        float factorNeutralCategoryUpperThreshold = 0.67f;
-        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
-        factorNeutralCategory.setId(factorNeutralCategoryId);
-
-        Long factorBadCategoryId = 12L;
-        String factorBadCategoryName = "Bad";
-        String factorBadCategoryColor = "#ff0000";
-        float factorBadCategoryUpperThreshold = 0.33f;
-        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
-        factorBadCategory.setId(factorBadCategoryId);
-
-        List<QFCategory> factorCategoryList = new ArrayList<>();
-        factorCategoryList.add(factorBadCategory);
-        factorCategoryList.add(factorNeutralCategory);
-        factorCategoryList.add(factorGoodCategory);
-
-        when(qfCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(factorCategoryList);
-
-        when(assesSI.AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class))).thenReturn(dtoSIAssesmentList);
-
-        // SI Categories setup
-        Long strategicIndicatorGoodCategoryId = 10L;
-        String strategicIndicatorGoodCategoryName = "Good";
-        String strategicIndicatorGoodCategoryColor = "#00ff00";
-        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
-        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
-
-        Long strategicIndicatorNeutralCategoryId = 11L;
-        String strategicIndicatorNeutralCategoryName = "Neutral";
-        String strategicIndicatorNeutralCategoryColor = "#ff8000";
-        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
-        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
-
-        Long strategicIndicatorBadCategoryId = 12L;
-        String strategicIndicatorBadCategoryName = "Bad";
-        String strategicIndicatorBadCategoryColor = "#ff0000";
-        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
-        siBadCategory.setId(strategicIndicatorBadCategoryId);
-
-        List<SICategory> siCategoryList = new ArrayList<>();
-        siCategoryList.add(siGoodCategory);
-        siCategoryList.add(siNeutralCategory);
-        siCategoryList.add(siBadCategory);
-
-        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
-
-        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L))).thenReturn(true);
-
-        List<Float> factorValuesList = new ArrayList<>();
-        factorValuesList.add(dtoFactor1.getValue());
-        factorValuesList.add(dtoFactor2.getValue());
-        factorValuesList.add(dtoFactor3.getValue());
-        List<Float> factorWeightsList = new ArrayList<>();
-        factorWeightsList.add(0f);
-        factorWeightsList.add(0f);
-        factorWeightsList.add(0f);
-        List<String> factorCategoryNamesList = new ArrayList<>();
-        factorCategoryNamesList.add("Good");
-        factorCategoryNamesList.add("Good");
-        factorCategoryNamesList.add("Neutral");
-
-        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(projectExternalId), eq(newQualityFactors), eq(strategicIndicatorExternalId), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq("Good"))).thenReturn(true);
+        when(strategicIndicatorsController.assessStrategicIndicator(strategicIndicatorName)).thenReturn(true);
+//
+//        // Factors setup
+//        String factor1Id = "codequality";
+//        String factor1Name = "Code Quality";
+//        String factor1Description = "Quality of the system code";
+//        Double factor1Value = 0.8;
+//        LocalDate evaluationDate = LocalDate.now();
+//        String factorRationale = "parameters: {...}, formula: ...";
+//        String strategicIndicatorExternalId = "productquality";
+//        List<String> strategicIndicatorsList = new ArrayList<>();
+//        strategicIndicatorsList.add(strategicIndicatorExternalId);
+//        DTOFactor dtoFactor1 = new DTOFactor(factor1Id, factor1Name, factor1Description, factor1Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        String factor2Id = "softwarestability";
+//        String factor2Name = "Software Stability";
+//        String factor2Description = "Critical issues in the system";
+//        Double factor2Value = 0.7;
+//        DTOFactor dtoFactor2 = new DTOFactor(factor2Id, factor2Name, factor2Description, factor2Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        String factor3Id = "testingperformance";
+//        String factor3Name = "Testing Performance";
+//        String factor3Description = "Performance of the tests";
+//        Double factor3Value = 0.6;
+//        DTOFactor dtoFactor3 = new DTOFactor(factor3Id, factor3Name, factor3Description, factor3Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        List<DTOFactor> dtoFactorList = new ArrayList<>();
+//        dtoFactorList.add(dtoFactor1);
+//        dtoFactorList.add(dtoFactor2);
+//        dtoFactorList.add(dtoFactor3);
+//
+//        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
+//
+//        // Assessments setup
+//        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
+//
+//        Long assessment1Id = 10L;
+//        String assessment1Label = "Good";
+//        Float assessment1Value = 0.5f;
+//        String assessment1Color = "#00ff00";
+//        Float assessment1UpperThreshold = 0.66f;
+//        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment1);
+//
+//        Long assessment2Id = 11L;
+//        String assessment2Label = "Neutral";
+//        Float assessment2Value = 0.3f;
+//        String assessment2Color = "#ff8000";
+//        Float assessment2UpperThreshold = 0.33f;
+//        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment2);
+//
+//        Long assessment3Id = 11L;
+//        String assessment3Label = "Bad";
+//        Float assessment3Value = 0.2f;
+//        String assessment3Color = "#ff0000";
+//        Float assessment3UpperThreshold = 0f;
+//        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment3);
+//
+//        Map<String, String> mapFactors = new HashMap<>();
+//        mapFactors.put(factor1Id, "Good");
+//        mapFactors.put(factor2Id, "Good");
+//        mapFactors.put(factor3Id, "Neutral");
+//
+//        // Factors categories setup
+//        Long factorGoodCategoryId = 10L;
+//        String factorGoodCategoryName = "Good";
+//        String factorGoodCategoryColor = "#00ff00";
+//        float factorGoodCategoryUpperThreshold = 1f;
+//        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
+//        factorGoodCategory.setId(factorGoodCategoryId);
+//
+//        Long factorNeutralCategoryId = 11L;
+//        String factorNeutralCategoryName = "Neutral";
+//        String factorNeutralCategoryColor = "#ff8000";
+//        float factorNeutralCategoryUpperThreshold = 0.67f;
+//        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
+//        factorNeutralCategory.setId(factorNeutralCategoryId);
+//
+//        Long factorBadCategoryId = 12L;
+//        String factorBadCategoryName = "Bad";
+//        String factorBadCategoryColor = "#ff0000";
+//        float factorBadCategoryUpperThreshold = 0.33f;
+//        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
+//        factorBadCategory.setId(factorBadCategoryId);
+//
+//        List<QFCategory> factorCategoryList = new ArrayList<>();
+//        factorCategoryList.add(factorBadCategory);
+//        factorCategoryList.add(factorNeutralCategory);
+//        factorCategoryList.add(factorGoodCategory);
+//
+//        when(qfCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(factorCategoryList);
+//
+//        when(assesSI.AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class))).thenReturn(dtoSIAssesmentList);
+//
+//        // SI Categories setup
+//        Long strategicIndicatorGoodCategoryId = 10L;
+//        String strategicIndicatorGoodCategoryName = "Good";
+//        String strategicIndicatorGoodCategoryColor = "#00ff00";
+//        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
+//        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
+//
+//        Long strategicIndicatorNeutralCategoryId = 11L;
+//        String strategicIndicatorNeutralCategoryName = "Neutral";
+//        String strategicIndicatorNeutralCategoryColor = "#ff8000";
+//        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
+//        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
+//
+//        Long strategicIndicatorBadCategoryId = 12L;
+//        String strategicIndicatorBadCategoryName = "Bad";
+//        String strategicIndicatorBadCategoryColor = "#ff0000";
+//        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
+//        siBadCategory.setId(strategicIndicatorBadCategoryId);
+//
+//        List<SICategory> siCategoryList = new ArrayList<>();
+//        siCategoryList.add(siGoodCategory);
+//        siCategoryList.add(siNeutralCategory);
+//        siCategoryList.add(siBadCategory);
+//
+//        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+//
+//        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L))).thenReturn(true);
+//
+//        List<Float> factorValuesList = new ArrayList<>();
+//        factorValuesList.add(dtoFactor1.getValue());
+//        factorValuesList.add(dtoFactor2.getValue());
+//        factorValuesList.add(dtoFactor3.getValue());
+//        List<Float> factorWeightsList = new ArrayList<>();
+//        factorWeightsList.add(0f);
+//        factorWeightsList.add(0f);
+//        factorWeightsList.add(0f);
+//        List<String> factorCategoryNamesList = new ArrayList<>();
+//        factorCategoryNamesList.add("Good");
+//        factorCategoryNamesList.add("Good");
+//        factorCategoryNamesList.add("Neutral");
+//
+//        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(projectExternalId), eq(newQualityFactors), eq(strategicIndicatorExternalId), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq("Good"))).thenReturn(true);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -786,26 +814,37 @@ public class UtilTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(anyList(), eq(projectExternalId));
-        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
-        verifyNoMoreInteractions(qmaQualityFactors);
-
         verify(strategicIndicatorRepository, times(1)).findById(strategicIndicatorId);
-        verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicatorName);
-        verify(strategicIndicatorRepository, times(1)).save(ArgumentMatchers.any(Strategic_Indicator.class));
-        verifyNoMoreInteractions(strategicIndicatorRepository);
 
-        verify(qmaProjects, times(1)).getAssessedProjects();
-        verifyNoMoreInteractions(qmaProjects);
+        ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
+        verify(strategicIndicatorRepository, times(1)).save(argument.capture());
+        Strategic_Indicator strategicIndicatorSaved = argument.getValue();
+        assertEquals(strategicIndicatorName, strategicIndicatorSaved.getName());
+        assertEquals(strategicIndicatorDescription, strategicIndicatorSaved.getDescription());
+        assertEquals(newQualityFactors, strategicIndicatorSaved.getQuality_factors());
 
-        verify(assesSI, times(1)).AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class));
-        verifyNoMoreInteractions(assesSI);
+        verify(strategicIndicatorsController, times(1)).assessStrategicIndicator(strategicIndicatorName);
 
-        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L));
-        verifyNoMoreInteractions(qmaStrategicIndicators);
 
-        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(projectExternalId), eq(newQualityFactors), eq(strategicIndicatorExternalId), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq("Good"));
-        verifyNoMoreInteractions(qmaRelations);
+//        verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(anyList(), eq(projectExternalId));
+//        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
+//        verifyNoMoreInteractions(qmaQualityFactors);
+//
+//        verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicatorName);
+//        verify(strategicIndicatorRepository, times(1)).save(ArgumentMatchers.any(Strategic_Indicator.class));
+//        verifyNoMoreInteractions(strategicIndicatorRepository);
+//
+//        verify(qmaProjects, times(1)).getAssessedProjects();
+//        verifyNoMoreInteractions(qmaProjects);
+//
+//        verify(assesSI, times(1)).AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class));
+//        verifyNoMoreInteractions(assesSI);
+//
+//        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L));
+//        verifyNoMoreInteractions(qmaStrategicIndicators);
+//
+//        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(projectExternalId), eq(newQualityFactors), eq(strategicIndicatorExternalId), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq("Good"));
+//        verifyNoMoreInteractions(qmaRelations);
     }
 
     @Test
@@ -815,7 +854,7 @@ public class UtilTest {
         String projectExternalId = "test";
         projectsList.add(projectExternalId);
 
-        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
+        //when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
 
         String projectName = "Test";
         String projectDescription = "Test project";
@@ -838,134 +877,136 @@ public class UtilTest {
         strategicIndicator.setId(strategicIndicatorId);
 
         when(strategicIndicatorRepository.findById(strategicIndicatorId)).thenReturn(Optional.of(strategicIndicator));
-        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
-
+//        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
+//
         List<String> newQualityFactors = new ArrayList<>();
         newQualityFactors.add("codequality");
         newQualityFactors.add("softwarestability");
         newQualityFactors.add("testingperformance");
 
-        // Factors setup
-        String factor1Id = "codequality";
-        String factor1Name = "Code Quality";
-        String factor1Description = "Quality of the system code";
-        Double factor1Value = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String factorRationale = "parameters: {...}, formula: ...";
-        String strategicIndicatorExternalId = "productquality";
-        List<String> strategicIndicatorsList = new ArrayList<>();
-        strategicIndicatorsList.add(strategicIndicatorExternalId);
-        DTOFactor dtoFactor1 = new DTOFactor(factor1Id, factor1Name, factor1Description, factor1Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor2Id = "softwarestability";
-        String factor2Name = "Software Stability";
-        String factor2Description = "Critical issues in the system";
-        Double factor2Value = 0.7;
-        DTOFactor dtoFactor2 = new DTOFactor(factor2Id, factor2Name, factor2Description, factor2Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor3Id = "testingperformance";
-        String factor3Name = "Testing Performance";
-        String factor3Description = "Performance of the tests";
-        Double factor3Value = 0.6;
-        DTOFactor dtoFactor3 = new DTOFactor(factor3Id, factor3Name, factor3Description, factor3Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        List<DTOFactor> dtoFactorList = new ArrayList<>();
-        dtoFactorList.add(dtoFactor1);
-        dtoFactorList.add(dtoFactor2);
-        dtoFactorList.add(dtoFactor3);
-
-        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
-
-        // Assessments setup
-        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
-
-        Long assessment1Id = 10L;
-        String assessment1Label = "Good";
-        Float assessment1Value = 0.5f;
-        String assessment1Color = "#00ff00";
-        Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment1);
-
-        Long assessment2Id = 11L;
-        String assessment2Label = "Neutral";
-        Float assessment2Value = 0.3f;
-        String assessment2Color = "#ff8000";
-        Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment2);
-
-        Long assessment3Id = 11L;
-        String assessment3Label = "Bad";
-        Float assessment3Value = 0.2f;
-        String assessment3Color = "#ff0000";
-        Float assessment3UpperThreshold = 0f;
-        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
-        dtoSIAssesmentList.add(dtoSIAssesment3);
-
-        Map<String, String> mapFactors = new HashMap<>();
-        mapFactors.put(factor1Id, "Good");
-        mapFactors.put(factor2Id, "Good");
-        mapFactors.put(factor3Id, "Neutral");
-
-        // Factors categories setup
-        Long factorGoodCategoryId = 10L;
-        String factorGoodCategoryName = "Good";
-        String factorGoodCategoryColor = "#00ff00";
-        float factorGoodCategoryUpperThreshold = 1f;
-        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
-        factorGoodCategory.setId(factorGoodCategoryId);
-
-        Long factorNeutralCategoryId = 11L;
-        String factorNeutralCategoryName = "Neutral";
-        String factorNeutralCategoryColor = "#ff8000";
-        float factorNeutralCategoryUpperThreshold = 0.67f;
-        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
-        factorNeutralCategory.setId(factorNeutralCategoryId);
-
-        Long factorBadCategoryId = 12L;
-        String factorBadCategoryName = "Bad";
-        String factorBadCategoryColor = "#ff0000";
-        float factorBadCategoryUpperThreshold = 0.33f;
-        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
-        factorBadCategory.setId(factorBadCategoryId);
-
-        List<QFCategory> factorCategoryList = new ArrayList<>();
-        factorCategoryList.add(factorBadCategory);
-        factorCategoryList.add(factorNeutralCategory);
-        factorCategoryList.add(factorGoodCategory);
-
-        when(qfCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(factorCategoryList);
-
-        when(assesSI.AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class))).thenReturn(dtoSIAssesmentList);
-
-        // SI Categories setup
-        Long strategicIndicatorGoodCategoryId = 10L;
-        String strategicIndicatorGoodCategoryName = "Good";
-        String strategicIndicatorGoodCategoryColor = "#00ff00";
-        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
-        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
-
-        Long strategicIndicatorNeutralCategoryId = 11L;
-        String strategicIndicatorNeutralCategoryName = "Neutral";
-        String strategicIndicatorNeutralCategoryColor = "#ff8000";
-        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
-        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
-
-        Long strategicIndicatorBadCategoryId = 12L;
-        String strategicIndicatorBadCategoryName = "Bad";
-        String strategicIndicatorBadCategoryColor = "#ff0000";
-        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
-        siBadCategory.setId(strategicIndicatorBadCategoryId);
-
-        List<SICategory> siCategoryList = new ArrayList<>();
-        siCategoryList.add(siGoodCategory);
-        siCategoryList.add(siNeutralCategory);
-        siCategoryList.add(siBadCategory);
-
-        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
-
-        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L))).thenReturn(false);
+        when(strategicIndicatorsController.assessStrategicIndicator(strategicIndicatorName)).thenReturn(false);
+//
+//        // Factors setup
+//        String factor1Id = "codequality";
+//        String factor1Name = "Code Quality";
+//        String factor1Description = "Quality of the system code";
+//        Double factor1Value = 0.8;
+//        LocalDate evaluationDate = LocalDate.now();
+//        String factorRationale = "parameters: {...}, formula: ...";
+//        String strategicIndicatorExternalId = "productquality";
+//        List<String> strategicIndicatorsList = new ArrayList<>();
+//        strategicIndicatorsList.add(strategicIndicatorExternalId);
+//        DTOFactor dtoFactor1 = new DTOFactor(factor1Id, factor1Name, factor1Description, factor1Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        String factor2Id = "softwarestability";
+//        String factor2Name = "Software Stability";
+//        String factor2Description = "Critical issues in the system";
+//        Double factor2Value = 0.7;
+//        DTOFactor dtoFactor2 = new DTOFactor(factor2Id, factor2Name, factor2Description, factor2Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        String factor3Id = "testingperformance";
+//        String factor3Name = "Testing Performance";
+//        String factor3Description = "Performance of the tests";
+//        Double factor3Value = 0.6;
+//        DTOFactor dtoFactor3 = new DTOFactor(factor3Id, factor3Name, factor3Description, factor3Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
+//
+//        List<DTOFactor> dtoFactorList = new ArrayList<>();
+//        dtoFactorList.add(dtoFactor1);
+//        dtoFactorList.add(dtoFactor2);
+//        dtoFactorList.add(dtoFactor3);
+//
+//        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
+//
+//        // Assessments setup
+//        List<DTOSIAssesment> dtoSIAssesmentList = new ArrayList<>();
+//
+//        Long assessment1Id = 10L;
+//        String assessment1Label = "Good";
+//        Float assessment1Value = 0.5f;
+//        String assessment1Color = "#00ff00";
+//        Float assessment1UpperThreshold = 0.66f;
+//        DTOSIAssesment dtoSIAssesment1 = new DTOSIAssesment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment1);
+//
+//        Long assessment2Id = 11L;
+//        String assessment2Label = "Neutral";
+//        Float assessment2Value = 0.3f;
+//        String assessment2Color = "#ff8000";
+//        Float assessment2UpperThreshold = 0.33f;
+//        DTOSIAssesment dtoSIAssesment2 = new DTOSIAssesment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment2);
+//
+//        Long assessment3Id = 11L;
+//        String assessment3Label = "Bad";
+//        Float assessment3Value = 0.2f;
+//        String assessment3Color = "#ff0000";
+//        Float assessment3UpperThreshold = 0f;
+//        DTOSIAssesment dtoSIAssesment3 = new DTOSIAssesment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+//        dtoSIAssesmentList.add(dtoSIAssesment3);
+//
+//        Map<String, String> mapFactors = new HashMap<>();
+//        mapFactors.put(factor1Id, "Good");
+//        mapFactors.put(factor2Id, "Good");
+//        mapFactors.put(factor3Id, "Neutral");
+//
+//        // Factors categories setup
+//        Long factorGoodCategoryId = 10L;
+//        String factorGoodCategoryName = "Good";
+//        String factorGoodCategoryColor = "#00ff00";
+//        float factorGoodCategoryUpperThreshold = 1f;
+//        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
+//        factorGoodCategory.setId(factorGoodCategoryId);
+//
+//        Long factorNeutralCategoryId = 11L;
+//        String factorNeutralCategoryName = "Neutral";
+//        String factorNeutralCategoryColor = "#ff8000";
+//        float factorNeutralCategoryUpperThreshold = 0.67f;
+//        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
+//        factorNeutralCategory.setId(factorNeutralCategoryId);
+//
+//        Long factorBadCategoryId = 12L;
+//        String factorBadCategoryName = "Bad";
+//        String factorBadCategoryColor = "#ff0000";
+//        float factorBadCategoryUpperThreshold = 0.33f;
+//        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
+//        factorBadCategory.setId(factorBadCategoryId);
+//
+//        List<QFCategory> factorCategoryList = new ArrayList<>();
+//        factorCategoryList.add(factorBadCategory);
+//        factorCategoryList.add(factorNeutralCategory);
+//        factorCategoryList.add(factorGoodCategory);
+//
+//        when(qfCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(factorCategoryList);
+//
+//        when(assesSI.AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class))).thenReturn(dtoSIAssesmentList);
+//
+//        // SI Categories setup
+//        Long strategicIndicatorGoodCategoryId = 10L;
+//        String strategicIndicatorGoodCategoryName = "Good";
+//        String strategicIndicatorGoodCategoryColor = "#00ff00";
+//        SICategory siGoodCategory = new SICategory(strategicIndicatorGoodCategoryName, strategicIndicatorGoodCategoryColor);
+//        siGoodCategory.setId(strategicIndicatorGoodCategoryId);
+//
+//        Long strategicIndicatorNeutralCategoryId = 11L;
+//        String strategicIndicatorNeutralCategoryName = "Neutral";
+//        String strategicIndicatorNeutralCategoryColor = "#ff8000";
+//        SICategory siNeutralCategory = new SICategory(strategicIndicatorNeutralCategoryName, strategicIndicatorNeutralCategoryColor);
+//        siNeutralCategory.setId(strategicIndicatorNeutralCategoryId);
+//
+//        Long strategicIndicatorBadCategoryId = 12L;
+//        String strategicIndicatorBadCategoryName = "Bad";
+//        String strategicIndicatorBadCategoryColor = "#ff0000";
+//        SICategory siBadCategory = new SICategory(strategicIndicatorBadCategoryName, strategicIndicatorBadCategoryColor);
+//        siBadCategory.setId(strategicIndicatorBadCategoryId);
+//
+//        List<SICategory> siCategoryList = new ArrayList<>();
+//        siCategoryList.add(siGoodCategory);
+//        siCategoryList.add(siNeutralCategory);
+//        siCategoryList.add(siBadCategory);
+//
+//        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+//
+//        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L))).thenReturn(false);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -990,25 +1031,35 @@ public class UtilTest {
                 ));
 
         // Verify mock interactions
-        verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(anyList(), eq(projectExternalId));
-        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
-        verifyNoMoreInteractions(qmaQualityFactors);
-
         verify(strategicIndicatorRepository, times(1)).findById(strategicIndicatorId);
-        verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicatorName);
-        verify(strategicIndicatorRepository, times(1)).save(ArgumentMatchers.any(Strategic_Indicator.class));
-        verifyNoMoreInteractions(strategicIndicatorRepository);
 
-        verify(qmaProjects, times(1)).getAssessedProjects();
-        verifyNoMoreInteractions(qmaProjects);
+        ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
+        verify(strategicIndicatorRepository, times(1)).save(argument.capture());
+        Strategic_Indicator strategicIndicatorSaved = argument.getValue();
+        assertEquals(strategicIndicatorName, strategicIndicatorSaved.getName());
+        assertEquals(strategicIndicatorDescription, strategicIndicatorSaved.getDescription());
+        assertEquals(newQualityFactors, strategicIndicatorSaved.getQuality_factors());
 
-        verify(assesSI, times(1)).AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class));
-        verifyNoMoreInteractions(assesSI);
-
-        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L));
-        verifyNoMoreInteractions(qmaStrategicIndicators);
-
-        verifyNoMoreInteractions(qmaRelations);
+        verify(strategicIndicatorsController, times(1)).assessStrategicIndicator(strategicIndicatorName);
+//        verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(anyList(), eq(projectExternalId));
+//        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
+//        verifyNoMoreInteractions(qmaQualityFactors);
+//
+//        verify(strategicIndicatorRepository, times(1)).findById(strategicIndicatorId);
+//        verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicatorName);
+//        verify(strategicIndicatorRepository, times(1)).save(ArgumentMatchers.any(Strategic_Indicator.class));
+//        verifyNoMoreInteractions(strategicIndicatorRepository);
+//
+//        verify(qmaProjects, times(1)).getAssessedProjects();
+//        verifyNoMoreInteractions(qmaProjects);
+//
+//        verify(assesSI, times(1)).AssesSI(eq(strategicIndicatorExternalId), eq(mapFactors), ArgumentMatchers.any(File.class));
+//        verifyNoMoreInteractions(assesSI);
+//
+//        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(0.8333334f), ArgumentMatchers.any(LocalDate.class), anyList(), anyList(), eq(0L));
+//        verifyNoMoreInteractions(qmaStrategicIndicators);
+//
+//        verifyNoMoreInteractions(qmaRelations);
     }
 
     @Test
@@ -1162,304 +1213,6 @@ public class UtilTest {
     }
 
     @Test
-    public void assesStrategicIndicators() throws Exception {
-        String projectExternalId = "test";
-        String projectName = "Test";
-        String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
-
-        String factor1Id = "testingperformance";
-        String factor1Name = "Testing Performance";
-        String factor1Description = "Performance of the tests";
-        Double factor1Value = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String factorRationale = "parameters: {...}, formula: ...";
-        String strategicIndicatorExternalId = "processperformance";
-        List<String> strategicIndicatorsList = new ArrayList<>();
-        strategicIndicatorsList.add(strategicIndicatorExternalId);
-        DTOFactor dtoFactor1 = new DTOFactor(factor1Id, factor1Name, factor1Description, factor1Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor2Id = "developmentspeed";
-        String factor2Name = "Development Speed";
-        String factor2Description = "Time spent to add new value to the product";
-        Double factor2Value = 0.7;
-        DTOFactor dtoFactor2 = new DTOFactor(factor2Id, factor2Name, factor2Description, factor2Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor3Id = "externalquality";
-        String factor3Name = "External Quality";
-        String factor3Description = "Quality perceived by the users";
-        Double factor3Value = 0.6;
-        DTOFactor dtoFactor3 = new DTOFactor(factor3Id, factor3Name, factor3Description, factor3Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        List<DTOFactor> dtoFactorList = new ArrayList<>();
-        dtoFactorList.add(dtoFactor1);
-        dtoFactorList.add(dtoFactor2);
-        dtoFactorList.add(dtoFactor3);
-
-        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
-
-        Long strategicIndicatorId = 1L;
-        String strategicIndicatorName = "Process Performance";
-        String strategicIndicatorDescription = "Performance levels of the processes involved in the project";
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "testingperformance";
-        qualityFactors.add(factor1);
-        String factor2 = "developmentspeed";
-        qualityFactors.add(factor2);
-        String factor3 = "externalquality";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
-        strategicIndicator.setId(strategicIndicatorId);
-        List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
-        strategic_indicatorList.add(strategicIndicator);
-
-        when(strategicIndicatorRepository.findAll()).thenReturn(strategic_indicatorList);
-
-        List<Float> factorValuesList = new ArrayList<>();
-        factorValuesList.add(factor1Value.floatValue());
-        factorValuesList.add(factor2Value.floatValue());
-        factorValuesList.add(factor3Value.floatValue());
-
-        int factorsNumber = factorValuesList.size();
-        Float factorsValuesSum = 0f;
-        for (Float factorValue : factorValuesList) {
-            factorsValuesSum += factorValue;
-        }
-        Float factorsAverageValue = factorsValuesSum / factorsNumber;
-
-        when(assesSI.AssesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
-
-        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(true);
-
-        List<Float> factorWeightsList = new ArrayList<>();
-        factorWeightsList.add(1f);
-        factorWeightsList.add(1f);
-        factorWeightsList.add(1f);
-        List<String> factorCategoryNamesList = new ArrayList<>();
-        factorCategoryNamesList.add("Good");
-        factorCategoryNamesList.add("Good");
-        factorCategoryNamesList.add("Neutral");
-
-        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(projectExternalId), eq(qualityFactors), eq(strategicIndicatorExternalId), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
-
-        Long factorGoodCategoryId = 10L;
-        String factorGoodCategoryName = "Good";
-        String factorGoodCategoryColor = "#00ff00";
-        float factorGoodCategoryUpperThreshold = 1f;
-        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
-        factorGoodCategory.setId(factorGoodCategoryId);
-
-        Long factorNeutralCategoryId = 11L;
-        String factorNeutralCategoryName = "Neutral";
-        String factorNeutralCategoryColor = "#ff8000";
-        float factorNeutralCategoryUpperThreshold = 0.67f;
-        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
-        factorNeutralCategory.setId(factorNeutralCategoryId);
-
-        Long factorBadCategoryId = 12L;
-        String factorBadCategoryName = "Bad";
-        String factorBadCategoryColor = "#ff0000";
-        float factorBadCategoryUpperThreshold = 0.33f;
-        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
-        factorBadCategory.setId(factorBadCategoryId);
-
-        List<QFCategory> factorCategoryList = new ArrayList<>();
-        factorCategoryList.add(factorBadCategory);
-        factorCategoryList.add(factorNeutralCategory);
-        factorCategoryList.add(factorGoodCategory);
-
-        when(qfCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(factorCategoryList);
-
-        // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/strategicIndicators/assess")
-                .param("prj", projectExternalId)
-                .param("train", "NONE");
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andDo(document("si/assess",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestParameters(
-                                parameterWithName("prj")
-                                        .description("Project external identifier"),
-                                parameterWithName("train").description("Indicates if the forecasting models should be trained: " +
-                                        "NONE for no training, ONE for one method training and ALL for all methods training"))
-                ));
-
-        // Verify mock interactions
-        verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(dtoFactorList, projectExternalId);
-        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
-        verifyNoMoreInteractions(qmaQualityFactors);
-
-        verify(strategicIndicatorRepository, times(1)).findAll();
-        verifyNoMoreInteractions(strategicIndicatorRepository);
-
-        verify(assesSI, times(1)).AssesSI(factorValuesList, 3);
-        verifyNoMoreInteractions(assesSI);
-
-        verify(qfCategoryRepository, times(6)).findAllByOrderByUpperThresholdAsc();
-        verifyNoMoreInteractions(qfCategoryRepository);
-
-        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
-        verifyNoMoreInteractions(qmaStrategicIndicators);
-
-        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(projectExternalId), eq(qualityFactors), eq(strategicIndicatorExternalId), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
-        verifyNoMoreInteractions(qmaRelations);
-    }
-
-    @Test
-    public void assesStrategicIndicatorsNotCorrect() throws Exception {
-        String projectExternalId = "test";
-        String projectName = "Test";
-        String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
-
-        String factor1Id = "testingperformance";
-        String factor1Name = "Testing Performance";
-        String factor1Description = "Performance of the tests";
-        Double factor1Value = 0.8;
-        LocalDate evaluationDate = LocalDate.now();
-        String factorRationale = "parameters: {...}, formula: ...";
-        String strategicIndicatorExternalId = "processperformance";
-        List<String> strategicIndicatorsList = new ArrayList<>();
-        strategicIndicatorsList.add(strategicIndicatorExternalId);
-        DTOFactor dtoFactor1 = new DTOFactor(factor1Id, factor1Name, factor1Description, factor1Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor2Id = "developmentspeed";
-        String factor2Name = "Development Speed";
-        String factor2Description = "Time spent to add new value to the product";
-        Double factor2Value = 0.7;
-        DTOFactor dtoFactor2 = new DTOFactor(factor2Id, factor2Name, factor2Description, factor2Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        String factor3Id = "externalquality";
-        String factor3Name = "External Quality";
-        String factor3Description = "Quality perceived by the users";
-        Double factor3Value = 0.6;
-        DTOFactor dtoFactor3 = new DTOFactor(factor3Id, factor3Name, factor3Description, factor3Value.floatValue(), evaluationDate, null, factorRationale, strategicIndicatorsList);
-
-        List<DTOFactor> dtoFactorList = new ArrayList<>();
-        dtoFactorList.add(dtoFactor1);
-        dtoFactorList.add(dtoFactor2);
-        dtoFactorList.add(dtoFactor3);
-
-        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
-
-        Long strategicIndicatorId = 1L;
-        String strategicIndicatorName = "Process Performance";
-        String strategicIndicatorDescription = "Performance levels of the processes involved in the project";
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "testingperformance";
-        qualityFactors.add(factor1);
-        String factor2 = "developmentspeed";
-        qualityFactors.add(factor2);
-        String factor3 = "externalquality";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
-        strategicIndicator.setId(strategicIndicatorId);
-        List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
-        strategic_indicatorList.add(strategicIndicator);
-
-        when(strategicIndicatorRepository.findAll()).thenReturn(strategic_indicatorList);
-
-        List<Float> factorValuesList = new ArrayList<>();
-        factorValuesList.add(factor1Value.floatValue());
-        factorValuesList.add(factor2Value.floatValue());
-        factorValuesList.add(factor3Value.floatValue());
-
-        int factorsNumber = factorValuesList.size();
-        Float factorsValuesSum = 0f;
-        for (Float factorValue : factorValuesList) {
-            factorsValuesSum += factorValue;
-        }
-        Float factorsAverageValue = factorsValuesSum / factorsNumber;
-
-        when(assesSI.AssesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
-
-        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
-
-        Long factorGoodCategoryId = 10L;
-        String factorGoodCategoryName = "Good";
-        String factorGoodCategoryColor = "#00ff00";
-        float factorGoodCategoryUpperThreshold = 1f;
-        QFCategory factorGoodCategory = new QFCategory(factorGoodCategoryName, factorGoodCategoryColor, factorGoodCategoryUpperThreshold);
-        factorGoodCategory.setId(factorGoodCategoryId);
-
-        Long factorNeutralCategoryId = 11L;
-        String factorNeutralCategoryName = "Neutral";
-        String factorNeutralCategoryColor = "#ff8000";
-        float factorNeutralCategoryUpperThreshold = 0.67f;
-        QFCategory factorNeutralCategory = new QFCategory(factorNeutralCategoryName, factorNeutralCategoryColor, factorNeutralCategoryUpperThreshold);
-        factorNeutralCategory.setId(factorNeutralCategoryId);
-
-        Long factorBadCategoryId = 12L;
-        String factorBadCategoryName = "Bad";
-        String factorBadCategoryColor = "#ff0000";
-        float factorBadCategoryUpperThreshold = 0.33f;
-        QFCategory factorBadCategory = new QFCategory(factorBadCategoryName, factorBadCategoryColor, factorBadCategoryUpperThreshold);
-        factorBadCategory.setId(factorBadCategoryId);
-
-        List<QFCategory> factorCategoryList = new ArrayList<>();
-        factorCategoryList.add(factorBadCategory);
-        factorCategoryList.add(factorNeutralCategory);
-        factorCategoryList.add(factorGoodCategory);
-
-        when(qfCategoryRepository.findAllByOrderByUpperThresholdAsc()).thenReturn(factorCategoryList);
-
-        // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/strategicIndicators/assess")
-                .param("prj", projectExternalId)
-                .param("train", "NONE");
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isInternalServerError())
-                .andDo(document("si/assess-error",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
-
-        // Verify mock interactions
-        verify(qmaQualityFactors, times(1)).setFactorStrategicIndicatorRelation(dtoFactorList, projectExternalId);
-        verify(qmaQualityFactors, times(1)).getAllFactors(projectExternalId);
-        verifyNoMoreInteractions(qmaQualityFactors);
-
-        verify(strategicIndicatorRepository, times(1)).findAll();
-        verifyNoMoreInteractions(strategicIndicatorRepository);
-
-        verify(assesSI, times(1)).AssesSI(factorValuesList, 3);
-        verifyNoMoreInteractions(assesSI);
-
-        verify(qfCategoryRepository, times(3)).findAllByOrderByUpperThresholdAsc();
-        verifyNoMoreInteractions(qfCategoryRepository);
-
-        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(projectExternalId), eq(strategicIndicatorExternalId), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
-        verifyNoMoreInteractions(qmaStrategicIndicators);
-
-        verifyNoMoreInteractions(qmaRelations);
-    }
-
-    @Test
-    public void assesStrategicIndicatorsBadParam() throws Exception {
-        String projectExternalId = "test";
-
-        // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/strategicIndicators/assess")
-                .param("prj", projectExternalId)
-                .param("train", "NONE")
-                .param("from", "2019-15-03");
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andDo(document("si/assess-param-error",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
-    }
-
-    @Test
     public void simulate() throws Exception {
         String factorId = "testingperformance";
         String factorName = "Testing Performance";
@@ -1487,6 +1240,7 @@ public class UtilTest {
         factorSimulated.put("value", factorSimulatedValue.toString());
         List<Map<String, String>> factorSimulatedList = new ArrayList<>();
         factorSimulatedList.add(factorSimulated);
+        when(qualityFactorsController.getFactorLabelFromValue(factorSimulatedValue.floatValue())).thenReturn("Good");
 
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Process Performance";
