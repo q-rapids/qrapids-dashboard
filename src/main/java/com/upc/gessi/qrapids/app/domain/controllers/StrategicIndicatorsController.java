@@ -13,6 +13,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryReposi
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import evaluation.StrategicIndicator;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -426,5 +427,26 @@ public class StrategicIndicatorsController {
                 index = i;
         }
         return (index/siCategoryList.size() + (index+1)/siCategoryList.size())/2.0f;
+    }
+
+    public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException {
+        List<String> projects = projectsController.importProjectsAndUpdateDatabase();
+        for(String projectExternalId : projects) {
+            List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
+            try {
+                dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId);
+            } catch (Exception e) {}
+            for (DTODetailedStrategicIndicator dtoDetailedStrategicIndicator : dtoDetailedStrategicIndicators) {
+                List<String> factors = new ArrayList<>();
+                for (DTOFactor f : dtoDetailedStrategicIndicator.getFactors()) {
+                    factors.add(f.getId());
+                }
+                Project project = projectsController.findProjectByExternalId(projectExternalId);
+                Strategic_Indicator newSI = new Strategic_Indicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
+                if (!strategicIndicatorRepository.existsByExternalIdAndProject_Id(newSI.getExternalId(), project.getId())) {
+                    strategicIndicatorRepository.save(newSI);
+                }
+            }
+        }
     }
 }

@@ -89,38 +89,6 @@ public class Util {
     @Autowired
     QualityFactorsController qualityFactorsController;
 
-    @GetMapping("/api/strategicIndicators/fetch")
-    @ResponseStatus(HttpStatus.OK)
-    public void fetchSIs() {
-        try {
-            List<String> projects = qmaPrj.getAssessedProjects();
-            for(String projectName : projects) {
-                Project project = projectRepository.findByExternalId(projectName);
-                if (project == null) {
-                    byte[] bytes = null;
-                    project = new Project(projectName, projectName, "No description specified", bytes, true);
-                    projectRepository.save(project);
-                }
-                List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
-                try {
-                    dtoDetailedStrategicIndicators = qmadsi.CurrentEvaluation(null, projectName);
-                } catch (Exception e) {}
-                for (DTODetailedStrategicIndicator d : dtoDetailedStrategicIndicators) {
-                    List<String> factors = new ArrayList<>();
-                    for (DTOFactor f : d.getFactors()) {
-                        factors.add(f.getId());
-                    }
-                    Strategic_Indicator newSI = new Strategic_Indicator(d.getName(), "", null, factors, project);
-                    if (!siRep.existsByExternalIdAndProject_Id(newSI.getExternalId(), project.getId())) {
-                        siRep.save(newSI);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
-        }
-    }
-
     @PostMapping("/api/strategicIndicators/simulate")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStrategicIndicatorEvaluation> Simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request) {

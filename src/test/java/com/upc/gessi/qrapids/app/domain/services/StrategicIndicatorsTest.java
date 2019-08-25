@@ -2283,4 +2283,22 @@ public class StrategicIndicatorsTest {
                 ));
     }
 
+    @Test
+    public void fetchStrategicIndicators() throws Exception {
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators/fetch");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("si/fetch",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).fetchStrategicIndicators();
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
 }

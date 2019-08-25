@@ -392,4 +392,14 @@ public class StrategicIndicators {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error in the request parameters");
         }
     }
+
+    @GetMapping("/api/strategicIndicators/fetch")
+    @ResponseStatus(HttpStatus.OK)
+    public void fetchSIs() {
+        try {
+            strategicIndicatorsController.fetchStrategicIndicators();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
 }

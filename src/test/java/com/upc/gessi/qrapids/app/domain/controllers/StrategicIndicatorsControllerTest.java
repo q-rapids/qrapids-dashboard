@@ -12,6 +12,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryReposi
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.*;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
@@ -969,5 +970,48 @@ public class StrategicIndicatorsControllerTest {
         float categorySpan = 1f / categoryList.size();
         float expectedValue = categorySpan * categoryPosition - categorySpan / 2f;
         assertEquals(expectedValue, value, 0.000001f);
+    }
+
+    @Test
+    public void fetchStrategicIndicators() throws IOException, CategoriesException, ProjectNotFoundException {
+        Project project = domainObjectsBuilder.buildProject();
+        List<String> projectsList = new ArrayList<>();
+        projectsList.add(project.getExternalId());
+
+        when(projectsController.importProjectsAndUpdateDatabase()).thenReturn(projectsList);
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
+
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
+        List<DTOFactor> dtoFactorList = new ArrayList<>();
+        dtoFactorList.add(dtoFactor);
+        DTODetailedStrategicIndicator dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicator(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorList);
+        dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactor.getValue(), "Good"));
+        List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
+        dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
+
+        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId())).thenReturn(dtoDetailedStrategicIndicatorList);
+
+        when(strategicIndicatorRepository.existsByExternalIdAndProject_Id(dtoStrategicIndicatorEvaluation.getId(), project.getId())).thenReturn(false);
+
+        // When
+        strategicIndicatorsController.fetchStrategicIndicators();
+
+        // Then
+        verify(projectsController, times(1)).importProjectsAndUpdateDatabase();
+        verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
+        verify(strategicIndicatorRepository, times(1)).existsByExternalIdAndProject_Id(dtoStrategicIndicatorEvaluation.getId(), project.getId());
+
+        ArgumentCaptor<Strategic_Indicator> argumentSI = ArgumentCaptor.forClass(Strategic_Indicator.class);
+        verify(strategicIndicatorRepository, times(1)).save(argumentSI.capture());
+        Strategic_Indicator strategicIndicatorSaved = argumentSI.getValue();
+        assertEquals(dtoStrategicIndicatorEvaluation.getName(), strategicIndicatorSaved.getName());
+        assertEquals("", strategicIndicatorSaved.getDescription());
+        List<String> factorIds = new ArrayList<>();
+        factorIds.add(dtoFactor.getId());
+        assertEquals(factorIds, strategicIndicatorSaved.getQuality_factors());
+
+        verifyNoMoreInteractions(strategicIndicatorRepository);
     }
 }

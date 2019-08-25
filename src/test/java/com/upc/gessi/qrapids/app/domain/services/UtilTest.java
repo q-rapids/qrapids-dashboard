@@ -14,7 +14,6 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
@@ -23,7 +22,6 @@ import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -41,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -112,72 +109,6 @@ public class UtilTest {
                 .standaloneSetup(utilController)
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
-    }
-
-    @Test
-    public void fetchStrategicIndicators() throws Exception {
-        List<String> projectsList = new ArrayList<>();
-        String projectExternalId = "test";
-        projectsList.add(projectExternalId);
-        Long projectId = 1L;
-
-        when(qmaProjects.getAssessedProjects()).thenReturn(projectsList);
-
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(null);
-
-        String strategicIndicatorId = "blocking";
-        String strategicIndicatorName = "Blocking";
-        String factorId = "blockingcode";
-        String factorName = "Blocking code";
-        String factorDescription = "Technical debt in software code in terms of rule violations";
-        Float factorValue = 0.8f;
-        String dateString = "2019-07-07";
-        LocalDate evaluationDate = LocalDate.parse(dateString);
-        String factorRationale = "parameters: {...}, formula: ...";
-        String strategicIndicator = "blocking";
-        List<String> strategicIndicatorsList = new ArrayList<>();
-        strategicIndicatorsList.add(strategicIndicator);
-        DTOFactor dtoFactor = new DTOFactor(factorId, factorName, factorDescription, factorValue, evaluationDate, null, factorRationale, strategicIndicatorsList);
-        List<DTOFactor> dtoFactorList = new ArrayList<>();
-        dtoFactorList.add(dtoFactor);
-
-        DTODetailedStrategicIndicator dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicator(strategicIndicatorId, strategicIndicatorName, dtoFactorList);
-        List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
-        dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
-
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
-
-        when(strategicIndicatorRepository.existsByExternalIdAndProject_Id(strategicIndicatorId, projectId)).thenReturn(false);
-
-        // Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/strategicIndicators/fetch");
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andDo(document("si/fetch",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
-                ));
-
-        // Verify mock interactions
-        ArgumentCaptor<Project> argumentPrj = ArgumentCaptor.forClass(Project.class);
-        verify(projectRepository, times(1)).save(argumentPrj.capture());
-        Project projectSaved = argumentPrj.getValue();
-        assertEquals(projectExternalId, projectSaved.getExternalId());
-        assertEquals(projectExternalId, projectSaved.getName());
-        assertEquals("No description specified", projectSaved.getDescription());
-        assertNull(projectSaved.getLogo());
-        assertTrue(projectSaved.getActive());
-
-        ArgumentCaptor<Strategic_Indicator> argumentSI = ArgumentCaptor.forClass(Strategic_Indicator.class);
-        verify(strategicIndicatorRepository, times(1)).save(argumentSI.capture());
-        Strategic_Indicator strategicIndicatorSaved = argumentSI.getValue();
-        assertEquals(strategicIndicatorName, strategicIndicatorSaved.getName());
-        assertEquals("", strategicIndicatorSaved.getDescription());
-        List<String> factorIds = new ArrayList<>();
-        factorIds.add(factorId);
-        assertEquals(factorIds, strategicIndicatorSaved.getQuality_factors());
     }
 
     @Test
