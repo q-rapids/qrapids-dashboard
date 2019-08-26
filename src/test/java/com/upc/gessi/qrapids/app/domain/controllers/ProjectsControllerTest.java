@@ -1,8 +1,10 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
@@ -14,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +34,9 @@ public class ProjectsControllerTest {
 
     @Mock
     private QMAProjects qmaProjects;
+
+    @Mock
+    private Backlog backlog;
 
     @InjectMocks
     private ProjectsController projectsController;
@@ -104,5 +110,20 @@ public class ProjectsControllerTest {
 
         // Throw
         projectsController.importProjectsAndUpdateDatabase();
+    }
+
+    @Test
+    public void getMilestonesForProject() throws ProjectNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectRepository.findByExternalId(project.getExternalId())).thenReturn(project);
+        LocalDate now = LocalDate.now();
+
+        List<DTOMilestone> dtoMilestoneList = domainObjectsBuilder.buildDTOMilestoneList();
+        when(backlog.getMilestones(project.getBacklogId(), now)).thenReturn(dtoMilestoneList);
+
+        // When
+        List<DTOMilestone> dtoMilestoneListFound = projectsController.getMilestonesForProject(project.getExternalId(), now);
+        assertEquals(dtoMilestoneList, dtoMilestoneListFound);
     }
 }

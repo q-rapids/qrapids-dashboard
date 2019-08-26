@@ -1,7 +1,9 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
+import com.upc.gessi.qrapids.app.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,9 +17,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -25,10 +29,14 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ProjectsTest {
+
+    private DomainObjectsBuilder domainObjectsBuilder;
 
     private MockMvc mockMvc;
 
@@ -48,6 +56,7 @@ public class ProjectsTest {
                 .standaloneSetup(projectsController)
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
+        domainObjectsBuilder = new DomainObjectsBuilder();
     }
 
     @Test
@@ -118,5 +127,71 @@ public class ProjectsTest {
 
         // Verify mock interactions
         verify(projectsDomainController, times(1)).importProjectsAndUpdateDatabase();
+    }
+
+    @Test
+    public void getNextMilestones () throws Exception {
+        // Given
+        String projectExternalId = "test";
+        List<DTOMilestone> milestoneList = domainObjectsBuilder.buildDTOMilestoneList();
+        LocalDate now = LocalDate.now();
+
+        when(projectsDomainController.getMilestonesForProject(eq(projectExternalId), eq(now))).thenReturn(milestoneList);
+
+        //Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/milestones")
+                .param("prj", projectExternalId)
+                .param("date", now.toString());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].date", is(milestoneList.get(0).getDate())))
+                .andExpect(jsonPath("$[0].name", is(milestoneList.get(0).getName())))
+                .andExpect(jsonPath("$[0].description", is(milestoneList.get(0).getDescription())))
+                .andExpect(jsonPath("$[0].type", is(milestoneList.get(0).getType())))
+                .andDo(document("milestones/get-from-date",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("date")
+                                        .optional()
+                                        .description("Minimum milestone date (yyyy-mm-dd)")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].date")
+                                        .description("Milestone date"),
+                                fieldWithPath("[].name")
+                                        .description("Milestone name"),
+                                fieldWithPath("[].description")
+                                        .description("Milestone description"),
+                                fieldWithPath("[].type")
+                                        .description("Milestone type"))
+                ));
+    }
+
+    @Test
+    public void getAllMilestones () throws Exception {
+        // Given
+        String projectExternalId = "test";
+        List<DTOMilestone> milestoneList = domainObjectsBuilder.buildDTOMilestoneList();
+
+        when(projectsDomainController.getMilestonesForProject(projectExternalId, null)).thenReturn(milestoneList);
+
+        //Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/milestones")
+                .param("prj", projectExternalId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].date", is(milestoneList.get(0).getDate())))
+                .andExpect(jsonPath("$[0].name", is(milestoneList.get(0).getName())))
+                .andExpect(jsonPath("$[0].description", is(milestoneList.get(0).getDescription())))
+                .andExpect(jsonPath("$[0].type", is(milestoneList.get(0).getType())));
     }
 }

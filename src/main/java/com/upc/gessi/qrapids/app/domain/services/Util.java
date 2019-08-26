@@ -10,7 +10,6 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMARelations;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
-import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
@@ -128,21 +126,6 @@ public class Util {
             return "{}";
         } else {
             return "{\"userName\":\"" + authentication.getName() + "\"}";
-        }
-    }
-
-    @GetMapping("api/milestones")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOMilestone> getMilestones (@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) {
-        Project project = projectRepository.findByExternalId(prj);
-        if (project != null) {
-            LocalDate localDate = null;
-            if (date != null) {
-                localDate = LocalDate.parse(date);
-            }
-            return backlog.getMilestones(project.getBacklogId(), localDate);
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project does not exist");
         }
     }
 }

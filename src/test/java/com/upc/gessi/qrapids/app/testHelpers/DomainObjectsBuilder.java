@@ -522,4 +522,15 @@ public class DomainObjectsBuilder {
 
         return dtoRelationsSIList;
     }
+
+    public List<DTOMilestone> buildDTOMilestoneList () {
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        String milestoneName = "Version 1.3";
+        String milestoneDescription = "Version 1.3 adding new features";
+        String milestoneType = "Release";
+        List<DTOMilestone> milestoneList = new ArrayList<>();
+        milestoneList.add(new DTOMilestone(date.toString(), milestoneName, milestoneDescription, milestoneType));
+        return milestoneList;
+    }
 }

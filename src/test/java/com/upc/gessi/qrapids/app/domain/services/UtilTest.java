@@ -6,12 +6,10 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.*;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
-import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.dto.DTOMilestone;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,7 +22,6 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +33,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -134,100 +129,5 @@ public class UtilTest {
         // Verify mock interactions
         verify(forecast, times(1)).getForecastTechniques();
         verifyNoMoreInteractions(forecast);
-    }
-
-    @Test
-    public void getNextMilestones () throws Exception {
-        String projectExternalId = "test";
-        String projectName = "Test";
-        String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
-        String projectBacklogId = "prj-1";
-        project.setBacklogId(projectBacklogId);
-
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
-
-        LocalDate date = LocalDate.now();
-        date = date.plusDays(3);
-        String milestoneName = "Version 1.3";
-        String milestoneDescription = "Version 1.3 adding new features";
-        String milestoneType = "Release";
-        DTOMilestone milestone = new DTOMilestone(date.toString(), milestoneName, milestoneDescription, milestoneType);
-
-        List<DTOMilestone> milestoneList = new ArrayList<>();
-        milestoneList.add(milestone);
-
-        LocalDate now = LocalDate.now();
-
-        when(backlog.getMilestones(project.getBacklogId(), now)).thenReturn(milestoneList);
-
-        //Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/milestones")
-                .param("prj", projectExternalId)
-                .param("date", now.toString());
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].date", is(date.toString())))
-                .andExpect(jsonPath("$[0].name", is(milestoneName)))
-                .andExpect(jsonPath("$[0].description", is(milestoneDescription)))
-                .andExpect(jsonPath("$[0].type", is(milestoneType)))
-                .andDo(document("milestones/get-from-date",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestParameters(
-                                parameterWithName("prj")
-                                        .description("Project external identifier"),
-                                parameterWithName("date")
-                                        .optional()
-                                        .description("Minimum milestone date (yyyy-mm-dd)")
-                        ),
-                        responseFields(
-                                fieldWithPath("[].date")
-                                        .description("Milestone date"),
-                                fieldWithPath("[].name")
-                                        .description("Milestone name"),
-                                fieldWithPath("[].description")
-                                        .description("Milestone description"),
-                                fieldWithPath("[].type")
-                                        .description("Milestone type"))
-                ));
-    }
-
-    @Test
-    public void getAllMilestones () throws Exception {
-        String projectExternalId = "test";
-        String projectName = "Test";
-        String projectDescription = "Test project";
-        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
-        String projectBacklogId = "prj-1";
-        project.setBacklogId(projectBacklogId);
-
-        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
-
-        LocalDate date = LocalDate.now();
-        date = date.plusDays(3);
-        String milestoneName = "Version 1.3";
-        String milestoneDescription = "Version 1.3 adding new features";
-        String milestoneType = "Release";
-        List<DTOMilestone> milestoneList = new ArrayList<>();
-        milestoneList.add(new DTOMilestone(date.toString(), milestoneName, milestoneDescription, milestoneType));
-
-        when(backlog.getMilestones(project.getBacklogId(), null)).thenReturn(milestoneList);
-
-        //Perform request
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/milestones")
-                .param("prj", projectExternalId);
-
-        this.mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].date", is(date.toString())))
-                .andExpect(jsonPath("$[0].name", is(milestoneName)))
-                .andExpect(jsonPath("$[0].description", is(milestoneDescription)))
-                .andExpect(jsonPath("$[0].type", is(milestoneType)));
     }
 }
