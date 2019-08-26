@@ -1177,7 +1177,7 @@ public class StrategicIndicatorsControllerTest {
         String descriptiveLabel = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
 
         // Then
-        assertEquals("Good (0,80)", descriptiveLabel);
+        assertEquals("Good (0.80)", descriptiveLabel);
     }
 
     @Test
@@ -1190,7 +1190,7 @@ public class StrategicIndicatorsControllerTest {
         String descriptiveLabel = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
 
         // Then
-        assertEquals("0,80", descriptiveLabel);
+        assertEquals("0.80", descriptiveLabel);
     }
 
     @Test

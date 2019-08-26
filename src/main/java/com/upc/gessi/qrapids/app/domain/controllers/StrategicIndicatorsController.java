@@ -546,7 +546,7 @@ public class StrategicIndicatorsController {
     public static String buildDescriptiveLabelAndValue (Pair<Float, String> value) {
         String labelAndValue;
 
-        String numeric_value = String.format("%.2f", value.getFirst());
+        String numeric_value = String.format(Locale.ENGLISH, "%.2f", value.getFirst());
 
         if (value.getSecond().isEmpty())
             labelAndValue = numeric_value;
