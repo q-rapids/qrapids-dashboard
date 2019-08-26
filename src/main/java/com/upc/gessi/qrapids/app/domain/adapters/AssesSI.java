@@ -1,9 +1,8 @@
 package com.upc.gessi.qrapids.app.domain.adapters;
 
 import com.google.gson.Gson;
-import com.upc.gessi.qrapids.app.domain.services.Util;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssessment;
-import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.dto.assessmentSI.DTOAssessmentSI;
 import com.upc.gessi.qrapids.app.dto.assessmentSI.DTOCategorySI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +16,16 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class AssesSI {
 
     @Autowired
-    private SICategoryRepository SICatRep;
-
-    @Autowired
-    private Util util;
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     @Value("${assessSI.url}")
     private String url;
@@ -99,7 +98,7 @@ public class AssesSI {
     }
 
     public List<DTOSIAssessment> DTOAssessmentSItoDTOSIAssesment(ArrayList<DTOCategorySI> catsEstimation) {
-        List<DTOSIAssessment> categories = util.getCategories();
+        List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
         if (catsEstimation.size() == categories.size()) {
             int i = 0;
             for (DTOSIAssessment assesment : categories) {

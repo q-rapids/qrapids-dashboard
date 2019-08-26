@@ -5,7 +5,6 @@ import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.domain.services.Util;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssessment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
@@ -36,7 +35,7 @@ public class FeedbackController {
     private QMAStrategicIndicators qmaStrategicIndicators;
 
     @Autowired
-    private Util util;
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     public Feedback buildFeedback (Long strategicIndicatorId, Date date, String author, AppUser user, float value, float oldValue) {
         return new Feedback(strategicIndicatorId, date, author, user, value, oldValue);
@@ -77,7 +76,7 @@ public class FeedbackController {
             float newValue = feedbackList.get(i).getNewvalue();
             String oldCategory = null;
             String oldCategoryColor = null;
-            String newCategory = util.getLabel(newValue);
+            String newCategory = strategicIndicatorsController.getLabel(newValue);
             String newCategoryColor = null;
             List<DTOStrategicIndicatorEvaluation> csi = qmaStrategicIndicators.CurrentEvaluation(strategicIndicator.getProject().getExternalId());
             OldAndNewCategories oldAndNewCategories = new OldAndNewCategories(strategicIndicator, csi, newCategory).invoke();

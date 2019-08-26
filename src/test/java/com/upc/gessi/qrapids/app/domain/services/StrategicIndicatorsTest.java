@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -2299,6 +2300,157 @@ public class StrategicIndicatorsTest {
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).fetchStrategicIndicators();
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
+    @Test
+    public void simulate() throws Exception {
+        // Given
+        Map<String, String> factorSimulated = new HashMap<>();
+        String factorId = "processperformance";
+        factorSimulated.put("id", factorId);
+        Float factorSimulatedValue = 0.9f;
+        factorSimulated.put("value", factorSimulatedValue.toString());
+        List<Map<String, String>> factorSimulatedList = new ArrayList<>();
+        factorSimulatedList.add(factorSimulated);
+
+        Map<String, Float> factorSimulatedMap = new HashMap<>();
+        factorSimulatedMap.put(factorId, factorSimulatedValue);
+
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        dtoStrategicIndicatorEvaluation.setDatasource("Simulation");
+        dtoStrategicIndicatorEvaluation.setDate(null);
+        dtoStrategicIndicatorEvaluation.setCategories_description("");
+        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();
+        dtoStrategicIndicatorEvaluationList.add(dtoStrategicIndicatorEvaluation);
+
+        when(strategicIndicatorsDomainController.simulateStrategicIndicatorsAssessment(eq(factorSimulatedMap), eq(projectExternalId))).thenReturn(dtoStrategicIndicatorEvaluationList);
+
+        // Perform request
+        Gson gson = new Gson();
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/strategicIndicators/simulate")
+                .param("prj", projectExternalId)
+                .param("factors", gson.toJson(factorSimulatedList));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(dtoStrategicIndicatorEvaluation.getId())))
+                .andExpect(jsonPath("$[0].dbId", is(dtoStrategicIndicatorEvaluation.getDbId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(dtoStrategicIndicatorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoStrategicIndicatorEvaluation.getDescription())))
+                .andExpect(jsonPath("$[0].value.first", is(HelperFunctions.getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
+                .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
+                .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
+                .andExpect(jsonPath("$[0].probabilities[0].value", is(nullValue())))
+                .andExpect(jsonPath("$[0].probabilities[0].color", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getColor())))
+                .andExpect(jsonPath("$[0].probabilities[0].upperThreshold", is(HelperFunctions.getFloatAsDouble(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getUpperThreshold()))))
+                .andExpect(jsonPath("$[0].probabilities[1].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(1).getId().intValue())))
+                .andExpect(jsonPath("$[0].probabilities[1].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(1).getLabel())))
+                .andExpect(jsonPath("$[0].probabilities[1].value", is(nullValue())))
+                .andExpect(jsonPath("$[0].probabilities[1].color", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(1).getColor())))
+                .andExpect(jsonPath("$[0].probabilities[1].upperThreshold", is(HelperFunctions.getFloatAsDouble(dtoStrategicIndicatorEvaluation.getProbabilities().get(1).getUpperThreshold()))))
+                .andExpect(jsonPath("$[0].probabilities[2].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(2).getId().intValue())))
+                .andExpect(jsonPath("$[0].probabilities[2].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(2).getLabel())))
+                .andExpect(jsonPath("$[0].probabilities[2].value", is(nullValue())))
+                .andExpect(jsonPath("$[0].probabilities[2].color", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(2).getColor())))
+                .andExpect(jsonPath("$[0].probabilities[2].upperThreshold", is(HelperFunctions.getFloatAsDouble(dtoStrategicIndicatorEvaluation.getProbabilities().get(2).getUpperThreshold()))))
+                .andExpect(jsonPath("$[0].date", is(nullValue())))
+                .andExpect(jsonPath("$[0].datasource", is(dtoStrategicIndicatorEvaluation.getDatasource())))
+                .andExpect(jsonPath("$[0].categories_description", is("")))
+                .andExpect(jsonPath("$[0].hasBN", is(false)))
+                .andExpect(jsonPath("$[0].hasFeedback", is(false)))
+                .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingFactors", is(nullValue())))
+                .andDo(document("si/simulation",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("factors")
+                                        .description("List of the names and new values of the quality factors")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].dbId")
+                                        .description("Strategic indicator database identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("[].value.first")
+                                        .description("Strategic indicator numerical value"),
+                                fieldWithPath("[].value.second")
+                                        .description("Strategic indicator category"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].probabilities")
+                                        .description("Strategic indicator categories list"),
+                                fieldWithPath("[].probabilities[].id")
+                                        .description("Strategic indicator category identifier"),
+                                fieldWithPath("[].probabilities[].label")
+                                        .description("Strategic indicator category label"),
+                                fieldWithPath("[].probabilities[].value")
+                                        .description("Strategic indicator category probability"),
+                                fieldWithPath("[].probabilities[].color")
+                                        .description("Strategic indicator category hexadecimal color"),
+                                fieldWithPath("[].probabilities[].upperThreshold")
+                                        .description("Strategic indicator category upper threshold"),
+                                fieldWithPath("[].date")
+                                        .description("Strategic indicator assessment date"),
+                                fieldWithPath("[].datasource")
+                                        .description("Strategic indicator source of data"),
+                                fieldWithPath("[].categories_description")
+                                        .description("Array with the strategic indicator categories and thresholds"),
+                                fieldWithPath("[].hasBN")
+                                        .description("Does the strategic indicator have a Bayesian Network?"),
+                                fieldWithPath("[].hasFeedback")
+                                        .description("Does the strategic indicator have any feedback"),
+                                fieldWithPath("[].forecastingError")
+                                        .description("Errors in the forecasting"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the strategic indicator and some quality factors"),
+                                fieldWithPath("[].missingFactors")
+                                        .description("Factors without assessment"))
+                ));
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).simulateStrategicIndicatorsAssessment(eq(factorSimulatedMap), eq(projectExternalId));
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
+    @Test
+    public void simulateError() throws Exception {
+        // Given
+        Map<String, String> factorSimulated = new HashMap<>();
+        String factorId = "processperformance";
+        factorSimulated.put("id", factorId);
+        Float factorSimulatedValue = 0.9f;
+        factorSimulated.put("value", factorSimulatedValue.toString());
+        List<Map<String, String>> factorSimulatedList = new ArrayList<>();
+        factorSimulatedList.add(factorSimulated);
+
+        Map<String, Float> factorSimulatedMap = new HashMap<>();
+        factorSimulatedMap.put(factorId, factorSimulatedValue);
+
+        when(strategicIndicatorsDomainController.simulateStrategicIndicatorsAssessment(eq(factorSimulatedMap), eq(projectExternalId))).thenThrow(new IOException());
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/strategicIndicators/simulate")
+                .param("prj", projectExternalId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isInternalServerError())
+                .andDo(document("si/simulation-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
 }

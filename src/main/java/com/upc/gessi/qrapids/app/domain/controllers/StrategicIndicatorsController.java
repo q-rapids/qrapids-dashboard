@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
+import static java.lang.Math.abs;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
@@ -448,5 +449,97 @@ public class StrategicIndicatorsController {
                 }
             }
         }
+    }
+
+    public List<DTOStrategicIndicatorEvaluation> simulateStrategicIndicatorsAssessment (Map<String, Float> factorsNameValueMap, String projectExternalId) throws IOException {
+        List<DTOFactor> factors = qualityFactorsController.getAllFactorsEvaluation(projectExternalId);
+        for (DTOFactor factor : factors) {
+            if (factorsNameValueMap.containsKey(factor.getId())) {
+                factor.setValue(factorsNameValueMap.get(factor.getId()));
+            }
+        }
+        Iterable<Strategic_Indicator> listSI = strategicIndicatorRepository.findAll();
+        List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
+        for (Strategic_Indicator si : listSI) {
+            Map<String,String> mapSIFactors = new HashMap<>();
+            List<DTOFactor> listSIFactors = new ArrayList<>();
+            for (String qfId : si.getQuality_factors()) {
+                for (DTOFactor factor : factors) {
+                    if (factor.getId().equals(qfId)) {
+                        mapSIFactors.put(factor.getId(), qualityFactorsController.getFactorLabelFromValue(factor.getValue()));
+                        listSIFactors.add(factor);
+                    }
+                }
+            }
+            if (si.getNetwork() != null && si.getNetwork().length > 10) {
+                File tempFile = File.createTempFile("network", ".dne", null);
+                FileOutputStream fos = new FileOutputStream(tempFile);
+                fos.write(si.getNetwork());
+                List<DTOSIAssessment> assessment = assesSI.AssesSI(si.getName().replaceAll("\\s+","").toLowerCase(), mapSIFactors, tempFile);
+                float value = getValueAndLabelFromCategories(assessment).getFirst();
+                result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+","").toLowerCase(),
+                        si.getName(),
+                        si.getDescription(),
+                        Pair.of(value, getLabel(value)), assessment,
+                        null,
+                        "Simulation",
+                        si.getId(),
+                        "",
+                        si.getNetwork() != null));
+            }
+            else {
+                float value = computeStrategicIndicatorValue(listSIFactors);
+                result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+","").toLowerCase(),
+                        si.getName(),
+                        si.getDescription(),
+                        Pair.of(value, getLabel(value)),
+                        getCategories(),
+                        null,
+                        "Simulation",
+                        si.getId(),
+                        "",
+                        si.getNetwork() != null));
+            }
+        }
+        return result;
+    }
+
+    public float computeStrategicIndicatorValue(List<DTOFactor> factors) {
+        float result = 0;
+        int nFactors = 0;
+        for (DTOFactor f : factors) {
+            if (f.getValue() != null) {
+                result += f.getValue();
+                nFactors++;
+            }
+        }
+        if (nFactors > 0) result /= nFactors;
+        return result;
+    }
+
+    public String getLabel(Float f) {
+        Iterable<SICategory> siCategoryIterable = strategicIndicatorCategoryRepository.findAll();
+        List<SICategory> siCategoryList = new ArrayList<>();
+        siCategoryIterable.forEach(siCategoryList::add);
+        if (f != null && !siCategoryList.isEmpty()) {
+            if (f < 1.0f)
+                return siCategoryList.get(siCategoryList.size() - 1 - (int) (f * (float) siCategoryList.size())).getName();
+            else
+                return siCategoryList.get(0).getName();
+        } else return "No Category";
+    }
+
+    public List<DTOSIAssessment> getCategories() {
+        Iterable<SICategory> siCategoryIterable = strategicIndicatorCategoryRepository.findAll();
+        List<SICategory> siCategoryList = new ArrayList<>();
+        siCategoryIterable.forEach(siCategoryList::add);
+        List<DTOSIAssessment> result = new ArrayList<>();
+        float thresholdsInterval = 1.0f/(float)siCategoryList.size();
+        float upperThreshold=1;
+        for (SICategory c : siCategoryIterable) {
+            result.add(new DTOSIAssessment(c.getId(), c.getName(), null, c.getColor(), abs((float)upperThreshold)));
+            upperThreshold -=  thresholdsInterval;
+        }
+        return result;
     }
 }

@@ -147,7 +147,7 @@ public class QMAStrategicIndicators {
                 }
             }
             //get categories
-            List<DTOSIAssessment> categories = util.getCategories();
+            List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
 
             //bool that determines if the current SI has the estimation parameter
             if (element.getEstimation() == null || element.getEstimation().size() != element.getEvaluations().size())
@@ -183,7 +183,7 @@ public class QMAStrategicIndicators {
                     DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
                             element.getName(),
                             element.getDescription(),
-                            Pair.of(value, util.getLabel(value)),
+                            Pair.of(value, strategicIndicatorsController.getLabel(value)),
                             new ArrayList<>(categories),
                             evaluation.getEvaluationDate(),
                             evaluation.getDatasource(),
@@ -198,7 +198,7 @@ public class QMAStrategicIndicators {
                     DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
                             element.getName(),
                             element.getDescription(),
-                            Pair.of(evaluation.getValue(), util.getLabel(evaluation.getValue())),
+                            Pair.of(evaluation.getValue(), strategicIndicatorsController.getLabel(evaluation.getValue())),
                             new ArrayList<>(categories),
                             evaluation.getEvaluationDate(),
                             evaluation.getDatasource(),

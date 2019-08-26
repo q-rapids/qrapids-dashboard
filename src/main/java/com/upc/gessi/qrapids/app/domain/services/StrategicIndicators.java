@@ -1,5 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
@@ -400,6 +402,24 @@ public class StrategicIndicators {
             strategicIndicatorsController.fetchStrategicIndicators();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/api/strategicIndicators/simulate")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOStrategicIndicatorEvaluation> Simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request) {
+        try {
+            JsonParser parser = new JsonParser();
+            JsonArray simulatedFactorsJsonArray = parser.parse(request.getParameter("factors")).getAsJsonArray();
+            Map<String, Float> simulatedFactorsMap = new HashMap<>();
+            for (int i = 0; i < simulatedFactorsJsonArray.size(); i++) {
+                String factorName = simulatedFactorsJsonArray.get(i).getAsJsonObject().get("id").getAsString();
+                Float factorValue = simulatedFactorsJsonArray.get(i).getAsJsonObject().get("value").getAsFloat();
+                simulatedFactorsMap.put(factorName, factorValue);
+            }
+            return strategicIndicatorsController.simulateStrategicIndicatorsAssessment(simulatedFactorsMap, prj);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Simulation error: " + e.getMessage());
         }
     }
 }

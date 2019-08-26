@@ -468,7 +468,7 @@ public class Forecast {
     public List<DTOStrategicIndicatorEvaluation> ForecastSI(String technique, String freq, String horizon, String prj) throws IOException {
         List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj), technique, freq, horizon, prj);
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
-        String categories_description = util.getCategories().toString();
+        String categories_description = strategicIndicatorsController.getCategories().toString();
         for (DTODetailedStrategicIndicator dsi : dsis) {
             Map<LocalDate, List<DTOFactor>> listSIFactors = new HashMap<>();
             Map<LocalDate,Map<String,String>> mapSIFactors = new HashMap<>();
@@ -503,7 +503,7 @@ public class Forecast {
                     result.add(new DTOStrategicIndicatorEvaluation(dsi.getId(),
                             si.getName(),
                             si.getDescription(),
-                            Pair.of(value, util.getLabel(value)),
+                            Pair.of(value, strategicIndicatorsController.getLabel(value)),
                             assessment, m.getKey(),
                             "Dashboard Assessment",
                             si.getId(),
@@ -512,12 +512,12 @@ public class Forecast {
                 }
             } else if (si != null){
                 for(Map.Entry<LocalDate,List<DTOFactor>> l : listSIFactors.entrySet()) {
-                    float value = com.upc.gessi.qrapids.app.domain.services.Util.assesSI(l.getValue());
+                    float value = strategicIndicatorsController.computeStrategicIndicatorValue(l.getValue());
                     result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+", "").toLowerCase(),
                             si.getName(),
                             si.getDescription(),
-                            Pair.of(value, util.getLabel(value)),
-                            util.getCategories(),
+                            Pair.of(value, strategicIndicatorsController.getLabel(value)),
+                            strategicIndicatorsController.getCategories(),
                             l.getKey(), "Dashboard Assessment",
                             si.getId(),
                             categories_description,

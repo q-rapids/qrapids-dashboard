@@ -116,7 +116,7 @@ public class QMARelations {
                 strategicIndicator.setValue(target.getValue());
                 try {
                     Float value = Float.parseFloat(strategicIndicator.getValue());
-                    String label = util.getLabel(value);
+                    String label = strategicIndicatorsController.getLabel(value);
                     String valueDescription = Util.buildDescriptiveLabelAndValue(Pair.of(value, label));
                     strategicIndicator.setValueDescription(valueDescription);
                     strategicIndicator.setColor(util.getColorFromLabel(label));

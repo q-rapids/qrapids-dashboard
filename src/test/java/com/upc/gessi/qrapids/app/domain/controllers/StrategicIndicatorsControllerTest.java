@@ -29,10 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -1013,5 +1010,160 @@ public class StrategicIndicatorsControllerTest {
         assertEquals(factorIds, strategicIndicatorSaved.getQuality_factors());
 
         verifyNoMoreInteractions(strategicIndicatorRepository);
+    }
+
+    @Test
+    public void simulateStrategicIndicatorsAssessment() throws IOException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+
+        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
+        List<DTOFactor> dtoFactorList = new ArrayList<>();
+        dtoFactorList.add(dtoFactor);
+        when(qualityFactorsController.getAllFactorsEvaluation(project.getExternalId())).thenReturn(dtoFactorList);
+
+        Map<String, Float> factorSimulatedMap = new HashMap<>();
+        Float factorSimulatedValue = 0.9f;
+        factorSimulatedMap.put(dtoFactor.getId(), factorSimulatedValue);
+        when(qualityFactorsController.getFactorLabelFromValue(factorSimulatedValue)).thenReturn("Good");
+
+        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
+        strategicIndicator.getQuality_factors().add(dtoFactor.getId());
+        List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
+        strategic_indicatorList.add(strategicIndicator);
+        when(strategicIndicatorRepository.findAll()).thenReturn(strategic_indicatorList);
+
+        List<SICategory> siCategoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+
+        // When
+        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = strategicIndicatorsController.simulateStrategicIndicatorsAssessment(factorSimulatedMap, project.getExternalId());
+
+        // Verify mock interactions
+        verify(qualityFactorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
+        verify(qualityFactorsController, times(1)).getFactorLabelFromValue(factorSimulatedValue);
+        verifyNoMoreInteractions(qualityFactorsController);
+
+        verify(strategicIndicatorRepository, times(1)).findAll();
+        verifyNoMoreInteractions(strategicIndicatorRepository);
+
+        verify(siCategoryRepository, times(2)).findAll();
+        verifyNoMoreInteractions(siCategoryRepository);
+
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluationFound = dtoStrategicIndicatorEvaluationList.get(0);
+        String strategicIndicatorNameLowerCase = strategicIndicator.getName().replaceAll("\\s+","").toLowerCase();
+        assertEquals(strategicIndicatorNameLowerCase, dtoStrategicIndicatorEvaluationFound.getId());
+        assertEquals(strategicIndicator.getName(), dtoStrategicIndicatorEvaluationFound.getName());
+        assertEquals(strategicIndicator.getDescription(), dtoStrategicIndicatorEvaluationFound.getDescription());
+        assertEquals(factorSimulatedValue, dtoStrategicIndicatorEvaluationFound.getValue().getFirst(), 0f);
+        assertEquals("Good", dtoStrategicIndicatorEvaluationFound.getValue().getSecond());
+        assertEquals("Simulation", dtoStrategicIndicatorEvaluationFound.getDatasource());
+        assertEquals(strategicIndicator.getId(), dtoStrategicIndicatorEvaluationFound.getDbId(), 0f);
+    }
+
+
+    @Test
+    public void computeStrategicIndicatorValue() {
+        // Given
+        DTOFactor dtoFactor1 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor1.setValue(0.7f);
+        DTOFactor dtoFactor2 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor2.setValue(0.8f);
+        DTOFactor dtoFactor3 = domainObjectsBuilder.buildDTOFactor();
+        dtoFactor3.setValue(0.9f);
+        List<DTOFactor> dtoFactorList = new ArrayList<>();
+        dtoFactorList.add(dtoFactor1);
+        dtoFactorList.add(dtoFactor2);
+        dtoFactorList.add(dtoFactor3);
+
+        // When
+        float value = strategicIndicatorsController.computeStrategicIndicatorValue(dtoFactorList);
+
+        // Then
+        float expectedValue = (dtoFactor1.getValue() + dtoFactor2.getValue() + dtoFactor3.getValue()) / dtoFactorList.size();
+        assertEquals(expectedValue, value, 0f);
+    }
+
+    @Test
+    public void getLabelGood() {
+        // Given
+        List<SICategory> siCategoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+
+        // When
+        String label = strategicIndicatorsController.getLabel(0.8f);
+
+        // Then
+        assertEquals("Good", label);
+    }
+
+    @Test
+    public void getLabelNeutral() {
+        // Given
+        List<SICategory> siCategoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+
+        // When
+        String label = strategicIndicatorsController.getLabel(0.5f);
+
+        // Then
+        assertEquals("Neutral", label);
+    }
+
+    @Test
+    public void getLabelBad() {
+        // Given
+        List<SICategory> siCategoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+
+        // When
+        String label = strategicIndicatorsController.getLabel(0.2f);
+
+        // Then
+        assertEquals("Bad", label);
+    }
+
+    @Test
+    public void getLabelNoCategory() {
+        // Given
+        when(siCategoryRepository.findAll()).thenReturn(new ArrayList<>());
+
+        // When
+        String label = strategicIndicatorsController.getLabel(0.8f);
+
+        // Then
+        assertEquals("No Category", label);
+    }
+
+    @Test
+    public void getCategories() {
+        // Given
+        List<SICategory> siCategoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
+
+        // When
+        List<DTOSIAssessment> dtoSIAssessmentList = strategicIndicatorsController.getCategories();
+
+        // Then
+        int expectedNumberOfElements = 3;
+        assertEquals(expectedNumberOfElements, dtoSIAssessmentList.size());
+
+        DTOSIAssessment dtoSIAssessment1 = dtoSIAssessmentList.get(0);
+        assertEquals(siCategoryList.get(0).getId(), dtoSIAssessment1.getId());
+        assertEquals(siCategoryList.get(0).getName(), dtoSIAssessment1.getLabel());
+        assertEquals(siCategoryList.get(0).getColor(), dtoSIAssessment1.getColor());
+        assertEquals(1f, dtoSIAssessment1.getUpperThreshold(), 0f);
+
+        DTOSIAssessment dtoSIAssessment2 = dtoSIAssessmentList.get(1);
+        assertEquals(siCategoryList.get(1).getId(), dtoSIAssessment2.getId());
+        assertEquals(siCategoryList.get(1).getName(), dtoSIAssessment2.getLabel());
+        assertEquals(siCategoryList.get(1).getColor(), dtoSIAssessment2.getColor());
+        assertEquals(0.66f, dtoSIAssessment2.getUpperThreshold(), 0.01f);
+
+        DTOSIAssessment dtoSIAssessment3 = dtoSIAssessmentList.get(2);
+        assertEquals(siCategoryList.get(2).getId(), dtoSIAssessment3.getId());
+        assertEquals(siCategoryList.get(2).getName(), dtoSIAssessment3.getLabel());
+        assertEquals(siCategoryList.get(2).getColor(), dtoSIAssessment3.getColor());
+        assertEquals(0.33f, dtoSIAssessment3.getUpperThreshold(), 0.01f);
     }
 }

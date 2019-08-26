@@ -1,8 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.services;
 
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
 import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
@@ -14,11 +12,10 @@ import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
-import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,18 +25,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static java.lang.Math.abs;
 
 @RestController
 public class Util {
@@ -89,73 +79,6 @@ public class Util {
     @Autowired
     QualityFactorsController qualityFactorsController;
 
-    @PostMapping("/api/strategicIndicators/simulate")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOStrategicIndicatorEvaluation> Simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request) {
-        try {
-            List<DTOFactor> factors = qmaqf.getAllFactors(prj);
-            JsonParser parser = new JsonParser();
-            JsonArray simFactors = parser.parse(request.getParameter("factors")).getAsJsonArray();
-            for (DTOFactor factor : factors) {
-                int i = 0;
-                boolean found = false;
-                while (i < simFactors.size() && !found) {
-                    if (factor.getId().equals(simFactors.get(i).getAsJsonObject().getAsJsonPrimitive("id").getAsString())) {
-                        factor.setValue(simFactors.get(i).getAsJsonObject().getAsJsonPrimitive("value").getAsFloat());
-                        simFactors.remove(i);
-                        found = true;
-                    }
-                    ++i;
-                }
-            }
-            Iterable<Strategic_Indicator> listSI = siRep.findAll();
-            List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
-            for (Strategic_Indicator si : listSI) {
-                Map<String,String> mapSIFactors = new HashMap<>();
-                List<DTOFactor> listSIFactors = new ArrayList<>();
-                for (String qfId : si.getQuality_factors()) {
-                    for (DTOFactor factor : factors) {
-                        if (factor.getId().equals(qfId)) {
-                            mapSIFactors.put(factor.getId(), qualityFactorsController.getFactorLabelFromValue(factor.getValue()));
-                            listSIFactors.add(factor);
-                        }
-                    }
-                }
-                if (si.getNetwork() != null && si.getNetwork().length > 10) {
-                    File tempFile = File.createTempFile("network", ".dne", null);
-                    FileOutputStream fos = new FileOutputStream(tempFile);
-                    fos.write(si.getNetwork());
-                    List<DTOSIAssessment> assessment = AssesSI.AssesSI(si.getName().replaceAll("\\s+","").toLowerCase(), mapSIFactors, tempFile);
-                    float value = strategicIndicatorsController.getValueAndLabelFromCategories(assessment).getFirst();
-                    result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+","").toLowerCase(),
-                            si.getName(),
-                            si.getDescription(),
-                            Pair.of(value, getLabel(value)), assessment,
-                            null,
-                            "Simulation",
-                            si.getId(),
-                            "",
-                            si.getNetwork() != null));
-                }
-                else {
-                    float value = assesSI(listSIFactors);
-                    result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+","").toLowerCase(),
-                            si.getName(),
-                            si.getDescription(),
-                            Pair.of(value, getLabel(value)), getCategories(),
-                            null,
-                            "Simulation",
-                            si.getId(),
-                            "",
-                            si.getNetwork() != null));
-                }
-            }
-            return result;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Simulation error: " + e.getMessage());
-        }
-    }
-
     @GetMapping("/api/rawdataDashboard")
     @ResponseStatus(HttpStatus.OK)
     public String RawDataDashboard() {
@@ -166,45 +89,6 @@ public class Util {
     @ResponseStatus(HttpStatus.OK)
     public String serverUrl() {
         return "{\"serverUrl\":\""+serverUrl+"\"}";
-    }
-
-    public String getLabel(Float f) {
-        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
-        List<SICategory> siCategoryList = new ArrayList<>();
-        siCategoryIterable.forEach(siCategoryList::add);
-        if (f != null && !siCategoryList.isEmpty()) {
-            if (f < 1.0f)
-                return siCategoryList.get(siCategoryList.size() - 1 - (int) (f * (float) siCategoryList.size())).getName();
-            else
-                return siCategoryList.get(0).getName();
-        } else return "No Category";
-    }
-
-    public List<DTOSIAssessment> getCategories() {
-        Iterable<SICategory> siCategoryIterable = SICatRep.findAll();
-        List<SICategory> siCategoryList = new ArrayList<>();
-        siCategoryIterable.forEach(siCategoryList::add);
-        List<DTOSIAssessment> result = new ArrayList<>();
-        float thresholdsInterval = 1.0f/(float)siCategoryList.size();
-        float upperThreshold=1;
-        for (SICategory c : siCategoryIterable) {
-            result.add(new DTOSIAssessment(c.getId(), c.getName(), null, c.getColor(), abs((float)upperThreshold)));
-            upperThreshold -=  thresholdsInterval;
-        }
-        return result;
-    }
-
-    public static float assesSI(List<DTOFactor> factors) {
-        float result = 0;
-        int nFactors = 0;
-        for (DTOFactor f : factors) {
-            if (f.getValue() != null) {
-                result += f.getValue();
-                nFactors++;
-            }
-        }
-        if (nFactors > 0) result /= nFactors;
-        return result;
     }
 
     public static String buildDescriptiveLabelAndValue (Pair<Float, String> value) {

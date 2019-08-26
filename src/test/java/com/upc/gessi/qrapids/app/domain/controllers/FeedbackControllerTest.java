@@ -5,7 +5,6 @@ import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.domain.services.Util;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
@@ -43,7 +42,7 @@ public class FeedbackControllerTest {
     private StrategicIndicatorRepository strategicIndicatorRepository;
 
     @Mock
-    private Util util;
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     @Mock
     private QMAStrategicIndicators qmaStrategicIndicators;
@@ -142,7 +141,7 @@ public class FeedbackControllerTest {
         when(feedbackRepository.findAllBySiId(strategicIndicatorId)).thenReturn(feedbackList);
 
         String newValueCategory = "Good";
-        when(util.getLabel(newValue)).thenReturn(newValueCategory);
+        when(strategicIndicatorsController.getLabel(newValue)).thenReturn(newValueCategory);
 
         DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDtoStrategicIndicatorEvaluation(strategicIndicator);
         List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();

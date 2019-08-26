@@ -88,7 +88,7 @@ public class QMADetailedStrategicIndicators {
             d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors()));
 
             // Get value
-            List<DTOSIAssessment> categories = util.getCategories();
+            List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
             EstimationEvaluationDTO estimation = element.getEstimation().get(0);
 
             boolean hasEstimation = true;
@@ -108,9 +108,9 @@ public class QMADetailedStrategicIndicators {
 
             if (hasEstimation) {
                 Float value = strategicIndicatorsController.getValueAndLabelFromCategories(categories).getFirst();
-                d.setValue(Pair.of(value, util.getLabel(value)));
+                d.setValue(Pair.of(value, strategicIndicatorsController.getLabel(value)));
             } else {
-                d.setValue(Pair.of(evaluation.getValue(), util.getLabel(evaluation.getValue())));
+                d.setValue(Pair.of(evaluation.getValue(), strategicIndicatorsController.getLabel(evaluation.getValue())));
             }
 
             dsi.add(d);
