@@ -568,4 +568,8 @@ public class StrategicIndicatorsController {
     public List<DTORelationsSI> getQualityModel(String projectExternalId, LocalDate date) throws IOException {
         return qmaRelations.getRelations(projectExternalId, date);
     }
+
+    public List<String> getForecastTechniques() {
+        return qmaForecast.getForecastTechniques();
+    }
 }

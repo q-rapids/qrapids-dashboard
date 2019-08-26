@@ -436,4 +436,10 @@ public class StrategicIndicators {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
+
+    @GetMapping("/api/forecastTechniques")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> getForecastTechniques() {
+        return strategicIndicatorsController.getForecastTechniques();
+    }
 }

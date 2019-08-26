@@ -2567,4 +2567,38 @@ public class StrategicIndicatorsTest {
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
+    @Test
+    public void getForecastTechniques() throws Exception {
+        List<String> forecastingTechniques = new ArrayList<>();
+        String technique1 = "PROPHET";
+        forecastingTechniques.add(technique1);
+        String technique2 = "ETS";
+        forecastingTechniques.add(technique2);
+        String technique3 = "NN";
+        forecastingTechniques.add(technique3);
+
+        when(strategicIndicatorsDomainController.getForecastTechniques()).thenReturn(forecastingTechniques);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/forecastTechniques");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0]", is(technique1)))
+                .andExpect(jsonPath("$[1]", is(technique2)))
+                .andExpect(jsonPath("$[2]", is(technique3)))
+                .andDo(document("forecast/techniques",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[]")
+                                        .description("Array with the forecasting techniques names"))
+                ));
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).getForecastTechniques();
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
 }
