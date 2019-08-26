@@ -119,14 +119,14 @@ public class QMARelations {
                     String label = strategicIndicatorsController.getLabel(value);
                     String valueDescription = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
                     strategicIndicator.setValueDescription(valueDescription);
-                    strategicIndicator.setColor(util.getColorFromLabel(label));
+                    strategicIndicator.setColor(strategicIndicatorsController.getColorFromLabel(label));
                 }
                 catch (NumberFormatException nfe) {
                     String label = strategicIndicator.getValue();
                     Float value = strategicIndicatorsController.getValueFromLabel(label);
                     String valueDescription = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
                     strategicIndicator.setValueDescription(valueDescription);
-                    strategicIndicator.setColor(util.getColorFromLabel(label));
+                    strategicIndicator.setColor(strategicIndicatorsController.getColorFromLabel(label));
                 }
 
                 DTORelationsFactor factor;

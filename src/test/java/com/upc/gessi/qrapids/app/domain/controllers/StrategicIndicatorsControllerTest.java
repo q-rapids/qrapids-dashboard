@@ -1193,4 +1193,16 @@ public class StrategicIndicatorsControllerTest {
         assertEquals("0,80", descriptiveLabel);
     }
 
+    @Test
+    public void getColorFromLabel() {
+        // Given
+        List<SICategory> siCategoryList = domainObjectsBuilder.buildSICategoryList();
+        when(siCategoryRepository.findByName(siCategoryList.get(0).getName())).thenReturn(siCategoryList.get(0));
+
+        // When
+        String color = strategicIndicatorsController.getColorFromLabel(siCategoryList.get(0).getName());
+
+        // Then
+        assertEquals(siCategoryList.get(0).getColor(), color);
+    }
 }

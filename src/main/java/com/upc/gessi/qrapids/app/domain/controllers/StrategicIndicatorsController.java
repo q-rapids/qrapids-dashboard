@@ -558,4 +558,9 @@ public class StrategicIndicatorsController {
 
         return labelAndValue;
     }
+
+    public String getColorFromLabel (String label) {
+        SICategory category = strategicIndicatorCategoryRepository.findByName(label);
+        return category.getColor();
+    }
 }
