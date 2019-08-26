@@ -19,7 +19,6 @@ import com.upc.gessi.qrapids.app.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -89,26 +88,6 @@ public class Util {
     @ResponseStatus(HttpStatus.OK)
     public String serverUrl() {
         return "{\"serverUrl\":\""+serverUrl+"\"}";
-    }
-
-    public static String buildDescriptiveLabelAndValue (Pair<Float, String> value) {
-        String labelAndValue;
-
-        String numeric_value;
-        if (value.getFirst()==null)
-            numeric_value="";
-        else
-            numeric_value = String.format("%.2f", value.getFirst());
-
-        if (value.getSecond().isEmpty())
-            labelAndValue = numeric_value;
-        else{
-            labelAndValue = value.getSecond();
-            if (!numeric_value.isEmpty())
-                labelAndValue += " (" + numeric_value + ')';
-        }
-
-        return labelAndValue;
     }
 
     public String getColorFromLabel (String label) {

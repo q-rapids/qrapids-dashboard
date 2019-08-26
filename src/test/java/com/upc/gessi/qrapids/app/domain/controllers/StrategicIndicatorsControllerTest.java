@@ -1166,4 +1166,31 @@ public class StrategicIndicatorsControllerTest {
         assertEquals(siCategoryList.get(2).getColor(), dtoSIAssessment3.getColor());
         assertEquals(0.33f, dtoSIAssessment3.getUpperThreshold(), 0.01f);
     }
+
+    @Test
+    public void buildDescriptiveLabelAndValue() {
+        // Given
+        Float value = 0.8f;
+        String label = "Good";
+
+        // When
+        String descriptiveLabel = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
+
+        // Then
+        assertEquals("Good (0,80)", descriptiveLabel);
+    }
+
+    @Test
+    public void buildDescriptiveLabelAndValueNoLabel() {
+        // Given
+        Float value = 0.8f;
+        String label = "";
+
+        // When
+        String descriptiveLabel = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
+
+        // Then
+        assertEquals("0,80", descriptiveLabel);
+    }
+
 }

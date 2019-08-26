@@ -542,4 +542,20 @@ public class StrategicIndicatorsController {
         }
         return result;
     }
+
+    public static String buildDescriptiveLabelAndValue (Pair<Float, String> value) {
+        String labelAndValue;
+
+        String numeric_value = String.format("%.2f", value.getFirst());
+
+        if (value.getSecond().isEmpty())
+            labelAndValue = numeric_value;
+        else{
+            labelAndValue = value.getSecond();
+            if (!numeric_value.isEmpty())
+                labelAndValue += " (" + numeric_value + ')';
+        }
+
+        return labelAndValue;
+    }
 }

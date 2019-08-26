@@ -117,14 +117,14 @@ public class QMARelations {
                 try {
                     Float value = Float.parseFloat(strategicIndicator.getValue());
                     String label = strategicIndicatorsController.getLabel(value);
-                    String valueDescription = Util.buildDescriptiveLabelAndValue(Pair.of(value, label));
+                    String valueDescription = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
                     strategicIndicator.setValueDescription(valueDescription);
                     strategicIndicator.setColor(util.getColorFromLabel(label));
                 }
                 catch (NumberFormatException nfe) {
                     String label = strategicIndicator.getValue();
                     Float value = strategicIndicatorsController.getValueFromLabel(label);
-                    String valueDescription = Util.buildDescriptiveLabelAndValue(Pair.of(value, label));
+                    String valueDescription = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
                     strategicIndicator.setValueDescription(valueDescription);
                     strategicIndicator.setColor(util.getColorFromLabel(label));
                 }
