@@ -12,6 +12,7 @@ import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
@@ -562,5 +563,9 @@ public class StrategicIndicatorsController {
     public String getColorFromLabel (String label) {
         SICategory category = strategicIndicatorCategoryRepository.findByName(label);
         return category.getColor();
+    }
+
+    public List<DTORelationsSI> getQualityModel(String projectExternalId, LocalDate date) throws IOException {
+        return qmaRelations.getRelations(projectExternalId, date);
     }
 }

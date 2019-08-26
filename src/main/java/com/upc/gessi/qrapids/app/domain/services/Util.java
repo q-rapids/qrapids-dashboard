@@ -15,7 +15,6 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.dto.DTOMilestone;
-import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,19 +118,6 @@ public class Util {
     @ResponseStatus(HttpStatus.OK)
     public List<String> getForecastTechniques() {
         return forecast.getForecastTechniques();
-    }
-
-    @GetMapping("/api/strategicIndicators/qualityModel")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTORelationsSI> getQualityModel(@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) {
-        try {
-            if (date == null)
-                return qmaRelations.getRelations(prj, null);
-            else
-                return qmaRelations.getRelations(prj, LocalDate.parse(date));
-        } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
-        }
     }
 
     @GetMapping("api/me")

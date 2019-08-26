@@ -2,6 +2,9 @@ package com.upc.gessi.qrapids.app.testHelpers;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
+import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
+import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import org.springframework.data.util.Pair;
 import qr.models.FixedPart;
 import qr.models.Form;
@@ -483,5 +486,40 @@ public class DomainObjectsBuilder {
         dtoSIAssessmentList.add(dtoSIAssessment3);
 
         return dtoSIAssessmentList;
+    }
+
+    public List<DTORelationsSI> buildDTORelationsSI () {
+        String metricId = "nonblockingfiles";
+        String metricValue = "0.8";
+        String metricWeight = "1";
+        DTORelationsMetric dtoRelationsMetric = new DTORelationsMetric(metricId);
+        dtoRelationsMetric.setValue(metricValue);
+        dtoRelationsMetric.setWeight(metricWeight);
+        List<DTORelationsMetric> dtoRelationsMetricList = new ArrayList<>();
+        dtoRelationsMetricList.add(dtoRelationsMetric);
+
+        String factorId = "blockingcode";
+        String factorValue = "0.8";
+        String factorWeight = "1";
+        DTORelationsFactor dtoRelationsFactor = new DTORelationsFactor(factorId);
+        dtoRelationsFactor.setValue(factorValue);
+        dtoRelationsFactor.setWeight(factorWeight);
+        dtoRelationsFactor.setMetrics(dtoRelationsMetricList);
+        List<DTORelationsFactor> dtoRelationsFactorList = new ArrayList<>();
+        dtoRelationsFactorList.add(dtoRelationsFactor);
+
+        String strategicIndicatorId = "blocking";
+        String strategicIndicatorValue = "0.8";
+        String strategicIndicatorValueDescription = "Good (0.8)";
+        String strategicIndicatorColor = "#00ff00";
+        DTORelationsSI dtoRelationsSI = new DTORelationsSI(strategicIndicatorId);
+        dtoRelationsSI.setValue(strategicIndicatorValue);
+        dtoRelationsSI.setValueDescription(strategicIndicatorValueDescription);
+        dtoRelationsSI.setColor(strategicIndicatorColor);
+        dtoRelationsSI.setFactors(dtoRelationsFactorList);
+        List<DTORelationsSI> dtoRelationsSIList = new ArrayList<>();
+        dtoRelationsSIList.add(dtoRelationsSI);
+
+        return dtoRelationsSIList;
     }
 }

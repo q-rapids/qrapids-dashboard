@@ -16,6 +16,9 @@ import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOQualityFactor;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
+import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
+import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
+import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.exceptions.StrategicIndicatorNotFoundException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
@@ -2451,6 +2454,117 @@ public class StrategicIndicatorsTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint())
                 ));
+    }
+
+    @Test
+    public void getQualityModel() throws Exception {
+        // Given
+        List<DTORelationsSI> dtoRelationsSIList = domainObjectsBuilder.buildDTORelationsSI();
+        DTORelationsSI dtoRelationsSI = dtoRelationsSIList.get(0);
+        DTORelationsFactor dtoRelationsFactor = dtoRelationsSI.getFactors().get(0);
+        DTORelationsMetric dtoRelationsMetric = dtoRelationsFactor.getMetrics().get(0);
+        String projectExternalId = "test";
+
+        when(strategicIndicatorsDomainController.getQualityModel(projectExternalId, null)).thenReturn(dtoRelationsSIList);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators/qualityModel")
+                .param("prj", projectExternalId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(dtoRelationsSI.getId())))
+                .andExpect(jsonPath("$[0].value", is(dtoRelationsSI.getValue())))
+                .andExpect(jsonPath("$[0].valueDescription", is(dtoRelationsSI.getValueDescription())))
+                .andExpect(jsonPath("$[0].color", is(dtoRelationsSI.getColor())))
+                .andExpect(jsonPath("$[0].factors", hasSize(1)))
+                .andExpect(jsonPath("$[0].factors[0].id", is(dtoRelationsFactor.getId())))
+                .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].weight", is(dtoRelationsFactor.getWeight())))
+                .andExpect(jsonPath("$[0].factors[0].metrics", hasSize(1)))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].id", is(dtoRelationsMetric.getId())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())));
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).getQualityModel(projectExternalId, null);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
+    @Test
+    public void getQualityModelForDate() throws Exception {
+        // Given
+        List<DTORelationsSI> dtoRelationsSIList = domainObjectsBuilder.buildDTORelationsSI();
+        DTORelationsSI dtoRelationsSI = dtoRelationsSIList.get(0);
+        DTORelationsFactor dtoRelationsFactor = dtoRelationsSI.getFactors().get(0);
+        DTORelationsMetric dtoRelationsMetric = dtoRelationsFactor.getMetrics().get(0);
+
+        String projectExternalId = "test";
+        String date = "2019-07-07";
+
+        when(strategicIndicatorsDomainController.getQualityModel(projectExternalId, LocalDate.parse(date))).thenReturn(dtoRelationsSIList);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators/qualityModel")
+                .param("prj", projectExternalId)
+                .param("date", date);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(dtoRelationsSI.getId())))
+                .andExpect(jsonPath("$[0].value", is(dtoRelationsSI.getValue())))
+                .andExpect(jsonPath("$[0].valueDescription", is(dtoRelationsSI.getValueDescription())))
+                .andExpect(jsonPath("$[0].color", is(dtoRelationsSI.getColor())))
+                .andExpect(jsonPath("$[0].factors", hasSize(1)))
+                .andExpect(jsonPath("$[0].factors[0].id", is(dtoRelationsFactor.getId())))
+                .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].weight", is(dtoRelationsFactor.getWeight())))
+                .andExpect(jsonPath("$[0].factors[0].metrics", hasSize(1)))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].id", is(dtoRelationsMetric.getId())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())))
+                .andDo(document("si/quality-model",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("date")
+                                        .optional()
+                                        .description("Date (yyyy-mm-dd) of the quality model evaluation")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].value")
+                                        .description("Strategic indicator assessment value"),
+                                fieldWithPath("[].valueDescription")
+                                        .description("Strategic indicator assessment value and category"),
+                                fieldWithPath("[].color")
+                                        .description("Strategic indicator category color"),
+                                fieldWithPath("[].factors")
+                                        .description("List with all the quality factors composing the strategic indicator"),
+                                fieldWithPath("[].factors[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].factors[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].weight")
+                                        .description("Quality factor weight in the strategic indicator assessment"),
+                                fieldWithPath("[].factors[].metrics")
+                                        .description("List with all the metrics composing the quality factor"),
+                                fieldWithPath("[].factors[].metrics[].id")
+                                        .description("Metric identifier"),
+                                fieldWithPath("[].factors[].metrics[].value")
+                                        .description("Metric value"),
+                                fieldWithPath("[].factors[].metrics[].weight")
+                                        .description("Metric weight in the computation of the quality factor"))
+                ));
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).getQualityModel(projectExternalId, LocalDate.parse(date));
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
 }
