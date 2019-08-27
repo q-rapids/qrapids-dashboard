@@ -96,11 +96,11 @@ public class QualityFactorsController {
     }
 
     public String getFactorLabelFromValue (Float f) {
-        List <QFCategory> QFCats = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
+        List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
         if (f != null) {
-            for (QFCategory qfcat : QFCats) {
-                if (f <= qfcat.getUpperThreshold())
-                    return qfcat.getName();
+            for (QFCategory qfCategory : qfCategoryList) {
+                if (f <= qfCategory.getUpperThreshold())
+                    return qfCategory.getName();
             }
         }
         return "No Category";

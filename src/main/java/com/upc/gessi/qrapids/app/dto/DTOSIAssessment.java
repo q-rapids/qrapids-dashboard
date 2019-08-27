@@ -65,11 +65,12 @@ public class DTOSIAssessment {
     /*
     * Function that returns de desc*/
     public String toString(){
-        String description, threshold_label;
+        String description;
+        String thresholdLabel;
         description = label;
         if (upperThreshold != null && !upperThreshold.isNaN()) {
-            threshold_label = String.format("%.2f",upperThreshold);
-            description = description + " (" + threshold_label + ')';
+            thresholdLabel = String.format("%.2f",upperThreshold);
+            description = description + " (" + thresholdLabel + ')';
         }
         return description;
     }

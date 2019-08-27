@@ -468,7 +468,7 @@ public class Forecast {
     public List<DTOStrategicIndicatorEvaluation> ForecastSI(String technique, String freq, String horizon, String prj) throws IOException {
         List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj), technique, freq, horizon, prj);
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
-        String categories_description = strategicIndicatorsController.getCategories().toString();
+        String categoriesDescription = strategicIndicatorsController.getCategories().toString();
         for (DTODetailedStrategicIndicator dsi : dsis) {
             Map<LocalDate, List<DTOFactor>> listSIFactors = new HashMap<>();
             Map<LocalDate,Map<String,String>> mapSIFactors = new HashMap<>();
@@ -498,7 +498,7 @@ public class Forecast {
                     File tempFile = File.createTempFile("network", ".dne", null);
                     FileOutputStream fos = new FileOutputStream(tempFile);
                     fos.write(si.getNetwork());
-                    List<DTOSIAssessment> assessment = AssesSI.AssesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
+                    List<DTOSIAssessment> assessment = AssesSI.assesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
                     float value = strategicIndicatorsController.getValueAndLabelFromCategories(assessment).getFirst();
                     result.add(new DTOStrategicIndicatorEvaluation(dsi.getId(),
                             si.getName(),
@@ -507,7 +507,7 @@ public class Forecast {
                             assessment, m.getKey(),
                             "Dashboard Assessment",
                             si.getId(),
-                            categories_description,
+                            categoriesDescription,
                             si.getNetwork() != null));
                 }
             } else if (si != null){
@@ -520,7 +520,7 @@ public class Forecast {
                             strategicIndicatorsController.getCategories(),
                             l.getKey(), "Dashboard Assessment",
                             si.getId(),
-                            categories_description,
+                            categoriesDescription,
                             si.getNetwork() != null));
                 }
             }

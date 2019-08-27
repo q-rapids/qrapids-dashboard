@@ -571,7 +571,7 @@ public class StrategicIndicatorsControllerTest {
         }
         Float factorsAverageValue = factorsValuesSum / factorsNumber;
 
-        when(assesSI.AssesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
+        when(assesSI.assesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
 
         when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(true);
 
@@ -600,7 +600,7 @@ public class StrategicIndicatorsControllerTest {
         verify(strategicIndicatorRepository, times(1)).findAll();
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
-        verify(assesSI, times(1)).AssesSI(factorValuesList, 3);
+        verify(assesSI, times(1)).assesSI(factorValuesList, 3);
         verifyNoMoreInteractions(assesSI);
 
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
@@ -676,7 +676,7 @@ public class StrategicIndicatorsControllerTest {
         }
         Float factorsAverageValue = factorsValuesSum / factorsNumber;
 
-        when(assesSI.AssesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
+        when(assesSI.assesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
 
         when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
 
@@ -694,7 +694,7 @@ public class StrategicIndicatorsControllerTest {
         verify(strategicIndicatorRepository, times(1)).findAll();
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
-        verify(assesSI, times(1)).AssesSI(factorValuesList, 3);
+        verify(assesSI, times(1)).assesSI(factorValuesList, 3);
         verifyNoMoreInteractions(assesSI);
 
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
@@ -770,7 +770,7 @@ public class StrategicIndicatorsControllerTest {
         }
         Float factorsAverageValue = factorsValuesSum / factorsNumber;
 
-        when(assesSI.AssesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
+        when(assesSI.assesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
 
         when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(true);
 
@@ -799,7 +799,7 @@ public class StrategicIndicatorsControllerTest {
         verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicator.getName());
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
-        verify(assesSI, times(1)).AssesSI(factorValuesList, 3);
+        verify(assesSI, times(1)).assesSI(factorValuesList, 3);
         verifyNoMoreInteractions(assesSI);
 
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
@@ -876,7 +876,7 @@ public class StrategicIndicatorsControllerTest {
         }
         Float factorsAverageValue = factorsValuesSum / factorsNumber;
 
-        when(assesSI.AssesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
+        when(assesSI.assesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
 
         when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
 
@@ -894,7 +894,7 @@ public class StrategicIndicatorsControllerTest {
         verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicator.getName());
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
-        verify(assesSI, times(1)).AssesSI(factorValuesList, 3);
+        verify(assesSI, times(1)).assesSI(factorValuesList, 3);
         verifyNoMoreInteractions(assesSI);
 
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));

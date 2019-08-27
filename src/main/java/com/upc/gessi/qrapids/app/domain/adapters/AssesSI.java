@@ -30,7 +30,7 @@ public class AssesSI {
     @Value("${assessSI.url}")
     private String url;
 
-    public List<DTOSIAssessment> AssesSI(String SIid, Map<String, String> mapFactors, File network) {
+    public List<DTOSIAssessment> assesSI(String siId, Map<String, String> mapFactors, File network) {
 
         mapFactors = new LinkedHashMap<>(mapFactors);
 
@@ -40,7 +40,7 @@ public class AssesSI {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/api/si/assessment");
 
             MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-            params.add("SIid", SIid);
+            params.add("SIid", siId);
             List<String> factorNames = new ArrayList<>(mapFactors.keySet());
             for (String name : factorNames) {
                 params.add("factorNames", name);
@@ -64,7 +64,7 @@ public class AssesSI {
             if (statusCode == HttpStatus.OK) {
                 Gson gson = new Gson();
                 DTOAssessmentSI assessmentSI = gson.fromJson(responseEntity.getBody(), DTOAssessmentSI.class);
-                dtoSiAssessment = DTOAssessmentSItoDTOSIAssesment(assessmentSI.getProbsSICategories());
+                dtoSiAssessment = dtoAssessmentSItoDTOSIAssessment(assessmentSI.getProbsSICategories());
             }
             else {
                 dtoSiAssessment = new ArrayList<>();
@@ -76,7 +76,7 @@ public class AssesSI {
     }
 
     // If there is no BN, the assessment is the factors average
-    public float AssesSI(List<Float> factors_assessment, int n_factors) {
+    public float assesSI(List<Float> factors_assessment, int n_factors) {
         try {
             float total = 0.f;
 //            int n_factors = 0;
@@ -97,13 +97,13 @@ public class AssesSI {
         }
     }
 
-    public List<DTOSIAssessment> DTOAssessmentSItoDTOSIAssesment(ArrayList<DTOCategorySI> catsEstimation) {
+    public List<DTOSIAssessment> dtoAssessmentSItoDTOSIAssessment(List<DTOCategorySI> catsEstimation) {
         List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
         if (catsEstimation.size() == categories.size()) {
             int i = 0;
-            for (DTOSIAssessment assesment : categories) {
-                if (assesment.getLabel().equals(catsEstimation.get(catsEstimation.size() - 1 - i).getIdSICategory())) {
-                    assesment.setValue(catsEstimation.get(catsEstimation.size() - 1 - i).getProbSICategory());
+            for (DTOSIAssessment assessment : categories) {
+                if (assessment.getLabel().equals(catsEstimation.get(catsEstimation.size() - 1 - i).getIdSICategory())) {
+                    assessment.setValue(catsEstimation.get(catsEstimation.size() - 1 - i).getProbSICategory());
                 }
                 ++i;
             }

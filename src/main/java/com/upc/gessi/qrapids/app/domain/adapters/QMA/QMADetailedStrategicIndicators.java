@@ -6,7 +6,6 @@ import DTOs.FactorEvaluationDTO;
 import DTOs.StrategicIndicatorFactorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
-import com.upc.gessi.qrapids.app.domain.services.Util;
 import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssessment;
@@ -26,9 +25,6 @@ public class QMADetailedStrategicIndicators {
 
     @Autowired
     private QMAConnection qmacon;
-
-    @Autowired
-    private Util util;
 
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;

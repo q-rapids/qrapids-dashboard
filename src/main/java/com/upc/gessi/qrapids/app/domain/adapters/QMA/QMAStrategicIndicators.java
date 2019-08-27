@@ -11,7 +11,6 @@ import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.domain.services.Util;
 import com.upc.gessi.qrapids.app.dto.DTOSIAssessment;
 import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
@@ -41,9 +40,6 @@ public class QMAStrategicIndicators {
 
     @Autowired
     private FeedbackRepository feedbackRepository;
-
-    @Autowired
-    private Util util;
 
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
@@ -118,7 +114,7 @@ public class QMAStrategicIndicators {
                                                             strategicIndicatorDescription,
                                                             value,
                                                             date,
-                                                            ListDTOSIAssesmenttoEstimationEvaluationDTO(assessment),
+                                                            listDTOSIAssessmentToEstimationEvaluationDTO(assessment),
                                                             missingFactors,
                                                             dates_mismatch)
                     .status();
@@ -215,7 +211,7 @@ public class QMAStrategicIndicators {
         return si;
     }
 
-    private EstimationEvaluationDTO ListDTOSIAssesmenttoEstimationEvaluationDTO(List<DTOSIAssessment> assessment) {
+    private EstimationEvaluationDTO listDTOSIAssessmentToEstimationEvaluationDTO(List<DTOSIAssessment> assessment) {
         List<QuadrupletDTO<Integer, String, Float, Float>> estimation = new ArrayList<>();
         for (DTOSIAssessment dsa : assessment) {
             estimation.add(new QuadrupletDTO<Integer, String, Float, Float>(dsa.getId() != null ? dsa.getId().intValue() : null, dsa.getLabel(), dsa.getValue(), dsa.getUpperThreshold()));

@@ -5,7 +5,6 @@ import DTOs.Relations.SourceRelationDTO;
 import DTOs.Relations.TargetRelationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
-import com.upc.gessi.qrapids.app.domain.services.Util;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
@@ -26,9 +25,6 @@ public class QMARelations {
 
     @Autowired
     private QMAConnection qmacon;
-
-    @Autowired
-    private Util util;
 
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;

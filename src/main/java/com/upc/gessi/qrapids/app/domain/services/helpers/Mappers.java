@@ -1,4 +1,4 @@
-package com.upc.gessi.qrapids.app.domain.services.Helpers;
+package com.upc.gessi.qrapids.app.domain.services.helpers;
 
 import com.upc.gessi.qrapids.app.dto.qrPattern.DTOQRFixedPart;
 import com.upc.gessi.qrapids.app.dto.qrPattern.DTOQRForm;
@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Mappers {
+
+    private Mappers() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static DTOQRPattern mapQualityRequirementPatternToDTOQRPattern (QualityRequirementPattern qrPattern) {
         List<DTOQRForm> dtoQRFormList = new ArrayList<>();

@@ -8,7 +8,7 @@ import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QualityRequirement;
-import com.upc.gessi.qrapids.app.domain.services.Helpers.Mappers;
+import com.upc.gessi.qrapids.app.domain.services.helpers.Mappers;
 import com.upc.gessi.qrapids.app.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.dto.DTOQualityRequirement;
 import com.upc.gessi.qrapids.app.dto.qrPattern.DTOQRPattern;
@@ -42,6 +42,8 @@ public class QualityRequirements {
     @Autowired
     private UsersController usersController;
 
+    private static final String PROJECT_NOT_FOUND = "The project identifier does not exist";
+
     @PostMapping("/api/qr/ignore")
     @ResponseStatus(HttpStatus.CREATED)
     public void ignoreQR (@RequestParam(value = "prj") String prj, HttpServletRequest request) {
@@ -51,7 +53,7 @@ public class QualityRequirements {
             Project project = projectsController.findProjectByExternalId(prj);
             qualityRequirementController.ignoreQualityRequirement(project, rationale, Integer.parseInt(patternId));
         } catch (ProjectNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PROJECT_NOT_FOUND);
         }
     }
 
@@ -83,7 +85,7 @@ public class QualityRequirements {
                     qualityRequirement.getBacklogId(),
                     qualityRequirement.getBacklogUrl());
         } catch (ProjectNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PROJECT_NOT_FOUND);
         }catch (HttpClientErrorException e1) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error when saving the quality requirement in the backlog");
         } catch (Exception e) {
@@ -131,7 +133,7 @@ public class QualityRequirements {
             }
             return dtoQualityRequirements;
         } catch (ProjectNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PROJECT_NOT_FOUND);
         }
     }
 

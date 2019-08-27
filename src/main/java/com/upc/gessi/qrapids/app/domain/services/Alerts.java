@@ -2,7 +2,7 @@ package com.upc.gessi.qrapids.app.domain.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
-import com.upc.gessi.qrapids.app.domain.services.Helpers.Mappers;
+import com.upc.gessi.qrapids.app.domain.services.helpers.Mappers;
 import com.upc.gessi.qrapids.app.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.dto.DTOAlertDecision;
 import com.upc.gessi.qrapids.app.dto.DTONewAlerts;

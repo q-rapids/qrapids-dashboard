@@ -27,7 +27,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		try {
 			context.getBean(StrategicIndicatorsController.class).fetchStrategicIndicators();
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
 	}
 }

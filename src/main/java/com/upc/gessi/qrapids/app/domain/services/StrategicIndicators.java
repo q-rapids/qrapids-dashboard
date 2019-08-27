@@ -43,6 +43,10 @@ public class StrategicIndicators {
     @Value("${forecast.technique}")
     private String forecastTechnique;
 
+    private static final String ASSESSMENT_ERROR = "Assessment error: ";
+
+    private static final String INTERNAL_SERVER_ERROR = "Internal server error: ";
+
     @GetMapping("/api/strategicIndicators/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsEvaluation(@RequestParam(value = "prj") String prj) {
@@ -53,7 +57,7 @@ public class StrategicIndicators {
         } catch (CategoriesException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -67,7 +71,7 @@ public class StrategicIndicators {
         } catch (CategoriesException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -79,7 +83,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -91,7 +95,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -103,7 +107,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -117,7 +121,7 @@ public class StrategicIndicators {
         } catch (CategoriesException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -129,7 +133,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -141,7 +145,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -154,7 +158,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -166,7 +170,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -179,7 +183,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -192,7 +196,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -205,7 +209,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -214,9 +218,9 @@ public class StrategicIndicators {
     public List<DTOSI> getAllStrategicIndicators (@RequestParam(value = "prj") String prj) {
         try {
             Project project = projectsController.findProjectByExternalId(prj);
-            List<Strategic_Indicator> strategic_indicators = strategicIndicatorsController.getStrategicIndicatorsByProject(project);
+            List<Strategic_Indicator> strategicIndicatorList = strategicIndicatorsController.getStrategicIndicatorsByProject(project);
             List<DTOSI> dtoSIList = new ArrayList<>();
-            for (Strategic_Indicator strategic_indicator : strategic_indicators) {
+            for (Strategic_Indicator strategic_indicator : strategicIndicatorList) {
                 DTOSI dtosi = new DTOSI(strategic_indicator.getId(),
                         strategic_indicator.getExternalId(),
                         strategic_indicator.getName(),
@@ -259,7 +263,7 @@ public class StrategicIndicators {
                 file = IOUtils.toByteArray(network.getInputStream());
             }
             List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
-            if (!name.equals("") && qualityFactors.size() > 0) {
+            if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Project project = projectsController.findProjectByExternalId(prj);
                 strategicIndicatorsController.saveStrategicIndicator(name, description, file, qualityFactors, project);
                 if (!strategicIndicatorsController.assessStrategicIndicator(name)) {
@@ -267,9 +271,9 @@ public class StrategicIndicators {
                 }
             }
         } catch (AssessmentErrorException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ASSESSMENT_ERROR + e.getMessage());
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -291,7 +295,7 @@ public class StrategicIndicators {
             } catch (Exception e) {
                 throw new MissingParametersException();
             }
-            if (!name.equals("") && qualityFactors.size() > 0) {
+            if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Strategic_Indicator oldStrategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
                 strategicIndicatorsController.editStrategicIndicator(id, name, description, file, qualityFactors);
 
@@ -303,10 +307,8 @@ public class StrategicIndicators {
                         sameFactors = false;
                     i++;
                 }
-                if (!sameFactors) {
-                    if (!strategicIndicatorsController.assessStrategicIndicator(name)) {
-                        throw new AssessmentErrorException();
-                    }
+                if (!sameFactors && !strategicIndicatorsController.assessStrategicIndicator(name)) {
+                    throw new AssessmentErrorException();
                 }
             }
         } catch (MissingParametersException e) {
@@ -314,11 +316,11 @@ public class StrategicIndicators {
         } catch (StrategicIndicatorNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Strategic Indicator not found");
         } catch (AssessmentErrorException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ASSESSMENT_ERROR + e.getMessage());
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Integrity violation: " + e.getMessage());
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -390,7 +392,7 @@ public class StrategicIndicators {
                 throw new AssessmentErrorException();
             }
         } catch (AssessmentErrorException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Assessment error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ASSESSMENT_ERROR + e.getMessage());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error in the request parameters");
         }
@@ -402,13 +404,13 @@ public class StrategicIndicators {
         try {
             strategicIndicatorsController.fetchStrategicIndicators();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
     @PostMapping("/api/strategicIndicators/simulate")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStrategicIndicatorEvaluation> Simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request) {
+    public List<DTOStrategicIndicatorEvaluation> simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request) {
         try {
             JsonParser parser = new JsonParser();
             JsonArray simulatedFactorsJsonArray = parser.parse(request.getParameter("factors")).getAsJsonArray();
@@ -433,7 +435,7 @@ public class StrategicIndicators {
             else
                 return strategicIndicatorsController.getQualityModel(prj, LocalDate.parse(date));
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
