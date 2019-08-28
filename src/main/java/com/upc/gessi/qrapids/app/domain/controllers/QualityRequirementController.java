@@ -6,11 +6,13 @@ import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Decision.DecisionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QR.QRRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class QualityRequirementController {
 
     @Autowired

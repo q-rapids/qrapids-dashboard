@@ -13,7 +13,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class Forecast {
     private QMADetailedStrategicIndicators qmadsi;
 
     @Autowired
-    private com.upc.gessi.qrapids.app.domain.services.Util util;
+    private com.upc.gessi.qrapids.app.presentation.rest.services.Util util;
 
     @Autowired
     private QualityFactorsController qualityFactorsController;

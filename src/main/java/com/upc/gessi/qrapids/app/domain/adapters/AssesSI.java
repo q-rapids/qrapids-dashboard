@@ -2,9 +2,9 @@ package com.upc.gessi.qrapids.app.domain.adapters;
 
 import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssessment;
-import com.upc.gessi.qrapids.app.dto.assessmentSI.DTOAssessmentSI;
-import com.upc.gessi.qrapids.app.dto.assessmentSI.DTOCategorySI;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.assessmentSI.DTOAssessmentSI;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.assessmentSI.DTOCategorySI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;

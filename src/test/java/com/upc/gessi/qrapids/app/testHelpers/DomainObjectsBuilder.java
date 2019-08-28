@@ -1,10 +1,11 @@
 package com.upc.gessi.qrapids.app.testHelpers;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
-import com.upc.gessi.qrapids.app.dto.*;
-import com.upc.gessi.qrapids.app.dto.relations.DTORelationsFactor;
-import com.upc.gessi.qrapids.app.dto.relations.DTORelationsMetric;
-import com.upc.gessi.qrapids.app.dto.relations.DTORelationsSI;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODecisionQualityRequirement;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMetric;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
 import org.springframework.data.util.Pair;
 import qr.models.FixedPart;
 import qr.models.Form;
