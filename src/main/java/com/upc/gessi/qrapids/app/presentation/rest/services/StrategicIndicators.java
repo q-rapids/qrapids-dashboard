@@ -262,7 +262,7 @@ public class StrategicIndicators {
             if (network != null) {
                 file = IOUtils.toByteArray(network.getInputStream());
             }
-            List<String> qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
+            List<String> qualityFactors = new ArrayList<>(Arrays.asList(request.getParameter("quality_factors").split(",")));
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Project project = projectsController.findProjectByExternalId(prj);
                 strategicIndicatorsController.saveStrategicIndicator(name, description, file, qualityFactors, project);
@@ -291,7 +291,7 @@ public class StrategicIndicators {
                 if (network != null) {
                     file = IOUtils.toByteArray(network.getInputStream());
                 }
-                qualityFactors = Arrays.asList(request.getParameter("quality_factors").split(","));
+                qualityFactors = new ArrayList<>(Arrays.asList(request.getParameter("quality_factors").split(",")));
             } catch (Exception e) {
                 throw new MissingParametersException();
             }

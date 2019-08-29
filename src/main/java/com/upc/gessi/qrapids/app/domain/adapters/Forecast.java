@@ -47,9 +47,6 @@ public class Forecast {
     private QMADetailedStrategicIndicators qmadsi;
 
     @Autowired
-    private com.upc.gessi.qrapids.app.presentation.rest.services.Util util;
-
-    @Autowired
     private QualityFactorsController qualityFactorsController;
 
     @Autowired
