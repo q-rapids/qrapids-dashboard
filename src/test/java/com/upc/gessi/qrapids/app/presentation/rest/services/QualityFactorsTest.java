@@ -44,7 +44,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class FactorsServiceTest {
+public class QualityFactorsTest {
 
     private DomainObjectsBuilder domainObjectsBuilder;
 
@@ -60,7 +60,7 @@ public class FactorsServiceTest {
     private MetricsController metricsDomainController;
 
     @InjectMocks
-    private FactorsService factorsController;
+    private QualityFactors factorsController;
 
     @Before
     public void setUp() {

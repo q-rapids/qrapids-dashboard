@@ -5,6 +5,8 @@ import com.upc.gessi.qrapids.app.config.Libs.RouteFilter;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.models.Route;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +31,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private UserRepository userRepository;
 
 	private boolean DEBUG = false;
+
+	private Logger logger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
 
 	public JWTAuthorizationFilter(AuthenticationManager authManager) {
 		super(authManager);
@@ -74,7 +78,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             token = cookie_token;
 
             if( this.DEBUG )
-                System.out.println(" Origin - WebApp ");
+                logger.info(" Origin - WebApp ");
 
         } else {
 
@@ -82,7 +86,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             if( header == null || !header.startsWith(TOKEN_PREFIX) ){
 
                 if (DEBUG)
-                    System.out.println(" No token API ");
+                    logger.info(" No token API ");
 
                 chain.doFilter(req, res);
 
@@ -93,7 +97,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             token = req.getHeader( HEADER_STRING );
 
             if( this.DEBUG )
-                System.out.println(" Origin - ApiCall ");
+                logger.info(" Origin - ApiCall ");
 
         }
 
@@ -147,7 +151,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         } else {
 
             if (this.DEBUG)
-                System.out.println( origin_request + " <- -> [Final status] : " + isAllowed );
+                logger.info(origin_request + " <- -> [Final status] : " + isAllowed);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(req, res);

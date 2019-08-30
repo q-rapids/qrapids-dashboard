@@ -7,6 +7,8 @@ import com.upc.gessi.qrapids.app.domain.repositories.Route.RouteRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.UserGroup.UserGroupRepository;
 import com.upc.gessi.qrapids.app.domain.models.Route;
 import com.upc.gessi.qrapids.app.domain.models.UserGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -41,6 +43,8 @@ public class UserGroupController {
 
     @Autowired
     private UserRepository userRepository;
+
+    private Logger logger = LoggerFactory.getLogger(UserGroupController.class);
 
     private final String redirectTo = "/usergroups";
 
@@ -183,7 +187,7 @@ public class UserGroupController {
                 return "redirect:" + this.redirectTo + "?success=" + "Group deleted".replace(" ","+");
 
             } catch( Exception e ){
-                System.out.println( "ERROR: " + e.toString());
+                logger.error(e.getMessage(), e);
 
                 return "redirect:" + this.redirectTo + "?error=" + "Something went wrong".replace(" ","+");
 
@@ -200,7 +204,7 @@ public class UserGroupController {
             this.userGroupRepository.updateUserGroupDefault( id );
             return "redirect:" + this.redirectTo + "?success=" + "Updated".replace(" ","+");
         } catch (Exception e) {
-            System.out.println(e);
+            logger.error(e.getMessage(), e);
             return "redirect:" + this.redirectTo + "?error=" + "Something went wrong".replace(" ","+");
         }
 

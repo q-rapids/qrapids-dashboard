@@ -1,6 +1,8 @@
 package com.upc.gessi.qrapids.app.config.Libs;
 
 import io.jsonwebtoken.Jwts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import javax.servlet.http.Cookie;
@@ -14,6 +16,8 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.TOKEN_
 public class AuthTools {
 
 	private final boolean DEBUG = false;
+
+	private Logger logger = LoggerFactory.getLogger(AuthTools.class);
 
 	/**
 	 * Origin validation (External application or WebApplication )
@@ -32,7 +36,7 @@ public class AuthTools {
 			return false;
 
 		if( this.DEBUG )
-			System.out.println( "Origin:" + request.getRequestURI() + " Session_login_page : " + lastPage );
+			logger.info("Origin:" + request.getRequestURI() + " Session_login_page : " + lastPage);
 
 		return ( lastPage != null && "login".equals(lastPage) );
 	}

@@ -2,10 +2,10 @@ package com.upc.gessi.qrapids.app.presentation.web.controller;
 
 import com.upc.gessi.qrapids.app.config.Libs.AuthTools;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
+import com.upc.gessi.qrapids.app.domain.models.UserGroup;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Question.QuestionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.UserGroup.UserGroupRepository;
-import com.upc.gessi.qrapids.app.domain.models.UserGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -105,8 +105,6 @@ public class AppUserController {
      */
     @PostMapping
     public String createEntity(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
-
-        System.out.println(user.toString());
         // Number of groups
         //long groups = this.userGroupRepository.count();
         //if ( groups >= 1 && user.getUserGroup() != null ){

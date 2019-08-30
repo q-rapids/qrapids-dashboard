@@ -138,8 +138,6 @@ public class AppUser implements Serializable{
 
             List<Route> routes = new ArrayList<Route>( this.userGroup.getRoutes() );
 
-            System.out.println(route.toString());
-
             return filter.userURLAttemp( route, routes );
 
         }

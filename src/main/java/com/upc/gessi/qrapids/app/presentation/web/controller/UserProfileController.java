@@ -5,6 +5,8 @@ import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Question.QuestionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.UserGroup.UserGroupRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +33,8 @@ public class UserProfileController {
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private Logger logger = LoggerFactory.getLogger(UserProfileController.class);
+
     private final String redirectTo = "/profile";
 
     private static final String REDIRECT = "redirect:";
@@ -55,7 +59,7 @@ public class UserProfileController {
             view.addObject("defautlUserGroup", this.userGroupRepository.findByDefaultGroupIsTrue() );
             view.addObject("appuser", this.userRepository.findByUsername( userName ));
         }catch (Exception e){
-            System.out.println(e);
+            logger.error(e.getMessage(), e);
         }
         return view;
     }

@@ -13,6 +13,8 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.qrPattern.DTOQRPattern;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -42,6 +44,8 @@ public class QualityRequirements {
     @Autowired
     private UsersController usersController;
 
+    private Logger logger = LoggerFactory.getLogger(QualityRequirements.class);
+
     private static final String PROJECT_NOT_FOUND = "The project identifier does not exist";
 
     @PostMapping("/api/qr/ignore")
@@ -53,6 +57,7 @@ public class QualityRequirements {
             Project project = projectsController.findProjectByExternalId(prj);
             qualityRequirementController.ignoreQualityRequirement(project, rationale, Integer.parseInt(patternId));
         } catch (ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PROJECT_NOT_FOUND);
         }
     }
@@ -85,10 +90,13 @@ public class QualityRequirements {
                     qualityRequirement.getBacklogId(),
                     qualityRequirement.getBacklogUrl());
         } catch (ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PROJECT_NOT_FOUND);
-        }catch (HttpClientErrorException e1) {
+        }catch (HttpClientErrorException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error when saving the quality requirement in the backlog");
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
         }
     }
@@ -133,6 +141,7 @@ public class QualityRequirements {
             }
             return dtoQualityRequirements;
         } catch (ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PROJECT_NOT_FOUND);
         }
     }

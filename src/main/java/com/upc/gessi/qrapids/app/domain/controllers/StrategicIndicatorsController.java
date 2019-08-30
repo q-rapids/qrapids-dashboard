@@ -18,6 +18,8 @@ import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorNotFoundException;
 import evaluation.StrategicIndicator;
 import org.elasticsearch.ElasticsearchStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -64,6 +66,8 @@ public class StrategicIndicatorsController {
 
     @Autowired
     private QMARelations qmaRelations;
+
+    private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
     public List<Strategic_Indicator> getStrategicIndicatorsByProject (Project project) {
         return strategicIndicatorRepository.findByProject_Id(project.getId());
@@ -433,7 +437,7 @@ public class StrategicIndicatorsController {
             try {
                 dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId);
             } catch (Exception e) {
-                System.err.println(e.getMessage());
+                logger.error(e.getMessage(), e);
             }
             for (DTODetailedStrategicIndicator dtoDetailedStrategicIndicator : dtoDetailedStrategicIndicators) {
                 List<String> factors = new ArrayList<>();

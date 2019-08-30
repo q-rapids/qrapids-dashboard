@@ -7,6 +7,8 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEval
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,8 @@ public class Products {
 	
 	@Autowired
     private ProductsController productCont;
+
+	private Logger logger = LoggerFactory.getLogger(Products.class);
 	
 	@GetMapping("/api/projects")
     @ResponseStatus(HttpStatus.OK)
@@ -33,6 +37,7 @@ public class Products {
 	    try {
             return productCont.getProjects();
         } catch (Exception e) {
+	        logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
@@ -43,6 +48,7 @@ public class Products {
 	    try {
             return productCont.getProducts();
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
@@ -53,6 +59,7 @@ public class Products {
         try {
             return productCont.getProductById(id);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
@@ -63,6 +70,7 @@ public class Products {
         try {
             return productCont.getProjectById(id);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
@@ -90,8 +98,10 @@ public class Products {
                 throw new ElementAlreadyPresentException();
         	}
         } catch (ElementAlreadyPresentException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
@@ -117,8 +127,10 @@ public class Products {
                 throw new ElementAlreadyPresentException();
         	}
         } catch (ElementAlreadyPresentException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Product name already exists");
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
@@ -149,8 +161,10 @@ public class Products {
                 throw new ElementAlreadyPresentException();
             }
         } catch (ElementAlreadyPresentException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
@@ -167,8 +181,10 @@ public class Products {
 		try {
 			return productCont.getProductEvaluation(Long.parseLong(id));
         } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
@@ -179,8 +195,10 @@ public class Products {
 		try {
 			return productCont.getDetailedProductEvaluation(Long.parseLong(id));
         } catch (CategoriesException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
         }
     }
