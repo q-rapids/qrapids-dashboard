@@ -1,12 +1,10 @@
 package com.upc.gessi.qrapids.app.domain.adapters;
 
 import com.google.gson.Gson;
-import com.upc.gessi.qrapids.app.domain.services.Util;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
-import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
-import com.upc.gessi.qrapids.app.domain.models.SICategory;
-import com.upc.gessi.qrapids.app.dto.assessmentSI.DTOAssessmentSI;
-import com.upc.gessi.qrapids.app.dto.assessmentSI.DTOCategorySI;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.assessmentSI.DTOAssessmentSI;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.assessmentSI.DTOCategorySI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -18,21 +16,21 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class AssesSI {
 
     @Autowired
-    private SICategoryRepository SICatRep;
-
-    @Autowired
-    private Util util;
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     @Value("${assessSI.url}")
     private String url;
 
-    public List<DTOSIAssesment> AssesSI(String SIid, Map<String, String> mapFactors, File network) {
+    public List<DTOSIAssessment> assesSI(String siId, Map<String, String> mapFactors, File network) {
 
         mapFactors = new LinkedHashMap<>(mapFactors);
 
@@ -42,7 +40,7 @@ public class AssesSI {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + "/api/si/assessment");
 
             MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-            params.add("SIid", SIid);
+            params.add("SIid", siId);
             List<String> factorNames = new ArrayList<>(mapFactors.keySet());
             for (String name : factorNames) {
                 params.add("factorNames", name);
@@ -62,23 +60,23 @@ public class AssesSI {
             ResponseEntity<String> responseEntity = restTemplate.postForEntity(builder.build().encode().toUri(), requestEntity, String.class);
 
             HttpStatus statusCode = responseEntity.getStatusCode();
-            List<DTOSIAssesment> dtoSiAssesment;
+            List<DTOSIAssessment> dtoSiAssessment;
             if (statusCode == HttpStatus.OK) {
                 Gson gson = new Gson();
                 DTOAssessmentSI assessmentSI = gson.fromJson(responseEntity.getBody(), DTOAssessmentSI.class);
-                dtoSiAssesment = DTOAssessmentSItoDTOSIAssesment(assessmentSI.getProbsSICategories());
+                dtoSiAssessment = dtoAssessmentSItoDTOSIAssessment(assessmentSI.getProbsSICategories());
             }
             else {
-                dtoSiAssesment = new ArrayList<>();
+                dtoSiAssessment = new ArrayList<>();
             }
-            return dtoSiAssesment;
+            return dtoSiAssessment;
         } catch (Exception e) {
             return new ArrayList<>();
         }
     }
 
     // If there is no BN, the assessment is the factors average
-    public float AssesSI(List<Float> factors_assessment, int n_factors) {
+    public float assesSI(List<Float> factors_assessment, int n_factors) {
         try {
             float total = 0.f;
 //            int n_factors = 0;
@@ -99,13 +97,13 @@ public class AssesSI {
         }
     }
 
-    public List<DTOSIAssesment> DTOAssessmentSItoDTOSIAssesment(ArrayList<DTOCategorySI> catsEstimation) {
-        List<DTOSIAssesment> categories = util.getCategories();
+    public List<DTOSIAssessment> dtoAssessmentSItoDTOSIAssessment(List<DTOCategorySI> catsEstimation) {
+        List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
         if (catsEstimation.size() == categories.size()) {
             int i = 0;
-            for (DTOSIAssesment assesment : categories) {
-                if (assesment.getLabel().equals(catsEstimation.get(catsEstimation.size() - 1 - i).getIdSICategory())) {
-                    assesment.setValue(catsEstimation.get(catsEstimation.size() - 1 - i).getProbSICategory());
+            for (DTOSIAssessment assessment : categories) {
+                if (assessment.getLabel().equals(catsEstimation.get(catsEstimation.size() - 1 - i).getIdSICategory())) {
+                    assessment.setValue(catsEstimation.get(catsEstimation.size() - 1 - i).getProbSICategory());
                 }
                 ++i;
             }

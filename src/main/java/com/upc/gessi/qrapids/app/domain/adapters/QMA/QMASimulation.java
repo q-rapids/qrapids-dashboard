@@ -2,7 +2,7 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 
 import DTOs.FactorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.dto.DTOFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import simulation.Model;

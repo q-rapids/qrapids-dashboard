@@ -1,7 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import evaluation.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

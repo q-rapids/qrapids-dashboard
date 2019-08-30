@@ -5,11 +5,10 @@ import DTOs.EvaluationDTO;
 import DTOs.FactorEvaluationDTO;
 import DTOs.StrategicIndicatorFactorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.domain.services.Util;
-import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
-import com.upc.gessi.qrapids.app.dto.DTOFactor;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
-import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedStrategicIndicator;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
 import evaluation.StrategicIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -28,7 +27,7 @@ public class QMADetailedStrategicIndicators {
     private QMAConnection qmacon;
 
     @Autowired
-    private Util util;
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     public List<DTODetailedStrategicIndicator> CurrentEvaluation(String id, String prj) throws IOException {
         List<DTODetailedStrategicIndicator> dsi;
@@ -85,7 +84,7 @@ public class QMADetailedStrategicIndicators {
             d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors()));
 
             // Get value
-            List<DTOSIAssesment> categories = util.getCategories();
+            List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
             EstimationEvaluationDTO estimation = element.getEstimation().get(0);
 
             boolean hasEstimation = true;
@@ -94,7 +93,7 @@ public class QMADetailedStrategicIndicators {
 
             if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
                 int i = 0;
-                for (DTOSIAssesment c : categories) {
+                for (DTOSIAssessment c : categories) {
                     if (c.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
                         c.setValue(estimation.getEstimation().get(i).getThird());
                         c.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
@@ -104,10 +103,10 @@ public class QMADetailedStrategicIndicators {
             }
 
             if (hasEstimation) {
-                Float value = util.getValueAndLabelFromCategories(categories).getFirst();
-                d.setValue(Pair.of(value, util.getLabel(value)));
+                Float value = strategicIndicatorsController.getValueAndLabelFromCategories(categories).getFirst();
+                d.setValue(Pair.of(value, strategicIndicatorsController.getLabel(value)));
             } else {
-                d.setValue(Pair.of(evaluation.getValue(), util.getLabel(evaluation.getValue())));
+                d.setValue(Pair.of(evaluation.getValue(), strategicIndicatorsController.getLabel(evaluation.getValue())));
             }
 
             dsi.add(d);

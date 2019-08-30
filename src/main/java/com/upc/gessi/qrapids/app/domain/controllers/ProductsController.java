@@ -1,20 +1,20 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
-import java.io.IOException;
-import java.util.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
-import org.springframework.stereotype.Service;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.models.Product;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Product.ProductRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
-import com.upc.gessi.qrapids.app.dto.DTOProduct;
-import com.upc.gessi.qrapids.app.dto.DTOProject;
-import com.upc.gessi.qrapids.app.dto.DTOStrategicIndicatorEvaluation;
-import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProduct;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.*;
 
 
 @Service

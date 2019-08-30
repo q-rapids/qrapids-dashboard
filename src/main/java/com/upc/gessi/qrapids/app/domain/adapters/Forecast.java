@@ -2,6 +2,8 @@ package com.upc.gessi.qrapids.app.domain.adapters;
 
 import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -11,7 +13,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,10 @@ public class Forecast {
     private QMADetailedStrategicIndicators qmadsi;
 
     @Autowired
-    private com.upc.gessi.qrapids.app.domain.services.Util util;
+    private QualityFactorsController qualityFactorsController;
+
+    @Autowired
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     @Autowired
     private StrategicIndicatorRepository siRep;
@@ -460,7 +465,7 @@ public class Forecast {
     public List<DTOStrategicIndicatorEvaluation> ForecastSI(String technique, String freq, String horizon, String prj) throws IOException {
         List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj), technique, freq, horizon, prj);
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
-        String categories_description = util.getCategories().toString();
+        String categoriesDescription = strategicIndicatorsController.getCategories().toString();
         for (DTODetailedStrategicIndicator dsi : dsis) {
             Map<LocalDate, List<DTOFactor>> listSIFactors = new HashMap<>();
             Map<LocalDate,Map<String,String>> mapSIFactors = new HashMap<>();
@@ -469,12 +474,12 @@ public class Forecast {
                 if (!factorHasForecastingError) factorHasForecastingError = (factor.getForecastingError() != null);
                 if (listSIFactors.containsKey(factor.getDate())) {
                     listSIFactors.get(factor.getDate()).add(factor);
-                    mapSIFactors.get(factor.getDate()).put(factor.getId(), util.getQFLabelFromValue(factor.getValue()));
+                    mapSIFactors.get(factor.getDate()).put(factor.getId(), qualityFactorsController.getFactorLabelFromValue(factor.getValue()));
                 } else {
                     listSIFactors.put(factor.getDate(), new ArrayList<>());
                     listSIFactors.get(factor.getDate()).add(factor);
                     mapSIFactors.put(factor.getDate(), new HashMap<>());
-                    mapSIFactors.get(factor.getDate()).put(factor.getId(), util.getQFLabelFromValue(factor.getValue()));
+                    mapSIFactors.get(factor.getDate()).put(factor.getId(), qualityFactorsController.getFactorLabelFromValue(factor.getValue()));
                 }
             }
             Strategic_Indicator si = null;
@@ -490,29 +495,29 @@ public class Forecast {
                     File tempFile = File.createTempFile("network", ".dne", null);
                     FileOutputStream fos = new FileOutputStream(tempFile);
                     fos.write(si.getNetwork());
-                    List<DTOSIAssesment> assessment = AssesSI.AssesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
-                    float value = util.getValueAndLabelFromCategories(assessment).getFirst();
+                    List<DTOSIAssessment> assessment = AssesSI.assesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
+                    float value = strategicIndicatorsController.getValueAndLabelFromCategories(assessment).getFirst();
                     result.add(new DTOStrategicIndicatorEvaluation(dsi.getId(),
                             si.getName(),
                             si.getDescription(),
-                            Pair.of(value, util.getLabel(value)),
+                            Pair.of(value, strategicIndicatorsController.getLabel(value)),
                             assessment, m.getKey(),
                             "Dashboard Assessment",
                             si.getId(),
-                            categories_description,
+                            categoriesDescription,
                             si.getNetwork() != null));
                 }
             } else if (si != null){
                 for(Map.Entry<LocalDate,List<DTOFactor>> l : listSIFactors.entrySet()) {
-                    float value = com.upc.gessi.qrapids.app.domain.services.Util.assesSI(l.getValue());
+                    float value = strategicIndicatorsController.computeStrategicIndicatorValue(l.getValue());
                     result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+", "").toLowerCase(),
                             si.getName(),
                             si.getDescription(),
-                            Pair.of(value, util.getLabel(value)),
-                            util.getCategories(),
+                            Pair.of(value, strategicIndicatorsController.getLabel(value)),
+                            strategicIndicatorsController.getCategories(),
                             l.getKey(), "Dashboard Assessment",
                             si.getId(),
-                            categories_description,
+                            categoriesDescription,
                             si.getNetwork() != null));
                 }
             }
