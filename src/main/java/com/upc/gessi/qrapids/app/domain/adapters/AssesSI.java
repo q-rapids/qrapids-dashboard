@@ -29,8 +29,6 @@ public class AssesSI {
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
 
-    private Logger logger = LoggerFactory.getLogger(AssesSI.class);
-
     @Value("${assessSI.url}")
     private String url;
 
@@ -96,6 +94,7 @@ public class AssesSI {
             return result;
 
         } catch (Exception e) {
+            Logger logger = LoggerFactory.getLogger(AssesSI.class);
             logger.error(e.getMessage(), e);
             return 0.f;
         }

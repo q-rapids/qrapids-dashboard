@@ -264,11 +264,10 @@ public class Forecast {
             in.close();
             con.disconnect();
 
-            List<List<DTOMetric>> metricsMatrix = new ArrayList<List<DTOMetric>>() {{
-                for (int x = 0; x < factor.size(); ++x) {
-                    add(new ArrayList<>());
-                }
-            }};
+            List<List<DTOMetric>> metricsMatrix = new ArrayList<>();
+            for (int x = 0; x < factor.size(); ++x) {
+                metricsMatrix.add(new ArrayList<>());
+            }
 
             JsonParser parser = new JsonParser();
             JsonArray data = parser.parse(content.toString()).getAsJsonArray();
@@ -391,11 +390,10 @@ public class Forecast {
             in.close();
             con.disconnect();
 
-            List<List<DTOFactor>> factorsMatrix = new ArrayList<List<DTOFactor>>() {{
-                for (int x = 0; x < dsi.size(); ++x) {
-                    add(new ArrayList<>());
-                }
-            }};
+            List<List<DTOFactor>> factorsMatrix = new ArrayList<>();
+            for (int x = 0; x < dsi.size(); ++x) {
+                factorsMatrix.add(new ArrayList<>());
+            }
 
             JsonParser parser = new JsonParser();
             JsonArray data = parser.parse(content.toString()).getAsJsonArray();
@@ -493,8 +491,9 @@ public class Forecast {
             else if (si != null && si.getNetwork() != null && si.getNetwork().length > 10) {
                 for(Map.Entry<LocalDate,Map<String,String>> m : mapSIFactors.entrySet()) {
                     File tempFile = File.createTempFile("network", ".dne", null);
-                    FileOutputStream fos = new FileOutputStream(tempFile);
-                    fos.write(si.getNetwork());
+                    try(FileOutputStream fos = new FileOutputStream(tempFile)) {
+                        fos.write(si.getNetwork());
+                    }
                     List<DTOSIAssessment> assessment = AssesSI.assesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
                     float value = strategicIndicatorsController.getValueAndLabelFromCategories(assessment).getFirst();
                     result.add(new DTOStrategicIndicatorEvaluation(dsi.getId(),
