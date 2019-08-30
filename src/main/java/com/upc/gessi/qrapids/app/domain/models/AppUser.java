@@ -1,6 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
-import com.upc.gessi.qrapids.app.config.Libs.RouteFilter;
+import com.upc.gessi.qrapids.app.config.libs.RouteFilter;
 
 import javax.persistence.*;
 import java.io.Serializable;

@@ -41,7 +41,7 @@ public class Forecast {
 
 //    @Value("${forecast.prefix}")
     @Value("${qma.prefix}")
-    public static String prefix;
+    private String prefix;
 
     @Autowired
     private QMADetailedStrategicIndicators qmadsi;

@@ -1,4 +1,4 @@
-package com.upc.gessi.qrapids.app.config.Libs;
+package com.upc.gessi.qrapids.app.config.libs;
 
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;

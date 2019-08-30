@@ -1,4 +1,4 @@
-package com.upc.gessi.qrapids.app.config.Libs;
+package com.upc.gessi.qrapids.app.config.libs;
 
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.models.Route;
