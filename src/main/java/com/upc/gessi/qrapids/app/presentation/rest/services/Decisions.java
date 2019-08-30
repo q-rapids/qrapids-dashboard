@@ -6,6 +6,7 @@ import com.upc.gessi.qrapids.app.domain.models.Decision;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODecision;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ public class Decisions {
             return dtoDecisions;
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         }
     }
 

@@ -8,6 +8,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityFactor;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,7 @@ public class QualityFactors {
             qualityFactorsController.newFactorCategories(categories);
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough categories");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.NOT_ENOUGH_CATEGORIES);
         }
     }
 
@@ -63,10 +64,10 @@ public class QualityFactors {
             return qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -77,10 +78,10 @@ public class QualityFactors {
             return qualityFactorsController.getSingleFactorEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -92,10 +93,10 @@ public class QualityFactors {
             return qualityFactorsController.getAllFactorsWithMetricsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -106,10 +107,10 @@ public class QualityFactors {
             return qualityFactorsController.getAllFactorsEvaluation(prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -121,10 +122,10 @@ public class QualityFactors {
             return qualityFactorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -139,10 +140,10 @@ public class QualityFactors {
             return qualityFactorsController.simulate(metricsMap, prj, LocalDate.parse(date));
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -153,10 +154,10 @@ public class QualityFactors {
             return metricsController.getMetricsForQualityFactorCurrentEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -167,10 +168,10 @@ public class QualityFactors {
             return metricsController.getMetricsForQualityFactorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 
@@ -182,10 +183,10 @@ public class QualityFactors {
             return metricsController.getMetricsPrediction(currentEvaluation, prj, technique, "7", horizon);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 }

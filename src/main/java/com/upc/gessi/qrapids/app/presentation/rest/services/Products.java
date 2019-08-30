@@ -6,6 +6,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class Products {
             return productCont.getProjects();
         } catch (Exception e) {
 	        logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 	
@@ -49,7 +50,7 @@ public class Products {
             return productCont.getProducts();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 	
@@ -60,18 +61,18 @@ public class Products {
             return productCont.getProductById(id);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 	
 	@GetMapping("/api/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
-	public DTOProject getProjectById(@PathVariable String id) throws Exception {
+	public DTOProject getProjectById(@PathVariable String id) {
         try {
             return productCont.getProjectById(id);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 	
@@ -102,7 +103,7 @@ public class Products {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 	
@@ -131,7 +132,7 @@ public class Products {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Product name already exists");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 	
@@ -165,7 +166,7 @@ public class Products {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 	
@@ -182,10 +183,10 @@ public class Products {
 			return productCont.getProductEvaluation(Long.parseLong(id));
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 	
@@ -196,10 +197,10 @@ public class Products {
 			return productCont.getDetailedProductEvaluation(Long.parseLong(id));
         } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 }

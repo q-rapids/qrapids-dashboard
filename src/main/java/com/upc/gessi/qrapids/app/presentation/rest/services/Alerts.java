@@ -10,6 +10,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.qrPattern.DTOQRPattern;
 import com.upc.gessi.qrapids.app.domain.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class Alerts {
             return dtoAlerts;
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         }
     }
 
@@ -79,7 +80,7 @@ public class Alerts {
             return new DTONewAlerts(newAlerts.getFirst(), newAlerts.getSecond());
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         }
     }
 
@@ -96,7 +97,7 @@ public class Alerts {
             return dtoQRPatternList;
         } catch (AlertNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
         }
     }
 
@@ -135,11 +136,13 @@ public class Alerts {
                         alertDecision.setDecisionRationale(decision.getRationale());
                     }
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + decision.getType());
             }
             return alertDecision;
         } catch (AlertNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
         }
     }
 
@@ -154,10 +157,10 @@ public class Alerts {
             qualityRequirementController.ignoreQualityRequirementForAlert(project, alert, rationale, Integer.parseInt(patternId));
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (AlertNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
         }
     }
 
@@ -194,13 +197,13 @@ public class Alerts {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error when saving the quality requirement in the backlog");
         } catch (AlertNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         }catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -243,13 +246,13 @@ public class Alerts {
                 );
             } catch (ProjectNotFoundException e) {
                 logger.error(e.getMessage(), e);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
             } catch (IllegalArgumentException e) {
                 logger.error(e.getMessage(), e);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more arguments have the wrong type");
             }
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more attributes are missing in the request body");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
         }
     }
 

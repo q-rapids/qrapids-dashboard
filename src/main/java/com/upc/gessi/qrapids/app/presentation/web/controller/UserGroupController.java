@@ -35,6 +35,12 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE
 @RequestMapping("/usergroups")
 public class UserGroupController {
 
+    public static final String ROUTES = "routes";
+    public static final String APPUSER = "appuser";
+    public static final String REDIRECT = "redirect:";
+    public static final String SUCCESS = "?success=";
+    public static final String ERROR = "?error=";
+
     @Autowired
     private UserGroupRepository userGroupRepository;
 
@@ -71,8 +77,8 @@ public class UserGroupController {
 
         view.addObject( "userGroup", new UserGroup());
         view.addObject("userGroups", userGroups);
-        view.addObject("routes", routes );
-        view.addObject("appuser", currenUser );
+        view.addObject(ROUTES, routes );
+        view.addObject(APPUSER, currenUser );
 
         return view;
     }
@@ -88,10 +94,10 @@ public class UserGroupController {
         try{
             // Save form
             this.userGroupRepository.save(userGroup);
-            return "redirect:" + this.redirectTo + "?success=" + "User group created".replace(" ","+");
+            return REDIRECT + this.redirectTo + SUCCESS + "User group created".replace(" ","+");
 
         } catch( Exception e ){
-            return "redirect:" + this.redirectTo + "?error=" + "User group no created".replace(" ","+");
+            return REDIRECT + this.redirectTo + ERROR + "User group no created".replace(" ","+");
         }
     }
 
@@ -116,8 +122,8 @@ public class UserGroupController {
         routesIterable.forEach(routes::add);
 
         view.addObject("userGroup", userGroup);
-        view.addObject("routes", routes );
-        view.addObject("appuser", currenUser );
+        view.addObject(ROUTES, routes );
+        view.addObject(APPUSER, currenUser );
 
         return view;
     }
@@ -133,11 +139,11 @@ public class UserGroupController {
         try{
             this.userGroupRepository.save(userGroup);
 
-            return "redirect:" + this.redirectTo + "?success=" + "Group updated".replace(" ","+");
+            return REDIRECT + this.redirectTo + SUCCESS + "Group updated".replace(" ","+");
 
         } catch( Exception e ){
 
-            return "redirect:" + this.redirectTo + "?error=" + "Group can not be updated".replace(" ","+");
+            return REDIRECT + this.redirectTo + ERROR + "Group can not be updated".replace(" ","+");
 
         }
 
@@ -157,7 +163,7 @@ public class UserGroupController {
             UserGroup user = this.userGroupRepository.getOne( id );
             view.addObject("id", user.getId() );
             view.addObject("name", user.getName() );
-            view.addObject("appuser", currenUser );
+            view.addObject(APPUSER, currenUser );
 
         } catch ( Exception err ) {
             view.addObject("errors", "Error" );
@@ -176,7 +182,7 @@ public class UserGroupController {
 
         if (! name.equals( name_string )){
 
-            return "redirect:" + this.redirectTo + "?error=" + "Confirmation error".replace(" ","+");
+            return REDIRECT + this.redirectTo + ERROR + "Confirmation error".replace(" ","+");
 
         } else {
 
@@ -184,12 +190,12 @@ public class UserGroupController {
 
                 this.userGroupRepository.delete(userGroup);
 
-                return "redirect:" + this.redirectTo + "?success=" + "Group deleted".replace(" ","+");
+                return REDIRECT + this.redirectTo + SUCCESS + "Group deleted".replace(" ","+");
 
             } catch( Exception e ){
                 logger.error(e.getMessage(), e);
 
-                return "redirect:" + this.redirectTo + "?error=" + "Something went wrong".replace(" ","+");
+                return REDIRECT + this.redirectTo + ERROR + "Something went wrong".replace(" ","+");
 
             }
 
@@ -202,10 +208,10 @@ public class UserGroupController {
 
         try {
             this.userGroupRepository.updateUserGroupDefault( id );
-            return "redirect:" + this.redirectTo + "?success=" + "Updated".replace(" ","+");
+            return REDIRECT + this.redirectTo + SUCCESS + "Updated".replace(" ","+");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return "redirect:" + this.redirectTo + "?error=" + "Something went wrong".replace(" ","+");
+            return REDIRECT + this.redirectTo + ERROR + "Something went wrong".replace(" ","+");
         }
 
     }
@@ -213,7 +219,7 @@ public class UserGroupController {
     @InitBinder
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws     Exception {
 
-        binder.registerCustomEditor(Route.class, "routes", new PropertyEditorSupport() {
+        binder.registerCustomEditor(Route.class, ROUTES, new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
                 Optional<Route> routeOptional = routeRepository.findById(Long.parseLong(text));
