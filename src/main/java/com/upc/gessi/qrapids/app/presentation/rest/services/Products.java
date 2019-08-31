@@ -26,8 +26,11 @@ import java.util.List;
 
 @RestController
 public class Products {
-	
-	@Autowired
+
+    private static final String DESCRIPTION = "description";
+    private static final String NAME = "name";
+
+    @Autowired
     private ProductsController productCont;
 
 	private Logger logger = LoggerFactory.getLogger(Products.class);
@@ -81,8 +84,8 @@ public class Products {
     public void updateProject(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "logo", required = false) MultipartFile logo) {
         try {
         	String externalId = request.getParameter("externalId");
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
+            String name = request.getParameter(NAME);
+            String description = request.getParameter(DESCRIPTION);
             String backlogId = request.getParameter("backlogId");
             byte[] logoBytes = null;
             if (logo != null) {
@@ -111,8 +114,8 @@ public class Products {
     @ResponseStatus(HttpStatus.OK)
     public void updateProduct(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "logo", required = false) MultipartFile logo) {
         try {
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
+            String name = request.getParameter(NAME);
+            String description = request.getParameter(DESCRIPTION);
             byte[] logoBytes = null;
             if (logo != null) {
                 logoBytes = IOUtils.toByteArray(logo.getInputStream());
@@ -140,8 +143,8 @@ public class Products {
     @ResponseStatus(HttpStatus.CREATED)
     public void newProduct(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "logo", required = false) MultipartFile logo) {
         try {
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
+            String name = request.getParameter(NAME);
+            String description = request.getParameter(DESCRIPTION);
             byte[] logoBytes = null;
             if (logo != null) {
                 logoBytes = IOUtils.toByteArray(logo.getInputStream());

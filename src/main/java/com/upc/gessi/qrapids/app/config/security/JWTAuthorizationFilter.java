@@ -77,16 +77,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             authentication = this.authTools.tokenValidation( cookie_token );
             token = cookie_token;
 
-            if( this.DEBUG )
-                logger.info(" Origin - WebApp ");
+            logMessage(" Origin - WebApp ");
 
         } else {
 
             // External application API Access
             if( header == null || !header.startsWith(TOKEN_PREFIX) ){
 
-                if (DEBUG)
-                    logger.info(" No token API ");
+                logMessage(" No token API ");
 
                 chain.doFilter(req, res);
 
@@ -96,8 +94,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             authentication = getAuthentication( req );
             token = req.getHeader( HEADER_STRING );
 
-            if( this.DEBUG )
-                logger.info(" Origin - ApiCall ");
+            logMessage(" Origin - ApiCall ");
 
         }
 
@@ -150,8 +147,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         } else {
 
-            if (this.DEBUG)
-                logger.info(origin_request + " <- -> [Final status] : " + isAllowed);
+            logMessage(origin_request + " <- -> [Final status] : " + isAllowed);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(req, res);
@@ -159,6 +155,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
 	}
+
+	private void logMessage (String message) {
+        if (this.DEBUG)
+            logger.info(message);
+    }
 
 	/**
 	 * Obtención de token de la cabecera previamente obtenida en doFilterInternal

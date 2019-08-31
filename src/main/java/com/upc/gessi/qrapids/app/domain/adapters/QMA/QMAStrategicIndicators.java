@@ -149,66 +149,68 @@ public class QMAStrategicIndicators {
             if (element.getEstimation() == null || element.getEstimation().size() != element.getEvaluations().size())
                 throw new CategoriesException();
 
-            Iterator<EstimationEvaluationDTO> iterSIEst = element.getEstimation().iterator();
-
-            for (Iterator<EvaluationDTO> iterSIEval = element.getEvaluations().iterator(); iterSIEval.hasNext() ; ) {
-                EvaluationDTO evaluation = iterSIEval.next();
-                EstimationEvaluationDTO estimation = iterSIEst.next();
-                //merge categories and estimation
-                boolean hasEstimation = true;
-                if (estimation == null || estimation.getEstimation() == null || estimation.getEstimation().size()==0)
-                    hasEstimation = false;
-
-                if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
-                    int changed = 0;
-                    int i = 0;
-                    for (DTOSIAssessment d : categories) {
-                        if (d.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
-                            d.setValue(estimation.getEstimation().get(i).getThird());
-                            d.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
-                            ++changed;
-                        }
-                        ++i;
-                    }
-                    if (changed != categories.size())
-                        throw new CategoriesException();
-                } else if (hasEstimation) throw new CategoriesException();
-                //calculate "fake" value if the SI has estimation
-                if (hasEstimation) {
-                    Float value = strategicIndicatorsController.getValueAndLabelFromCategories(categories).getFirst();
-                    DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
-                            element.getName(),
-                            element.getDescription(),
-                            Pair.of(value, strategicIndicatorsController.getLabel(value)),
-                            new ArrayList<>(categories),
-                            evaluation.getEvaluationDate(),
-                            evaluation.getDatasource(),
-                            id,
-                            categories.toString(),
-                            hasBN);
-                    dtoStrategicIndicatorEvaluation.setHasFeedback(hasFeedback);
-                    dtoStrategicIndicatorEvaluation.setMismatchDays(evaluation.getMismatchDays());
-                    dtoStrategicIndicatorEvaluation.setMissingFactors(evaluation.getMissingElements());
-                    si.add(dtoStrategicIndicatorEvaluation);
-                } else {
-                    DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
-                            element.getName(),
-                            element.getDescription(),
-                            Pair.of(evaluation.getValue(), strategicIndicatorsController.getLabel(evaluation.getValue())),
-                            new ArrayList<>(categories),
-                            evaluation.getEvaluationDate(),
-                            evaluation.getDatasource(),
-                            id,
-                            categories.toString(),
-                            hasBN);
-                    dtoStrategicIndicatorEvaluation.setHasFeedback(hasFeedback);
-                    dtoStrategicIndicatorEvaluation.setMismatchDays(evaluation.getMismatchDays());
-                    dtoStrategicIndicatorEvaluation.setMissingFactors(evaluation.getMissingElements());
-                    si.add(dtoStrategicIndicatorEvaluation);
-                }
-            }
+            buildDTOStrategicIndicatorEvaluationList(si, element, id, hasBN, hasFeedback, categories);
         }
         return si;
+    }
+
+    private void buildDTOStrategicIndicatorEvaluationList(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOSIAssessment> categories) throws CategoriesException {
+        Iterator<EstimationEvaluationDTO> iterSIEst = element.getEstimation().iterator();
+
+        for (EvaluationDTO evaluation : element.getEvaluations()) {
+            EstimationEvaluationDTO estimation = iterSIEst.next();
+            //merge categories and estimation
+            boolean hasEstimation = true;
+            if (estimation == null || estimation.getEstimation() == null || estimation.getEstimation().size() == 0)
+                hasEstimation = false;
+
+            if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
+                setValueAndThresholdForCategories(categories, estimation);
+            } else if (hasEstimation) throw new CategoriesException();
+            //calculate "fake" value if the SI has estimation
+            if (hasEstimation) {
+                buildDTOStrategicIndicatorEvaluationWithEstimation(si, element, id, hasBN, hasFeedback, categories, evaluation);
+            } else {
+                buildDTOStrategicIndicatorEvaluationWithoutEstimation(si, element, id, hasBN, hasFeedback, categories, evaluation, evaluation.getValue());
+            }
+        }
+    }
+
+    private void buildDTOStrategicIndicatorEvaluationWithoutEstimation(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOSIAssessment> categories, EvaluationDTO evaluation, Float value) {
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
+                element.getName(),
+                element.getDescription(),
+                Pair.of(value, strategicIndicatorsController.getLabel(value)),
+                new ArrayList<>(categories),
+                evaluation.getEvaluationDate(),
+                evaluation.getDatasource(),
+                id,
+                categories.toString(),
+                hasBN);
+        dtoStrategicIndicatorEvaluation.setHasFeedback(hasFeedback);
+        dtoStrategicIndicatorEvaluation.setMismatchDays(evaluation.getMismatchDays());
+        dtoStrategicIndicatorEvaluation.setMissingFactors(evaluation.getMissingElements());
+        si.add(dtoStrategicIndicatorEvaluation);
+    }
+
+    private void buildDTOStrategicIndicatorEvaluationWithEstimation(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOSIAssessment> categories, EvaluationDTO evaluation) {
+        Float value = strategicIndicatorsController.getValueAndLabelFromCategories(categories).getFirst();
+        buildDTOStrategicIndicatorEvaluationWithoutEstimation(si, element, id, hasBN, hasFeedback, categories, evaluation, value);
+    }
+
+    private void setValueAndThresholdForCategories(List<DTOSIAssessment> categories, EstimationEvaluationDTO estimation) throws CategoriesException {
+        int changed = 0;
+        int i = 0;
+        for (DTOSIAssessment d : categories) {
+            if (d.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
+                d.setValue(estimation.getEstimation().get(i).getThird());
+                d.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
+                ++changed;
+            }
+            ++i;
+        }
+        if (changed != categories.size())
+            throw new CategoriesException();
     }
 
     private EstimationEvaluationDTO listDTOSIAssessmentToEstimationEvaluationDTO(List<DTOSIAssessment> assessment) {

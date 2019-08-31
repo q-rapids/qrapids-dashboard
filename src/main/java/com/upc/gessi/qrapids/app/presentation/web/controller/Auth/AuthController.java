@@ -32,8 +32,8 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE
 @RequestMapping("/")
 public class AuthController {
 
-    public static final String QUESTIONS = "questions";
-    public static final String APPUSER = "appuser";
+    private static final String QUESTIONS = "questions";
+    private static final String APPUSER = "appuser";
 
     @Autowired
 	UserRepository userRepository;

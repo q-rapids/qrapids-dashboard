@@ -35,11 +35,11 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE
 @RequestMapping("/usergroups")
 public class UserGroupController {
 
-    public static final String ROUTES = "routes";
-    public static final String APPUSER = "appuser";
-    public static final String REDIRECT = "redirect:";
-    public static final String SUCCESS = "?success=";
-    public static final String ERROR = "?error=";
+    private static final String ROUTES = "routes";
+    private static final String APPUSER = "appuser";
+    private static final String REDIRECT = "redirect:";
+    private static final String SUCCESS = "?success=";
+    private static final String ERROR = "?error=";
 
     @Autowired
     private UserGroupRepository userGroupRepository;

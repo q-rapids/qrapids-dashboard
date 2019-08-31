@@ -32,11 +32,11 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE
 @RequestMapping("/users")
 public class AppUserController {
 
-    public static final String APPUSER = "appuser";
-    public static final String ERROR_QUERY = "?error=";
-    public static final String REDIRECT = "redirect:";
-    public static final String ERROR = "Error";
-    public static final String SUCCESS = "?success=";
+    private static final String APPUSER = "appuser";
+    private static final String ERROR_QUERY = "?error=";
+    private static final String REDIRECT = "redirect:";
+    private static final String ERROR = "Error";
+    private static final String SUCCESS = "?success=";
 
     @Autowired
 	private UserRepository userRepository;
