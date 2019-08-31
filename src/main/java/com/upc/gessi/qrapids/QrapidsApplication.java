@@ -1,6 +1,9 @@
 package com.upc.gessi.qrapids;
 
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.presentation.rest.services.Alerts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -27,7 +30,8 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		try {
 			context.getBean(StrategicIndicatorsController.class).fetchStrategicIndicators();
 		} catch (Exception e) {
-			e.printStackTrace(System.err);
+			Logger logger = LoggerFactory.getLogger(Alerts.class);
+			logger.error(e.getMessage(), e);
 		}
 	}
 }

@@ -92,14 +92,7 @@ public class QMADetailedStrategicIndicators {
                 hasEstimation = false;
 
             if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
-                int i = 0;
-                for (DTOSIAssessment c : categories) {
-                    if (c.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
-                        c.setValue(estimation.getEstimation().get(i).getThird());
-                        c.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
-                    }
-                    ++i;
-                }
+                setValueAndThresholdToCategories(categories, estimation);
             }
 
             if (hasEstimation) {
@@ -114,7 +107,18 @@ public class QMADetailedStrategicIndicators {
         return dsi;
     }
 
-    public static List<DTOFactor> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors) {
+    private void setValueAndThresholdToCategories(List<DTOSIAssessment> categories, EstimationEvaluationDTO estimation) {
+        int i = 0;
+        for (DTOSIAssessment c : categories) {
+            if (c.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
+                c.setValue(estimation.getEstimation().get(i).getThird());
+                c.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
+            }
+            ++i;
+        }
+    }
+
+    static List<DTOFactor> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors) {
         List<DTOFactor> listFact = new ArrayList<>();
         //for each factor in the Detailed Strategic Indicator
         for (Iterator<FactorEvaluationDTO> iterFactor = factors.iterator(); iterFactor.hasNext(); ) {
@@ -128,7 +132,7 @@ public class QMADetailedStrategicIndicators {
         return listFact;
     }
 
-    public static DTOFactor FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
+    static DTOFactor FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
         return new DTOFactor(
                 factor.getID(),
                 factor.getName(),

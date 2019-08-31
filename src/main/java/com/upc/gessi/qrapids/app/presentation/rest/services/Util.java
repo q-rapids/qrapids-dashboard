@@ -48,17 +48,19 @@ public class Util {
     public List<DTOMilestone> getMilestonesTest(@RequestParam("project_id") String projectId, @RequestParam(value = "date_from", required = false) String dateFrom) {
         List<DTOMilestone> milestoneList = new ArrayList<>();
 
+        String type = "Release";
+
         LocalDate date = LocalDate.now();
         date = date.plusDays(3);
-        milestoneList.add(new DTOMilestone(date.toString(), "Version 1.3", "Version 1.3 adding new features", "Release"));
+        milestoneList.add(new DTOMilestone(date.toString(), "Version 1.3", "Version 1.3 adding new features", type));
 
         LocalDate date2 = LocalDate.now();
         date2 = date2.plusDays(20);
-        milestoneList.add(new DTOMilestone(date2.toString(), "Version 1.4", "Version 1.4 adding new features", "Release"));
+        milestoneList.add(new DTOMilestone(date2.toString(), "Version 1.4", "Version 1.4 adding new features", type));
 
         LocalDate date3 = LocalDate.now();
         date3 = date3.plusDays(40);
-        milestoneList.add(new DTOMilestone(date3.toString(), "Version 1.5", "Version 1.5 adding new features", "Release"));
+        milestoneList.add(new DTOMilestone(date3.toString(), "Version 1.5", "Version 1.5 adding new features", type));
 
         return milestoneList;
     }

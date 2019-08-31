@@ -69,7 +69,7 @@ public class QMAMetrics {
     }
 
 
-    public static List<DTOMetric> MetricEvaluationDTOListToDTOMetricList(List<MetricEvaluationDTO> evals) {
+    static List<DTOMetric> MetricEvaluationDTOListToDTOMetricList(List<MetricEvaluationDTO> evals) {
         List<DTOMetric> m = new ArrayList<>();
         for (Iterator<MetricEvaluationDTO> iterMetrics = evals.iterator(); iterMetrics.hasNext(); ) {
             MetricEvaluationDTO metric = iterMetrics.next();
@@ -83,7 +83,7 @@ public class QMAMetrics {
         return m;
     }
 
-    public static DTOMetric MetricEvaluationDTOToDTOMetric (MetricEvaluationDTO metric, EvaluationDTO evaluation) {
+    private static DTOMetric MetricEvaluationDTOToDTOMetric(MetricEvaluationDTO metric, EvaluationDTO evaluation) {
         return new DTOMetric(metric.getID(),
                 metric.getName(),
                 metric.getDescription(),

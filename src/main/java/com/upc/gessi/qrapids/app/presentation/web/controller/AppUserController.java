@@ -1,11 +1,11 @@
 package com.upc.gessi.qrapids.app.presentation.web.controller;
 
-import com.upc.gessi.qrapids.app.config.Libs.AuthTools;
+import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
+import com.upc.gessi.qrapids.app.domain.models.UserGroup;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Question.QuestionRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.UserGroup.UserGroupRepository;
-import com.upc.gessi.qrapids.app.domain.models.UserGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +31,12 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE
 @Controller
 @RequestMapping("/users")
 public class AppUserController {
+
+    private static final String APPUSER = "appuser";
+    private static final String ERROR_QUERY = "?error=";
+    private static final String REDIRECT = "redirect:";
+    private static final String ERROR = "Error";
+    private static final String SUCCESS = "?success=";
 
     @Autowired
 	private UserRepository userRepository;
@@ -84,7 +90,7 @@ public class AppUserController {
         // View creation
         ModelAndView view = new ModelAndView("/AppUser/index");
 
-        view.addObject("appuser", currenUser );
+        view.addObject(APPUSER, currenUser );
         view.addObject("users", users );
         view.addObject("userGroups", userGroups);
         view.addObject("defautlUserGroup", defautlUserGroup );
@@ -104,9 +110,7 @@ public class AppUserController {
      * @return
      */
     @PostMapping
-    public String createEntity(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
-
-        System.out.println(user.toString());
+    public String createEntity(@ModelAttribute(value = APPUSER) @Valid AppUser user ) {
         // Number of groups
         //long groups = this.userGroupRepository.count();
         //if ( groups >= 1 && user.getUserGroup() != null ){
@@ -122,11 +126,11 @@ public class AppUserController {
             this.userRepository.save( user );
 
         } catch( Exception e ){
-            return("redirect:" + this.redirectTo + "?error=" +
+            return(REDIRECT + this.redirectTo + ERROR_QUERY +
                     "User was registered, check the current users available");
         }
 
-        return "redirect:" + this.redirectTo + "?success=User+created";
+        return REDIRECT + this.redirectTo + "?success=User+created";
     }
 
     /**
@@ -148,7 +152,7 @@ public class AppUserController {
             view.addObject("userGroups", userGroups);
             view.addObject( "questions", this.questionRepository.findAll());
             view.addObject("defautlUserGroup", this.userGroupRepository.findByDefaultGroupIsTrue() );
-            view.addObject("appuser", user);
+            view.addObject(APPUSER, user);
 
             return view;
         } else {
@@ -162,7 +166,7 @@ public class AppUserController {
      * @return
      */
     @PostMapping("/update")
-    public String updateEntity(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
+    public String updateEntity(@ModelAttribute(value = APPUSER) @Valid AppUser user ) {
         try{
             Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
             if (userOptional.isPresent()) {
@@ -180,12 +184,12 @@ public class AppUserController {
                     userUpdate.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
                 this.userRepository.save(userUpdate);
-                return "redirect:" + this.redirectTo + "?success=Success";
+                return REDIRECT + this.redirectTo + "?success=Success";
             } else {
-                return "redirect:" + this.redirectTo + "?error=User+not+found";
+                return REDIRECT + this.redirectTo + "?error=User+not+found";
             }
         } catch( Exception e ){
-            return "redirect:" + this.redirectTo + "?error=Something+went+wrong";
+            return REDIRECT + this.redirectTo + "?error=Something+went+wrong";
         }
     }
 
@@ -203,13 +207,13 @@ public class AppUserController {
                 AppUser user = userOptional.get();
                 view.addObject("id", user.getId());
                 view.addObject("name", user.getUsername());
-                view.addObject("appuser", user);
+                view.addObject(APPUSER, user);
                 return view;
             } else {
                 view.addObject("errors", USER_NOT_FOUND );
             }
         } catch ( Exception err ) {
-            view.addObject("errors", "Error" );
+            view.addObject("errors", ERROR);
         }
         return view;
     }
@@ -226,24 +230,24 @@ public class AppUserController {
             String username = authTools.getUserToken( token );
 
             if ( username.equals(user.getUsername()))
-                return "redirect:" + this.redirectTo + "?error=" + "You can not delete the current user administrator".replace(" ","+");
+                return REDIRECT + this.redirectTo + ERROR_QUERY + "You can not delete the current user administrator".replace(" ","+");
             // Last admin user
             if (this.userRepository.count() <= 1)
-                return "redirect:" + this.redirectTo + "?error=" + "The application needs one administrator user".replace(" ","+");
+                return REDIRECT + this.redirectTo + ERROR_QUERY + "The application needs one administrator user".replace(" ","+");
 
             String name_string = user.getUsername();
             if (! name.equals( name_string )){
-                return "redirect:" + this.redirectTo + "?error=" + "Something went wrong".replace(" ","+");
+                return REDIRECT + this.redirectTo + ERROR_QUERY + "Something went wrong".replace(" ","+");
             } else {
                 try{
                     this.userRepository.delete( user );
-                    return "redirect:" + this.redirectTo + "?success=" + "User deleted".replace(" ","+");
+                    return REDIRECT + this.redirectTo + SUCCESS + "User deleted".replace(" ","+");
                 } catch( Exception e ){
-                    return "redirect:" + this.redirectTo + "?error=" + "User can not be deleted".replace(" ","+");
+                    return REDIRECT + this.redirectTo + ERROR_QUERY + "User can not be deleted".replace(" ","+");
                 }
             }
         } else {
-            return "redirect:" + this.redirectTo + "?error=" + USER_NOT_FOUND.replace(" ","+");
+            return REDIRECT + this.redirectTo + ERROR_QUERY + USER_NOT_FOUND.replace(" ","+");
         }
     }
 
@@ -253,19 +257,19 @@ public class AppUserController {
      * @return
      */
     @RequestMapping(value = "/resetpassword", method = RequestMethod.POST)
-    public String resetPassword(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
+    public String resetPassword(@ModelAttribute(value = APPUSER) @Valid AppUser user ) {
         try{
             Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
             if (userOptional.isPresent()) {
                 AppUser userUpdate = userOptional.get();
                 userUpdate.setPassword(bCryptPasswordEncoder.encode(userUpdate.getEmail()));
                 this.userRepository.save(userUpdate);
-                return "redirect:" + this.redirectTo + "?success=" + "Success".replace(" ","+");
+                return REDIRECT + this.redirectTo + SUCCESS + "Success".replace(" ","+");
             } else {
-                return "redirect:" + this.redirectTo + "?error=" + USER_NOT_FOUND.replace(" ","+");
+                return REDIRECT + this.redirectTo + ERROR_QUERY + USER_NOT_FOUND.replace(" ","+");
             }
         } catch( Exception e ){
-            return "redirect:" + this.redirectTo + "?error=" + "Error".replace(" ","+");
+            return REDIRECT + this.redirectTo + ERROR_QUERY + ERROR.replace(" ","+");
         }
     }
 
@@ -275,7 +279,7 @@ public class AppUserController {
      * @return
      */
     @RequestMapping(value = "/updateadmin", method = RequestMethod.POST)
-    public String updateAdminAccess(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
+    public String updateAdminAccess(@ModelAttribute(value = APPUSER) @Valid AppUser user ) {
         try{
             Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
             if(userOptional.isPresent()) {
@@ -283,12 +287,12 @@ public class AppUserController {
                 userUpdate.setAdmin(true);
                 userUpdate.setUserGroup(null);
                 this.userRepository.save(userUpdate);
-                return "redirect:" + this.redirectTo + "?success=" + "User updated".replace(" ","+");
+                return REDIRECT + this.redirectTo + SUCCESS + "User updated".replace(" ","+");
             } else {
-                return "redirect:" + this.redirectTo + "?error=" + USER_NOT_FOUND.replace(" ","+");
+                return REDIRECT + this.redirectTo + ERROR_QUERY + USER_NOT_FOUND.replace(" ","+");
             }
         } catch( Exception e ) {
-            return "redirect:" + this.redirectTo + "?error=" + "Error".replace(" ","+");
+            return REDIRECT + this.redirectTo + ERROR_QUERY + ERROR.replace(" ","+");
         }
     }
 
@@ -298,7 +302,7 @@ public class AppUserController {
      * @return
      */
     @RequestMapping(value = "/setusergroup", method = RequestMethod.POST)
-    public String setUpUserGroup(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
+    public String setUpUserGroup(@ModelAttribute(value = APPUSER) @Valid AppUser user ) {
         try{
             Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
             if (userOptional.isPresent()) {
@@ -308,12 +312,12 @@ public class AppUserController {
                     userUpdate.setUserGroup(this.userGroupRepository.findByDefaultGroupIsTrue());
                 userUpdate.setUserGroup(user.getUserGroup());
                 this.userRepository.save(userUpdate);
-                return "redirect:" + this.redirectTo + "?success=User+was+updated";
+                return REDIRECT + this.redirectTo + "?success=User+was+updated";
             } else {
-                return "redirect:" + this.redirectTo + "?error=" + "User+not+found";
+                return REDIRECT + this.redirectTo + ERROR_QUERY + "User+not+found";
             }
         } catch( Exception e ){
-            return "redirect:" + this.redirectTo + "?error=" + e.toString();
+            return REDIRECT + this.redirectTo + ERROR_QUERY + e.toString();
         }
 
     }

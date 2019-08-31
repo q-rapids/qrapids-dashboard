@@ -1,9 +1,9 @@
 package com.upc.gessi.qrapids.app.config;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 /**
  * Class that encapsulates the QMA API connection information
@@ -67,13 +67,13 @@ public class QMAConnection {
     }
 
     public void initConnexion() {
-        if (this.init == false)
+        if (!this.init)
             util.Connection.initConnection(ip, port, path, prefix, username , password);
         this.init=true;
     }
 
-    public void finalize() throws IOException {
-        if (this.init == true)
+    protected void finalize() throws IOException {
+        if (this.init)
             util.Connection.closeConnection();
     }
 }

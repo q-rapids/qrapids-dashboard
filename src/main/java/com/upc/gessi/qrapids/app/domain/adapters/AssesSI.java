@@ -5,6 +5,8 @@ import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsControlle
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.assessmentSI.DTOAssessmentSI;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.assessmentSI.DTOCategorySI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -92,7 +94,8 @@ public class AssesSI {
             return result;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger logger = LoggerFactory.getLogger(AssesSI.class);
+            logger.error(e.getMessage(), e);
             return 0.f;
         }
     }

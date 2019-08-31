@@ -4,6 +4,9 @@ import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,14 +25,18 @@ public class Projects {
     @Autowired
     private ProjectsController projectsController;
 
+    private Logger logger = LoggerFactory.getLogger(Projects.class);
+
     @GetMapping("/api/projects/import")
     @ResponseStatus(HttpStatus.OK)
     public List<String> importProjects() {
     	try {
             return projectsController.importProjectsAndUpdateDatabase();
         } catch (CategoriesException e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "The categories do not match");
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
         }
     }
@@ -44,7 +51,8 @@ public class Projects {
         try {
             return projectsController.getMilestonesForProject(prj, localDate);
         } catch (ProjectNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project does not exist");
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         }
     }
 }

@@ -1,10 +1,12 @@
 package com.upc.gessi.qrapids.app.config.security;
 
-import com.upc.gessi.qrapids.app.config.Libs.AuthTools;
-import com.upc.gessi.qrapids.app.config.Libs.RouteFilter;
+import com.upc.gessi.qrapids.app.config.libs.AuthTools;
+import com.upc.gessi.qrapids.app.config.libs.RouteFilter;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.models.Route;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +31,8 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private UserRepository userRepository;
 
 	private boolean DEBUG = false;
+
+	private Logger logger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
 
 	public JWTAuthorizationFilter(AuthenticationManager authManager) {
 		super(authManager);
@@ -73,16 +77,14 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             authentication = this.authTools.tokenValidation( cookie_token );
             token = cookie_token;
 
-            if( this.DEBUG )
-                System.out.println(" Origin - WebApp ");
+            logMessage(" Origin - WebApp ");
 
         } else {
 
             // External application API Access
             if( header == null || !header.startsWith(TOKEN_PREFIX) ){
 
-                if (DEBUG)
-                    System.out.println(" No token API ");
+                logMessage(" No token API ");
 
                 chain.doFilter(req, res);
 
@@ -92,8 +94,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             authentication = getAuthentication( req );
             token = req.getHeader( HEADER_STRING );
 
-            if( this.DEBUG )
-                System.out.println(" Origin - ApiCall ");
+            logMessage(" Origin - ApiCall ");
 
         }
 
@@ -146,8 +147,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
         } else {
 
-            if (this.DEBUG)
-                System.out.println( origin_request + " <- -> [Final status] : " + isAllowed );
+            logMessage(origin_request + " <- -> [Final status] : " + isAllowed);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(req, res);
@@ -155,6 +155,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
 	}
+
+	private void logMessage (String message) {
+        if (this.DEBUG)
+            logger.info(message);
+    }
 
 	/**
 	 * Obtención de token de la cabecera previamente obtenida en doFilterInternal

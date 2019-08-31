@@ -1,7 +1,9 @@
-package com.upc.gessi.qrapids.app.config.Libs;
+package com.upc.gessi.qrapids.app.config.libs;
 
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
 import com.upc.gessi.qrapids.app.domain.models.Route;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -16,6 +18,8 @@ public class RouteFilter {
     UserRepository userRepository;
 
     private boolean DEBUG = false;
+
+    private Logger logger = LoggerFactory.getLogger(RouteFilter.class);
 
     AuthTools authTools;
 
@@ -42,7 +46,7 @@ public class RouteFilter {
         }
 
         if (this.DEBUG)
-            System.out.println( originRequest + " <- -> [Final status] : " + success);
+            logger.info(originRequest + " <- -> [Final status] : " + success);
 
         return success;
     }
@@ -102,7 +106,7 @@ public class RouteFilter {
 
 
         if (DEBUG)
-            System.out.printf("Pattern: " + pattern);
+            logger.info("Pattern: " + pattern);
 
         // Regext match
         return origin.matches( pattern );
@@ -136,7 +140,6 @@ public class RouteFilter {
         if ( globar_tool )
             pattern = pattern + "|" + pattern + "(.{1,2083})" + "|" + pattern + "\\/";
 
-        // System.out.println("pattern: " + pattern);
         // Return successfully pattern
         return pattern;
 

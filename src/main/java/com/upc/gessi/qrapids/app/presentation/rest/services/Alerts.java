@@ -10,6 +10,9 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.qrPattern.DTOQRPattern;
 import com.upc.gessi.qrapids.app.domain.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
@@ -46,6 +49,8 @@ public class Alerts {
     @Autowired
     private UsersController usersController;
 
+    private Logger logger = LoggerFactory.getLogger(Alerts.class);
+
     @GetMapping("/api/alerts")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj) {
@@ -61,7 +66,8 @@ public class Alerts {
             }
             return dtoAlerts;
         } catch (ProjectNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         }
     }
 
@@ -73,7 +79,8 @@ public class Alerts {
             Pair<Long, Long> newAlerts = alertsController.countNewAlerts(project);
             return new DTONewAlerts(newAlerts.getFirst(), newAlerts.getSecond());
         } catch (ProjectNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         }
     }
 
@@ -89,7 +96,8 @@ public class Alerts {
             }
             return dtoQRPatternList;
         } catch (AlertNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
         }
     }
 
@@ -128,10 +136,13 @@ public class Alerts {
                         alertDecision.setDecisionRationale(decision.getRationale());
                     }
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + decision.getType());
             }
             return alertDecision;
         } catch (AlertNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
         }
     }
 
@@ -145,9 +156,11 @@ public class Alerts {
             Project project = projectsController.findProjectByExternalId(prj);
             qualityRequirementController.ignoreQualityRequirementForAlert(project, alert, rationale, Integer.parseInt(patternId));
         } catch (ProjectNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (AlertNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
         }
     }
 
@@ -179,14 +192,18 @@ public class Alerts {
                     qualityRequirement.getGoal(),
                     qualityRequirement.getBacklogId(),
                     qualityRequirement.getBacklogUrl());
-        } catch (HttpClientErrorException e1) {
+        } catch (HttpClientErrorException e) {
+            logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error when saving the quality requirement in the backlog");
-        } catch (AlertNotFoundException e2) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alert not found");
+        } catch (AlertNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.ALERT_NOT_FOUND);
         } catch (ProjectNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
-        }catch (Exception e3) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+        }catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -228,12 +245,14 @@ public class Alerts {
                         new Notification("New Alert")
                 );
             } catch (ProjectNotFoundException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The project identifier does not exist");
+                logger.error(e.getMessage(), e);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
             } catch (IllegalArgumentException e) {
+                logger.error(e.getMessage(), e);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more arguments have the wrong type");
             }
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more attributes are missing in the request body");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
         }
     }
 

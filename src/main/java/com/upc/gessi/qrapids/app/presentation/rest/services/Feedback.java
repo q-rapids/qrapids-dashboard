@@ -8,6 +8,9 @@ import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFeedback;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -30,6 +33,8 @@ public class Feedback {
 
     @Autowired
     private UsersController usersController;
+
+    private Logger logger = LoggerFactory.getLogger(Feedback.class);
 
     @PostMapping("/api/strategicIndicators/{id}/feedback")
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -55,7 +60,8 @@ public class Feedback {
             com.upc.gessi.qrapids.app.domain.models.Feedback feedback = feedbackController.buildFeedback(id, date, author, user, value, oldValue);
             feedbackController.saveFeedbackForStrategicIndicator(feedback, factorIds, factorNames, factorValues, factorEvaluationDates);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more attributes are missing in the request body");
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
         }
     }
 

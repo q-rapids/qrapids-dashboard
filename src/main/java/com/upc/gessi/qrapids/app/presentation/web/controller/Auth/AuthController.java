@@ -1,6 +1,6 @@
 package com.upc.gessi.qrapids.app.presentation.web.controller.Auth;
 
-import com.upc.gessi.qrapids.app.config.Libs.AuthTools;
+import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Question;
 import com.upc.gessi.qrapids.app.domain.repositories.AppUser.UserRepository;
@@ -32,7 +32,10 @@ import static com.upc.gessi.qrapids.app.config.security.SecurityConstants.COOKIE
 @RequestMapping("/")
 public class AuthController {
 
-	@Autowired
+    private static final String QUESTIONS = "questions";
+    private static final String APPUSER = "appuser";
+
+    @Autowired
 	UserRepository userRepository;
 
 	@Autowired
@@ -65,8 +68,8 @@ public class AuthController {
 
             ModelAndView view =  new ModelAndView("Auth/FirstLoad");
 
-            view.addObject( "questions", this.questionRepository.findAll());
-            view.addObject( "appuser", new AppUser());
+            view.addObject(QUESTIONS, this.questionRepository.findAll());
+            view.addObject(APPUSER, new AppUser());
             view.addObject("all",true);
 
             return view;
@@ -86,7 +89,7 @@ public class AuthController {
 	    request.getSession().setAttribute("lastPage","login");
 
 		ModelAndView view = new ModelAndView("redirect:/StrategicIndicators/CurrentChart");
-        view.addObject("appuser", currenUser );
+        view.addObject(APPUSER, currenUser );
 
         if( "".equals( cookie_token ) || cookie_token == null )
             return new ModelAndView("Auth/Login");
@@ -128,8 +131,8 @@ public class AuthController {
 
 
 	    ModelAndView view =  new ModelAndView("Auth/Signup");
-        view.addObject( "questions", this.questionRepository.findAll());
-        view.addObject( "appuser", new AppUser());
+        view.addObject(QUESTIONS, this.questionRepository.findAll());
+        view.addObject(APPUSER, new AppUser());
 
         return view;
 
@@ -151,14 +154,14 @@ public class AuthController {
             return new ModelAndView("redirect:/login?error=Email+does+not+exist");
         } else{
             ModelAndView view = new ModelAndView("Auth/Reset");
-            view.addObject("appuser", current);
-            view.addObject("questions", this.questionRepository.findAll());
+            view.addObject(APPUSER, current);
+            view.addObject(QUESTIONS, this.questionRepository.findAll());
             return view;
         }
     }
 
     @PostMapping("/reset-trigger")
-    public String resetTraigger(@ModelAttribute(value = "appuser") @Valid AppUser user ){
+    public String resetTraigger(@ModelAttribute(value = APPUSER) @Valid AppUser user ){
         Optional<AppUser> userOptional = this.userRepository.findById(user.getId());
         if (userOptional.isPresent()) {
             AppUser userUpdate = userOptional.get();
@@ -184,7 +187,7 @@ public class AuthController {
      * @return
      */
     @PostMapping("/signup")
-    public String signupUser(@ModelAttribute(value = "appuser") @Valid AppUser user ) {
+    public String signupUser(@ModelAttribute(value = APPUSER) @Valid AppUser user ) {
 
         // First charge user register view
         Long users =  this.userRepository.count();
