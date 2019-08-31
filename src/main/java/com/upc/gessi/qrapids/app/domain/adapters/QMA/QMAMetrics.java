@@ -3,10 +3,9 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.EvaluationDTO;
 import DTOs.MetricEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.dto.DTOMetric;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
 import evaluation.Factor;
 import evaluation.Metric;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,30 +19,22 @@ import java.util.List;
 public class QMAMetrics {
 
     @Autowired
-    private QMAFakedata qmafake;
-
-    @Autowired
     private QMAConnection qmacon;
 
     public List<DTOMetric> CurrentEvaluation(String id, String prj) throws IOException {
         List<DTOMetric> result;
 
-        if (qmafake.usingFakeData()){
-            result = qmafake.getMetrics(id);
-        }
-        else {
-            List<MetricEvaluationDTO> evals;
+        List<MetricEvaluationDTO> evals;
 
-            qmacon.initConnexion();
+        qmacon.initConnexion();
 
+        if (id == null)
+            evals = Metric.getEvaluations(prj);
+        else
+            evals = Factor.getMetricsEvaluations(prj, id).getMetrics();
+        //Connection.closeConnection();
+        result = MetricEvaluationDTOListToDTOMetricList(evals);
 
-            if (id == null)
-                evals = Metric.getEvaluations(prj);
-            else
-                evals = Factor.getMetricsEvaluations(prj, id).getMetrics();
-            //Connection.closeConnection();
-            result = MetricEvaluationDTOListToDTOMetricList(evals);
-        }
         return result;
     }
 
@@ -56,21 +47,16 @@ public class QMAMetrics {
     public List<DTOMetric> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
         List<DTOMetric> result;
 
-        if (qmafake.usingFakeData()){
-            result = qmafake.getHistoricalMetrics(id);
-        }
-        else {
-            List<MetricEvaluationDTO> evals;
+        List<MetricEvaluationDTO> evals;
 
-            qmacon.initConnexion();
-            if (id == null)
-                evals = Metric.getEvaluations(prj, from, to);
-            else
-                evals = Factor.getMetricsEvaluations(prj, id, from, to).getMetrics();
-            //Connection.closeConnection();
-            result = MetricEvaluationDTOListToDTOMetricList(evals);
+        qmacon.initConnexion();
+        if (id == null)
+            evals = Metric.getEvaluations(prj, from, to);
+        else
+            evals = Factor.getMetricsEvaluations(prj, id, from, to).getMetrics();
+        //Connection.closeConnection();
+        result = MetricEvaluationDTOListToDTOMetricList(evals);
 
-        }
         return result;
     }
 
@@ -83,7 +69,7 @@ public class QMAMetrics {
     }
 
 
-    public static List<DTOMetric> MetricEvaluationDTOListToDTOMetricList(List<MetricEvaluationDTO> evals) {
+    static List<DTOMetric> MetricEvaluationDTOListToDTOMetricList(List<MetricEvaluationDTO> evals) {
         List<DTOMetric> m = new ArrayList<>();
         for (Iterator<MetricEvaluationDTO> iterMetrics = evals.iterator(); iterMetrics.hasNext(); ) {
             MetricEvaluationDTO metric = iterMetrics.next();
@@ -97,7 +83,7 @@ public class QMAMetrics {
         return m;
     }
 
-    public static DTOMetric MetricEvaluationDTOToDTOMetric (MetricEvaluationDTO metric, EvaluationDTO evaluation) {
+    private static DTOMetric MetricEvaluationDTOToDTOMetric(MetricEvaluationDTO metric, EvaluationDTO evaluation) {
         return new DTOMetric(metric.getID(),
                 metric.getName(),
                 metric.getDescription(),

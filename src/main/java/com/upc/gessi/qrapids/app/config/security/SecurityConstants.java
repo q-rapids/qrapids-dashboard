@@ -44,7 +44,7 @@ public class SecurityConstants {
 	};
 
     public static final String[] GLOBAL_MATCHERS = {
-            "/login",
+            LOGIN_VIEW_URL,
             "/home",
             "/setupUser",
             "/reset-password",

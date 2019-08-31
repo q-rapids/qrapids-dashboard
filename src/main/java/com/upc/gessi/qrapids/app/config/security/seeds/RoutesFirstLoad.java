@@ -55,10 +55,10 @@ public class RoutesFirstLoad {
         routes.add( new Route( "Quality Factor - Historic Chart", "/QualityFactor/HistoricChart") );
 
         // Metrics
-        routes.add( new Route( "Metrics - CurrentChart", "/Metrics/CurrentTable") );
+        routes.add( new Route( "Metrics - Current Table", "/Metrics/CurrentTable") );
 
-        routes.add( new Route( "Metrics - CurrentChart", "/Metrics/HistoricTable") );
-        routes.add( new Route( "Metrics - CurrentChart", "/Metrics/HistoricChart") );
+        routes.add( new Route( "Metrics - Historic Table", "/Metrics/HistoricTable") );
+        routes.add( new Route( "Metrics - Historic Chart", "/Metrics/HistoricChart") );
 
         // Detailed Strategic Indicators
         routes.add( new Route( "Detailed Strategic Indicators - Current Chart", "/DetailedStrategicIndicators/CurrentChart") );

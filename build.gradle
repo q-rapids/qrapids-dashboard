@@ -90,6 +90,8 @@ dependencies {
 	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
+	testCompile('com.h2database:h2')
+
 	// comment this line to launch application from developing environment
 	// uncomment this line before generating .war file
 	//providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
@@ -112,5 +114,12 @@ asciidoctor {
 	outputDir = file('docs/asciidoc')
 	separateOutputDirs = false
 	dependsOn test
+}
+
+test {
+	testLogging {
+		events "passed", "skipped", "failed"
+		exceptionFormat "full"
+	}
 }
 

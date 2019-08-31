@@ -5,11 +5,10 @@ import DTOs.EvaluationDTO;
 import DTOs.FactorEvaluationDTO;
 import DTOs.StrategicIndicatorFactorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.domain.services.Util;
-import com.upc.gessi.qrapids.app.dto.DTODetailedStrategicIndicator;
-import com.upc.gessi.qrapids.app.dto.DTOFactor;
-import com.upc.gessi.qrapids.app.dto.DTOSIAssesment;
-import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedStrategicIndicator;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
 import evaluation.StrategicIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -25,59 +24,48 @@ import java.util.List;
 public class QMADetailedStrategicIndicators {
 
     @Autowired
-    private QMAFakedata qmafake;
-
-    @Autowired
     private QMAConnection qmacon;
 
     @Autowired
-    private Util util;
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     public List<DTODetailedStrategicIndicator> CurrentEvaluation(String id, String prj) throws IOException {
         List<DTODetailedStrategicIndicator> dsi;
 
-        if (qmafake.usingFakeData())
-            dsi = qmafake.getDetailedSIs(id);
-        else {
-            // Data coming from QMA API
-            qmacon.initConnexion();
+        // Data coming from QMA API
+        qmacon.initConnexion();
 
-            List<StrategicIndicatorFactorEvaluationDTO> evals;
-            // All the strategic indicators
-            if (id == null) {
-                evals = StrategicIndicator.getFactorsEvaluations(prj);
-            } else {
-                evals = new ArrayList<>();
-                evals.add(StrategicIndicator.getFactorsEvaluations(prj, id));
-            }
-
-            dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(evals);
-            //Connection.closeConnection();
+        List<StrategicIndicatorFactorEvaluationDTO> evals;
+        // All the strategic indicators
+        if (id == null) {
+            evals = StrategicIndicator.getFactorsEvaluations(prj);
+        } else {
+            evals = new ArrayList<>();
+            evals.add(StrategicIndicator.getFactorsEvaluations(prj, id));
         }
+
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(evals);
+        //Connection.closeConnection();
         return dsi;
     }
 
     public List<DTODetailedStrategicIndicator> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
         List<DTODetailedStrategicIndicator> dsi;
 
-        if (qmafake.usingFakeData())
-            dsi=qmafake.getHistoricalDetailedSIs(id);
-        else {
-            // Data coming from QMA API
-            qmacon.initConnexion();
+        // Data coming from QMA API
+        qmacon.initConnexion();
 
-            List<StrategicIndicatorFactorEvaluationDTO> evals;
-            if (id == null) {
-                //using dates from 1/1/2015 to now at the moment
-                evals = StrategicIndicator.getFactorsEvaluations(prj, from, to);
-            } else {
-                //using dates from 1/1/2015 to now at the moment
-                evals = new ArrayList<>();
-                evals.add(StrategicIndicator.getFactorsEvaluations(prj, id, from, to));
-            }
-            dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(evals);
-            //Connection.closeConnection();
+        List<StrategicIndicatorFactorEvaluationDTO> evals;
+        if (id == null) {
+            //using dates from 1/1/2015 to now at the moment
+            evals = StrategicIndicator.getFactorsEvaluations(prj, from, to);
+        } else {
+            //using dates from 1/1/2015 to now at the moment
+            evals = new ArrayList<>();
+            evals.add(StrategicIndicator.getFactorsEvaluations(prj, id, from, to));
         }
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(evals);
+        //Connection.closeConnection();
         return dsi;
     }
 
@@ -96,7 +84,7 @@ public class QMADetailedStrategicIndicators {
             d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors()));
 
             // Get value
-            List<DTOSIAssesment> categories = util.getCategories();
+            List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
             EstimationEvaluationDTO estimation = element.getEstimation().get(0);
 
             boolean hasEstimation = true;
@@ -104,21 +92,14 @@ public class QMADetailedStrategicIndicators {
                 hasEstimation = false;
 
             if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
-                int i = 0;
-                for (DTOSIAssesment c : categories) {
-                    if (c.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
-                        c.setValue(estimation.getEstimation().get(i).getThird());
-                        c.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
-                    }
-                    ++i;
-                }
+                setValueAndThresholdToCategories(categories, estimation);
             }
 
             if (hasEstimation) {
-                Float value = util.getValueAndLabelFromCategories(categories).getFirst();
-                d.setValue(Pair.of(value, util.getLabel(value)));
+                Float value = strategicIndicatorsController.getValueAndLabelFromCategories(categories).getFirst();
+                d.setValue(Pair.of(value, strategicIndicatorsController.getLabel(value)));
             } else {
-                d.setValue(Pair.of(evaluation.getValue(), util.getLabel(evaluation.getValue())));
+                d.setValue(Pair.of(evaluation.getValue(), strategicIndicatorsController.getLabel(evaluation.getValue())));
             }
 
             dsi.add(d);
@@ -126,7 +107,18 @@ public class QMADetailedStrategicIndicators {
         return dsi;
     }
 
-    public static List<DTOFactor> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors) {
+    private void setValueAndThresholdToCategories(List<DTOSIAssessment> categories, EstimationEvaluationDTO estimation) {
+        int i = 0;
+        for (DTOSIAssessment c : categories) {
+            if (c.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
+                c.setValue(estimation.getEstimation().get(i).getThird());
+                c.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
+            }
+            ++i;
+        }
+    }
+
+    static List<DTOFactor> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors) {
         List<DTOFactor> listFact = new ArrayList<>();
         //for each factor in the Detailed Strategic Indicator
         for (Iterator<FactorEvaluationDTO> iterFactor = factors.iterator(); iterFactor.hasNext(); ) {
@@ -140,7 +132,7 @@ public class QMADetailedStrategicIndicators {
         return listFact;
     }
 
-    public static DTOFactor FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
+    static DTOFactor FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
         return new DTOFactor(
                 factor.getID(),
                 factor.getName(),

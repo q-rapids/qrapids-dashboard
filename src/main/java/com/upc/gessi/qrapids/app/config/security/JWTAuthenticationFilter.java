@@ -1,6 +1,6 @@
 package com.upc.gessi.qrapids.app.config.security;
 
-import com.upc.gessi.qrapids.app.config.Libs.AuthTools;
+import com.upc.gessi.qrapids.app.config.libs.AuthTools;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;

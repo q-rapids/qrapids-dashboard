@@ -1,26 +1,23 @@
 package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 
-import DTOs.StrategicIndicatorEvaluationDTO;
 import DTOs.EstimationEvaluationDTO;
-import DTOs.QuadrupletDTO;
 import DTOs.EvaluationDTO;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.upc.gessi.qrapids.app.domain.models.Feedback;
-import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
-import com.upc.gessi.qrapids.app.exceptions.CategoriesException;
+import DTOs.QuadrupletDTO;
+import DTOs.StrategicIndicatorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.domain.services.Util;
-import com.upc.gessi.qrapids.app.dto.*;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.models.Feedback;
+import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.domain.models.SICategory;
-
-import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
+import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import evaluation.StrategicIndicator;
-import org.springframework.data.util.Pair;
 import org.elasticsearch.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -28,13 +25,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class QMAStrategicIndicators {
-
-    @Autowired
-    private QMAFakedata qmafake;
 
     @Autowired
     private QMAConnection qmacon;
@@ -49,20 +42,17 @@ public class QMAStrategicIndicators {
     private FeedbackRepository feedbackRepository;
 
     @Autowired
-    private Util util;
+    private StrategicIndicatorsController strategicIndicatorsController;
 
     public List<DTOStrategicIndicatorEvaluation> CurrentEvaluation(String prj) throws IOException, CategoriesException {
         List<DTOStrategicIndicatorEvaluation> result;
 
-        if (qmafake.usingFakeData())
-            result = qmafake.getSIs();
-        else {
-            // Data coming from QMA API
-            qmacon.initConnexion();
-            List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj);
-            //Connection.closeConnection();
-            result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
-        }
+        // Data coming from QMA API
+        qmacon.initConnexion();
+        List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj);
+        //Connection.closeConnection();
+        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
+
         return result;
     }
 
@@ -77,32 +67,14 @@ public class QMAStrategicIndicators {
     public List<DTOStrategicIndicatorEvaluation> HistoricalData(LocalDate from, LocalDate to, String prj) throws IOException, CategoriesException  {
         List<DTOStrategicIndicatorEvaluation> result;
 
-        if (qmafake.usingFakeData())
-            result = qmafake.getHistoricalSIs();
-        else {
-            // Data coming from QMA API
-            qmacon.initConnexion();
-            //using dates from 1/1/2015 to now at the moment
-            List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj, from, to);
-            //Connection.closeConnection();
-            result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
-        }
+        // Data coming from QMA API
+        qmacon.initConnexion();
+        //using dates from 1/1/2015 to now at the moment
+        List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj, from, to);
+        //Connection.closeConnection();
+        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
+
         return result;
-    }
-
-    public void newCategories(List<Map<String, String>> categories) {
-        if (SICatRep.count() == 0) {
-            for (Map<String, String> c : categories) {
-                SICategory sic = new SICategory();
-                sic.setName(c.get("name"));
-                sic.setColor(c.get("color"));
-                SICatRep.save(sic);
-            }
-        }
-    }
-
-    public void deleteAllCategories(){
-        SICatRep.deleteAll();
     }
 
     public boolean isCategoriesEmpty() {
@@ -118,7 +90,7 @@ public class QMAStrategicIndicators {
                                               String strategicIndicatorDescription,
                                               Float value,
                                               LocalDate date,
-                                              List<DTOSIAssesment> assessment,
+                                              List<DTOSIAssessment> assessment,
                                               List<String> missingFactors,
                                               long dates_mismatch
                                               ) throws IOException {
@@ -142,7 +114,7 @@ public class QMAStrategicIndicators {
                                                             strategicIndicatorDescription,
                                                             value,
                                                             date,
-                                                            ListDTOSIAssesmenttoEstimationEvaluationDTO(assessment),
+                                                            listDTOSIAssessmentToEstimationEvaluationDTO(assessment),
                                                             missingFactors,
                                                             dates_mismatch)
                     .status();
@@ -165,83 +137,85 @@ public class QMAStrategicIndicators {
                     hasBN = dbsi.getNetwork() != null;
                     List<Feedback> feedback = new ArrayList<>();
                     try {
-                        feedback = feedbackRepository.getFeedback(id);
+                        feedback = feedbackRepository.findAllBySiId(id);
                     } catch (Exception e) {}
                     if (!feedback.isEmpty()) hasFeedback = true;
                 }
             }
             //get categories
-            List<DTOSIAssesment> categories = util.getCategories();
+            List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
 
             //bool that determines if the current SI has the estimation parameter
             if (element.getEstimation() == null || element.getEstimation().size() != element.getEvaluations().size())
                 throw new CategoriesException();
 
-            Iterator<EstimationEvaluationDTO> iterSIEst = element.getEstimation().iterator();
-
-            for (Iterator<EvaluationDTO> iterSIEval = element.getEvaluations().iterator(); iterSIEval.hasNext() ; ) {
-                EvaluationDTO evaluation = iterSIEval.next();
-                EstimationEvaluationDTO estimation = iterSIEst.next();
-                //merge categories and estimation
-                boolean hasEstimation = true;
-                if (estimation == null || estimation.getEstimation() == null || estimation.getEstimation().size()==0)
-                    hasEstimation = false;
-
-                if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
-                    int changed = 0;
-                    int i = 0;
-                    for (DTOSIAssesment d : categories) {
-                        if (d.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
-                            d.setValue(estimation.getEstimation().get(i).getThird());
-                            d.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
-                            ++changed;
-                        }
-                        ++i;
-                    }
-                    if (changed != categories.size())
-                        throw new CategoriesException();
-                } else if (hasEstimation) throw new CategoriesException();
-                //calculate "fake" value if the SI has estimation
-                if (hasEstimation) {
-                    Float value = util.getValueAndLabelFromCategories(categories).getFirst();
-                    DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
-                            element.getName(),
-                            element.getDescription(),
-                            Pair.of(value, util.getLabel(value)),
-                            new ArrayList<>(categories),
-                            evaluation.getEvaluationDate(),
-                            evaluation.getDatasource(),
-                            id,
-                            categories.toString(),
-                            hasBN);
-                    dtoStrategicIndicatorEvaluation.setHasFeedback(hasFeedback);
-                    dtoStrategicIndicatorEvaluation.setMismatchDays(evaluation.getMismatchDays());
-                    dtoStrategicIndicatorEvaluation.setMissingFactors(evaluation.getMissingElements());
-                    si.add(dtoStrategicIndicatorEvaluation);
-                } else {
-                    DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
-                            element.getName(),
-                            element.getDescription(),
-                            Pair.of(evaluation.getValue(), util.getLabel(evaluation.getValue())),
-                            new ArrayList<>(categories),
-                            evaluation.getEvaluationDate(),
-                            evaluation.getDatasource(),
-                            id,
-                            categories.toString(),
-                            hasBN);
-                    dtoStrategicIndicatorEvaluation.setHasFeedback(hasFeedback);
-                    dtoStrategicIndicatorEvaluation.setMismatchDays(evaluation.getMismatchDays());
-                    dtoStrategicIndicatorEvaluation.setMissingFactors(evaluation.getMissingElements());
-                    si.add(dtoStrategicIndicatorEvaluation);
-                }
-            }
+            buildDTOStrategicIndicatorEvaluationList(si, element, id, hasBN, hasFeedback, categories);
         }
         return si;
     }
 
-    private EstimationEvaluationDTO ListDTOSIAssesmenttoEstimationEvaluationDTO(List<DTOSIAssesment> assessment) {
+    private void buildDTOStrategicIndicatorEvaluationList(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOSIAssessment> categories) throws CategoriesException {
+        Iterator<EstimationEvaluationDTO> iterSIEst = element.getEstimation().iterator();
+
+        for (EvaluationDTO evaluation : element.getEvaluations()) {
+            EstimationEvaluationDTO estimation = iterSIEst.next();
+            //merge categories and estimation
+            boolean hasEstimation = true;
+            if (estimation == null || estimation.getEstimation() == null || estimation.getEstimation().size() == 0)
+                hasEstimation = false;
+
+            if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
+                setValueAndThresholdForCategories(categories, estimation);
+            } else if (hasEstimation) throw new CategoriesException();
+            //calculate "fake" value if the SI has estimation
+            if (hasEstimation) {
+                buildDTOStrategicIndicatorEvaluationWithEstimation(si, element, id, hasBN, hasFeedback, categories, evaluation);
+            } else {
+                buildDTOStrategicIndicatorEvaluationWithoutEstimation(si, element, id, hasBN, hasFeedback, categories, evaluation, evaluation.getValue());
+            }
+        }
+    }
+
+    private void buildDTOStrategicIndicatorEvaluationWithoutEstimation(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOSIAssessment> categories, EvaluationDTO evaluation, Float value) {
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
+                element.getName(),
+                element.getDescription(),
+                Pair.of(value, strategicIndicatorsController.getLabel(value)),
+                new ArrayList<>(categories),
+                evaluation.getEvaluationDate(),
+                evaluation.getDatasource(),
+                id,
+                categories.toString(),
+                hasBN);
+        dtoStrategicIndicatorEvaluation.setHasFeedback(hasFeedback);
+        dtoStrategicIndicatorEvaluation.setMismatchDays(evaluation.getMismatchDays());
+        dtoStrategicIndicatorEvaluation.setMissingFactors(evaluation.getMissingElements());
+        si.add(dtoStrategicIndicatorEvaluation);
+    }
+
+    private void buildDTOStrategicIndicatorEvaluationWithEstimation(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOSIAssessment> categories, EvaluationDTO evaluation) {
+        Float value = strategicIndicatorsController.getValueAndLabelFromCategories(categories).getFirst();
+        buildDTOStrategicIndicatorEvaluationWithoutEstimation(si, element, id, hasBN, hasFeedback, categories, evaluation, value);
+    }
+
+    private void setValueAndThresholdForCategories(List<DTOSIAssessment> categories, EstimationEvaluationDTO estimation) throws CategoriesException {
+        int changed = 0;
+        int i = 0;
+        for (DTOSIAssessment d : categories) {
+            if (d.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
+                d.setValue(estimation.getEstimation().get(i).getThird());
+                d.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
+                ++changed;
+            }
+            ++i;
+        }
+        if (changed != categories.size())
+            throw new CategoriesException();
+    }
+
+    private EstimationEvaluationDTO listDTOSIAssessmentToEstimationEvaluationDTO(List<DTOSIAssessment> assessment) {
         List<QuadrupletDTO<Integer, String, Float, Float>> estimation = new ArrayList<>();
-        for (DTOSIAssesment dsa : assessment) {
+        for (DTOSIAssessment dsa : assessment) {
             estimation.add(new QuadrupletDTO<Integer, String, Float, Float>(dsa.getId() != null ? dsa.getId().intValue() : null, dsa.getLabel(), dsa.getValue(), dsa.getUpperThreshold()));
         }
         return new EstimationEvaluationDTO(estimation);
