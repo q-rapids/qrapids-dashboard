@@ -30,15 +30,15 @@ import java.util.*;
 public class Forecast {
 
     private static final String UTF_8 = "utf-8";
-    private static final String FREQUENCY = "&frequency=";
-    private static final String HORIZON = "&horizon=";
-    private static final String TECHNIQUE = "&technique=";
-    private static final String METRIC = "&metric=";
-    private static final String HOST = "&host=";
-    private static final String PORT = "&port=";
-    private static final String PATH = "&path=";
-    private static final String USER = "&user=";
-    private static final String PWD = "&pwd=";
+    private static final String FREQUENCY_QUERY = "&frequency=";
+    private static final String HORIZON_QUERY = "&horizon=";
+    private static final String TECHNIQUE_QUERY = "&technique=";
+    private static final String METRIC_QUERY = "&metric=";
+    private static final String HOST_QUERY = "&host=";
+    private static final String PORT_QUERY = "&port=";
+    private static final String PATH_QUERY = "&path=";
+    private static final String USER_QUERY = "&user=";
+    private static final String PWD_QUERY = "&pwd=";
     private static final String APPLICATION_JSON = "application/json";
     private static final String CONTENT_TYPE = "Content-Type";
     public static final String GET = "GET";
@@ -49,7 +49,7 @@ public class Forecast {
     private static final String UPPER_95 = "upper95";
     private static final String MEAN = "mean";
     private static final String ID = "id";
-    private static final String FORECAST = "Forecast";
+    private static final String FORECAST_SOURCE = "Forecast";
 
     @Autowired
     private QMAConnection connection;
@@ -143,17 +143,17 @@ public class Forecast {
     public List<DTOMetric> ForecastMetric(List<DTOMetric> metric, String technique, String freq, String horizon, String prj) throws IOException {
         StringBuffer urlString = new StringBuffer(url + "/api/Metrics/Forecast?index_metrics=");
         if (prefix == null) prefix = "";
-        urlString.append(URLEncoder.encode(prefix + Constants.INDEX_METRICS + "." + prj, UTF_8)).append(FREQUENCY).append(URLEncoder.encode(freq, UTF_8));
-        urlString.append(HORIZON).append(URLEncoder.encode(horizon, UTF_8));
-        urlString.append(TECHNIQUE).append(URLEncoder.encode(technique, UTF_8));
+        urlString.append(URLEncoder.encode(prefix + Constants.INDEX_METRICS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
+        urlString.append(HORIZON_QUERY).append(URLEncoder.encode(horizon, UTF_8));
+        urlString.append(TECHNIQUE_QUERY).append(URLEncoder.encode(technique, UTF_8));
         for(DTOMetric m : metric) {
-            urlString.append(METRIC).append(URLEncoder.encode(m.getId(), UTF_8));
+            urlString.append(METRIC_QUERY).append(URLEncoder.encode(m.getId(), UTF_8));
         }
-        urlString.append(HOST).append(URLEncoder.encode(connection.getIp(), UTF_8));
-        urlString.append(PORT).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
-        urlString.append(PATH).append(URLEncoder.encode(path, UTF_8));
-        urlString.append(USER).append(URLEncoder.encode(connection.getUsername(), UTF_8));
-        urlString.append(PWD).append(URLEncoder.encode(connection.getPassword(), UTF_8));
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
+        urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
+        urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
+        urlString.append(PWD_QUERY).append(URLEncoder.encode(connection.getPassword(), UTF_8));
         URL url = new URL(urlString.toString());
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod(GET);
@@ -258,22 +258,22 @@ public class Forecast {
     public List<DTOQualityFactor> ForecastFactor(List<DTOQualityFactor> factor, String technique, String freq, String horizon, String prj) throws IOException {
         StringBuffer urlString = new StringBuffer(url + "/api/Metrics/Forecast?index_metrics=");
         if (prefix == null) prefix = "";
-        urlString.append(URLEncoder.encode(prefix + Constants.INDEX_METRICS + "." + prj, UTF_8)).append(FREQUENCY).append(URLEncoder.encode(freq, UTF_8));
-        urlString.append(HORIZON).append(URLEncoder.encode(horizon, UTF_8));
-        urlString.append(TECHNIQUE).append(URLEncoder.encode(technique, UTF_8));
+        urlString.append(URLEncoder.encode(prefix + Constants.INDEX_METRICS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
+        urlString.append(HORIZON_QUERY).append(URLEncoder.encode(horizon, UTF_8));
+        urlString.append(TECHNIQUE_QUERY).append(URLEncoder.encode(technique, UTF_8));
         Map<String, ArrayList<Integer>> metrics = new HashMap<>();
         Map<String, String> metricsNames = new HashMap<>();
 
         buildMetricsForFactors(factor, metrics, metricsNames);
 
         for(Map.Entry<String, ArrayList<Integer>> m : metrics.entrySet()) {
-            urlString.append(METRIC).append(URLEncoder.encode(m.getKey(), UTF_8));
+            urlString.append(METRIC_QUERY).append(URLEncoder.encode(m.getKey(), UTF_8));
         }
-        urlString.append(HOST).append(URLEncoder.encode(connection.getIp(), UTF_8));
-        urlString.append(PORT).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
-        urlString.append(PATH).append(URLEncoder.encode(path, UTF_8));
-        urlString.append(USER).append(URLEncoder.encode(connection.getUsername(), UTF_8));
-        urlString.append(PWD).append(URLEncoder.encode(connection.getPassword(), UTF_8));
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
+        urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
+        urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
+        urlString.append(PWD_QUERY).append(URLEncoder.encode(connection.getPassword(), UTF_8));
         URL url = new URL(urlString.toString());
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod(GET);
@@ -360,8 +360,8 @@ public class Forecast {
                         metricsMatrix.get(index).add(new DTOMetric(m.getKey(),
                                 metricsNames.get(m.getKey()),
                                 "",
-                                FORECAST,
-                                FORECAST,
+                                FORECAST_SOURCE,
+                                FORECAST_SOURCE,
                                 LocalDate.now().plusDays((long) j), mean.get(j).getAsFloat(), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
@@ -369,8 +369,8 @@ public class Forecast {
                     metricsMatrix.get(index).add(new DTOMetric(m.getKey(),
                             metricsNames.get(m.getKey()),
                             "",
-                            FORECAST,
-                            FORECAST,
+                            FORECAST_SOURCE,
+                            FORECAST_SOURCE,
                             LocalDate.now(), null, null, null));
             }
         }
@@ -405,9 +405,9 @@ public class Forecast {
     public List<DTODetailedStrategicIndicator> ForecastDSI(List<DTODetailedStrategicIndicator> dsi, String technique, String freq, String horizon, String prj) throws IOException {
         StringBuffer urlString = new StringBuffer(url + "/api/QualityFactors/Forecast?index_factors=");
         if (prefix == null) prefix = "";
-        urlString.append(URLEncoder.encode(prefix + Constants.INDEX_FACTORS + "." + prj, UTF_8)).append(FREQUENCY).append(URLEncoder.encode(freq, UTF_8));
-        urlString.append(HORIZON).append(URLEncoder.encode(horizon, UTF_8));
-        urlString.append(TECHNIQUE).append(URLEncoder.encode(technique, UTF_8));
+        urlString.append(URLEncoder.encode(prefix + Constants.INDEX_FACTORS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
+        urlString.append(HORIZON_QUERY).append(URLEncoder.encode(horizon, UTF_8));
+        urlString.append(TECHNIQUE_QUERY).append(URLEncoder.encode(technique, UTF_8));
         Map<String, ArrayList<Integer>> factors = new HashMap<>();
         Map<String, String> factorsNames = new HashMap<>();
 
@@ -416,11 +416,11 @@ public class Forecast {
         for(Map.Entry<String, ArrayList<Integer>> m : factors.entrySet()) {
             urlString.append("&factor=").append(URLEncoder.encode(m.getKey(), UTF_8));
         }
-        urlString.append(HOST).append(URLEncoder.encode(connection.getIp(), UTF_8));
-        urlString.append(PORT).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
-        urlString.append(PATH).append(URLEncoder.encode(path, UTF_8));
-        urlString.append(USER).append(URLEncoder.encode(connection.getUsername(), UTF_8));
-        urlString.append(PWD).append(URLEncoder.encode(connection.getPassword(), UTF_8));
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
+        urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
+        urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
+        urlString.append(PWD_QUERY).append(URLEncoder.encode(connection.getPassword(), UTF_8));
         URL url = new URL(urlString.toString());
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod(GET);
@@ -504,12 +504,12 @@ public class Forecast {
                 for (int j = 0; j < lower80.size(); ++j) {
                     for (Integer index : m.getValue())
                         factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
-                                mean.get(j).getAsFloat(), LocalDate.now().plusDays((long) j), FORECAST, FORECAST, null));
+                                mean.get(j).getAsFloat(), LocalDate.now().plusDays((long) j), FORECAST_SOURCE, FORECAST_SOURCE, null));
                 }
             } else {
                 for (Integer index : m.getValue())
                     factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
-                            null, LocalDate.now(), FORECAST, FORECAST, null));
+                            null, LocalDate.now(), FORECAST_SOURCE, FORECAST_SOURCE, null));
             }
         }
     }
