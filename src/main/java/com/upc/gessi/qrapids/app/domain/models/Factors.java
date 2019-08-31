@@ -1,6 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
-import com.upc.gessi.qrapids.app.dto.DTOFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
 import util.FormattedDates;
 
 import java.time.LocalDate;
