@@ -1,4 +1,4 @@
-# Q-Rapids Strategic Dashboard ![](https://img.shields.io/badge/License-Apache2.0-blue.svg) [![Build Status](https://travis-ci.org/q-rapids/qrapids-dashboard.svg?branch=master)](https://travis-ci.org/q-rapids/qrapids-dashboard)
+# Q-Rapids Strategic Dashboard ![](https://img.shields.io/badge/License-Apache2.0-blue.svg) [![Build Status](https://travis-ci.org/q-rapids/qrapids-dashboard.svg?branch=master)](https://travis-ci.org/q-rapids/qrapids-dashboard) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=q-rapids_qrapids-dashboard&metric=alert_status)](https://sonarcloud.io/dashboard?id=q-rapids_qrapids-dashboard)
 A dashboard for visualizing the quality of the company's products. This strategic dashboard is complemented with some specific features to support decision-makers managing **quality requirements**.
 
 This component has been created as a result of the Q-Rapids project funded by the European Union Horizon 2020 Research and Innovation programme under grant agreement No 732253.
