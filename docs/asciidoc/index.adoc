@@ -715,7 +715,7 @@ operation::feedback/get-feedback[snippets='path-parameters,curl-request,response
 
 === Get feedback report for strategic indicator
 
-operation::feedback/get-feedback-report[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+operation::feedback/get-feedback-report[snippets='path-parameters,curl-request,response-fields,http-response']
 
 
 == Projects

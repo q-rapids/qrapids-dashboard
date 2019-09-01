@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v0.3.5, 2019-07-31">
+<meta name="author" content="v0.3.5, 2019-09-01">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v0.3.5, 2019-07-31</span><br>
+<span id="author" class="author">v0.3.5, 2019-09-01</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -729,19 +729,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 900
 Content-Type: application/json;charset=UTF-8
-Content-Length: 840
 
 [ {
-  "id" : "blocking",
+  "id" : "processperformance",
   "dbId" : 1,
-  "name" : "Blocking",
-  "description" : "Blocking elements",
+  "name" : "Process Performance",
+  "description" : "Performance of the processes involved in the development",
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -847,7 +847,7 @@ Content-Length: 840
 <h4 id="_get_one_current_evaluation_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/blocking/current?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/current?prj=test' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -980,19 +980,19 @@ Content-Length: 840
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 836
+Content-Length: 896
 Content-Type: application/json;charset=UTF-8
 
 {
-  "id" : "blocking",
+  "id" : "processperformance",
   "dbId" : 1,
-  "name" : "Blocking",
-  "description" : "Blocking elements",
+  "name" : "Process Performance",
+  "description" : "Performance of the processes involved in the development",
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -1217,19 +1217,19 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 900
 Content-Type: application/json;charset=UTF-8
-Content-Length: 840
 
 [ {
-  "id" : "blocking",
+  "id" : "processperformance",
   "dbId" : 1,
-  "name" : "Blocking",
-  "description" : "Blocking elements",
+  "name" : "Process Performance",
+  "description" : "Performance of the processes involved in the development",
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -1454,19 +1454,19 @@ Content-Length: 840
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 837
+Content-Length: 897
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "id" : "blocking",
+  "id" : "processperformance",
   "dbId" : 1,
-  "name" : "Blocking",
-  "description" : "Blocking elements",
+  "name" : "Process Performance",
+  "description" : "Performance of the processes involved in the development",
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -1662,32 +1662,32 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 660
+Content-Length: 668
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "id" : "blocking",
-  "name" : "Blocking",
+  "id" : "processperformance",
+  "name" : "Process Performance",
   "date" : [ 2019, 7, 7 ],
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "mismatchDays" : 0,
   "missingFactors" : null,
   "factors" : [ {
-    "id" : "blockingcode",
-    "name" : "Blocking code",
-    "description" : "Technical debt in software code in terms of rule violations",
+    "id" : "testingperformance",
+    "name" : "Testing Performance",
+    "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 7 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-07-07",
-    "strategicIndicators" : [ "blocking" ]
+    "formattedDate" : "2019-09-01",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -1759,7 +1759,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_one_detailed_current_evaluation_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/blocking/qualityFactors/current?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/current?prj=test' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -1887,32 +1887,32 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 660
+Content-Length: 668
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "id" : "blocking",
-  "name" : "Blocking",
+  "id" : "processperformance",
+  "name" : "Process Performance",
   "date" : [ 2019, 7, 7 ],
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "mismatchDays" : 0,
   "missingFactors" : null,
   "factors" : [ {
-    "id" : "blockingcode",
-    "name" : "Blocking code",
-    "description" : "Technical debt in software code in terms of rule violations",
+    "id" : "testingperformance",
+    "name" : "Testing Performance",
+    "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 7 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-07-07",
-    "strategicIndicators" : [ "blocking" ]
+    "formattedDate" : "2019-09-01",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2098,32 +2098,32 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 660
+Content-Length: 668
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "id" : "blocking",
-  "name" : "Blocking",
+  "id" : "processperformance",
+  "name" : "Process Performance",
   "date" : [ 2019, 7, 7 ],
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "mismatchDays" : 0,
   "missingFactors" : null,
   "factors" : [ {
-    "id" : "blockingcode",
-    "name" : "Blocking code",
-    "description" : "Technical debt in software code in terms of rule violations",
+    "id" : "testingperformance",
+    "name" : "Testing Performance",
+    "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 7 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-07-07",
-    "strategicIndicators" : [ "blocking" ]
+    "formattedDate" : "2019-09-01",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2203,7 +2203,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_one_detailed_historical_evaluation_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/blocking/qualityFactors/historical?prj=test&amp;from=2019-07-07&amp;to=2019-07-15' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/historical?prj=test&amp;from=2019-07-07&amp;to=2019-07-15' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -2331,32 +2331,32 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 660
+Content-Length: 668
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "id" : "blocking",
-  "name" : "Blocking",
+  "id" : "processperformance",
+  "name" : "Process Performance",
   "date" : [ 2019, 7, 7 ],
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "mismatchDays" : 0,
   "missingFactors" : null,
   "factors" : [ {
-    "id" : "blockingcode",
-    "name" : "Blocking code",
-    "description" : "Technical debt in software code in terms of rule violations",
+    "id" : "testingperformance",
+    "name" : "Testing Performance",
+    "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 7 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-07-07",
-    "strategicIndicators" : [ "blocking" ]
+    "formattedDate" : "2019-09-01",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2542,32 +2542,32 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 643
 Content-Type: application/json;charset=UTF-8
+Content-Length: 651
 
 [ {
-  "id" : "blocking",
-  "name" : "Blocking",
+  "id" : "processperformance",
+  "name" : "Process Performance",
   "date" : [ 2019, 7, 7 ],
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "mismatchDays" : 0,
   "missingFactors" : null,
   "factors" : [ {
-    "id" : "blockingcode",
-    "name" : "Blocking code",
-    "description" : "Technical debt in software code in terms of rule violations",
+    "id" : "testingperformance",
+    "name" : "Testing Performance",
+    "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 7 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "formattedDate" : "2019-07-07",
-    "strategicIndicators" : [ "blocking" ]
+    "formattedDate" : "2019-09-01",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2639,7 +2639,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_one_detailed_prediction_evaluation_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/blocking/qualityFactors/prediction?prj=test&amp;technique=PROPHET&amp;horizon=7' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/prediction?prj=test&amp;technique=PROPHET&amp;horizon=7' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -2767,32 +2767,32 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 643
 Content-Type: application/json;charset=UTF-8
+Content-Length: 651
 
 [ {
-  "id" : "blocking",
-  "name" : "Blocking",
+  "id" : "processperformance",
+  "name" : "Process Performance",
   "date" : [ 2019, 7, 7 ],
   "value" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "mismatchDays" : 0,
   "missingFactors" : null,
   "factors" : [ {
-    "id" : "blockingcode",
-    "name" : "Blocking code",
-    "description" : "Technical debt in software code in terms of rule violations",
+    "id" : "testingperformance",
+    "name" : "Testing Performance",
+    "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 7 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "formattedDate" : "2019-07-07",
-    "strategicIndicators" : [ "blocking" ]
+    "formattedDate" : "2019-09-01",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -3282,6 +3282,10 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>train</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Indicates if the forecasting models should be trained: NONE for no training, ONE for one method training and ALL for all methods training</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Date of the day from which execute several assessments, one for each day since today</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3350,7 +3354,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/simulate' -i -X POST \
-    -d 'prj=test&amp;factors=%5B%7B%22id%22%3A%22testingperformance%22%2C%22value%22%3A%220.9%22%7D%5D'</code></pre>
+    -d 'prj=test&amp;factors=%5B%7B%22id%22%3A%22processperformance%22%2C%22value%22%3A%220.9%22%7D%5D'</code></pre>
 </div>
 </div>
 </div>
@@ -3483,37 +3487,37 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 841
 Content-Type: application/json;charset=UTF-8
-Content-Length: 855
 
 [ {
   "id" : "processperformance",
   "dbId" : 1,
   "name" : "Process Performance",
-  "description" : "Performance levels of the processes involved in the project",
+  "description" : "Performance of the processes involved in the development",
   "value" : {
-    "first" : 0.9,
+    "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,90)",
+  "value_description" : "Good (0.80)",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
     "value" : null,
     "color" : "#00ff00",
-    "upperThreshold" : 1.0
+    "upperThreshold" : 0.66
   }, {
     "id" : 11,
     "label" : "Neutral",
     "value" : null,
     "color" : "#ff8000",
-    "upperThreshold" : 0.6666666
+    "upperThreshold" : 0.33
   }, {
-    "id" : 12,
+    "id" : 11,
     "label" : "Bad",
     "value" : null,
     "color" : "#ff0000",
-    "upperThreshold" : 0.33333328
+    "upperThreshold" : 0.0
   } ],
   "date" : null,
   "datasource" : "Simulation",
@@ -3944,7 +3948,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 472
+Content-Length: 471
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -3956,7 +3960,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 31 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4131,7 +4135,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 472
+Content-Length: 471
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -4143,7 +4147,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 31 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4296,7 +4300,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 472
+Content-Length: 471
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -4308,7 +4312,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 31 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4483,7 +4487,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 472
+Content-Length: 471
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -4495,7 +4499,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 31 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4676,7 +4680,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 571
+Content-Length: 570
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -4688,7 +4692,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 31 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -4897,7 +4901,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 571
+Content-Length: 570
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -4909,7 +4913,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 7, 31 ],
+    "date" : [ 2019, 9, 1 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -5053,7 +5057,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 383
+Content-Length: 382
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5062,11 +5066,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-07-31",
+  "formattedDate" : "2019-09-01",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -5221,8 +5225,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 379
 Content-Type: application/json;charset=UTF-8
+Content-Length: 378
 
 {
   "id" : "testingperformance",
@@ -5230,11 +5234,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-07-31",
+  "formattedDate" : "2019-09-01",
   "strategicIndicators" : [ "processperformance" ]
 }</code></pre>
 </div>
@@ -5405,7 +5409,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 383
+Content-Length: 382
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5414,11 +5418,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-07-31",
+  "formattedDate" : "2019-09-01",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -5708,7 +5712,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 361
+Content-Length: 360
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5717,7 +5721,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5876,8 +5880,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 357
 Content-Type: application/json;charset=UTF-8
+Content-Length: 356
 
 {
   "id" : "fasttests",
@@ -5885,7 +5889,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6044,7 +6048,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 361
+Content-Length: 360
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6053,7 +6057,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6198,7 +6202,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 361
+Content-Length: 360
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6207,7 +6211,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6374,7 +6378,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 361
+Content-Length: 360
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6383,7 +6387,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6550,7 +6554,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 361
+Content-Length: 360
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6559,7 +6563,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6724,7 +6728,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 448
+Content-Length: 447
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6733,7 +6737,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -6926,7 +6930,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 448
+Content-Length: 447
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6935,7 +6939,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 7, 31 ],
+  "date" : [ 2019, 9, 1 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -7246,7 +7250,7 @@ Content-Length: 245
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1564563093553,
+  "date" : 1567372627161,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -7589,7 +7593,7 @@ Content-Length: 46
 <h4 id="_get_quality_requirement_patterns_for_alert_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/1/qrPatterns' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/2/qrPatterns' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -7667,11 +7671,11 @@ Content-Length: 46
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 501
 Content-Type: application/json;charset=UTF-8
-Content-Length: 499
 
 [ {
-  "id" : 1,
+  "id" : 100,
   "name" : "Duplications",
   "comments" : "No comments",
   "description" : "No description",
@@ -7726,7 +7730,7 @@ Content-Length: 499
 <h4 id="_get_alert_decision_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/1/decision' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/2/decision' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -7785,7 +7789,7 @@ Content-Length: 499
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 365
+Content-Length: 364
 
 {
   "qrGoal" : "Improve the quality of the source code",
@@ -7793,7 +7797,7 @@ Content-Length: 365
   "qrDescription" : "The ratio of files without duplications should be at least the given value",
   "qrBacklogUrl" : "https://backlog.example/issue/999",
   "decisionType" : "ADD",
-  "decisionRationale" : "Very important"
+  "decisionRationale" : "User comments"
 }</code></pre>
 </div>
 </div>
@@ -7964,7 +7968,7 @@ Content-Length: 365
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/alerts/2/qr' -i -X POST \
-    -d 'prj=test&amp;rationale=Not+important&amp;patternId=100&amp;requirement=The+ratio+of+files+without+duplications+should+be+at+least+0.8&amp;description=The+ratio+of+files+without+duplications+should+be+at+least+the+given+value&amp;goal=Improve+the+quality+of+the+source+code'</code></pre>
+    -d 'prj=test&amp;rationale=User+comments&amp;patternId=100&amp;requirement=The+ratio+of+files+without+duplications+should+be+at+least+0.8&amp;description=The+ratio+of+files+without+duplications+should+be+at+least+the+given+value&amp;goal=Improve+the+quality+of+the+source+code'</code></pre>
 </div>
 </div>
 </div>
@@ -8042,7 +8046,7 @@ Content-Length: 400
 
 {
   "id" : 3,
-  "date" : 1564563093195,
+  "date" : 1567372626832,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8227,17 +8231,17 @@ Content-Length: 400
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 664
+Content-Length: 668
 
 [ {
   "id" : 3,
-  "date" : 1564563093453,
+  "date" : 1567372630504,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
   "backlogId" : "ID-999",
   "backlogUrl" : "https://backlog.example/issue/999",
-  "backlogProjectId" : "1",
+  "backlogProjectId" : "prj-1",
   "alert" : {
     "id" : 2,
     "id_element" : "id",
@@ -8246,7 +8250,7 @@ Content-Length: 664
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1564563093453,
+    "date" : 1567372630504,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -8312,7 +8316,7 @@ Content-Length: 664
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qr' -i -X POST \
-    -d 'prj=test&amp;rationale=Not+important&amp;patternId=100&amp;requirement=The+ratio+of+files+without+duplications+should+be+at+least+0.8&amp;description=The+ratio+of+files+without+duplications+should+be+at+least+the+given+value&amp;goal=Improve+the+quality+of+the+source+code'</code></pre>
+    -d 'prj=test&amp;rationale=User+comments&amp;patternId=100&amp;requirement=The+ratio+of+files+without+duplications+should+be+at+least+0.8&amp;description=The+ratio+of+files+without+duplications+should+be+at+least+the+given+value&amp;goal=Improve+the+quality+of+the+source+code'</code></pre>
 </div>
 </div>
 </div>
@@ -8390,7 +8394,7 @@ Content-Length: 400
 
 {
   "id" : 3,
-  "date" : 1564563093779,
+  "date" : 1567372630579,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8552,11 +8556,11 @@ Content-Length: 400
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 501
 Content-Type: application/json;charset=UTF-8
-Content-Length: 499
 
 [ {
-  "id" : 1,
+  "id" : 100,
   "name" : "Duplications",
   "comments" : "No comments",
   "description" : "No description",
@@ -8603,7 +8607,7 @@ Content-Length: 499
 <h4 id="_get_single_quality_requirement_pattern_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qrPatterns/1' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qrPatterns/100' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -8681,11 +8685,11 @@ Content-Length: 499
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 495
 Content-Type: application/json;charset=UTF-8
+Content-Length: 497
 
 {
-  "id" : 1,
+  "id" : 100,
   "name" : "Duplications",
   "comments" : "No comments",
   "description" : "No description",
@@ -8819,7 +8823,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_all_decisions_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/decisions?prj=test&amp;qrs=true&amp;from=2019-07-07&amp;to=2019-07-31' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/decisions?prj=test&amp;qrs=true&amp;from=2019-07-15&amp;to=2019-08-01' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -8907,17 +8911,17 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 480
 Content-Type: application/json;charset=UTF-8
-Content-Length: 477
 
 [ {
   "id" : 2,
   "type" : "ADD",
-  "date" : 1563141600000,
+  "date" : 1567372630061,
   "author" : null,
-  "rationale" : "Not important",
-  "patternId" : 1,
-  "elementId" : "duplication",
+  "rationale" : "User comments",
+  "patternId" : 100,
+  "elementId" : "duplications",
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -9045,7 +9049,7 @@ Content-Length: 477
 <div class="sect3">
 <h4 id="_get_feedback_for_strategic_indicator_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/strategicIndicator/{id}/feedback</caption>
+<caption class="title">Table 1. /api/strategicIndicators/{id}/feedback</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -9068,7 +9072,7 @@ Content-Length: 477
 <h4 id="_get_feedback_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicator/1/feedback' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/1/feedback' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -9089,13 +9093,13 @@ Content-Length: 477
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].siId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].strategicIndicatorId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator identifier</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Feedback creation date</p></td>
 </tr>
 <tr>
@@ -9104,17 +9108,12 @@ Content-Length: 477
 <td class="tableblock halign-left valign-top"><p class="tableblock">Feedback creator name</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].appUser</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Feedback creator user</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].newvalue</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].newValue</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">New strategic indicator value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].oldvalue</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].oldValue</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Old strategic indicator value</p></td>
 </tr>
@@ -9126,16 +9125,15 @@ Content-Length: 477
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 126
+Content-Length: 121
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "siId" : 1,
-  "date" : 1564563095641,
+  "strategicIndicatorId" : 1,
+  "date" : "2019-09-01",
   "author" : null,
-  "appUser" : null,
-  "newvalue" : 0.75,
-  "oldvalue" : 0.6
+  "oldValue" : 0.6,
+  "newValue" : 0.75
 } ]</code></pre>
 </div>
 </div>
@@ -9146,7 +9144,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="sect3">
 <h4 id="_get_feedback_report_for_strategic_indicator_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/strategicIndicator/{id}/feedbackReport</caption>
+<caption class="title">Table 1. /api/strategicIndicators/{id}/feedbackReport</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -9166,31 +9164,10 @@ Content-Type: application/json;charset=UTF-8
 </table>
 </div>
 <div class="sect3">
-<h4 id="_get_feedback_report_for_strategic_indicator_request_parameters">Request parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
 <h4 id="_get_feedback_report_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicator/1/feedbackReport?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/1/feedbackReport' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -10327,7 +10304,7 @@ Content-Length: 840
     "first" : 0.8,
     "second" : "Good"
   },
-  "value_description" : "Good (0,80)",
+  "value_description" : "Good (0.80)",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -10545,7 +10522,7 @@ Content-Type: application/json;charset=UTF-8
       "first" : 0.8,
       "second" : "Good"
     },
-    "value_description" : "Good (0,80)",
+    "value_description" : "Good (0.80)",
     "probabilities" : [ {
       "id" : 10,
       "label" : "Good",
@@ -10662,7 +10639,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2019-07-31' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2019-09-01' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -10714,7 +10691,7 @@ Content-Length: 132
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "date" : "2019-08-03",
+  "date" : "2019-09-04",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -10728,7 +10705,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-07-31 10:51:24 +0200
+Last updated 2019-09-01 23:18:22 +0200
 </div>
 </div>
 </body>
