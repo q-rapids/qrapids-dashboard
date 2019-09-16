@@ -2213,6 +2213,39 @@ public class StrategicIndicatorsTest {
     }
 
     @Test
+    public void assesStrategicIndicatorsLegacy() throws Exception {
+        String projectExternalId = "test";
+
+        when(strategicIndicatorsDomainController.assessStrategicIndicators(projectExternalId, null)).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/assessStrategicIndicators")
+                .param("prj", projectExternalId)
+                .param("train", "NONE");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("si/assessLegacy",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("train")
+                                        .description("Indicates if the forecasting models should be trained: " +
+                                                "NONE for no training, ONE for one method training and ALL for all methods training"),
+                                parameterWithName("from")
+                                        .description("Date of the day from which execute several assessments, one for each day since today (optional)")
+                                        .optional())
+                ));
+
+        // Verify mock interactions
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicators(projectExternalId, null);
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
+    @Test
     public void assesStrategicIndicators() throws Exception {
         String projectExternalId = "test";
 

@@ -199,6 +199,21 @@ include::{snippets}/si/assess-error/http-response.adoc[]
 :numbered:
 
 
+=== Assess strategic indicators (deprecated)
+
+NOTE: This operation is deprecated. Please, use <<Assess strategic indicators>>
+
+operation::si/assessLegacy[snippets='request-parameters,curl-request,http-response']
+
+:numbered!:
+==== HTTP response bad parameter
+include::{snippets}/si/assess-param-error/http-response.adoc[]
+
+==== HTTP response assessment error
+include::{snippets}/si/assess-error/http-response.adoc[]
+:numbered:
+
+
 === Simulate strategic indicators assessment
 
 operation::si/simulation[snippets='request-parameters,curl-request,response-fields,http-response']

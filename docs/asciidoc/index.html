@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v0.3.5, 2019-09-01">
+<meta name="author" content="v0.3.5, 2019-09-16">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v0.3.5, 2019-09-01</span><br>
+<span id="author" class="author">v0.3.5, 2019-09-16</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -460,10 +460,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_delete_strategic_indicator">2.15. Delete strategic indicator</a></li>
 <li><a href="#_fetch_strategic_indicators">2.16. Fetch strategic indicators</a></li>
 <li><a href="#_assess_strategic_indicators">2.17. Assess strategic indicators</a></li>
-<li><a href="#_simulate_strategic_indicators_assessment">2.18. Simulate strategic indicators assessment</a></li>
-<li><a href="#_get_quality_model">2.19. Get quality model</a></li>
-<li><a href="#_get_strategic_indicator_categories">2.20. Get strategic indicator categories</a></li>
-<li><a href="#_set_strategic_indicator_categories">2.21. Set strategic indicator categories</a></li>
+<li><a href="#_assess_strategic_indicators_deprecated">2.18. Assess strategic indicators (deprecated)</a></li>
+<li><a href="#_simulate_strategic_indicators_assessment">2.19. Simulate strategic indicators assessment</a></li>
+<li><a href="#_get_quality_model">2.20. Get quality model</a></li>
+<li><a href="#_get_strategic_indicator_categories">2.21. Get strategic indicator categories</a></li>
+<li><a href="#_set_strategic_indicator_categories">2.22. Set strategic indicator categories</a></li>
 </ul>
 </li>
 <li><a href="#_quality_factors">3. Quality Factors</a>
@@ -1662,7 +1663,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 668
+Content-Length: 669
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -1682,11 +1683,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-09-01",
+    "formattedDate" : "2019-09-16",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -1887,7 +1888,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 668
+Content-Length: 669
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -1907,11 +1908,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-09-01",
+    "formattedDate" : "2019-09-16",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2098,7 +2099,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 668
+Content-Length: 669
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2118,11 +2119,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-09-01",
+    "formattedDate" : "2019-09-16",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2331,7 +2332,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 668
+Content-Length: 669
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2351,11 +2352,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-09-01",
+    "formattedDate" : "2019-09-16",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2543,7 +2544,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 651
+Content-Length: 652
 
 [ {
   "id" : "processperformance",
@@ -2562,11 +2563,11 @@ Content-Length: 651
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "formattedDate" : "2019-09-01",
+    "formattedDate" : "2019-09-16",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2768,7 +2769,7 @@ Content-Length: 651
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 651
+Content-Length: 652
 
 [ {
   "id" : "processperformance",
@@ -2787,11 +2788,11 @@ Content-Length: 651
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "formattedDate" : "2019-09-01",
+    "formattedDate" : "2019-09-16",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -3284,7 +3285,7 @@ Content-Type: application/json;charset=UTF-8
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>from</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Date of the day from which execute several assessments, one for each day since today</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Date of the day from which execute several assessments, one for each day since today (optional)</p></td>
 </tr>
 </tbody>
 </table>
@@ -3323,7 +3324,83 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_simulate_strategic_indicators_assessment">2.18. Simulate strategic indicators assessment</h3>
+<h3 id="_assess_strategic_indicators_deprecated">2.18. Assess strategic indicators (deprecated)</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+This operation is deprecated. Please, use <a href="#_assess_strategic_indicators">Assess strategic indicators</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_assess_strategic_indicators_deprecated_request_parameters">Request parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>train</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Indicates if the forecasting models should be trained: NONE for no training, ONE for one method training and ALL for all methods training</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Date of the day from which execute several assessments, one for each day since today (optional)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_assess_strategic_indicators_deprecated_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/assessStrategicIndicators?prj=test&amp;train=NONE' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_assess_strategic_indicators_deprecated_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_bad_parameter_2">HTTP response bad parameter</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_assessment_error_4">HTTP response assessment error</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_simulate_strategic_indicators_assessment">2.19. Simulate strategic indicators assessment</h3>
 <div class="sect3">
 <h4 id="_simulate_strategic_indicators_assessment_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3541,7 +3618,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_quality_model">2.19. Get quality model</h3>
+<h3 id="_get_quality_model">2.20. Get quality model</h3>
 <div class="sect3">
 <h4 id="_get_quality_model_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3683,7 +3760,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_strategic_indicator_categories">2.20. Get strategic indicator categories</h3>
+<h3 id="_get_strategic_indicator_categories">2.21. Get strategic indicator categories</h3>
 <div class="sect3">
 <h4 id="_get_strategic_indicator_categories_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -3752,7 +3829,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_set_strategic_indicator_categories">2.21. Set strategic indicator categories</h3>
+<h3 id="_set_strategic_indicator_categories">2.22. Set strategic indicator categories</h3>
 <div class="sect3">
 <h4 id="_set_strategic_indicator_categories_request_fields">Request fields</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3948,7 +4025,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 471
+Content-Length: 472
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -3960,7 +4037,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4135,7 +4212,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 471
+Content-Length: 472
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -4147,7 +4224,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4300,7 +4377,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 471
+Content-Length: 472
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -4312,7 +4389,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4487,7 +4564,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 471
+Content-Length: 472
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -4499,7 +4576,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4680,7 +4757,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 570
+Content-Length: 571
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -4692,7 +4769,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -4901,7 +4978,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 570
+Content-Length: 571
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -4913,7 +4990,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2019, 9, 1 ],
+    "date" : [ 2019, 9, 16 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -5057,7 +5134,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 382
+Content-Length: 383
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5066,11 +5143,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-09-01",
+  "formattedDate" : "2019-09-16",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -5225,8 +5302,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 379
 Content-Type: application/json;charset=UTF-8
-Content-Length: 378
 
 {
   "id" : "testingperformance",
@@ -5234,11 +5311,11 @@ Content-Length: 378
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-09-01",
+  "formattedDate" : "2019-09-16",
   "strategicIndicators" : [ "processperformance" ]
 }</code></pre>
 </div>
@@ -5409,7 +5486,7 @@ Content-Length: 378
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 382
+Content-Length: 383
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5418,11 +5495,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-09-01",
+  "formattedDate" : "2019-09-16",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -5712,7 +5789,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 360
+Content-Length: 361
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5721,7 +5798,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5880,8 +5957,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 357
 Content-Type: application/json;charset=UTF-8
-Content-Length: 356
 
 {
   "id" : "fasttests",
@@ -5889,7 +5966,7 @@ Content-Length: 356
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6048,7 +6125,7 @@ Content-Length: 356
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 360
+Content-Length: 361
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6057,7 +6134,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6202,7 +6279,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 360
+Content-Length: 361
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6211,7 +6288,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6378,7 +6455,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 360
+Content-Length: 361
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6387,7 +6464,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6554,7 +6631,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 360
+Content-Length: 361
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6563,7 +6640,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6728,7 +6805,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 447
+Content-Length: 448
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6737,7 +6814,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -6930,7 +7007,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 447
+Content-Length: 448
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6939,7 +7016,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2019, 9, 1 ],
+  "date" : [ 2019, 9, 16 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -7250,7 +7327,7 @@ Content-Length: 245
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1567372627161,
+  "date" : 1568666363250,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -8046,7 +8123,7 @@ Content-Length: 400
 
 {
   "id" : 3,
-  "date" : 1567372626832,
+  "date" : 1568666362824,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8235,7 +8312,7 @@ Content-Length: 668
 
 [ {
   "id" : 3,
-  "date" : 1567372630504,
+  "date" : 1568666367140,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8250,7 +8327,7 @@ Content-Length: 668
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1567372630504,
+    "date" : 1568666367140,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -8394,7 +8471,7 @@ Content-Length: 400
 
 {
   "id" : 3,
-  "date" : 1567372630579,
+  "date" : 1568666367232,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8917,7 +8994,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : 2,
   "type" : "ADD",
-  "date" : 1567372630061,
+  "date" : 1568666366695,
   "author" : null,
   "rationale" : "User comments",
   "patternId" : 100,
@@ -9130,7 +9207,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "strategicIndicatorId" : 1,
-  "date" : "2019-09-01",
+  "date" : "2019-09-16",
   "author" : null,
   "oldValue" : 0.6,
   "newValue" : 0.75
@@ -10639,7 +10716,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2019-09-01' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2019-09-16' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -10691,7 +10768,7 @@ Content-Length: 132
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "date" : "2019-09-04",
+  "date" : "2019-09-19",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -10705,7 +10782,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-01 23:18:22 +0200
+Last updated 2019-09-16 22:42:08 +0200
 </div>
 </div>
 </body>

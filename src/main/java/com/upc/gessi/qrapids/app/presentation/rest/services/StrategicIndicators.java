@@ -405,6 +405,15 @@ public class StrategicIndicators {
         NONE, ONE, ALL
     }
 
+    @RequestMapping("/api/assessStrategicIndicators")
+    @ResponseStatus(HttpStatus.OK)
+    public void assesStrategicIndicatorsLegacy(@RequestParam(value = "prj", required=false) String prj,
+                                  @RequestParam(value = "from", required=false) String from,
+                                  @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType) {
+
+        assesStrategicIndicators(prj, from, trainType);
+    }
+
     @GetMapping("/api/strategicIndicators/assess")
     @ResponseStatus(HttpStatus.OK)
     public void assesStrategicIndicators(@RequestParam(value = "prj", required=false) String prj,
