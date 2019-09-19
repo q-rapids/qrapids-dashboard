@@ -281,6 +281,34 @@ public class StrategicIndicatorsController {
         return correct;
     }
 
+    // TODO New Funcion for assessStrategicIndicator to concrete project
+    public boolean assessStrategicIndicator(String name, String prj) throws IOException, CategoriesException {
+        boolean correct = false;
+        // Local date to be used as evaluation date
+        Date input = new Date();
+        LocalDate evaluationDate = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // Strategic Indicator
+        Strategic_Indicator si = strategicIndicatorRepository.findByName(name);
+
+        // All the factors' assessment from QMA external service
+        Factors factorsQma= new Factors();
+
+        // We will compute the evaluation values for the SI for THIS CONCRETE component
+
+        // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
+        factorsQma.setFactors(qualityFactorsController.getAllFactorsEvaluation(prj));
+        factorsQma.clearStrategicIndicatorsRelations(evaluationDate, name);
+
+        correct = assessStrategicIndicator(evaluationDate, prj, si, factorsQma);
+
+        // 3. When all the strategic indicators is calculated, we need to update the factors with the information of
+        // the strategic indicators using them
+        qualityFactorsController.setFactorStrategicIndicatorRelation(factorsQma.getFactors(), prj);
+
+        return correct;
+    }
+
     private boolean assessStrategicIndicator(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, Factors factorsQMA)
             throws IOException {
         boolean correct = true;

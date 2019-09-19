@@ -298,7 +298,12 @@ public class StrategicIndicators {
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Project project = projectsController.findProjectByExternalId(prj);
                 strategicIndicatorsController.saveStrategicIndicator(name, description, file, qualityFactors, project);
+                /*
                 if (!strategicIndicatorsController.assessStrategicIndicator(name)) {
+                    throw new AssessmentErrorException();
+                }
+                */
+                if (!strategicIndicatorsController.assessStrategicIndicator(name, prj)) {
                     throw new AssessmentErrorException();
                 }
             }
@@ -319,9 +324,15 @@ public class StrategicIndicators {
             String description;
             byte[] file = null;
             List<String> qualityFactors;
+
+            String prj;
+
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
+
+                prj = request.getParameter("prj");
+
                 if (network != null) {
                     file = IOUtils.toByteArray(network.getInputStream());
                 }
@@ -336,7 +347,12 @@ public class StrategicIndicators {
                 List<String> strategicIndicatorQualityFactors = oldStrategicIndicator.getQuality_factors();
                 boolean sameFactors = (strategicIndicatorQualityFactors.size() == qualityFactors.size());
                 sameFactors = isSameFactors(qualityFactors, strategicIndicatorQualityFactors, sameFactors);
+                /*
                 if (!sameFactors && !strategicIndicatorsController.assessStrategicIndicator(name)) {
+                    throw new AssessmentErrorException();
+                }
+                */
+                if (!sameFactors || !strategicIndicatorsController.assessStrategicIndicator(name, prj)) {
                     throw new AssessmentErrorException();
                 }
             }
