@@ -243,6 +243,30 @@ function getChosenProject(currentProjectId) {
 			};
 			saveBtnRow.appendChild(milestonesBtn);
 
+			var phasesBtn = document.createElement('button');
+			phasesBtn.classList.add("btn");
+			phasesBtn.classList.add("btn-primary");
+			phasesBtn.setAttribute("id", "phasesBtn");
+			phasesBtn.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+			phasesBtn.appendChild(document.createTextNode("Show phases"));
+			phasesBtn.onclick = function () {
+				jQuery.ajax({
+					url: "../api/phases?prj=" + data.externalId,
+					type: "GET",
+					async: true,
+					success: function (phases) {
+						if (phases.length > 0) {
+							$("#phasesItems").empty();
+							phases.forEach(function (phase) {
+								$("#phasesItems").append('<tr class="phaseItem"><td>' + phase.dateFrom + '</td><td>' + phase.dateTo + '</td><td>' + phase.name + '</td><td>' + phase.description + '</td></tr>');
+							});
+							$("#phasesModal").modal();
+						}
+					}
+				})
+			};
+			saveBtnRow.appendChild(phasesBtn);
+
     		var saveBtn = document.createElement('button');
     		saveBtn.classList.add("btn");
     		saveBtn.classList.add("btn-primary");

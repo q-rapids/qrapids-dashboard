@@ -160,6 +160,10 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
     id = "QualityModel";
     highlightAndSaveCurrentAssessment(id);
     disableViewModeAndTimeOption();
+} else if (currentURL.search("/Phases") !== -1) {
+    id = "Phases";
+    highlightAndSaveCurrentAssessment(id);
+    disableViewModeAndTimeOption();
 } else if (currentURL.search("/Products/Evaluation") !== -1) {
     id = "Evaluation";
     highlightandSaveCurrentProducts(id);
@@ -283,6 +287,8 @@ $("#QualityRequirements").attr("href", serverUrl + "/QualityRequirements");
 $("#Decisions").attr("href", serverUrl + "/Decisions");
 
 $("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel");
+
+$("#Phases").attr("href", serverUrl + "/Phases");
 
 $("#Products").attr("href", serverUrl + "/Products/" + products);
 

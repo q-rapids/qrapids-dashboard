@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -63,6 +64,28 @@ public class Util {
         milestoneList.add(new DTOMilestone(date3.toString(), "Version 1.5", "Version 1.5 adding new features", type));
 
         return milestoneList;
+    }
+
+    @GetMapping("/api/phasesTest")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOPhase> getPhasesTest(@RequestParam("project_id") String projectId, @RequestParam(value = "date_from", required = false) String dateFrom) {
+        List<DTOPhase> phaseList = new ArrayList<>();
+
+        LocalDate date_from = LocalDate.now();
+        LocalDate date_to = date_from.plusDays(30);
+        phaseList.add(new DTOPhase(date_from.toString(), "Project set-up", "Eliciting project goals & setting-up the infrastruture and teams", date_to.toString()));
+
+        LocalDate date2_from = LocalDate.now();
+        date2_from = date2_from.plusDays(30);
+        LocalDate date2_to = date2_from.plusDays(30);
+        phaseList.add(new DTOPhase(date2_from.toString(), "Design", "Defining project requirements and initial design", date2_to.toString()));
+
+        LocalDate date3_from = LocalDate.now();
+        date3_from = date3_from.plusDays(60);
+        LocalDate date3_to = date3_from.plusDays(90);
+        phaseList.add(new DTOPhase(date3_from.toString(), "Development", "Development, Testing, and Releasing", date3_to.toString()));
+
+        return phaseList;
     }
 
     @GetMapping("api/me")

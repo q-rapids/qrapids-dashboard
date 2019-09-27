@@ -235,5 +235,33 @@
         </div>
     </th:block>
 
+    <th:block th:fragment="phasesModal">
+        <div class="modal fade" id="phasesModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Phases list</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table id="phasesTable" class="phasesTable">
+                            <thead>
+                            <tr class="phaseItem">
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody id = "phasesItems">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
 </body>
 </html>
