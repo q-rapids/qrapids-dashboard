@@ -1814,7 +1814,7 @@ public class StrategicIndicatorsTest {
         File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
 
-        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName())).thenReturn(true);
+        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName(),strategicIndicator.getProject().getExternalId())).thenReturn(true);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1850,7 +1850,7 @@ public class StrategicIndicatorsTest {
         verifyNoMoreInteractions(projectsController);
 
         verify(strategicIndicatorsDomainController, times(1)).saveStrategicIndicator(eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getQuality_factors()), eq(project));
-        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName());
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getProject().getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
@@ -1864,7 +1864,7 @@ public class StrategicIndicatorsTest {
         File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
 
-        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName())).thenReturn(false);
+        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getProject().getExternalId())).thenReturn(false);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1887,7 +1887,7 @@ public class StrategicIndicatorsTest {
         verifyNoMoreInteractions(projectsController);
 
         verify(strategicIndicatorsDomainController, times(1)).saveStrategicIndicator(eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getQuality_factors()), eq(project));
-        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName());
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getProject().getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 

@@ -281,7 +281,7 @@ public class StrategicIndicatorsController {
         return correct;
     }
 
-    // TODO New Funcion for assessStrategicIndicator to concrete project
+    // TODO New Funcion for AssessStrategicIndicator to concrete project
     public boolean assessStrategicIndicator(String name, String prj) throws IOException, CategoriesException {
         boolean correct = false;
         // Local date to be used as evaluation date
