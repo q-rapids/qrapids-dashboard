@@ -325,13 +325,9 @@ public class StrategicIndicators {
             byte[] file = null;
             List<String> qualityFactors;
 
-            String prj;
-
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
-
-                //prj = request.getParameter("prj");
 
                 if (network != null) {
                     file = IOUtils.toByteArray(network.getInputStream());
@@ -347,14 +343,14 @@ public class StrategicIndicators {
                 List<String> strategicIndicatorQualityFactors = oldStrategicIndicator.getQuality_factors();
                 boolean sameFactors = (strategicIndicatorQualityFactors.size() == qualityFactors.size());
                 sameFactors = isSameFactors(qualityFactors, strategicIndicatorQualityFactors, sameFactors);
+                /*
                 if (!sameFactors && !strategicIndicatorsController.assessStrategicIndicator(name)) {
                     throw new AssessmentErrorException();
                 }
-                /*
-                if (!sameFactors || !strategicIndicatorsController.assessStrategicIndicator(name, prj)) {
+                */
+                if (!sameFactors && !strategicIndicatorsController.assessStrategicIndicator(name, oldStrategicIndicator.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }
-                */
             }
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);

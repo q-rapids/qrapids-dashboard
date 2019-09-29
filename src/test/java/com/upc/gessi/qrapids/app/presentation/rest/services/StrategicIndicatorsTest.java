@@ -1955,7 +1955,7 @@ public class StrategicIndicatorsTest {
         qualityFactors.add("testingperformance");
 
         when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicator.getId())).thenReturn(strategicIndicator);
-        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName())).thenReturn(true);
+        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId())).thenReturn(true);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1982,7 +1982,7 @@ public class StrategicIndicatorsTest {
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
         verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(qualityFactors));
-        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName());
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
@@ -2001,7 +2001,7 @@ public class StrategicIndicatorsTest {
         qualityFactors.add("testingperformance");
 
         when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicator.getId())).thenReturn(strategicIndicator);
-        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName())).thenReturn(false);
+        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId())).thenReturn(false);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -2028,7 +2028,7 @@ public class StrategicIndicatorsTest {
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
         verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(qualityFactors));
-        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName());
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
