@@ -179,7 +179,7 @@ public class StrategicIndicatorsController {
         qmaForecast.trainFactorForecast(factors, "7", project, technique);
     }
 
-    public boolean assessStrategicIndicators(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException {
+    public boolean assessStrategicIndicators(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
         boolean correct = true;
         if (dateFrom != null) {
             LocalDate dateTo = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -193,7 +193,7 @@ public class StrategicIndicatorsController {
         return correct;
     }
 
-    private boolean assessDateStrategicIndicators(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException {
+    private boolean assessDateStrategicIndicators(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
         boolean correct = true;
 
         // if there is no specific project as a parameter, all the projects are assessed
@@ -211,7 +211,7 @@ public class StrategicIndicatorsController {
         return correct;
     }
 
-    private boolean assessDateProjectStrategicIndicators(String project, LocalDate evaluationDate) throws IOException, CategoriesException {
+    private boolean assessDateProjectStrategicIndicators(String project, LocalDate evaluationDate) throws IOException, ProjectNotFoundException {
         Factors factorsQma= new Factors(); //factors list, each of them includes list of SI in which is involved
         List<DTOFactor> factorList;
 
@@ -228,9 +228,10 @@ public class StrategicIndicatorsController {
         return assessProjectStrategicIndicators(evaluationDate, project, factorsQma);
     }
 
-    private boolean assessProjectStrategicIndicators(LocalDate evaluationDate, String  project, Factors factorsQMA) throws IOException {
+    private boolean assessProjectStrategicIndicators(LocalDate evaluationDate, String  projectExternalId, Factors factorsQMA) throws IOException, ProjectNotFoundException {
         // List of ALL the strategic indicators in the local database
-        Iterable<Strategic_Indicator> strategicIndicatorIterable = strategicIndicatorRepository.findAll();
+        Project project = projectsController.findProjectByExternalId(projectExternalId);
+        Iterable<Strategic_Indicator> strategicIndicatorIterable = strategicIndicatorRepository.findByProject_Id(project.getId());
 
         boolean correct = true;
 
@@ -240,12 +241,12 @@ public class StrategicIndicatorsController {
         // 2.- We will compute the evaluation values for the SIs, adding the corresponding relations to the factors
         //      used for these computation
         for (Strategic_Indicator si : strategicIndicatorIterable) {
-            correct = assessStrategicIndicator(evaluationDate, project, si, factorsQMA);
+            correct = assessStrategicIndicator(evaluationDate, projectExternalId, si, factorsQMA);
         }
 
         // 3. When all the strategic indicators is calculated, we need to update the factors with the information of
         // the strategic indicators using them
-        qualityFactorsController.setFactorStrategicIndicatorRelation(factorsQMA.getFactors(), project);
+        qualityFactorsController.setFactorStrategicIndicatorRelation(factorsQMA.getFactors(), projectExternalId);
 
         return correct;
     }
@@ -282,14 +283,15 @@ public class StrategicIndicatorsController {
     }
 
     // TODO New Funcion for AssessStrategicIndicator to concrete project
-    public boolean assessStrategicIndicator(String name, String prj) throws IOException, CategoriesException {
+    public boolean assessStrategicIndicator(String name, String prj) throws IOException, ProjectNotFoundException {
         boolean correct = false;
         // Local date to be used as evaluation date
         Date input = new Date();
         LocalDate evaluationDate = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
         // Strategic Indicator
-        Strategic_Indicator si = strategicIndicatorRepository.findByName(name);
+        Project project = projectsController.findProjectByExternalId(prj);
+        Strategic_Indicator si = strategicIndicatorRepository.findByNameAndProject_Id(name, project.getId());
 
         // All the factors' assessment from QMA external service
         Factors factorsQma= new Factors();

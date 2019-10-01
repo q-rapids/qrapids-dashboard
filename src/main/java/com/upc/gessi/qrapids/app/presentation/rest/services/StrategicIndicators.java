@@ -338,9 +338,9 @@ public class StrategicIndicators {
             }
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Strategic_Indicator oldStrategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
+                List<String> strategicIndicatorQualityFactors = oldStrategicIndicator.getQuality_factors();
                 strategicIndicatorsController.editStrategicIndicator(id, name, description, file, qualityFactors);
 
-                List<String> strategicIndicatorQualityFactors = oldStrategicIndicator.getQuality_factors();
                 boolean sameFactors = (strategicIndicatorQualityFactors.size() == qualityFactors.size());
                 sameFactors = isSameFactors(qualityFactors, strategicIndicatorQualityFactors, sameFactors);
                 /*
