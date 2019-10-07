@@ -1,89 +1,160 @@
-// HeatMap Options
-var data;
-var myranges = [{
-    from: 0,
-    to: 34,
-    name: 'Good',
-    color: '#00A100'
-},
-    {
-        from: 35,
-        to: 67,
-        name: 'Neutral',
-        color: '#FFB200'
+var r = []; // ranges
+var p = []; // phases
+var s = []; // series
+
+var options = {
+    chart: {
+        height: 350,
+        type: 'heatmap',
     },
+    plotOptions: {
+        heatmap: {
+            shadeIntensity: 0.5,
+
+            colorScale: {
+                ranges: [{
+                    from: 0,
+                    to: 50,
+                    color: "#0000ff",
+                    name: "undefined",
+                }]
+            }
+        }
+    },
+    series: [],
+    dataLabels: {
+        enabled: false
+    },
+    title: {
+        text: 'HeatMap Chart with Color Range'
+    }
+};
+
+var HeatMap = new ApexCharts(document.querySelector("#HeatMap"), options);
+HeatMap.render();
+var ser = [
     {
-        from: 68,
-        to: 100,
-        name: 'Bad',
-        color: '#FF0000'
+        name: "Series 1",
+        data: [45, 52, 38, 24, 33, 26, 21, 20, 6, 8, 15, 10]
     }
 ];
+HeatMap.appendSeries(ser);
+HeatMap.render();
+
+function getPhasesList () {
+    $.getJSON("../api/phases")
+        .then (function(phases) {
+            if (phases.length > 0) {
+                phases.forEach(function (ph) {
+                    p.push({
+                        from: ph.dateFrom,
+                        to: ph.dateTo,
+                        name: ph.name
+                    });
+                });
+            }
+        });
+    console.log("p: ");
+    console.log(p);
+}
 
 function checkCategories() {
-    $.ajax({
-        url: '../api/strategicIndicators/categories',
-        type: "GET",
-        success: function(categories) {
+    $.getJSON("../api/strategicIndicators/categories")
+        .then (function(categories) {
             if (categories.length === 0) {
-                alert("You need to define Strategic Indicator categories in order to see the chart correctly. " +
+                alert("You need to define Strategic Indicator categories in order to see the heatmap correctly. " +
                     "Please, go to the Categories section of the Configuration menu and define them.");
             } else {
-                cat = categories;
                 var f = 0;
-                var plus = (100/categories.length);
+                var plus = (100 / categories.length);
                 categories.forEach(function (cat) {
                     var aux = Math.round(f);
                     var aux2 = Math.round(f+plus);
-                    myranges.push({
+                    r.push({
                         from: aux,
                         to: aux2,
                         name: cat.name,
                         color: cat.color
                     });
-                    f += plus;
+                    f += (plus);
                 });
-                console.log(myranges);
+                console.log("r: ");
+                console.log(r);
+            }
+        });
+}
+
+
+
+function getData() {
+    var today = new Date();
+    var aux = [];
+    var todayTextDate = parseDate(today);
+    // must be the datefrom of first phase
+    var date = new Date(today.getFullYear(), 0, 1);
+    var textDate = parseDate(date);
+    $.ajax({
+        url: "../api/strategicIndicators/historical?" + "from=" + textDate + "&to=" + todayTextDate,
+        type: "GET",
+        success: function(data) {
+            if (data.length === 0) {
+                alert("No data about Strategic Indicators for phases of this project.");
+            } else {
+                console.log(data);
+                data.forEach(function (d) {
+                    if (aux.length == 0) {
+                        s.push({
+                            name: d.name,
+                            data: [{x: "P1", y: 1}, {x: "P2", y: 5}, {x: "P3", y: 8}]
+                        });
+                        aux.push(d.name);
+                    } else {
+                        if (!aux.includes(d.name)) {
+                            s.push({
+                                name: d.name,
+                                data: [{x: "P1", y: 1}, {x: "P2", y: 5}, {x: "P3", y: 8}]
+                            });
+                            aux.push(d.name);
+                        }
+                    }
+                });
             }
         }
     });
+    console.log("series: ");
+    console.log(s);
 }
-checkCategories();
 
-function getData() {
-    var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/strategicIndicators/current";
-    if (serverUrl) {
-        url = serverUrl + url;
-    }
-    jQuery.ajax({
-        dataType: "json",
-        url: url,
-        cache: false,
-        type: "GET",
-        async: true,
-        success: function (callData) {
-            data = callData;
-            //drawChart("gaugeChart", width, height, showButtons, chartHyperlinked, color);
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status == 409)
-                alert("Your datasource and DB categories IDs do not match.");
-            else if (jqXHR.status == 400)
-                alert("Datasource connection failed.");
+function mode(arr) {
+    var numMapping = {};
+    var greatestFreq = 0;
+    var mode;
+    arr.forEach(function findMode(number) {
+        numMapping[number] = (numMapping[number] || 0) + 1;
+
+        if (greatestFreq < numMapping[number]) {
+            greatestFreq = numMapping[number];
+            mode = number;
         }
     });
-    console.log(data);
+    return mode;
 }
 
-function sortDataAlphabetically () {
-    function compare (a, b) {
-        if (a.id < b.id) return -1;
-        else if (a.id > b.id) return 1;
-        else return 0;
+function parseDate(date) {
+    var date = new Date(date);
+    var dd = date.getDate();
+    var mm = date.getMonth() + 1; //January is 0!
+    var yyyy = date.getFullYear();
+
+    if(dd < 10) {
+        dd = '0' + dd;
     }
-    data.sort(compare);
-    console.log(data);
+    if(mm < 10) {
+        mm = '0' + mm;
+    }
+
+    var stringDate = yyyy + '-' + mm + '-' + dd;
+    return stringDate
 }
 
 function generateData(count, yrange) {
@@ -103,113 +174,5 @@ function generateData(count, yrange) {
 }
 
 
-var options = {
-    chart: {
-        height: 350,
-        type: 'heatmap',
-    },
-    plotOptions: {
-        heatmap: {
-            shadeIntensity: 0.5,
 
-            colorScale: {
-                ranges: myranges
-                    /*[{
-                    from: -30,
-                    to: 5,
-                    name: 'low',
-                    color: '#00A100'
-                },
-                    {
-                        from: 6,
-                        to: 45,
-                        name: 'high',
-                        color: '#FFB200'
-                    },
-                    {
-                        from: 46,
-                        to: 55,
-                        name: 'extreme',
-                        color: '#FF0000'
-                    }
-                ]*/
-            }
-        }
-    },
-    dataLabels: {
-        enabled: false
-    },
-    series: [{
-        name: 'Jan',
-        data: generateData(20, {
-            min: 0,
-            max: 100
-        })
-    },
-        {
-            name: 'Feb',
-            data: generateData(20, {
-                min: 0,
-                max: 100
-            })
-        },
-        {
-            name: 'Mar',
-            data: generateData(20, {
-                min: 0,
-                max: 100
-            })
-        },
-        {
-            name: 'Apr',
-            data: generateData(20, {
-                min: 0,
-                max: 100
-            })
-        },
-        {
-            name: 'May',
-            data: generateData(20, {
-                min: 0,
-                max: 100
-            })
-        },
-        {
-            name: 'Jun',
-            data: generateData(20, {
-                min: 0,
-                max: 100
-            })
-        },
-        {
-            name: 'Jul',
-            data: generateData(20, {
-                min: 0,
-                max: 100
-            })
-        },
-        {
-            name: 'Aug',
-            data: generateData(20, {
-                min: 0,
-                max: 100
-            })
-        },
-        {
-            name: 'Sep',
-            data: generateData(20, {
-                min: 0,
-                max: 100
-            })
-        }
-    ],
-    title: {
-        text: 'HeatMap Chart with Color Range'
-    },
-
-}
-// Init HeatMap
-var HeatMap = new ApexCharts(document.querySelector("#HeatMap"), options);
-// Render HeatMap
-HeatMap.render();
 

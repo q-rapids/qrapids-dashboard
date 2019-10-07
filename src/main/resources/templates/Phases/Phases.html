@@ -21,9 +21,11 @@
 <script type="text/javascript" src="../../static/js/phases.js" th:src="@{/js/phases.js}"></script>
 <script>
     window.onload = function() {
-        getData();
+        checkCategories();
+        getPhasesList ();
     };
 </script>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" th:src="@{/js/app/app.services.js}"></script>
 </html>
