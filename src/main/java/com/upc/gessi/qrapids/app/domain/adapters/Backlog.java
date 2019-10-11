@@ -81,7 +81,7 @@ public class Backlog {
                         int i = 0;
                         boolean b = false;
                         while (i < dtoMilestonesList.size() && !b) {
-                            if (dtoMilestonesList.get(i).getDate().compareTo(dateFrom.toString()) == 1) b = true;
+                            if (dtoMilestonesList.get(i).getDate().compareTo(dateFrom.toString()) > 0) b = true;
                             else {
                                 dtoMilestonesList.remove(i);
                             }
@@ -116,7 +116,7 @@ public class Backlog {
                         int i = 0;
                         boolean b = false;
                         while (i < dtoPhasesList.size() && !b) {
-                            if (dtoPhasesList.get(i).getDateFrom().compareTo(dateFrom.toString()) == 1) b = true;
+                            if (dtoPhasesList.get(i).getDateFrom().compareTo(dateFrom.toString()) > 0) b = true;
                             else {
                                 dtoPhasesList.remove(i);
                             }

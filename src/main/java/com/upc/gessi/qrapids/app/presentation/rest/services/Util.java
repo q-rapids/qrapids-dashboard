@@ -73,22 +73,9 @@ public class Util {
     public List<DTOPhase> getPhasesTest(@RequestParam("project_id") String projectId, @RequestParam(value = "date_from", required = false) String dateFrom) {
         List<DTOPhase> phaseList = new ArrayList<>();
 
-        LocalDate date_from = LocalDate.now();
-        LocalDate date_to = date_from.plusDays(30);
-
-
-        LocalDate date2_from = LocalDate.now();
-        date2_from = date2_from.plusDays(30);
-        LocalDate date2_to = date2_from.plusDays(30);
-
-
-        LocalDate date3_from = LocalDate.now();
-        date3_from = date3_from.plusDays(60);
-        LocalDate date3_to = date3_from.plusDays(90);
-
-        phaseList.add(new DTOPhase(date2_from.toString(), "Design", "Defining project requirements and initial design", date2_to.toString()));
-        phaseList.add(new DTOPhase(date_from.toString(), "Project set-up", "Eliciting project goals & setting-up the infrastruture and teams", date_to.toString()));
-        phaseList.add(new DTOPhase(date3_from.toString(), "Development", "Development, Testing, and Releasing", date3_to.toString()));
+        phaseList.add(new DTOPhase("2019-03-15", "Design", "Defining project requirements and initial design", "2019-05-25"));
+        phaseList.add(new DTOPhase("2019-02-01", "Project set-up", "Eliciting project goals & setting-up the infrastruture and teams", "2019-03-15"));
+        phaseList.add(new DTOPhase("2019-05-25", "Development", "Development, Testing and Releasing", "2019-12-15"));
 
         return phaseList;
     }

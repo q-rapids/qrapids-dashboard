@@ -251,7 +251,7 @@ function disableViewModeAndTimeOption () {
 //         --> time and viewMode variables filled
 ///////////////////////////////////////////////////////////////////
 
-if (assessment === "QualityModel") $("#Assessment").attr("href", serverUrl + "/" + assessment);
+if (assessment === "QualityModel" || assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
 else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
@@ -288,7 +288,7 @@ $("#Decisions").attr("href", serverUrl + "/Decisions");
 
 $("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel");
 
-$("#Phases").attr("href", serverUrl + "/Phases");
+$("#PhasesAssessment").attr("href", serverUrl + "/Phases");
 
 $("#Products").attr("href", serverUrl + "/Products/" + products);
 

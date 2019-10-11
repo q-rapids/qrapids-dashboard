@@ -5,10 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller("/Phases")
 public class PhasesController {
-
     @RequestMapping("/Phases")
-    public String Phases(){
+    public String CurrentChart(){
         return "Phases/Phases";
     }
-
 }

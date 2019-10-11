@@ -2236,7 +2236,7 @@ public class StrategicIndicatorsTest {
                                         .description("Indicates if the forecasting models should be trained: " +
                                                 "NONE for no training, ONE for one method training and ALL for all methods training"),
                                 parameterWithName("from")
-                                        .description("Date of the day from which execute several assessments, one for each day since today (optional)")
+                                        .description("Date of the day (yyyy-mm-dd) from which execute several assessments, one for each day since today (optional)")
                                         .optional())
                 ));
 
@@ -2269,7 +2269,7 @@ public class StrategicIndicatorsTest {
                                         .description("Indicates if the forecasting models should be trained: " +
                                         "NONE for no training, ONE for one method training and ALL for all methods training"),
                                 parameterWithName("from")
-                                        .description("Date of the day from which execute several assessments, one for each day since today (optional)")
+                                        .description("Date of the day (yyyy-mm-dd) from which execute several assessments, one for each day since today (optional)")
                                         .optional())
                 ));
 
