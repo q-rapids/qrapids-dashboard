@@ -57,7 +57,25 @@ function checkProducts () {
         }
     });
 }
+
+function checkPhases () {
+    jQuery.ajax({
+        dataType: "json",
+        url: serverUrl + "/api/phases",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            if (data.length > 0)
+                $("#PhasesAssessment").show();
+            else
+                $("#PhasesAssessment").hide();
+        }
+    });
+}
+
 checkProducts();
+checkPhases();
 
 // Load state from sessionStorage
 // If missing, set default values

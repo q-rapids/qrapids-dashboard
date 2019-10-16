@@ -63,7 +63,6 @@ public class Util {
         milestoneList.add(new DTOMilestone(date3.toString(), "Version 1.5", "Version 1.5 adding new features", type));
         milestoneList.add(new DTOMilestone(date.toString(), "Version 1.3", "Version 1.3 adding new features", type));
         milestoneList.add(new DTOMilestone(date2.toString(), "Version 1.4", "Version 1.4 adding new features", type));
-        milestoneList.add(new DTOMilestone("2019-08-15", "Version 1.2", "Version 1.2 adding new features", type));
 
         return milestoneList;
     }
@@ -73,9 +72,29 @@ public class Util {
     public List<DTOPhase> getPhasesTest(@RequestParam("project_id") String projectId, @RequestParam(value = "date_from", required = false) String dateFrom) {
         List<DTOPhase> phaseList = new ArrayList<>();
 
-        phaseList.add(new DTOPhase("2019-03-15", "Design", "Defining project requirements and initial design", "2019-05-25"));
-        phaseList.add(new DTOPhase("2019-02-01", "Project set-up", "Eliciting project goals & setting-up the infrastruture and teams", "2019-03-15"));
-        phaseList.add(new DTOPhase("2019-05-25", "Development", "Development, Testing and Releasing", "2019-12-15"));
+        // today phase
+        LocalDate date4_from = LocalDate.now().minusMonths(1);
+        LocalDate date4_to = date4_from.plusMonths(2);
+
+        // future phase
+        LocalDate date5_from = date4_to;
+        LocalDate date5_to = date5_from.plusMonths(1);
+
+        // past phases
+        LocalDate date3_from = date4_from.minusMonths(3);
+        LocalDate date3_to = date4_from;
+
+        LocalDate date2_from = date3_from.minusMonths(2);
+        LocalDate date2_to = date3_from;
+
+        LocalDate date1_from = date2_from.minusMonths(1);
+        LocalDate date1_to = date2_from;
+
+        phaseList.add(new DTOPhase(date3_from.toString(), "Development", "Implementation of the project functionalities", date3_to.toString()));
+        phaseList.add(new DTOPhase(date2_from.toString(), "Design", "Defining project requirements and initial design", date2_to.toString()));
+        phaseList.add(new DTOPhase(date4_from.toString(), "Testing", "Testing of the project functionalities", date4_to.toString()));
+        phaseList.add(new DTOPhase(date1_from.toString(), "Project set-up", "Eliciting project goals & setting-up the infrastruture and teams", date1_to.toString()));
+        phaseList.add(new DTOPhase(date5_from.toString(), "Closing", "Releasing the final deliverables to the customer and communicating the closure of the project to all stakeholders", date5_to.toString()));
 
         return phaseList;
     }
