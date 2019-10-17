@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v0.3.5, 2019-10-09">
+<meta name="author" content="v0.3.5, 2019-10-17">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v0.3.5, 2019-10-09</span><br>
+<span id="author" class="author">v0.3.5, 2019-10-17</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -553,6 +553,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_get_forecasting_techniques">11.1. Get forecasting techniques</a></li>
 <li><a href="#_get_project_milestones">11.2. Get project milestones</a></li>
+<li><a href="#_get_project_phases">11.3. Get project phases</a></li>
 </ul>
 </li>
 </ul>
@@ -1687,8 +1688,8 @@ Content-Length: 694
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-10-17",
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2019-10-17"
   } ]
 } ]</code></pre>
 </div>
@@ -1912,8 +1913,8 @@ Content-Length: 694
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-10-17",
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2019-10-17"
   } ]
 } ]</code></pre>
 </div>
@@ -2123,8 +2124,8 @@ Content-Length: 694
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-10-17",
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2019-10-17"
   } ]
 } ]</code></pre>
 </div>
@@ -2356,8 +2357,8 @@ Content-Length: 694
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2019-10-17",
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2019-10-17"
   } ]
 } ]</code></pre>
 </div>
@@ -2567,8 +2568,8 @@ Content-Type: application/json;charset=UTF-8
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "formattedDate" : "2019-10-17",
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2019-10-17"
   } ]
 } ]</code></pre>
 </div>
@@ -2792,8 +2793,8 @@ Content-Type: application/json;charset=UTF-8
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "formattedDate" : "2019-10-17",
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2019-10-17"
   } ]
 } ]</code></pre>
 </div>
@@ -5147,8 +5148,8 @@ Content-Type: application/json;charset=UTF-8
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-10-17",
-  "strategicIndicators" : [ "processperformance" ]
+  "strategicIndicators" : [ "processperformance" ],
+  "formattedDate" : "2019-10-17"
 } ]</code></pre>
 </div>
 </div>
@@ -5315,8 +5316,8 @@ Content-Type: application/json;charset=UTF-8
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-10-17",
-  "strategicIndicators" : [ "processperformance" ]
+  "strategicIndicators" : [ "processperformance" ],
+  "formattedDate" : "2019-10-17"
 }</code></pre>
 </div>
 </div>
@@ -5499,8 +5500,8 @@ Content-Type: application/json;charset=UTF-8
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2019-10-17",
-  "strategicIndicators" : [ "processperformance" ]
+  "strategicIndicators" : [ "processperformance" ],
+  "formattedDate" : "2019-10-17"
 } ]</code></pre>
 </div>
 </div>
@@ -7327,7 +7328,7 @@ Content-Length: 257
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1571300812037,
+  "date" : 1571303101681,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -8123,7 +8124,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1571300811771,
+  "date" : 1571303101244,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8312,7 +8313,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : 3,
-  "date" : 1571300814452,
+  "date" : 1571303104508,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8327,7 +8328,7 @@ Content-Type: application/json;charset=UTF-8
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1571300814452,
+    "date" : 1571303104508,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -8471,7 +8472,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1571300814583,
+  "date" : 1571303104602,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8994,7 +8995,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : 2,
   "type" : "ADD",
-  "date" : 1571300812956,
+  "date" : 1571303102478,
   "author" : null,
   "rationale" : "User comments",
   "patternId" : 100,
@@ -10777,12 +10778,104 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_get_project_phases">11.3. Get project phases</h3>
+<div class="sect3">
+<h4 id="_get_project_phases_request_parameters">Request parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum phase date (yyyy-mm-dd)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_project_phases_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/phases?prj=test' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_project_phases_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].dateFrom</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase from date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].dateTo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Phase to date</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_project_phases_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 156
+
+[ {
+  "dateFrom" : "2019-10-02",
+  "name" : "Development",
+  "description" : "Implementation of project functionalities",
+  "dateTo" : "2019-11-01"
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-09 12:32:34 +0200
+Last updated 2019-10-17 10:54:11 +0200
 </div>
 </div>
 </body>

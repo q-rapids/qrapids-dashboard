@@ -843,3 +843,7 @@ operation::forecast/techniques[snippets='curl-request,response-fields,http-respo
 === Get project milestones
 
 operation::milestones/get-from-date[snippets='request-parameters,curl-request,response-fields,http-response']
+
+=== Get project phases
+
+operation::phases/get-from-date[snippets='request-parameters,curl-request,response-fields,http-response']

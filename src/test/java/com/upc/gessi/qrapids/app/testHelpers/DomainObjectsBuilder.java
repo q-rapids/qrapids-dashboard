@@ -534,4 +534,14 @@ public class DomainObjectsBuilder {
         milestoneList.add(new DTOMilestone(date.toString(), milestoneName, milestoneDescription, milestoneType));
         return milestoneList;
     }
+
+    public List<DTOPhase> buildDTOPhaseList () {
+        LocalDate dateFrom = LocalDate.now().minusDays(15);
+        LocalDate dateTo = LocalDate.now().plusDays(15);
+        String phaseName = "Development";
+        String phaseDescription = "Implementation of project functionalities";
+        List<DTOPhase> phaseList = new ArrayList<>();
+        phaseList.add(new DTOPhase(dateFrom.toString(), phaseName, phaseDescription, dateTo.toString()));
+        return phaseList;
+    }
 }
