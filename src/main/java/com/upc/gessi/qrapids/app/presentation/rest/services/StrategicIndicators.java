@@ -298,11 +298,6 @@ public class StrategicIndicators {
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Project project = projectsController.findProjectByExternalId(prj);
                 strategicIndicatorsController.saveStrategicIndicator(name, description, file, qualityFactors, project);
-                /*
-                if (!strategicIndicatorsController.assessStrategicIndicator(name)) {
-                    throw new AssessmentErrorException();
-                }
-                */
                 if (!strategicIndicatorsController.assessStrategicIndicator(name, prj)) {
                     throw new AssessmentErrorException();
                 }
@@ -343,11 +338,6 @@ public class StrategicIndicators {
 
                 boolean sameFactors = (strategicIndicatorQualityFactors.size() == qualityFactors.size());
                 sameFactors = isSameFactors(qualityFactors, strategicIndicatorQualityFactors, sameFactors);
-                /*
-                if (!sameFactors && !strategicIndicatorsController.assessStrategicIndicator(name)) {
-                    throw new AssessmentErrorException();
-                }
-                */
                 if (!sameFactors && !strategicIndicatorsController.assessStrategicIndicator(name, oldStrategicIndicator.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }
