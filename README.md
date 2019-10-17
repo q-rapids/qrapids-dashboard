@@ -1,4 +1,4 @@
-# Q-Rapids Strategic Dashboard ![](https://img.shields.io/badge/License-Apache2.0-blue.svg)
+# Q-Rapids Strategic Dashboard ![](https://img.shields.io/badge/License-Apache2.0-blue.svg) [![Build Status](https://travis-ci.org/q-rapids/qrapids-dashboard.svg?branch=master)](https://travis-ci.org/q-rapids/qrapids-dashboard) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=q-rapids_qrapids-dashboard&metric=alert_status)](https://sonarcloud.io/dashboard?id=q-rapids_qrapids-dashboard)
 A dashboard for visualizing the quality of the company's products. This strategic dashboard is complemented with some specific features to support decision-makers managing **quality requirements**.
 
 This component has been created as a result of the Q-Rapids project funded by the European Union Horizon 2020 Research and Innovation programme under grant agreement No 732253.
@@ -12,9 +12,19 @@ The main functionalities of the current version of Q-Rapids Dashboard are: provi
 | Type of component    | Web Application                 |
 | Build                | .war                            |
 | Programming language | Java                            |
-| DBMS                 | PostreSQL                       |
+| DBMS                 | PostgreSQL                       |
 | Frameworks           | Spring Boot, AngularJS, Gradle  |
 | External libraries   | Chart.js, ElasticSearch java API|
+
+## How to build
+This is a Gradle project. You can use any IDE that supports Gradle to build it, or alternatively you can use the command line using the Gradle wrapper with the command *__gradlew__* if you don't have Gradle installed on your machine or with the command *__gradle__* if you do, followed by the task *__war__*.
+
+```
+# Example: using Gradle wrapper to build with dependencies
+cd qrapids-dashboard
+gradlew war
+```
+After the build is done the WAR file can be found at the __build/libs__ directory
 
 ## Documentation
 
