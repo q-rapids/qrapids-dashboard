@@ -229,11 +229,15 @@ public class Forecast {
         if (m.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
+                    // Avoid predicted values out of range
+                    float aux = mean.get(j).getAsFloat();
+                    if (mean.get(j).getAsFloat() > 1) aux = 1;
+                    else if (mean.get(j).getAsFloat() < 0) aux = 0;
                     result.add(new DTOMetric(m.getId(), m.getName(),
                             m.getDescription(),
                             m.getDatasource(),
                             m.getRationale(),
-                            LocalDate.now().plusDays((long) j), mean.get(j).getAsFloat(), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                            LocalDate.now().plusDays((long) j), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
                 result.add(new DTOMetric(m.getId(), m.getName(),
@@ -356,13 +360,17 @@ public class Forecast {
         if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
+                    // Avoid predicted values out of range
+                    float aux = mean.get(j).getAsFloat();
+                    if (mean.get(j).getAsFloat() > 1) aux = 1;
+                    else if (mean.get(j).getAsFloat() < 0) aux = 0;
                     for (Integer index : m.getValue())
                         metricsMatrix.get(index).add(new DTOMetric(m.getKey(),
                                 metricsNames.get(m.getKey()),
                                 "",
                                 FORECAST_SOURCE,
                                 FORECAST_SOURCE,
-                                LocalDate.now().plusDays((long) j), mean.get(j).getAsFloat(), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                                LocalDate.now().plusDays((long) j), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
                 for (Integer index : m.getValue())
@@ -502,9 +510,13 @@ public class Forecast {
         if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
+                    // Avoid predicted values out of range
+                    float aux = mean.get(j).getAsFloat();
+                    if (mean.get(j).getAsFloat() > 1) aux = 1;
+                    else if (mean.get(j).getAsFloat() < 0) aux = 0;
                     for (Integer index : m.getValue())
                         factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
-                                mean.get(j).getAsFloat(), LocalDate.now().plusDays((long) j), FORECAST_SOURCE, FORECAST_SOURCE, null));
+                                aux, LocalDate.now().plusDays((long) j), FORECAST_SOURCE, FORECAST_SOURCE, null));
                 }
             } else {
                 for (Integer index : m.getValue())

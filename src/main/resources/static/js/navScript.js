@@ -57,7 +57,25 @@ function checkProducts () {
         }
     });
 }
+
+function checkPhases () {
+    jQuery.ajax({
+        dataType: "json",
+        url: serverUrl + "/api/phases",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            if (data.length > 0)
+                $("#PhasesAssessment").show();
+            else
+                $("#PhasesAssessment").hide();
+        }
+    });
+}
+
 checkProducts();
+checkPhases();
 
 // Load state from sessionStorage
 // If missing, set default values
@@ -160,6 +178,10 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
     id = "QualityModel";
     highlightAndSaveCurrentAssessment(id);
     disableViewModeAndTimeOption();
+} else if (currentURL.search("/Phases") !== -1) {
+    id = "Phases";
+    highlightAndSaveCurrentAssessment(id);
+    disableViewModeAndTimeOption();
 } else if (currentURL.search("/Products/Evaluation") !== -1) {
     id = "Evaluation";
     highlightandSaveCurrentProducts(id);
@@ -247,7 +269,7 @@ function disableViewModeAndTimeOption () {
 //         --> time and viewMode variables filled
 ///////////////////////////////////////////////////////////////////
 
-if (assessment === "QualityModel") $("#Assessment").attr("href", serverUrl + "/" + assessment);
+if (assessment === "QualityModel" || assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
 else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
@@ -283,6 +305,8 @@ $("#QualityRequirements").attr("href", serverUrl + "/QualityRequirements");
 $("#Decisions").attr("href", serverUrl + "/Decisions");
 
 $("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel");
+
+$("#PhasesAssessment").attr("href", serverUrl + "/Phases");
 
 $("#Products").attr("href", serverUrl + "/Products/" + products);
 
