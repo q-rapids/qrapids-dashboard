@@ -229,11 +229,10 @@ public class Forecast {
         if (m.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
-                    // TODO 98.predicted values out of range
+                    // Avoid predicted values out of range
                     float aux = mean.get(j).getAsFloat();
                     if (mean.get(j).getAsFloat() > 1) aux = 1;
                     else if (mean.get(j).getAsFloat() < 0) aux = 0;
-
                     result.add(new DTOMetric(m.getId(), m.getName(),
                             m.getDescription(),
                             m.getDatasource(),
@@ -361,11 +360,10 @@ public class Forecast {
         if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
-                    // TODO 98.predicted values out of range
+                    // Avoid predicted values out of range
                     float aux = mean.get(j).getAsFloat();
                     if (mean.get(j).getAsFloat() > 1) aux = 1;
                     else if (mean.get(j).getAsFloat() < 0) aux = 0;
-
                     for (Integer index : m.getValue())
                         metricsMatrix.get(index).add(new DTOMetric(m.getKey(),
                                 metricsNames.get(m.getKey()),
@@ -512,11 +510,10 @@ public class Forecast {
         if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
-                    // TODO 98.predicted values out of range
+                    // Avoid predicted values out of range
                     float aux = mean.get(j).getAsFloat();
                     if (mean.get(j).getAsFloat() > 1) aux = 1;
                     else if (mean.get(j).getAsFloat() < 0) aux = 0;
-
                     for (Integer index : m.getValue())
                         factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
                                 aux, LocalDate.now().plusDays((long) j), FORECAST_SOURCE, FORECAST_SOURCE, null));

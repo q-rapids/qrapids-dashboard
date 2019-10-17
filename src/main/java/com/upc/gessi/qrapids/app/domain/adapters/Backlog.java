@@ -75,7 +75,7 @@ public class Backlog {
                 Gson gson = new Gson();
                 Type listType = new TypeToken<ArrayList<DTOMilestone>>(){}.getType();
                 dtoMilestonesList = gson.fromJson(responseEntity.getBody(), listType);
-                if (dtoMilestonesList.size() > 0) {
+                if (!dtoMilestonesList.isEmpty()) {
                     Collections.sort(dtoMilestonesList, (x, y) -> x.getDate().compareTo(y.getDate()));
                     if (dateFrom != null) {
                         int i = 0;
@@ -110,7 +110,7 @@ public class Backlog {
                 Gson gson = new Gson();
                 Type listType = new TypeToken<ArrayList<DTOPhase>>(){}.getType();
                 dtoPhasesList = gson.fromJson(responseEntity.getBody(), listType);
-                if (dtoPhasesList.size() > 0) {
+                if (!dtoPhasesList.isEmpty()) {
                     Collections.sort(dtoPhasesList, (x, y) -> x.getDateFrom().compareTo(y.getDateFrom()));
                     if (dateFrom != null) {
                         int i = 0;
