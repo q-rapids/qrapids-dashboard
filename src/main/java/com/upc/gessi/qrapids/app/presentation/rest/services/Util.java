@@ -73,21 +73,21 @@ public class Util {
         List<DTOPhase> phaseList = new ArrayList<>();
 
         // today phase
-        LocalDate dateFrom4 = LocalDate.now().minusMonths(1);
-        LocalDate dateTo4 = dateFrom4.plusMonths(2);
+        LocalDate dateFrom4 = LocalDate.now().minusDays(3);
+        LocalDate dateTo4 = dateFrom4.plusDays(5);
 
         // future phase
         LocalDate dateFrom5 = dateTo4;
-        LocalDate dateTo5 = dateFrom5.plusMonths(1);
+        LocalDate dateTo5 = dateFrom5.plusDays(5);
 
         // past phases
-        LocalDate dateFrom3 = dateFrom4.minusMonths(3);
+        LocalDate dateFrom3 = dateFrom4.minusDays(5);
         LocalDate dateTo3 = dateFrom4;
 
-        LocalDate dateFrom2 = dateFrom3.minusMonths(2);
+        LocalDate dateFrom2 = dateFrom3.minusDays(5);
         LocalDate dateTo2 = dateFrom3;
 
-        LocalDate dateFrom1 = dateFrom2.minusMonths(1);
+        LocalDate dateFrom1 = dateFrom2.minusDays(5);
         LocalDate dateTo1 = dateFrom2;
 
         phaseList.add(new DTOPhase(dateFrom3.toString(), "Development", "Implementation of the project functionalities", dateTo3.toString()));
