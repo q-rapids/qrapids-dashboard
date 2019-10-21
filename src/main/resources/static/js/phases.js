@@ -42,7 +42,12 @@ HeatMap.render();
 
 
 function getPhasesList () {
-    $.getJSON("../api/phases")
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/phases";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    $.getJSON(url)
         .then (function(phases) {
             if (phases.length > 0) {
                 phases.forEach(function (ph) {
@@ -58,7 +63,12 @@ function getPhasesList () {
 }
 
 function checkCategories() {
-    $.getJSON("../api/strategicIndicators/categories")
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/strategicIndicators/categories";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    $.getJSON(url)
         .then (function(categories) {
             if (categories.length === 0) {
                 alert("You need to define Strategic Indicator categories in order to see the heatmap correctly. " +
@@ -106,7 +116,12 @@ function checkCategories() {
 function getData(phases) {
     var today = new Date();
     var todayTextDate = parseDate(today);
-    $.getJSON("../api/strategicIndicators/historical?" + "from=" + phases[0].from + "&to=" + todayTextDate)
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/strategicIndicators/historical?";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    $.getJSON(url + "from=" + phases[0].from + "&to=" + todayTextDate)
         .then (function(data) {
             if (data.length === 0) {
                 alert("No data about Strategic Indicators for phases of this project.");
