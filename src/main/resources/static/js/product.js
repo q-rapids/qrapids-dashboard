@@ -230,6 +230,9 @@ function getChosenProject(currentProjectId) {
 					url: "../api/milestones?prj=" + data.externalId,
 					type: "GET",
 					async: true,
+					error: function(jqXHR, textStatus, errorThrown) {
+						if (jqXHR.status == 500) alert("There is no information to show about milestones.");
+					},
 					success: function (milestones) {
 						if (milestones.length > 0) {
 							$("#milestonesItems").empty();
@@ -237,11 +240,38 @@ function getChosenProject(currentProjectId) {
 								$("#milestonesItems").append('<tr class="milestoneItem"><td>' + milestone.date + '</td><td>' + milestone.type + '</td><td>' + milestone.name + '</td><td>' + milestone.description + '</td></tr>');
 							});
 							$("#milestonesModal").modal();
-						}
+						} else alert("There is no information to show about milestones.");
 					}
 				})
 			};
 			saveBtnRow.appendChild(milestonesBtn);
+
+			var phasesBtn = document.createElement('button');
+			phasesBtn.classList.add("btn");
+			phasesBtn.classList.add("btn-primary");
+			phasesBtn.setAttribute("id", "phasesBtn");
+			phasesBtn.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+			phasesBtn.appendChild(document.createTextNode("Show phases"));
+			phasesBtn.onclick = function () {
+				jQuery.ajax({
+					url: "../api/phases?prj=" + data.externalId,
+					type: "GET",
+					async: true,
+					error: function(jqXHR, textStatus, errorThrown) {
+						if (jqXHR.status == 500) alert("There is no information to show about phases.");
+					},
+					success: function (phases) {
+						if (phases.length > 0) {
+							$("#phasesItems").empty();
+							phases.forEach(function (phase) {
+								$("#phasesItems").append('<tr class="phaseItem"><td>' + phase.dateFrom + '</td><td>' + phase.dateTo + '</td><td>' + phase.name + '</td><td>' + phase.description + '</td></tr>');
+							});
+							$("#phasesModal").modal();
+						} else alert("There is no information to show about phases.");
+					}
+				})
+			};
+			saveBtnRow.appendChild(phasesBtn);
 
     		var saveBtn = document.createElement('button');
     		saveBtn.classList.add("btn");

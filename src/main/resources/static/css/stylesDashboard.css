@@ -215,3 +215,14 @@ canvas {
     border-collapse: collapse;
     padding: 5px;
 }
+
+.phasesTable{
+    width: 100%;
+    border: 1px solid gray;
+}
+
+.phaseItem > th, .phaseItem > td {
+    border: 1px solid gray;
+    border-collapse: collapse;
+    padding: 5px;
+}

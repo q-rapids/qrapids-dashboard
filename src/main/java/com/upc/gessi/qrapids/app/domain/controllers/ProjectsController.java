@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +58,11 @@ public class ProjectsController {
     public List<DTOMilestone> getMilestonesForProject (String projectExternalId, LocalDate date) throws ProjectNotFoundException {
         Project project = findProjectByExternalId(projectExternalId);
         return backlog.getMilestones(project.getBacklogId(), date);
+    }
+
+    public List<DTOPhase> getPhasesForProject (String projectExternalId, LocalDate date) throws ProjectNotFoundException {
+        Project project = findProjectByExternalId(projectExternalId);
+        return backlog.getPhases(project.getBacklogId(), date);
     }
 
 }

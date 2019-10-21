@@ -336,8 +336,8 @@ public class ProductsTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "999";
-
-        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
+// getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
+        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
         MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
@@ -403,8 +403,8 @@ public class ProductsTest {
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "999";
-
-        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
+// getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
+        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
         MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
@@ -454,8 +454,8 @@ public class ProductsTest {
         Long productId = 1L;
         String productName = "Test";
         String productDescription = "Test product";
-
-        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
+        // getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
+        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
         MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
@@ -519,8 +519,8 @@ public class ProductsTest {
         Long productId = 1L;
         String productName = "Test";
         String productDescription = "Test product";
-
-        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
+// getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
+        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
         MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
@@ -569,8 +569,8 @@ public class ProductsTest {
         String productName = "Test";
         String productDescription = "Test product";
         String projectId = "1";
-
-        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
+// getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
+        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
         MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 
@@ -617,8 +617,8 @@ public class ProductsTest {
         String productName = "Test";
         String productDescription = "Test product";
         String projectId = "1";
-
-        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + File.separator + "icons" + File.separator + "projectDefault.jpg");
+// getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
+        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
         File file = new File(projectImageUrl.getPath());
         MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
 

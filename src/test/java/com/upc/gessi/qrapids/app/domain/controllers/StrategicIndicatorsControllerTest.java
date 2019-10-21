@@ -506,8 +506,9 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void assessStrategicIndicators() throws IOException, CategoriesException {
+    public void assessStrategicIndicators() throws IOException, CategoriesException, ProjectNotFoundException {
         Project project = domainObjectsBuilder.buildProject();
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         DTOFactor dtoFactor1 = domainObjectsBuilder.buildDTOFactor();
 
@@ -553,7 +554,7 @@ public class StrategicIndicatorsControllerTest {
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
 
-        when(strategicIndicatorRepository.findAll()).thenReturn(strategic_indicatorList);
+        when(strategicIndicatorRepository.findByProject_Id(project.getId())).thenReturn(strategic_indicatorList);
 
         when(qualityFactorsController.getFactorLabelFromValue(dtoFactor1.getValue())).thenReturn("Good");
         when(qualityFactorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
@@ -592,12 +593,15 @@ public class StrategicIndicatorsControllerTest {
         // Then
         assertTrue(correct);
 
+        verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsController);
+
         verify(qualityFactorsController, times(1)).setFactorStrategicIndicatorRelation(dtoFactorList, project.getExternalId());
         verify(qualityFactorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
         verify(qualityFactorsController, times(6)).getFactorLabelFromValue(anyFloat());
         verifyNoMoreInteractions(qualityFactorsController);
 
-        verify(strategicIndicatorRepository, times(1)).findAll();
+        verify(strategicIndicatorRepository, times(1)).findByProject_Id(project.getId());
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
         verify(assesSI, times(1)).assesSI(factorValuesList, 3);
@@ -611,8 +615,9 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void assessStrategicIndicatorsNotCorrect() throws IOException, CategoriesException {
+    public void assessStrategicIndicatorsNotCorrect() throws IOException, CategoriesException, ProjectNotFoundException {
         Project project = domainObjectsBuilder.buildProject();
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         DTOFactor dtoFactor1 = domainObjectsBuilder.buildDTOFactor();
 
@@ -658,7 +663,7 @@ public class StrategicIndicatorsControllerTest {
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
 
-        when(strategicIndicatorRepository.findAll()).thenReturn(strategic_indicatorList);
+        when(strategicIndicatorRepository.findByProject_Id(project.getId())).thenReturn(strategic_indicatorList);
 
         when(qualityFactorsController.getFactorLabelFromValue(dtoFactor1.getValue())).thenReturn("Good");
         when(qualityFactorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
@@ -686,12 +691,15 @@ public class StrategicIndicatorsControllerTest {
         // Then
         assertFalse(correct);
 
+        verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsController);
+
         verify(qualityFactorsController, times(1)).setFactorStrategicIndicatorRelation(dtoFactorList, project.getExternalId());
         verify(qualityFactorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
         verify(qualityFactorsController, times(3)).getFactorLabelFromValue(anyFloat());
         verifyNoMoreInteractions(qualityFactorsController);
 
-        verify(strategicIndicatorRepository, times(1)).findAll();
+        verify(strategicIndicatorRepository, times(1)).findByProject_Id(project.getId());
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
         verify(assesSI, times(1)).assesSI(factorValuesList, 3);
@@ -704,11 +712,9 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void assessStrategicIndicator () throws IOException, CategoriesException {
+    public void assessStrategicIndicator () throws IOException, ProjectNotFoundException {
         Project project = domainObjectsBuilder.buildProject();
-        List<String> projectList = new ArrayList<>();
-        projectList.add(project.getExternalId());
-        when(projectsController.getAllProjects()).thenReturn(projectList);
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         DTOFactor dtoFactor1 = domainObjectsBuilder.buildDTOFactor();
 
@@ -752,7 +758,7 @@ public class StrategicIndicatorsControllerTest {
         Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
-        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
+        when(strategicIndicatorRepository.findByNameAndProject_Id(strategicIndicatorName, project.getId())).thenReturn(strategicIndicator);
 
         when(qualityFactorsController.getFactorLabelFromValue(dtoFactor1.getValue())).thenReturn("Good");
         when(qualityFactorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
@@ -786,7 +792,7 @@ public class StrategicIndicatorsControllerTest {
         when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(qualityFactors), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
 
         // When
-        boolean correct = strategicIndicatorsController.assessStrategicIndicator(strategicIndicator.getName());
+        boolean correct = strategicIndicatorsController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
 
         // Then
         assertTrue(correct);
@@ -796,7 +802,7 @@ public class StrategicIndicatorsControllerTest {
         verify(qualityFactorsController, times(6)).getFactorLabelFromValue(anyFloat());
         verifyNoMoreInteractions(qualityFactorsController);
 
-        verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicator.getName());
+        verify(strategicIndicatorRepository, times(1)).findByNameAndProject_Id(strategicIndicator.getName(), project.getId());
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
         verify(assesSI, times(1)).assesSI(factorValuesList, 3);
@@ -810,11 +816,9 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void assessStrategicIndicatorNotCorrect () throws IOException, CategoriesException {
+    public void assessStrategicIndicatorNotCorrect () throws IOException, ProjectNotFoundException {
         Project project = domainObjectsBuilder.buildProject();
-        List<String> projectList = new ArrayList<>();
-        projectList.add(project.getExternalId());
-        when(projectsController.getAllProjects()).thenReturn(projectList);
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         DTOFactor dtoFactor1 = domainObjectsBuilder.buildDTOFactor();
 
@@ -858,7 +862,7 @@ public class StrategicIndicatorsControllerTest {
         Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
         strategicIndicator.setId(strategicIndicatorId);
 
-        when(strategicIndicatorRepository.findByName(strategicIndicatorName)).thenReturn(strategicIndicator);
+        when(strategicIndicatorRepository.findByNameAndProject_Id(strategicIndicatorName, project.getId())).thenReturn(strategicIndicator);
 
         when(qualityFactorsController.getFactorLabelFromValue(dtoFactor1.getValue())).thenReturn("Good");
         when(qualityFactorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
@@ -881,7 +885,7 @@ public class StrategicIndicatorsControllerTest {
         when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
 
         // When
-        boolean correct = strategicIndicatorsController.assessStrategicIndicator(strategicIndicator.getName());
+        boolean correct = strategicIndicatorsController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
 
         // Then
         assertFalse(correct);
@@ -891,7 +895,7 @@ public class StrategicIndicatorsControllerTest {
         verify(qualityFactorsController, times(3)).getFactorLabelFromValue(anyFloat());
         verifyNoMoreInteractions(qualityFactorsController);
 
-        verify(strategicIndicatorRepository, times(1)).findByName(strategicIndicator.getName());
+        verify(strategicIndicatorRepository, times(1)).findByNameAndProject_Id(strategicIndicator.getName(), project.getId());
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
         verify(assesSI, times(1)).assesSI(factorValuesList, 3);

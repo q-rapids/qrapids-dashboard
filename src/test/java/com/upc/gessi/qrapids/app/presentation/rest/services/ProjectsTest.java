@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Rule;
@@ -193,5 +194,47 @@ public class ProjectsTest {
                 .andExpect(jsonPath("$[0].name", is(milestoneList.get(0).getName())))
                 .andExpect(jsonPath("$[0].description", is(milestoneList.get(0).getDescription())))
                 .andExpect(jsonPath("$[0].type", is(milestoneList.get(0).getType())));
+    }
+
+    @Test
+    public void getAllPhases () throws Exception {
+        // Given
+        String projectExternalId = "test";
+        List<DTOPhase> phaseList = domainObjectsBuilder.buildDTOPhaseList();
+
+        when(projectsDomainController.getPhasesForProject(projectExternalId, null)).thenReturn(phaseList);
+
+        //Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/phases")
+                .param("prj", projectExternalId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].dateFrom", is(phaseList.get(0).getDateFrom())))
+                .andExpect(jsonPath("$[0].name", is(phaseList.get(0).getName())))
+                .andExpect(jsonPath("$[0].description", is(phaseList.get(0).getDescription())))
+                .andExpect(jsonPath("$[0].dateTo", is(phaseList.get(0).getDateTo())))
+                .andDo(document("phases/get-from-date",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("date")
+                                        .optional()
+                                        .description("Minimum phase date (yyyy-mm-dd)")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].dateFrom")
+                                        .description("Phase from date"),
+                                fieldWithPath("[].name")
+                                        .description("Phase name"),
+                                fieldWithPath("[].description")
+                                        .description("Phase description"),
+                                fieldWithPath("[].dateTo")
+                                        .description("Phase to date"))
+                ));
     }
 }

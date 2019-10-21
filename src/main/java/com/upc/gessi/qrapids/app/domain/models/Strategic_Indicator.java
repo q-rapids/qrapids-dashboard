@@ -39,7 +39,7 @@ public class Strategic_Indicator implements Serializable {
 
     // we need to keep the name of this list as quality_factors, it is the name of the table in the database
     // ToDo: This should be changed, the name of the local variables should be no directly connected to table names in database
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> quality_factors = new ArrayList<String>();
 
     @ManyToOne
