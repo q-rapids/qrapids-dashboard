@@ -86,7 +86,7 @@ function newSI() {
     else {
         loadFactors(true);
     }
-    postUrl="/api/strategicIndicators";
+    postUrl="../api/strategicIndicators";
 }
 
 function showFactors () {
