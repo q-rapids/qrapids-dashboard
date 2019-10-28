@@ -59,8 +59,11 @@
                 <div class="selectionColumn" style="width: 100%">
                     <p style="font-size: 18px; margin-bottom: 1%">Selected Factors*: </p>
                     <select id="selFactorsBox" multiple="multiple" style="height: 150px;">
-
                     </select>
+                    <form>
+                        <input type="checkbox" id="weight"> Weighted average <br>
+                        <div th:replace="Fragments/Modals :: weightsModal"></div>
+                    </form>
                 </div>
             </div>
             <div class="SIInfoRow" style="justify-content: space-between">

@@ -131,13 +131,66 @@ function moveAllItemsRight() {
     $('#avFactorsBox').children().appendTo('#selFactorsBox');
 };
 
-$("#saveSI").click(function () {
+var checkbox = document.getElementById('weight');
+checkbox.addEventListener("change", validaCheckbox, false);
+function validaCheckbox(){
+    var checked = checkbox.checked;
+    if(checked){
+        var qualityFactors = getSelectedFactors();
+        console.log(qualityFactors);
+        if (qualityFactors.length > 0) {
+            $("#weightsItems").empty();
+            var i = 0;
+            qualityFactors.forEach(function (qf) {
+                var id = "editor"+i;
+                $("#weightsItems").append('<tr class="phaseItem"><td>' + qf + '</td><td contenteditable="true">' + " " +'</td>');
+                i++;
+            });
+            $("#weightsModal").modal();
+        } else alert('You have no selected factors.');
+    }
+}
+function uncheck() {
+    document.getElementById("weight").checked = false;
+}
+uncheck();
+
+$("#submitWeightsButton").click(function () {
+    var qualityFactors = getSelectedFactors();
+    var weightForFactors = [];
+    var i = 0;
+    qualityFactors.forEach(function (qf) {
+        var id = "#editor"+i;
+        console.log(id);
+        var value = $(id).text();
+        console.log(value);
+        if (!/^([0-9])*$/.test(value)) {
+            alert("El valor " + value + " no es un número");
+        } else {
+            weightForFactors.push([qf, value]);
+        }
+        i++;
+    });
+    console.log(weightForFactors);
+});
+
+function getSelectedFactors() {
     var qualityFactors = [];
 
     $('#selFactorsBox').children().each (function (i, option) {
         qualityFactors.push(option.value);
     });
 
+    return qualityFactors;
+}
+
+$("#saveSI").click(function () {
+    var qualityFactors = getSelectedFactors();
+    /*
+    $('#selFactorsBox').children().each (function (i, option) {
+        qualityFactors.push(option.value);
+    });
+    */
     if ($('#SIName').val() !== "" && qualityFactors.length > 0) {
 
         var formData = new FormData();
