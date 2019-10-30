@@ -77,7 +77,6 @@ function showQualityFactorSliders () {
         };
         sliderConfig.rangeHighlights = [];
         Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
-        console.log(sliderConfig.rangeHighlights);
         // Add original value
         var start, end;
         if (qualityFactor.value === 0) {
@@ -109,9 +108,14 @@ function showQualityFactorSliders () {
 }
 
 function getDetailedStrategicIndicators () {
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/strategicIndicators/qualityFactors/current";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
     jQuery.ajax({
         dataType: "json",
-        url: "../api/strategicIndicators/qualityFactors/current",
+        url: url,
         cache: false,
         type: "GET",
         async: true,
