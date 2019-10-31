@@ -517,8 +517,8 @@ public class StrategicIndicatorsController {
                 factor.setValue(factorsNameValueMap.get(factor.getId()));
             }
         }
-        Project p = projectsController.findProjectByExternalId(projectExternalId);
-        Iterable<Strategic_Indicator> listSI = strategicIndicatorRepository.findByProject_Id(p.getId());
+        Project project = projectsController.findProjectByExternalId(projectExternalId);
+        Iterable<Strategic_Indicator> listSI = strategicIndicatorRepository.findByProject_Id(project.getId());
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
         for (Strategic_Indicator si : listSI) {
             Map<String,String> mapSIFactors = new HashMap<>();

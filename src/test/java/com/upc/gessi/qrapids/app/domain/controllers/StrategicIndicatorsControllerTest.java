@@ -1017,9 +1017,10 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void simulateStrategicIndicatorsAssessment() throws IOException {
+    public void simulateStrategicIndicatorsAssessment() throws IOException, ProjectNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
         List<DTOFactor> dtoFactorList = new ArrayList<>();
@@ -1035,7 +1036,7 @@ public class StrategicIndicatorsControllerTest {
         strategicIndicator.getQuality_factors().add(dtoFactor.getId());
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
-        when(strategicIndicatorRepository.findAll()).thenReturn(strategic_indicatorList);
+        when(strategicIndicatorRepository.findByProject_Id(project.getId())).thenReturn(strategic_indicatorList);
 
         List<SICategory> siCategoryList = domainObjectsBuilder.buildSICategoryList();
         when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
@@ -1047,8 +1048,8 @@ public class StrategicIndicatorsControllerTest {
         verify(qualityFactorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
         verify(qualityFactorsController, times(1)).getFactorLabelFromValue(factorSimulatedValue);
         verifyNoMoreInteractions(qualityFactorsController);
-
-        verify(strategicIndicatorRepository, times(1)).findAll();
+        
+        verify(strategicIndicatorRepository, times(1)).findByProject_Id(project.getId());
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
         verify(siCategoryRepository, times(2)).findAll();
