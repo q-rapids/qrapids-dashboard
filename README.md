@@ -6,6 +6,8 @@ This component has been created as a result of the Q-Rapids project funded by th
 ## Main Functionality
 The main functionalities of the current version of Q-Rapids Dashboard are: providing several ways to visualize and explore the available data, generate predictions of the existing assessments, perform simulations on how the strategic indicators will evolve based on the value of the factors and generate quality requirements to correct deviations on the assessments.
 
+The **User's Guide** is available in the [Wiki](https://github.com/q-rapids/qrapids-dashboard/wiki/User-Guide).
+
 ## Technologies
 |Property|Description|
 | -------------------- | --------------------------------|
