@@ -6,12 +6,11 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicat
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMARelations;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.exceptions.AssessmentErrorException;
-import com.upc.gessi.qrapids.app.domain.models.Factors;
-import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.models.SICategory;
-import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
+import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
@@ -25,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Null;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -68,6 +68,12 @@ public class StrategicIndicatorsController {
     @Autowired
     private QMARelations qmaRelations;
 
+    @Autowired
+    private StrategicIndicatorQualityFactorsController strategicIndicatorQualityFactorsController;
+
+    @Autowired
+    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
+
     private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
     public List<Strategic_Indicator> getStrategicIndicatorsByProject (Project project) {
@@ -83,20 +89,85 @@ public class StrategicIndicatorsController {
         }
     }
 
+
     public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException {
         Strategic_Indicator strategicIndicator = getStrategicIndicatorById(strategicIndicatorId);
         if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
         strategicIndicator.setName(name);
         strategicIndicator.setDescription(description);
-        strategicIndicator.setQuality_factors(qualityFactors);
+        // Actualize Quality Factors
+        boolean weighted = reassignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
+        strategicIndicator.setWeighted(weighted);
         strategicIndicatorRepository.save(strategicIndicator);
         return  strategicIndicator;
     }
 
+    private  boolean reassignQualityFactorsToStrategicIndicator (List<String> quality_factors, Strategic_Indicator strategicIndicator){
+        List<StrategicIndicatorQualityFactors> newQualityFactorsWeights = new ArrayList();
+        List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findBystrategic_indicator_Id(strategicIndicator.getId());
+        boolean weighted = false;
+        String f;
+        Float w;
+
+        // generate StrategicIndicatorQualityFactors class objects from List<String> quality_factors
+        while (!quality_factors.isEmpty()) {
+            StrategicIndicatorQualityFactors siqf;
+            f = quality_factors.get(0);
+            w = Float.parseFloat(quality_factors.get(1));
+            if (w == -1) {
+                siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
+                weighted = false;
+            } else {
+                siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
+                weighted = true;
+            }
+            newQualityFactorsWeights.add(siqf);
+            quality_factors.remove(1);
+            quality_factors.remove(0);
+        }
+        // create the association between Strategic Indicator and its Quality Factors
+        strategicIndicator.setQuality_factors(newQualityFactorsWeights);
+        return weighted;
+    }
+
+
     public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) {
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(name, description, file, qualityFactors, project);
+        Strategic_Indicator strategicIndicator;
+        // create Strategic Indicator
+        strategicIndicator = new Strategic_Indicator(name, description, file, qualityFactors, project);
+        strategicIndicatorRepository.save(strategicIndicator);
+        // Associate it with Quality Factors (set weighted quality)
+        boolean weighted = assignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
+        strategicIndicator.setWeighted(weighted);
         strategicIndicatorRepository.save(strategicIndicator);
         return strategicIndicator;
+    }
+
+    private boolean assignQualityFactorsToStrategicIndicator (List<String> quality_factors, Strategic_Indicator strategicIndicator ) {
+        List<StrategicIndicatorQualityFactors> qualityFactorsWeights = new ArrayList();
+        boolean weighted = false;
+        String f;
+        Float w;
+
+        // generate StrategicIndicatorQualityFactors class objects from List<String> quality_factors
+        while (!quality_factors.isEmpty()) {
+            StrategicIndicatorQualityFactors siqf;
+            f = quality_factors.get(0);
+            w = Float.parseFloat(quality_factors.get(1));
+            if (w == -1) {
+                siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
+                weighted = false;
+            } else {
+                siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
+                weighted = true;
+            }
+            qualityFactorsWeights.add(siqf);
+            quality_factors.remove(1);
+            quality_factors.remove(0);
+        }
+        // create the association between Strategic Indicator and its Quality Factors
+        strategicIndicator.setQuality_factors(qualityFactorsWeights);
+        return weighted;
     }
 
     public void deleteStrategicIndicator (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {

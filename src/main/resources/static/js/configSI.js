@@ -54,6 +54,8 @@ function clickOnTree(e){
         type: "GET",
         async: true,
         success: function (si) {
+            console.log ("SI concret:");
+            console.log(si);
             $("#SIInfo").show();
             $("#SIInfoTitle").text("Strategic Indicator Information");
             $("#SIName").val(si.name);
@@ -136,14 +138,15 @@ checkbox.addEventListener("change", validaCheckbox, false);
 function validaCheckbox(){
     var checked = checkbox.checked;
     if(checked){
-        var qualityFactors = getSelectedFactors();
+        var qualityFactors = getSelectedFactors(false);
         console.log(qualityFactors);
         if (qualityFactors.length > 0) {
             $("#weightsItems").empty();
             var i = 0;
             qualityFactors.forEach(function (qf) {
                 var id = "editor"+i;
-                $("#weightsItems").append('<tr class="phaseItem"><td>' + qf + '</td><td contenteditable="true">' + " " +'</td>');
+                $("#weightsItems").append('<tr class="phaseItem"><td>' + qf + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
+                //$('"#'+id+'"').inputmask({"mask": "999"});
                 i++;
             });
             $("#weightsModal").modal();
@@ -155,44 +158,66 @@ function uncheck() {
 }
 uncheck();
 
+function openEdit() {  // This function is called by the checkbox click
+    if (document.getElementById('weight').checked == true) { // If it is checked
+        document.getElementById('weightEditButton').disabled = false; // Then we remove the disable attribute
+    }
+}
+
+$("#weightEditButton").click(function () {
+    alert("Open a modal with corresponding values.");
+});
+
+var weightsForFactors = [];
+
 $("#submitWeightsButton").click(function () {
-    var qualityFactors = getSelectedFactors();
-    var weightForFactors = [];
+    var qualityFactors = getSelectedFactors(false);
     var i = 0;
+    var totalSum = 0;
+    weightsForFactors = [];
     qualityFactors.forEach(function (qf) {
-        var id = "#editor"+i;
-        console.log(id);
-        var value = $(id).text();
-        console.log(value);
-        if (!/^([0-9])*$/.test(value)) {
-            alert("El valor " + value + " no es un número");
+        var id = "editor"+i;
+        var cell = document.getElementById(id);
+        var cellValue = cell.innerText;
+        var weightValue = parseFloat(cellValue);
+        if (isNaN(weightValue)) {
+            alert("The value " + cellValue + " is not a number");
         } else {
-            weightForFactors.push([qf, value]);
+            totalSum += weightValue;
+            weightsForFactors.push([qf, weightValue]);
         }
         i++;
     });
-    console.log(weightForFactors);
+    if (totalSum != 100) alert("Total sum is not equals to 100.");
+    else $("#weightsModal").modal('hide');
+    console.log(weightsForFactors);
 });
 
-function getSelectedFactors() {
+function getSelectedFactors(final) {
     var qualityFactors = [];
 
-    $('#selFactorsBox').children().each (function (i, option) {
-        qualityFactors.push(option.value);
-    });
+    if (final) {
+        $('#selFactorsBox').children().each (function (i, option) {
+            qualityFactors.push([option.value, -1]);
+        });
+    } else {
+        $('#selFactorsBox').children().each (function (i, option) {
+            qualityFactors.push(option.value);
+        });
+    }
 
     return qualityFactors;
 }
 
 $("#saveSI").click(function () {
-    var qualityFactors = getSelectedFactors();
-    /*
-    $('#selFactorsBox').children().each (function (i, option) {
-        qualityFactors.push(option.value);
-    });
-    */
-    if ($('#SIName').val() !== "" && qualityFactors.length > 0) {
+    var qualityFactors;
+    if (weightsForFactors.length == 0){
+        qualityFactors = getSelectedFactors(true);
+    } else {
+        qualityFactors = weightsForFactors;
+    }
 
+    if ($('#SIName').val() !== "" && qualityFactors.length > 0) {
         var formData = new FormData();
         formData.append("name", $('#SIName').val());
         formData.append("description", $('#SIDescription').val());
@@ -200,7 +225,6 @@ $("#saveSI").click(function () {
         if (file)
             formData.append("network", file);
         formData.append("quality_factors", qualityFactors);
-
         $.ajax({
             url: postUrl,
             data: formData,

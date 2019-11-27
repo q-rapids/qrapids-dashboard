@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.CascadeType.ALL;
+
 /*
     This class is not following the class naming rules, it should be named as StrategicIndicator, without '_', but
     there is an unsolved issue with the hibernate and we need to add the '_' in order to have de name
@@ -37,10 +39,17 @@ public class Strategic_Indicator implements Serializable {
     @Column(name = "network")
     private byte[] network;
 
+    @Column(name = "weighted")
+    boolean weighted;
+
     // we need to keep the name of this list as quality_factors, it is the name of the table in the database
     // ToDo: This should be changed, the name of the local variables should be no directly connected to table names in database
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> quality_factors = new ArrayList<String>();
+    //@ElementCollection(fetch = FetchType.EAGER)
+    //private List<String> quality_factors = new ArrayList<String>();
+
+    @OneToMany
+    @JoinColumn(name="strategic_indicator_id")
+    private List<StrategicIndicatorQualityFactors> quality_factors = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="projectId", referencedColumnName = "id")
@@ -54,7 +63,16 @@ public class Strategic_Indicator implements Serializable {
         setName(name);
         setDescription(description);
         setNetwork(network);
-        setQuality_factors(qualityFactors);
+        //setQuality_factors(qualityFactors);
+        setProject(project);
+    }
+
+    // Strategic Indicator without Quality Factors
+    public Strategic_Indicator(String name, String description, byte[] network, boolean weighted, Project project) {
+        setName(name);
+        setDescription(description);
+        setNetwork(network);
+        setWeighted(weighted);
         setProject(project);
     }
 
@@ -105,10 +123,14 @@ public class Strategic_Indicator implements Serializable {
     }
 
     public List<String> getQuality_factors() {
+        List<String> quality_factors = new ArrayList<>();
+        for (int i = 0; i < this.quality_factors.size(); i ++) {
+            quality_factors.add(this.quality_factors.get(i).getQuality_factor());
+        }
         return quality_factors;
     }
 
-    public void setQuality_factors(List<String> quality_factors) {
+    public void setQuality_factors(List<StrategicIndicatorQualityFactors> quality_factors) {
         this.quality_factors = quality_factors;
     }
 
@@ -118,5 +140,13 @@ public class Strategic_Indicator implements Serializable {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public void setWeighted(boolean weighted) {
+        this.weighted = weighted;
+    }
+
+    public boolean isWeighted() {
+        return weighted;
     }
 }

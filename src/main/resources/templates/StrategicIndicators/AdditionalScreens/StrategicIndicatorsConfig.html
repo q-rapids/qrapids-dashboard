@@ -61,7 +61,8 @@
                     <select id="selFactorsBox" multiple="multiple" style="height: 150px;">
                     </select>
                     <form>
-                        <input type="checkbox" id="weight"> Weighted average <br>
+                        <input type="checkbox" id="weight" onchange="openEdit()"> Weighted average &nbsp;&nbsp;&nbsp;
+                        <button id="weightEditButton" disabled="true" >···</button>
                         <div th:replace="Fragments/Modals :: weightsModal"></div>
                     </form>
                 </div>
