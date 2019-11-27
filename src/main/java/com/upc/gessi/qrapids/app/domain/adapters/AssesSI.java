@@ -81,12 +81,10 @@ public class AssesSI {
     public float assesSI(List<Float> factors_assessment, int n_factors) {
         try {
             float total = 0.f;
-//            int n_factors = 0;
             float result =0.f;
 
             for (Float factor : factors_assessment) {
                 total += factor;
-//              n_factors++;
             }
             if (total>0)
                 result = total/n_factors;

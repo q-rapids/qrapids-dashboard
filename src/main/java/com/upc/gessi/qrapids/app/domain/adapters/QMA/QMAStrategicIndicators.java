@@ -143,7 +143,6 @@ public class QMAStrategicIndicators {
             hasBN = false;
             hasFeedback = false;
             found=false;
-//            for (Strategic_Indicator dbsi : siRep.findByProject_Id(prjID)) {
             for (Strategic_Indicator dbsi : sis_DB) {
                 if (dbsi.getName().replaceAll("\\s+","").toLowerCase().equals(element.getID())) {
                     found = true;
