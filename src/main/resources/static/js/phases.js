@@ -224,7 +224,7 @@ function getData(phases) {
                             position: 'top',
                             orientation: 'horizontal',
                             offsetX: 0,
-                            offsetY: -4
+                            offsetY: 50
                         }
                     });
                 });
