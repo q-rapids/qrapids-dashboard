@@ -124,6 +124,8 @@ function getData(phases) {
     $.getJSON(url + "from=" + phases[0].from + "&to=" + todayTextDate)
         .then (function(data) {
             if (data.length === 0) {
+                var siData = [];
+                addNoDataStrategicIndicators (phases, siData);
                 alert("No data about Strategic Indicators for phases of this project.");
             } else {
                 var aux = [{cat: "No data", val:-1}];
@@ -131,6 +133,7 @@ function getData(phases) {
                 var currentSI = data[0].name;
                 var i = 0;
                 var currentPH = phases[i];
+                var siData = [data[0].name];
                 data.forEach(function (d) {
                     if (d.name == currentSI) {
                         var out = false;
@@ -164,6 +167,7 @@ function getData(phases) {
                             data: values
                         });
                         currentSI = d.name;
+                        siData.push(d.name);
                         aux = [{cat: "No data", val:-1}];
                         i = 0;
                         values = [];
@@ -199,38 +203,70 @@ function getData(phases) {
                     name: currentSI,
                     data: values
                 });
+                addNoDataStrategicIndicators(phases, siData);
                 console.log("new serie: ");
                 console.log(s);
-                var h = 400;
-                if (s.length >= 5) { h = 75 * s.length; }
-                else{ h = 100 * s.length; }
-                HeatMap.updateOptions({  chart: {
-                        height: h,
-                        type: 'heatmap',
-                    }
-                });
-                HeatMap.updateSeries(s);
-                phases.forEach(function (p) {
-                    HeatMap.addXaxisAnnotation({
-                        x: p.name,
-                        strokeDashArray: 0,
-                        borderColor: 'transparent',
-                        fillColor: 'transparent',
-                        label: {
-                            borderColor: '#c2c2c2',
-                            borderWidth: 0,
-                            text: "(" + p.from + " / " + p.to + ")",
-                            textAnchor: 'middle',
-                            position: 'top',
-                            orientation: 'horizontal',
-                            offsetX: 0,
-                            offsetY: 50
-                        }
-                    });
-                });
+                drawHeatmap(phases);
             }
         }
     );
+}
+
+function addNoDataStrategicIndicators (phases, siData) {
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/strategicIndicators";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    $.getJSON(url)
+        .then (function(data) {
+            for (var i = 0; i < data.length; i++) {
+                if (!siData.includes(data[i].name)){
+                    var values = [];
+                    for (var j = 0; j < phases.length; j++) {
+                        values.push({x: phases[j].name, y: -100});
+                    }
+                    s.push({
+                        name: data[i].name,
+                        data: values
+                    });
+                }
+            }
+            console.log("new serie: ");
+            console.log(s);
+            drawHeatmap(phases);
+        }
+    );
+}
+
+function drawHeatmap(phases) {
+    var h = 400;
+    if (s.length >= 5) { h = 75 * s.length; }
+    else{ h = 100 * s.length; }
+    HeatMap.updateOptions({  chart: {
+            height: h,
+            type: 'heatmap',
+        }
+    });
+    HeatMap.updateSeries(s);
+    phases.forEach(function (p) {
+        HeatMap.addXaxisAnnotation({
+            x: p.name,
+            strokeDashArray: 0,
+            borderColor: 'transparent',
+            fillColor: 'transparent',
+            label: {
+                borderColor: '#c2c2c2',
+                borderWidth: 0,
+                text: "(" + p.from + " / " + p.to + ")",
+                textAnchor: 'middle',
+                position: 'top',
+                orientation: 'horizontal',
+                offsetX: 0,
+                offsetY: 50
+            }
+        });
+    });
 }
 
 function mode(arr) {
