@@ -1,5 +1,8 @@
 var today = new Date();
 
+var param_from = getParameterByName('from');
+var param_to = getParameterByName('to');
+
 var config = {
     format: 'yyyy-mm-dd',
     weekStartDay: 1,
@@ -26,14 +29,33 @@ function configureHistoric () {
     $('#intervalsDropdown').append('<li><a onclick="thisMonth();$(\'#chartContainer\').empty();getData()" href="#">This month</a></li>');
     $('#intervalsDropdown').append('<li><a onclick="thisYear();$(\'#chartContainer\').empty();getData()" href="#">This year</a></li>');
 
-    var historicFrom = sessionStorage.getItem("historicFromDate");
-    if (!historicFrom)
-        last14Days();
-    else $('#datepickerFrom').datepicker().value(historicFrom);
+    var historicFrom;
+    var historicTo;
+    // we are navegating -> no params
+    if (param_from.length == 0 && param_to.length==0) {
+        historicFrom=sessionStorage.getItem("historicFromDate");
+        historicTo=sessionStorage.getItem("historicToDate");
+        if (!historicFrom || !historicTo)
+            last14Days(); // Default
+    }
+    else if (param_from.length > 0 && param_to.length>0) {
+        historicFrom=param_from;
+        historicTo=param_to;
+    }
+    else if (param_to.length==0) { // from filled, to empty
+        historicFrom=param_from;
+        historicTo=parseDate(today);
+    }
+    else {// from empty, to filled --> 14 days before, like in the default case when it shows 14 days
+        var d = param_to.split("-");
+        var date_to = new Date(d[0], d[1]-1, d[2]); // January is 0!
+        var dateOffset = (24*60*60*1000) * 14; //14 days
+        var date = new Date().setTime(date_to.getTime() - dateOffset);
+        historicFrom=parseDate(date);
+        historicTo=param_to;
+    }
 
-    var historicTo = sessionStorage.getItem("historicToDate");
-    if (!historicTo)
-        historicTo = parseDate(today);
+    $('#datepickerFrom').datepicker().value(historicFrom);
     $('#datepickerTo').datepicker().value(historicTo);
 
     $('#techniqueDropdownDiv').hide();
@@ -190,6 +212,7 @@ function next14Days () {
 
 function parseDate(date) {
     var date = new Date(date);
+    console.log(date);
     var dd = date.getDate();
     var mm = date.getMonth() + 1; //January is 0!
     var yyyy = date.getFullYear();

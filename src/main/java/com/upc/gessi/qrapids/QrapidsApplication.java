@@ -26,12 +26,15 @@ public class QrapidsApplication extends SpringBootServletInitializer {
     }
 
 	public static void main(String[] args) {
+		// Commented fetch function for avoid automatic add elasticsearch information to local SQL database.
 		ConfigurableApplicationContext context = SpringApplication.run(QrapidsApplication.class, args);
+		/*
 		try {
 			context.getBean(StrategicIndicatorsController.class).fetchStrategicIndicators();
 		} catch (Exception e) {
 			Logger logger = LoggerFactory.getLogger(Alerts.class);
 			logger.error(e.getMessage(), e);
 		}
+		*/
 	}
 }

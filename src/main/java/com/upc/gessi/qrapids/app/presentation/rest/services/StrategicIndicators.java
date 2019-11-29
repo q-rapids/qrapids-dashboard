@@ -406,7 +406,7 @@ public class StrategicIndicators {
     private enum TrainType {
         NONE, ONE, ALL
     }
-
+//TODO: assessSI
     @RequestMapping("/api/assessStrategicIndicators")
     @ResponseStatus(HttpStatus.OK)
     public void assesStrategicIndicatorsLegacy(@RequestParam(value = "prj", required=false) String prj,

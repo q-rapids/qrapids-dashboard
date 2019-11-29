@@ -6,6 +6,8 @@ import DTOs.FactorEvaluationDTO;
 import DTOs.StrategicIndicatorFactorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedStrategicIndicator;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
@@ -27,6 +29,13 @@ public class QMADetailedStrategicIndicators {
     private QMAConnection qmacon;
 
     @Autowired
+    private StrategicIndicatorRepository siRep;
+
+
+    @Autowired
+    private ProjectRepository prjRep;
+
+    @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
 
     public List<DTODetailedStrategicIndicator> CurrentEvaluation(String id, String prj) throws IOException {
@@ -44,7 +53,7 @@ public class QMADetailedStrategicIndicators {
             evals.add(StrategicIndicator.getFactorsEvaluations(prj, id));
         }
 
-        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(evals);
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals);
         //Connection.closeConnection();
         return dsi;
     }
@@ -64,45 +73,50 @@ public class QMADetailedStrategicIndicators {
             evals = new ArrayList<>();
             evals.add(StrategicIndicator.getFactorsEvaluations(prj, id, from, to));
         }
-        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(evals);
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals);
         //Connection.closeConnection();
         return dsi;
     }
 
-    private List<DTODetailedStrategicIndicator> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(List<StrategicIndicatorFactorEvaluationDTO> evals) {
+    private List<DTODetailedStrategicIndicator> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(Long prjID, List<StrategicIndicatorFactorEvaluationDTO> evals) {
         List<DTODetailedStrategicIndicator> dsi = new ArrayList<>();
+        boolean found; // to check if the SI is in the database
         //for each Detailed Strategic Indicador
         for (Iterator<StrategicIndicatorFactorEvaluationDTO> iterDSI = evals.iterator(); iterDSI.hasNext(); ) {
             StrategicIndicatorFactorEvaluationDTO element = iterDSI.next();
-            EvaluationDTO evaluation = element.getEvaluations().get(0);
-            //Create Detailed Strategic Indicator with name, id and null factors
-            DTODetailedStrategicIndicator d = new DTODetailedStrategicIndicator(element.getID(), element.getName(), null);
-            d.setDate(evaluation.getEvaluationDate());
-            d.setMismatchDays(evaluation.getMismatchDays());
-            d.setMissingFactors(evaluation.getMissingElements());
-            //set Factors to Detailed Strategic Indicator
-            d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors()));
+            found = siRep.existsByExternalIdAndProject_Id(element.getID(), prjID);
+            // only return Detailed Strategic Indicator if it is in local database
+            if (found) {
+                EvaluationDTO evaluation = element.getEvaluations().get(0);
+                //Create Detailed Strategic Indicator with name, id and null factors
+                DTODetailedStrategicIndicator d = new DTODetailedStrategicIndicator(element.getID(), element.getName(), null);
+                d.setDate(evaluation.getEvaluationDate());
+                d.setMismatchDays(evaluation.getMismatchDays());
+                d.setMissingFactors(evaluation.getMissingElements());
+                //set Factors to Detailed Strategic Indicator
+                d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors()));
 
-            // Get value
-            List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
-            EstimationEvaluationDTO estimation = element.getEstimation().get(0);
+                // Get value
+                List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
+                EstimationEvaluationDTO estimation = element.getEstimation().get(0);
 
-            boolean hasEstimation = true;
-            if (estimation == null || estimation.getEstimation() == null || estimation.getEstimation().size()==0)
-                hasEstimation = false;
+                boolean hasEstimation = true;
+                if (estimation == null || estimation.getEstimation() == null || estimation.getEstimation().size() == 0)
+                    hasEstimation = false;
 
-            if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
-                setValueAndThresholdToCategories(categories, estimation);
+                if (hasEstimation && estimation.getEstimation() != null && estimation.getEstimation().size() == categories.size()) {
+                    setValueAndThresholdToCategories(categories, estimation);
+                }
+
+                if (hasEstimation) {
+                    Float value = strategicIndicatorsController.getValueAndLabelFromCategories(categories).getFirst();
+                    d.setValue(Pair.of(value, strategicIndicatorsController.getLabel(value)));
+                } else {
+                    d.setValue(Pair.of(evaluation.getValue(), strategicIndicatorsController.getLabel(evaluation.getValue())));
+                }
+
+                dsi.add(d);
             }
-
-            if (hasEstimation) {
-                Float value = strategicIndicatorsController.getValueAndLabelFromCategories(categories).getFirst();
-                d.setValue(Pair.of(value, strategicIndicatorsController.getLabel(value)));
-            } else {
-                d.setValue(Pair.of(evaluation.getValue(), strategicIndicatorsController.getLabel(evaluation.getValue())));
-            }
-
-            dsi.add(d);
         }
         return dsi;
     }

@@ -9,6 +9,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsControlle
 import com.upc.gessi.qrapids.app.domain.models.Feedback;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
@@ -39,6 +40,9 @@ public class QMAStrategicIndicators {
     private StrategicIndicatorRepository siRep;
 
     @Autowired
+    private ProjectRepository prjRep;
+
+    @Autowired
     private FeedbackRepository feedbackRepository;
 
     @Autowired
@@ -51,7 +55,7 @@ public class QMAStrategicIndicators {
         qmacon.initConnexion();
         List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj);
         //Connection.closeConnection();
-        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
+        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(prjRep.findByExternalId(prj).getId(), evals);
 
         return result;
     }
@@ -61,7 +65,8 @@ public class QMAStrategicIndicators {
         StrategicIndicatorEvaluationDTO strategicIndicatorEvaluationDTO = StrategicIndicator.getSingleEvaluation(prj, strategicIndicatorId);
         List<StrategicIndicatorEvaluationDTO> strategicIndicatorEvaluationDTOList = new ArrayList<>();
         strategicIndicatorEvaluationDTOList.add(strategicIndicatorEvaluationDTO);
-        return StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(strategicIndicatorEvaluationDTOList).get(0);
+        return StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(prjRep.findByExternalId(prj).getId(),
+                strategicIndicatorEvaluationDTOList).get(0);
     }
 
     public List<DTOStrategicIndicatorEvaluation> HistoricalData(LocalDate from, LocalDate to, String prj) throws IOException, CategoriesException  {
@@ -72,7 +77,7 @@ public class QMAStrategicIndicators {
         //using dates from 1/1/2015 to now at the moment
         List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj, from, to);
         //Connection.closeConnection();
-        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(evals);
+        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(prjRep.findByExternalId(prj).getId(), evals);
 
         return result;
     }
@@ -122,34 +127,46 @@ public class QMAStrategicIndicators {
         return status.equals(RestStatus.OK) || status.equals(RestStatus.CREATED);
     }
 
-    private List<DTOStrategicIndicatorEvaluation> StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(List<StrategicIndicatorEvaluationDTO> evals) throws CategoriesException {
+    private List<DTOStrategicIndicatorEvaluation> StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(Long prjID, List<StrategicIndicatorEvaluationDTO> evals) throws CategoriesException {
         List<DTOStrategicIndicatorEvaluation> si = new ArrayList<>();
+        Long id = null;
+        boolean hasBN = false;
+        boolean hasFeedback = false;
+        boolean found=false; // to check if the SI is in the database
+        Iterable<Strategic_Indicator> sis_DB=siRep.findByProject_Id(prjID);
+
         // si contains the list of evaluations for strategic indicators
         for (Iterator<StrategicIndicatorEvaluationDTO> iterSI = evals.iterator(); iterSI.hasNext(); ) {
             // For each SI
             StrategicIndicatorEvaluationDTO element = iterSI.next();
-            Long id = null;
-            boolean hasBN = false;
-            boolean hasFeedback = false;
-            for (Strategic_Indicator dbsi : siRep.findAll()) {
+            id = null;
+            hasBN = false;
+            hasFeedback = false;
+            found=false;
+            for (Strategic_Indicator dbsi : sis_DB) {
                 if (dbsi.getName().replaceAll("\\s+","").toLowerCase().equals(element.getID())) {
+                    found = true;
                     id = dbsi.getId();
                     hasBN = dbsi.getNetwork() != null;
                     List<Feedback> feedback = new ArrayList<>();
                     try {
                         feedback = feedbackRepository.findAllBySiId(id);
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                    }
                     if (!feedback.isEmpty()) hasFeedback = true;
                 }
             }
-            //get categories
-            List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
+            // only return Strategic Indicator if it is in local database
+            if (found) {
+                //get categories
+                List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
 
-            //bool that determines if the current SI has the estimation parameter
-            if (element.getEstimation() == null || element.getEstimation().size() != element.getEvaluations().size())
-                throw new CategoriesException();
+                //bool that determines if the current SI has the estimation parameter
+                if (element.getEstimation() == null || element.getEstimation().size() != element.getEvaluations().size())
+                    throw new CategoriesException();
 
-            buildDTOStrategicIndicatorEvaluationList(si, element, id, hasBN, hasFeedback, categories);
+                buildDTOStrategicIndicatorEvaluationList(si, element, id, hasBN, hasFeedback, categories);
+            }
         }
         return si;
     }

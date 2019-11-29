@@ -510,14 +510,15 @@ public class StrategicIndicatorsController {
         }
     }
 
-    public List<DTOStrategicIndicatorEvaluation> simulateStrategicIndicatorsAssessment (Map<String, Float> factorsNameValueMap, String projectExternalId) throws IOException {
+    public List<DTOStrategicIndicatorEvaluation> simulateStrategicIndicatorsAssessment (Map<String, Float> factorsNameValueMap, String projectExternalId) throws IOException, ProjectNotFoundException {
         List<DTOFactor> factors = qualityFactorsController.getAllFactorsEvaluation(projectExternalId);
         for (DTOFactor factor : factors) {
             if (factorsNameValueMap.containsKey(factor.getId())) {
                 factor.setValue(factorsNameValueMap.get(factor.getId()));
             }
         }
-        Iterable<Strategic_Indicator> listSI = strategicIndicatorRepository.findAll();
+        Project project = projectsController.findProjectByExternalId(projectExternalId);
+        Iterable<Strategic_Indicator> listSI = strategicIndicatorRepository.findByProject_Id(project.getId());
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
         for (Strategic_Indicator si : listSI) {
             Map<String,String> mapSIFactors = new HashMap<>();
