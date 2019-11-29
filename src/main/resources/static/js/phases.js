@@ -58,6 +58,8 @@ function getPhasesList () {
                     });
                 });
                 getData(p);
+            } else {
+                alert("No information about phases of this project.");
             }
         });
 }
@@ -126,7 +128,6 @@ function getData(phases) {
             if (data.length === 0) {
                 var siData = [];
                 addNoDataStrategicIndicators (phases, siData);
-                alert("No data about Strategic Indicators for phases of this project.");
             } else {
                 var aux = [{cat: "No data", val:-1}];
                 var values = [];
