@@ -1,6 +1,6 @@
 {
   "name": "rangerover",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Range selection plugin for jQuery",
   "main": "index.js",
   "scripts": {
