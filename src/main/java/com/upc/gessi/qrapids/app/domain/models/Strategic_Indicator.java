@@ -59,20 +59,20 @@ public class Strategic_Indicator implements Serializable {
     public Strategic_Indicator() {
     }
 
-    public Strategic_Indicator(String name, String description, byte[] network, List<String> qualityFactors, Project project) {
+    public Strategic_Indicator(String name, String description, byte[] network, List<StrategicIndicatorQualityFactors> quality_factors, boolean weighted, Project project) {
         setName(name);
         setDescription(description);
         setNetwork(network);
-        //setQuality_factors(qualityFactors);
+        setQuality_factors(quality_factors);
+        setWeighted(weighted);
         setProject(project);
     }
 
     // Strategic Indicator without Quality Factors
-    public Strategic_Indicator(String name, String description, byte[] network, boolean weighted, Project project) {
+    public Strategic_Indicator(String name, String description, byte[] network, Project project) {
         setName(name);
         setDescription(description);
         setNetwork(network);
-        setWeighted(weighted);
         setProject(project);
     }
 
@@ -128,6 +128,15 @@ public class Strategic_Indicator implements Serializable {
             quality_factors.add(this.quality_factors.get(i).getQuality_factor());
         }
         return quality_factors;
+    }
+
+    public List<String> getWeights() {
+        List<String> quality_factors_weights = new ArrayList<>();
+        for (int i = 0; i < this.quality_factors.size(); i ++) {
+            quality_factors_weights.add(this.quality_factors.get(i).getQuality_factor());
+            quality_factors_weights.add(String.valueOf(this.quality_factors.get(i).getWeight()));
+        }
+        return quality_factors_weights;
     }
 
     public void setQuality_factors(List<StrategicIndicatorQualityFactors> quality_factors) {

@@ -104,7 +104,7 @@ public class StrategicIndicatorsController {
 
     private  boolean reassignQualityFactorsToStrategicIndicator (List<String> quality_factors, Strategic_Indicator strategicIndicator){
         List<StrategicIndicatorQualityFactors> newQualityFactorsWeights = new ArrayList();
-        List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findBystrategic_indicator_Id(strategicIndicator.getId());
+        //List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findBystrategic_indicator_Id(strategicIndicator.getId());
         boolean weighted = false;
         String f;
         Float w;
@@ -133,10 +133,10 @@ public class StrategicIndicatorsController {
 
     public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) {
         Strategic_Indicator strategicIndicator;
-        // create Strategic Indicator
-        strategicIndicator = new Strategic_Indicator(name, description, file, qualityFactors, project);
+        // create Strategic Indicator minim (without quality factors and weighted)
+        strategicIndicator = new Strategic_Indicator(name, description, file, project);
         strategicIndicatorRepository.save(strategicIndicator);
-        // Associate it with Quality Factors (set weighted quality)
+        // Associate it with Quality Factors (set weighted)
         boolean weighted = assignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
         strategicIndicator.setWeighted(weighted);
         strategicIndicatorRepository.save(strategicIndicator);
@@ -148,7 +148,6 @@ public class StrategicIndicatorsController {
         boolean weighted = false;
         String f;
         Float w;
-
         // generate StrategicIndicatorQualityFactors class objects from List<String> quality_factors
         while (!quality_factors.isEmpty()) {
             StrategicIndicatorQualityFactors siqf;
@@ -560,6 +559,7 @@ public class StrategicIndicatorsController {
 
     public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException {
         List<String> projects = projectsController.importProjectsAndUpdateDatabase();
+        boolean weighted = false;
         for(String projectExternalId : projects) {
             List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
             try {
@@ -571,9 +571,10 @@ public class StrategicIndicatorsController {
                 List<String> factors = new ArrayList<>();
                 for (DTOFactor f : dtoDetailedStrategicIndicator.getFactors()) {
                     factors.add(f.getId());
+                    factors.add("-1");
                 }
                 Project project = projectsController.findProjectByExternalId(projectExternalId);
-                Strategic_Indicator newSI = new Strategic_Indicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
+                Strategic_Indicator newSI = saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
                 if (!strategicIndicatorRepository.existsByExternalIdAndProject_Id(newSI.getExternalId(), project.getId())) {
                     strategicIndicatorRepository.save(newSI);
                 }

@@ -257,7 +257,9 @@ public class StrategicIndicators {
                         strategic_indicator.getName(),
                         strategic_indicator.getDescription(),
                         strategic_indicator.getNetwork(),
-                        strategic_indicator.getQuality_factors());
+                        strategic_indicator.getQuality_factors(),
+                        strategic_indicator.isWeighted(),
+                        strategic_indicator.getWeights());
                 dtoSIList.add(dtosi);
             }
             return dtoSIList;
@@ -277,7 +279,9 @@ public class StrategicIndicators {
                     strategicIndicator.getName(),
                     strategicIndicator.getDescription(),
                     strategicIndicator.getNetwork(),
-                    strategicIndicator.getQuality_factors());
+                    strategicIndicator.getQuality_factors(),
+                    strategicIndicator.isWeighted(),
+                    strategicIndicator.getWeights());
         } catch (StrategicIndicatorNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
