@@ -47,7 +47,7 @@ public class Strategic_Indicator implements Serializable {
     //@ElementCollection(fetch = FetchType.EAGER)
     //private List<String> quality_factors = new ArrayList<String>();
 
-    @OneToMany
+    @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name="strategic_indicator_id")
     private List<StrategicIndicatorQualityFactors> quality_factors = new ArrayList<>();
 

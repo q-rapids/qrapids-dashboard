@@ -423,7 +423,17 @@ public class StrategicIndicatorsController {
 
     private String assessStrategicIndicatorWithoutBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<Float> listFactorsAssessmentValues, List<String> siFactors, List<String> missingFactors, long factorsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException {
         if (!listFactorsAssessmentValues.isEmpty()) {
-            float value = assesSI.assesSI(listFactorsAssessmentValues, siFactors.size());
+            float value = 0.f;
+            if (strategicIndicator.isWeighted()) {
+                List<String> qf_weights = strategicIndicator.getWeights();
+                List<Float> weights = new ArrayList<>();
+                for ( int i = 1; i < qf_weights.size(); i+=2) {
+                    weights.add(Float.valueOf(qf_weights.get(i)));
+                }
+                value = assesSI.assesSI_weighted(listFactorsAssessmentValues, weights, siFactors.size());
+            } else {
+                value = assesSI.assesSI(listFactorsAssessmentValues, siFactors.size());
+            }
             assessmentValueOrLabel = String.valueOf(value);
             // saving the SI's assessment
             if (!qmaStrategicIndicators.setStrategicIndicatorValue(

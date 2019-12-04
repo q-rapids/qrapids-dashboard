@@ -19,11 +19,4 @@ public class StrategicIndicatorQualityFactorsController {
         return strategicIndicatorQualityFactor;
     }
 
-    public StrategicIndicatorQualityFactors saveStrategicIndicatorQualityFactor (String quality_factor, Float weight) {
-        StrategicIndicatorQualityFactors strategicIndicatorQualityFactor;
-        strategicIndicatorQualityFactor = new StrategicIndicatorQualityFactors(quality_factor, weight);
-        strategicIndicatorQualityFactorsRepository.save(strategicIndicatorQualityFactor);
-        return strategicIndicatorQualityFactor;
-    }
-
 }

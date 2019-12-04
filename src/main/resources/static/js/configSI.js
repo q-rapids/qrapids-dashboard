@@ -249,11 +249,13 @@ $('#weightCheckbox').change(function(){
 function checkTotalSum () {
     var qualityFactors = getSelectedFactors(false);
     var wff = String(weightsForFactors).split(",");
+    console.log(wff);
     var totalSum = 0;
     for (var i = 0; i < qualityFactors.length; i++){
         if (wff.includes(qualityFactors[i])) totalSum += parseFloat(wff[wff.indexOf(qualityFactors[i])+1]);
     }
-    return totalSum == 100 && (qualityFactors.length == weightsForFactors.length);
+    console.log(totalSum);
+    return totalSum == 100 && (qualityFactors.length == wff.length/2);
 }
 
 $("#saveSI").click(function () {
