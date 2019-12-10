@@ -235,6 +235,9 @@ public class StrategicIndicatorsController {
 
         boolean correct = true;
 
+        // TODO: qmaStrategicIndicators.prepareSIIndex(projectExternalId)
+        qmaStrategicIndicators.prepareSIIndex(projectExternalId);
+
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
         factorsQMA.clearStrategicIndicatorsRelations(evaluationDate);
 

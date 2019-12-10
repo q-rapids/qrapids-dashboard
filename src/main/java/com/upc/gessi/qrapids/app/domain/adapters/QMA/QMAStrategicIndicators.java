@@ -20,6 +20,7 @@ import org.elasticsearch.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
+import util.Queries;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -47,6 +48,12 @@ public class QMAStrategicIndicators {
 
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
+
+    public boolean prepareSIIndex(String projectID) throws IOException {
+        System.out.print("IN prepareSIIndex(" + projectID + ")  FUNCTION");
+        qmacon.initConnexion();
+        return Queries.prepareSIIndex(projectID);
+    }
 
     public List<DTOStrategicIndicatorEvaluation> CurrentEvaluation(String prj) throws IOException, CategoriesException {
         List<DTOStrategicIndicatorEvaluation> result;
