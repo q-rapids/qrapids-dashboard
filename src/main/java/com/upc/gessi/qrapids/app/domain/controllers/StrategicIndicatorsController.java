@@ -430,7 +430,7 @@ public class StrategicIndicatorsController {
                 for ( int i = 1; i < qf_weights.size(); i+=2) {
                     weights.add(Float.valueOf(qf_weights.get(i)));
                 }
-                value = assesSI.assesSI_weighted(listFactorsAssessmentValues, weights, siFactors.size());
+                value = assesSI.assesSI_weighted(listFactorsAssessmentValues, weights);
             } else {
                 value = assesSI.assesSI(listFactorsAssessmentValues, siFactors.size());
             }
@@ -523,9 +523,15 @@ public class StrategicIndicatorsController {
             factorIds.add(dtoFactor.getId());
             Float weight = 0f;
             if (strategicIndicator.getNetwork() == null)
-                weight = 1f;
+                // when SI is not weighted the weight of factor value is 1f
+                if (!strategicIndicator.isWeighted()) {
+                    weight = 1f;
+                } else { // when SI is weighted the weight of factor has corresponding value
+                    List<String> qfw = strategicIndicator.getWeights();
+                    weight = Float.parseFloat(qfw.get(qfw.indexOf(dtoFactor.getId())+1))/100;
+                }
             weights.add(weight);
-            values.add(dtoFactor.getValue());
+            values.add(dtoFactor.getValue()*weight); // value of weighted factor
             labels.add(qualityFactorsController.getFactorLabelFromValue(dtoFactor.getValue()));
         }
         correct = saveFactorSIRelation(project, factorIds, strategicIndicator.getExternalId(), evaluationDate, weights, values, labels, assessmentValueOrLabel);

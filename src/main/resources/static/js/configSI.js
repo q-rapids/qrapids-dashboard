@@ -158,6 +158,16 @@ function validaCheckbox(){
             document.getElementById('weightCheckbox').checked = false;
         }
     }
+    if (!checked) {
+        if (weightsForFactors.length > 0) {
+            var c = confirm('You will lose the values of weights for Strategic Indicators. Do you want to continue?');
+            if (c) {
+                weightsForFactors = [];
+            } else {
+                document.getElementById('weightCheckbox').checked = true;
+            }
+        }
+    }
 }
 
 function openEdit() {  // This function is called by the checkbox click
@@ -176,7 +186,7 @@ $("#weightEditButton").click(function () {
         selector.forEach(function (qf) {
             var id = "editor"+i;
             if (wff.includes(qf)) {
-                $("#weightsItems").append('<tr class="phaseItem"><td>' + qf + '</td><td id="' + id + '" contenteditable="true">' + wff[wff.indexOf(qf)+1] +'</tdid>');
+                $("#weightsItems").append('<tr class="phaseItem"><td>' + qf + '</td><td id="' + id + '" contenteditable="true">' + Math.floor(wff[wff.indexOf(qf)+1]) +'</tdid>');
             } else {
                 $("#weightsItems").append('<tr class="phaseItem"><td>' + qf + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
             }
@@ -195,28 +205,31 @@ $("#submitWeightsButton").click(function () {
     var qualityFactors = getSelectedFactors(false);
     var i = 0;
     var totalSum = 0;
-    weightsForFactors = [];
+    aux = [];
     var ok = true;
     while (i < qualityFactors.length && ok) {
         var id = "editor"+i;
         var cell = document.getElementById(id);
         var cellValue = cell.innerText;
-        var weightValue = parseFloat(cellValue.replace(',', '.'));
-        if (isNaN(weightValue) || weightValue < 0) {
+        var weightValue = Math.floor(cellValue);
+        if (isNaN(weightValue) || weightValue <= 0) {
             ok = false;
         } else {
             totalSum += weightValue;
-            weightsForFactors.push([qualityFactors[i], weightValue]);
+            aux.push([qualityFactors[i], weightValue]);
         }
         i++;
     }
     if (!ok) alert ("Check the form fields, there may be one of the following errors:\n" +
         "- Empty fields\n" +
         "- Non numerical values\n"+
-        "- Negative values");
+        "- Zero or negative values");
     else {
         if (totalSum != 100) alert("Total sum is not equals to 100.");
-        else $("#weightsModal").modal('hide');
+        else {
+            weightsForFactors = aux;
+            $("#weightsModal").modal('hide');
+        }
     }
 });
 
