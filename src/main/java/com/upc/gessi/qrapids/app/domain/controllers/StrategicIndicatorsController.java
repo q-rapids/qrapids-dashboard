@@ -201,11 +201,13 @@ public class StrategicIndicatorsController {
             List<String> projects = projectsController.getAllProjects();
             int i=0;
             while (i<projects.size() && correct) {
+                qmaStrategicIndicators.prepareSIIndex(projects.get(i));
                 correct = assessDateProjectStrategicIndicators(projects.get(i), dateFrom);
                 i++;
             }
         }
         else {
+            qmaStrategicIndicators.prepareSIIndex(projectExternalId);
             correct = assessDateProjectStrategicIndicators(projectExternalId, dateFrom);
         }
         return correct;
@@ -236,7 +238,7 @@ public class StrategicIndicatorsController {
         boolean correct = true;
 
         // TODO: qmaStrategicIndicators.prepareSIIndex(projectExternalId)
-        qmaStrategicIndicators.prepareSIIndex(projectExternalId);
+        // qmaStrategicIndicators.prepareSIIndex(projectExternalId);
 
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
         factorsQMA.clearStrategicIndicatorsRelations(evaluationDate);
