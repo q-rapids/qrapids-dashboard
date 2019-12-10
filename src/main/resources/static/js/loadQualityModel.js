@@ -68,8 +68,8 @@ function createNode (element, color, colorBorder) {
 
 function createEdge (source, target) {
     var weight = source.weight;
-    if (weight == 0) weight = null;
-    else weight = parseFloat(weight).toFixed(0);
+    if (weight == 0 || weight == 1) weight = null; //  if (weight == 1) no weighted SI
+    else weight = (parseFloat(weight) * 100).toFixed(0) + "%"; // weight percentage
     return {
         data: {
             source: source.id,
