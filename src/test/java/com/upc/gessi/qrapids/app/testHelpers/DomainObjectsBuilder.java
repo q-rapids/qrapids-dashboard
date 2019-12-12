@@ -43,19 +43,25 @@ public class DomainObjectsBuilder {
         return alert;
     }
 
+    // build Strategic Indicator without weights
     public Strategic_Indicator buildStrategicIndicator (Project project) {
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Product Quality";
         String strategicIndicatorDescription = "Quality of the product built";
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "codequality";
-        qualityFactors.add(factor1);
-        String factor2 = "softwarestability";
-        qualityFactors.add(factor2);
-        String factor3 = "testingstatus";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, project);
         strategicIndicator.setId(strategicIndicatorId);
+
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator);
+        qualityFactors.add(factor1);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", 1, strategicIndicator);
+        qualityFactors.add(factor2);
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator);
+        qualityFactors.add(factor3);
+
+        strategicIndicator.setQuality_factors(qualityFactors);
+        strategicIndicator.setWeighted(false);
         return strategicIndicator;
     }
 

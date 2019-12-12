@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMARelations;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
+import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
@@ -542,15 +543,21 @@ public class StrategicIndicatorsControllerTest {
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Process Performance";
         String strategicIndicatorDescription = "Performance levels of the processes involved in the project";
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "testingperformance";
-        qualityFactors.add(factor1);
-        String factor2 = "developmentspeed";
-        qualityFactors.add(factor2);
-        String factor3 = "externalquality";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, project);
         strategicIndicator.setId(strategicIndicatorId);
+
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("testingperformance", -1, strategicIndicator);
+        qualityFactors.add(factor1);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", 1, strategicIndicator);
+        qualityFactors.add(factor2);
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "externalquality", -1, strategicIndicator);
+        qualityFactors.add(factor3);
+
+        strategicIndicator.setQuality_factors(qualityFactors);
+        strategicIndicator.setWeighted(false);
+
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
 
@@ -585,7 +592,7 @@ public class StrategicIndicatorsControllerTest {
         factorCategoryNamesList.add("Good");
         factorCategoryNamesList.add("Neutral");
 
-        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(qualityFactors), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
+        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
 
         // When
         boolean correct = strategicIndicatorsController.assessStrategicIndicators(project.getExternalId(), null);
@@ -610,7 +617,7 @@ public class StrategicIndicatorsControllerTest {
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
-        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(qualityFactors), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
+        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
         verifyNoMoreInteractions(qmaRelations);
     }
 
@@ -651,15 +658,21 @@ public class StrategicIndicatorsControllerTest {
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Process Performance";
         String strategicIndicatorDescription = "Performance levels of the processes involved in the project";
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "testingperformance";
-        qualityFactors.add(factor1);
-        String factor2 = "developmentspeed";
-        qualityFactors.add(factor2);
-        String factor3 = "externalquality";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, project);
         strategicIndicator.setId(strategicIndicatorId);
+
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("testingperformance", -1, strategicIndicator);
+        qualityFactors.add(factor1);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", 1, strategicIndicator);
+        qualityFactors.add(factor2);
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "externalquality", -1, strategicIndicator);
+        qualityFactors.add(factor3);
+
+        strategicIndicator.setQuality_factors(qualityFactors);
+        strategicIndicator.setWeighted(false);
+
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
 
@@ -748,15 +761,20 @@ public class StrategicIndicatorsControllerTest {
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Process Performance";
         String strategicIndicatorDescription = "Performance levels of the processes involved in the project";
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "testingperformance";
-        qualityFactors.add(factor1);
-        String factor2 = "developmentspeed";
-        qualityFactors.add(factor2);
-        String factor3 = "externalquality";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, project);
         strategicIndicator.setId(strategicIndicatorId);
+
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("testingperformance", -1, strategicIndicator);
+        qualityFactors.add(factor1);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", 1, strategicIndicator);
+        qualityFactors.add(factor2);
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "externalquality", -1, strategicIndicator);
+        qualityFactors.add(factor3);
+
+        strategicIndicator.setQuality_factors(qualityFactors);
+        strategicIndicator.setWeighted(false);
 
         when(strategicIndicatorRepository.findByNameAndProject_Id(strategicIndicatorName, project.getId())).thenReturn(strategicIndicator);
 
@@ -789,7 +807,7 @@ public class StrategicIndicatorsControllerTest {
         factorCategoryNamesList.add("Good");
         factorCategoryNamesList.add("Neutral");
 
-        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(qualityFactors), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
+        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
 
         // When
         boolean correct = strategicIndicatorsController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
@@ -811,7 +829,7 @@ public class StrategicIndicatorsControllerTest {
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
-        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(qualityFactors), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
+        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
         verifyNoMoreInteractions(qmaRelations);
     }
 
@@ -852,15 +870,20 @@ public class StrategicIndicatorsControllerTest {
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Process Performance";
         String strategicIndicatorDescription = "Performance levels of the processes involved in the project";
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "testingperformance";
-        qualityFactors.add(factor1);
-        String factor2 = "developmentspeed";
-        qualityFactors.add(factor2);
-        String factor3 = "externalquality";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, project);
         strategicIndicator.setId(strategicIndicatorId);
+
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("testingperformance", -1, strategicIndicator);
+        qualityFactors.add(factor1);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", 1, strategicIndicator);
+        qualityFactors.add(factor2);
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "externalquality", -1, strategicIndicator);
+        qualityFactors.add(factor3);
+
+        strategicIndicator.setQuality_factors(qualityFactors);
+        strategicIndicator.setWeighted(false);
 
         when(strategicIndicatorRepository.findByNameAndProject_Id(strategicIndicatorName, project.getId())).thenReturn(strategicIndicator);
 
