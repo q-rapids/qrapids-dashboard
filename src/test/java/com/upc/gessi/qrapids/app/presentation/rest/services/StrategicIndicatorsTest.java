@@ -9,6 +9,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
+import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
@@ -1653,15 +1654,19 @@ public class StrategicIndicatorsTest {
         String strategicIndicatorExternalId = "productquality";
         String strategicIndicatorName = "Product Quality";
         String strategicIndicatorDescription = "Quality of the product built";
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "codequality";
-        qualityFactors.add(factor1);
-        String factor2 = "softwarestability";
-        qualityFactors.add(factor2);
-        String factor3 = "testingstatus";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, project);
         strategicIndicator.setId(strategicIndicatorId);
+
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator);
+        qualityFactors.add(factor1);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator);
+        qualityFactors.add(factor2);
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator);
+        qualityFactors.add(factor3);
+
+        strategicIndicator.setQuality_factors(qualityFactors);
+        strategicIndicator.setWeighted(false);
 
         List<Strategic_Indicator> strategicIndicatorList = new ArrayList<>();
         strategicIndicatorList.add(strategicIndicator);
@@ -1682,9 +1687,11 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].description", is(strategicIndicatorDescription)))
                 .andExpect(jsonPath("$[0].network", is(nullValue())))
                 .andExpect(jsonPath("$[0].qualityFactors", hasSize(3)))
-                .andExpect(jsonPath("$[0].qualityFactors[0]", is(factor1)))
-                .andExpect(jsonPath("$[0].qualityFactors[1]", is(factor2)))
-                .andExpect(jsonPath("$[0].qualityFactors[2]", is(factor3)))
+                .andExpect(jsonPath("$[0].qualityFactors[0]", is("codequality")))
+                .andExpect(jsonPath("$[0].qualityFactors[1]", is("softwarestability")))
+                .andExpect(jsonPath("$[0].qualityFactors[2]", is("testingstatus")))
+                .andExpect(jsonPath("$[0].weighted", is(strategicIndicator.isWeighted())))
+                .andExpect(jsonPath("$[0].qualityFactorsWeights", is(strategicIndicator.getWeights())))
                 .andDo(document("si/get-all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1705,7 +1712,11 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].qualityFactors")
                                         .description("List of the quality factors composing the strategic indicator"),
                                 fieldWithPath("[].qualityFactors[]")
-                                        .description("Quality factor name"))
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].weighted")
+                                        .description("Strategic indicator is weighted or not"),
+                                fieldWithPath("[].qualityFactorsWeights")
+                                        .description("List of the quality factors composing the strategic indicator with their corresponding weights"))
                 ));
 
         // Verify mock interactions
@@ -1740,6 +1751,8 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$.qualityFactors[0]", is(strategicIndicator.getQuality_factors().get(0))))
                 .andExpect(jsonPath("$.qualityFactors[1]", is(strategicIndicator.getQuality_factors().get(1))))
                 .andExpect(jsonPath("$.qualityFactors[2]", is(strategicIndicator.getQuality_factors().get(2))))
+                .andExpect(jsonPath("$.weighted", is(strategicIndicator.isWeighted())))
+                .andExpect(jsonPath("$.qualityFactorsWeights", is(strategicIndicator.getWeights())))
                 .andDo(document("si/get-one",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1758,7 +1771,11 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("network")
                                         .description("Strategic indicator bayesian network"),
                                 fieldWithPath("qualityFactors")
-                                        .description("Strategic indicator quality factors identifiers list"))
+                                        .description("Strategic indicator quality factors identifiers list"),
+                                fieldWithPath("weighted")
+                                        .description("Strategic indicator's boolean field which identify if it is weighted or not"),
+                                fieldWithPath("qualityFactorsWeights")
+                                        .description("Strategic indicator quality factors identifiers and weights list (-1.0 represent non weighted Strategic indicator)"))
                 ));
 
         // Verify mock interactions

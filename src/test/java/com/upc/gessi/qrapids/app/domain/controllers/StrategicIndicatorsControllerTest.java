@@ -550,7 +550,7 @@ public class StrategicIndicatorsControllerTest {
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
         StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("testingperformance", -1, strategicIndicator);
         qualityFactors.add(factor1);
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", 1, strategicIndicator);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", -1, strategicIndicator);
         qualityFactors.add(factor2);
         StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "externalquality", -1, strategicIndicator);
         qualityFactors.add(factor3);
@@ -665,7 +665,7 @@ public class StrategicIndicatorsControllerTest {
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
         StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("testingperformance", -1, strategicIndicator);
         qualityFactors.add(factor1);
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", 1, strategicIndicator);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", -1, strategicIndicator);
         qualityFactors.add(factor2);
         StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "externalquality", -1, strategicIndicator);
         qualityFactors.add(factor3);
@@ -768,7 +768,7 @@ public class StrategicIndicatorsControllerTest {
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
         StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("testingperformance", -1, strategicIndicator);
         qualityFactors.add(factor1);
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", 1, strategicIndicator);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", -1, strategicIndicator);
         qualityFactors.add(factor2);
         StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "externalquality", -1, strategicIndicator);
         qualityFactors.add(factor3);
@@ -877,7 +877,7 @@ public class StrategicIndicatorsControllerTest {
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
         StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("testingperformance", -1, strategicIndicator);
         qualityFactors.add(factor1);
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", 1, strategicIndicator);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "developmentspeed", -1, strategicIndicator);
         qualityFactors.add(factor2);
         StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "externalquality", -1, strategicIndicator);
         qualityFactors.add(factor3);

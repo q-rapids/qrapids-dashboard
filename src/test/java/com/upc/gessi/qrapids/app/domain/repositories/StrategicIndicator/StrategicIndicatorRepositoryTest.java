@@ -41,7 +41,7 @@ public class StrategicIndicatorRepositoryTest {
         List<StrategicIndicatorQualityFactors> qualityFactors1 = new ArrayList<>();
         StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator1);
         qualityFactors1.add(factor1);
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", 1, strategicIndicator1);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator1);
         qualityFactors1.add(factor2);
         StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator1);
         qualityFactors1.add(factor3);
@@ -56,7 +56,7 @@ public class StrategicIndicatorRepositoryTest {
         List<StrategicIndicatorQualityFactors> qualityFactors2 = new ArrayList<>();
         StrategicIndicatorQualityFactors factor4 = new StrategicIndicatorQualityFactors("blockingcode", -1, strategicIndicator2);
         qualityFactors2.add(factor4);
-        StrategicIndicatorQualityFactors factor5 = new StrategicIndicatorQualityFactors( "testingstatus", 1, strategicIndicator2);
+        StrategicIndicatorQualityFactors factor5 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator2);
         qualityFactors2.add(factor5);
         StrategicIndicatorQualityFactors factor6 = new StrategicIndicatorQualityFactors( "qualityissuespecification", -1, strategicIndicator2);
         qualityFactors2.add(factor6);
@@ -92,7 +92,7 @@ public class StrategicIndicatorRepositoryTest {
         List<StrategicIndicatorQualityFactors> qualityFactors1 = new ArrayList<>();
         StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator1);
         qualityFactors1.add(factor1);
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", 1, strategicIndicator1);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator1);
         qualityFactors1.add(factor2);
         StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator1);
         qualityFactors1.add(factor3);
@@ -106,7 +106,7 @@ public class StrategicIndicatorRepositoryTest {
         List<StrategicIndicatorQualityFactors> qualityFactors2 = new ArrayList<>();
         StrategicIndicatorQualityFactors factor4 = new StrategicIndicatorQualityFactors("blockingcode", -1, strategicIndicator2);
         qualityFactors2.add(factor4);
-        StrategicIndicatorQualityFactors factor5 = new StrategicIndicatorQualityFactors( "testingstatus", 1, strategicIndicator2);
+        StrategicIndicatorQualityFactors factor5 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator2);
         qualityFactors2.add(factor5);
         StrategicIndicatorQualityFactors factor6 = new StrategicIndicatorQualityFactors( "qualityissuespecification", -1, strategicIndicator2);
         qualityFactors2.add(factor6);
@@ -138,7 +138,7 @@ public class StrategicIndicatorRepositoryTest {
         List<StrategicIndicatorQualityFactors> qualityFactors1 = new ArrayList<>();
         StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator1);
         qualityFactors1.add(factor1);
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", 1, strategicIndicator1);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator1);
         qualityFactors1.add(factor2);
         StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator1);
         qualityFactors1.add(factor3);

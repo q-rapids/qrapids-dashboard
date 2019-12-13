@@ -55,7 +55,7 @@ public class DomainObjectsBuilder {
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
         StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator);
         qualityFactors.add(factor1);
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", 1, strategicIndicator);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator);
         qualityFactors.add(factor2);
         StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator);
         qualityFactors.add(factor3);
