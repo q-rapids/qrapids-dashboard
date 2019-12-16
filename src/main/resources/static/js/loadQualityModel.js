@@ -35,10 +35,17 @@ function buildTree(strategicIndicators) {
         for (var j = 0; j < strategicIndicator.factors.length; j++) {
             var factor = strategicIndicator.factors[j];
             var node = createNode(factor, factorColor, factorColor);
-            if (!qmnodes.has(factor.id))
-                qmnodes.set(factor.id, node);
-            if (!qmedges.has(factor.id+"-"+strategicIndicator.id))
-                qmedges.set(factor.id+"-"+strategicIndicator.id, createEdge(factor, strategicIndicator));
+            if (factor.weight== 1){
+                if (!qmnodes.has(factor.id))
+                    qmnodes.set(factor.id, node);
+                if (!qmedges.has(factor.id+"-"+strategicIndicator.id))
+                    qmedges.set(factor.id+"-"+strategicIndicator.id, createEdge(factor, strategicIndicator, strategicIndicator.factors.length));
+            } else {
+                if (!qmnodes.has(factor.id))
+                    qmnodes.set(factor.id, node);
+                if (!qmedges.has(factor.id+"-"+strategicIndicator.id))
+                    qmedges.set(factor.id+"-"+strategicIndicator.id, createEdge(factor, strategicIndicator));
+            }
             var metricsWeights = sumMetricsWeights(factor.metrics);
 
             for (var k = 0; k < factor.metrics.length; k++) {
@@ -81,13 +88,13 @@ function createNode (element, color, colorBorder) {
     }
 }
 
-function createEdge (source, target, metricsWeights) {
+function createEdge (source, target, aux) { // aux = { sum metrics weights or #factors (no weighted) }
     var weight = source.weight;
-    if (metricsWeights) {
-        weight = ((parseFloat(weight)/metricsWeights) * 100).toFixed(0) + "%";
+    if (aux) {
+        weight = ((parseFloat(weight)/aux) * 100).toFixed(0) + "%"; // weight percentage
     }
     else {
-        if (weight == 0 || weight == 1) weight = null; //  if (weight == 1) no weighted SI
+        if (weight == 0) weight = null;
         else weight = (parseFloat(weight) * 100).toFixed(0) + "%"; // weight percentage
     }
     return {
