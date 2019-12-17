@@ -184,6 +184,7 @@ public class QMAStrategicIndicators {
                 element.getName(),
                 element.getDescription(),
                 Pair.of(value, strategicIndicatorsController.getLabel(value)),
+                evaluation.getRationale(),
                 new ArrayList<>(categories),
                 evaluation.getEvaluationDate(),
                 evaluation.getDatasource(),

@@ -55,7 +55,8 @@ app.controller('TablesCtrl', function($scope, $http) {
                     date: strategicIndicatorEval.date,
                     description: strategicIndicatorEval.description,
                     value: strategicIndicatorEval.value_description,
-                    categories: strategicIndicatorEval.categories_description
+                    categories: strategicIndicatorEval.categories_description,
+                    rationale: strategicIndicatorEval.rationale
                 });
             });
             $scope.data = data;

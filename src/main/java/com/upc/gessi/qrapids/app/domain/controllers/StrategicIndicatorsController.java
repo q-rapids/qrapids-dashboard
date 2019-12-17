@@ -433,8 +433,8 @@ public class StrategicIndicatorsController {
                 int j = 0;
                 for ( int i = 1; i < qf_weights.size(); i+=2) {
                     weights.add(Float.valueOf(qf_weights.get(i)));
-                    weightsum += Float.valueOf(qf_weights.get(i));
-                    valuesum += (listFactorsAssessmentValues.get(j) * Float.valueOf(qf_weights.get(i)));
+                    weightsum += Float.valueOf(qf_weights.get(i))/100;
+                    valuesum += (listFactorsAssessmentValues.get(j) * Float.valueOf(qf_weights.get(i))/100);
                     j++;
                 }
                 value = assesSI.assesSI_weighted(listFactorsAssessmentValues, weights);
@@ -482,12 +482,14 @@ public class StrategicIndicatorsController {
         if (!valueAndLabel.getFirst().isNaN()) {
             assessmentValueOrLabel = valueAndLabel.getSecond();
             // saving the SI's assessment
+            String info = "";
             if (!qmaStrategicIndicators.setStrategicIndicatorValue(
                     project,
                     strategicIndicator.getExternalId(),
                     strategicIndicator.getName(),
                     strategicIndicator.getDescription(),
                     valueAndLabel.getFirst(),
+                    info,
                     evaluationDate,
                     assessment,
                     missingFactors,
@@ -640,7 +642,9 @@ public class StrategicIndicatorsController {
                 result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+","").toLowerCase(),
                         si.getName(),
                         si.getDescription(),
-                        Pair.of(value, getLabel(value)), assessment,
+                        Pair.of(value, getLabel(value)),
+                        "",
+                        assessment,
                         null,
                         "Simulation",
                         si.getId(),
@@ -653,6 +657,7 @@ public class StrategicIndicatorsController {
                         si.getName(),
                         si.getDescription(),
                         Pair.of(value, getLabel(value)),
+                        "",
                         getCategories(),
                         null,
                         "Simulation",
