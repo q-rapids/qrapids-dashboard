@@ -38,7 +38,7 @@ public class QMADetailedStrategicIndicators {
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
 
-    public List<DTODetailedStrategicIndicator> CurrentEvaluation(String id, String prj) throws IOException {
+    public List<DTODetailedStrategicIndicator> CurrentEvaluation(String id, String prj, boolean fetch) throws IOException {
         List<DTODetailedStrategicIndicator> dsi;
 
         // Data coming from QMA API
@@ -53,7 +53,7 @@ public class QMADetailedStrategicIndicators {
             evals.add(StrategicIndicator.getFactorsEvaluations(prj, id));
         }
 
-        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals);
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals, fetch);
         //Connection.closeConnection();
         return dsi;
     }
@@ -73,12 +73,12 @@ public class QMADetailedStrategicIndicators {
             evals = new ArrayList<>();
             evals.add(StrategicIndicator.getFactorsEvaluations(prj, id, from, to));
         }
-        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals);
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals, false);
         //Connection.closeConnection();
         return dsi;
     }
 
-    private List<DTODetailedStrategicIndicator> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(Long prjID, List<StrategicIndicatorFactorEvaluationDTO> evals) {
+    private List<DTODetailedStrategicIndicator> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(Long prjID, List<StrategicIndicatorFactorEvaluationDTO> evals, boolean fetch) {
         List<DTODetailedStrategicIndicator> dsi = new ArrayList<>();
         boolean found; // to check if the SI is in the database
         //for each Detailed Strategic Indicador
@@ -86,7 +86,7 @@ public class QMADetailedStrategicIndicators {
             StrategicIndicatorFactorEvaluationDTO element = iterDSI.next();
             found = siRep.existsByExternalIdAndProject_Id(element.getID(), prjID);
             // only return Detailed Strategic Indicator if it is in local database
-            if (found) {
+            if (found || fetch) {
                 EvaluationDTO evaluation = element.getEvaluations().get(0);
                 //Create Detailed Strategic Indicator with name, id and null factors
                 DTODetailedStrategicIndicator d = new DTODetailedStrategicIndicator(element.getID(), element.getName(), null);

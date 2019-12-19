@@ -553,7 +553,7 @@ public class Forecast {
     }
 
     public List<DTOStrategicIndicatorEvaluation> ForecastSI(String technique, String freq, String horizon, String prj) throws IOException {
-        List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj), technique, freq, horizon, prj);
+        List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj, false), technique, freq, horizon, prj);
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
         String categoriesDescription = strategicIndicatorsController.getCategories().toString();
         for (DTODetailedStrategicIndicator dsi : dsis) {
