@@ -86,7 +86,7 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedStrategicIndicator> getDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj) {
         try {
-            return strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, false);
+            return strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, true);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -202,7 +202,7 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedStrategicIndicator> getQualityFactorsPredictionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
-            List<DTODetailedStrategicIndicator> currentEvaluation = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, false);
+            List<DTODetailedStrategicIndicator> currentEvaluation = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, true);
             return strategicIndicatorsController.getDetailedStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);

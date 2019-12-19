@@ -136,12 +136,12 @@ public class StrategicIndicatorsController {
         return qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, strategicIndicatorId);
     }
 
-    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, boolean fetch) throws IOException, ElasticsearchStatusException {
-        return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, fetch);
+    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, boolean DBfilter) throws IOException, ElasticsearchStatusException {
+        return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, DBfilter);
     }
 
     public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorCurrentEvaluation (String strategicIndicatorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
-        return qmaDetailedStrategicIndicators.CurrentEvaluation(strategicIndicatorId, projectExternalId, false);
+        return qmaDetailedStrategicIndicators.CurrentEvaluation(strategicIndicatorId, projectExternalId, true);
     }
 
     public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsHistoricalEvaluation (String projectExternalId, LocalDate from, LocalDate to) throws IOException, CategoriesException, ElasticsearchStatusException {
@@ -497,7 +497,7 @@ public class StrategicIndicatorsController {
         for(String projectExternalId : projects) {
             List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
             try {
-                dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true);
+                dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, false);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

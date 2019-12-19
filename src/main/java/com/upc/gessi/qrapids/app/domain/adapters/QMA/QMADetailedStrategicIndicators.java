@@ -38,7 +38,7 @@ public class QMADetailedStrategicIndicators {
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
 
-    public List<DTODetailedStrategicIndicator> CurrentEvaluation(String id, String prj, boolean fetch) throws IOException {
+    public List<DTODetailedStrategicIndicator> CurrentEvaluation(String id, String prj, boolean DBfilter) throws IOException {
         List<DTODetailedStrategicIndicator> dsi;
 
         // Data coming from QMA API
@@ -53,7 +53,7 @@ public class QMADetailedStrategicIndicators {
             evals.add(StrategicIndicator.getFactorsEvaluations(prj, id));
         }
 
-        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals, fetch);
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals, DBfilter);
         //Connection.closeConnection();
         return dsi;
     }
@@ -73,20 +73,21 @@ public class QMADetailedStrategicIndicators {
             evals = new ArrayList<>();
             evals.add(StrategicIndicator.getFactorsEvaluations(prj, id, from, to));
         }
-        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals, false);
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals, true);
         //Connection.closeConnection();
         return dsi;
     }
 
-    private List<DTODetailedStrategicIndicator> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(Long prjID, List<StrategicIndicatorFactorEvaluationDTO> evals, boolean fetch) {
+    private List<DTODetailedStrategicIndicator> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(Long prjID, List<StrategicIndicatorFactorEvaluationDTO> evals, boolean DBfilter) {
         List<DTODetailedStrategicIndicator> dsi = new ArrayList<>();
         boolean found; // to check if the SI is in the database
         //for each Detailed Strategic Indicador
         for (Iterator<StrategicIndicatorFactorEvaluationDTO> iterDSI = evals.iterator(); iterDSI.hasNext(); ) {
             StrategicIndicatorFactorEvaluationDTO element = iterDSI.next();
-            found = siRep.existsByExternalIdAndProject_Id(element.getID(), prjID);
+            if (DBfilter) found = siRep.existsByExternalIdAndProject_Id(element.getID(), prjID);
+            else found = true; // because we want make fetch
             // only return Detailed Strategic Indicator if it is in local database
-            if (found || fetch) {
+            if (found) {
                 EvaluationDTO evaluation = element.getEvaluations().get(0);
                 //Create Detailed Strategic Indicator with name, id and null factors
                 DTODetailedStrategicIndicator d = new DTODetailedStrategicIndicator(element.getID(), element.getName(), null);
