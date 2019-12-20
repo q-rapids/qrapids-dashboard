@@ -232,13 +232,16 @@ public class StrategicIndicatorsController {
 
     private boolean assessProjectStrategicIndicators(LocalDate evaluationDate, String  projectExternalId, Factors factorsQMA) throws IOException, ProjectNotFoundException {
         // List of ALL the strategic indicators in the local database
-        Project project = projectsController.findProjectByExternalId(projectExternalId);
+        Project project = new Project();
+        try {
+            project = projectsController.findProjectByExternalId(projectExternalId);
+        } catch (ProjectNotFoundException e) {
+            List <String> prj = Arrays.asList(projectExternalId);;
+            projectsController.updateDataBaseWithNewProjects(prj);
+        }
         Iterable<Strategic_Indicator> strategicIndicatorIterable = strategicIndicatorRepository.findByProject_Id(project.getId());
 
         boolean correct = true;
-
-        // TODO: qmaStrategicIndicators.prepareSIIndex(projectExternalId)
-        // qmaStrategicIndicators.prepareSIIndex(projectExternalId);
 
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
         factorsQMA.clearStrategicIndicatorsRelations(evaluationDate);
