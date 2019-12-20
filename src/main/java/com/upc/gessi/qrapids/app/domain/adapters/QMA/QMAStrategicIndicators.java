@@ -50,7 +50,6 @@ public class QMAStrategicIndicators {
     private StrategicIndicatorsController strategicIndicatorsController;
 
     public boolean prepareSIIndex(String projectID) throws IOException {
-        System.out.print("IN prepareSIIndex(" + projectID + ")  FUNCTION \n");
         qmacon.initConnexion();
         return Queries.prepareSIIndex(projectID);
     }

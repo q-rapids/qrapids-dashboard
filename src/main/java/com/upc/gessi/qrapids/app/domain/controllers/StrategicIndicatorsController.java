@@ -136,8 +136,8 @@ public class StrategicIndicatorsController {
         return qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, strategicIndicatorId);
     }
 
-    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, boolean DBfilter) throws IOException, ElasticsearchStatusException {
-        return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, DBfilter);
+    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, boolean filterDB) throws IOException, ElasticsearchStatusException {
+        return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, filterDB);
     }
 
     public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorCurrentEvaluation (String strategicIndicatorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
@@ -236,7 +236,7 @@ public class StrategicIndicatorsController {
         try {
             project = projectsController.findProjectByExternalId(projectExternalId);
         } catch (ProjectNotFoundException e) {
-            List <String> prj = Arrays.asList(projectExternalId);;
+            List <String> prj = Arrays.asList(projectExternalId);
             projectsController.updateDataBaseWithNewProjects(prj);
         }
         Iterable<Strategic_Indicator> strategicIndicatorIterable = strategicIndicatorRepository.findByProject_Id(project.getId());
