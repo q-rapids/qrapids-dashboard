@@ -26,7 +26,7 @@ apply plugin: 'jacoco'
 apply plugin: 'org.asciidoctor.convert'
 
 group = 'com.upc.gessi.qrapids'
-version = '1.0.3'
+version = '1.0.4'
 sourceCompatibility = 1.8
 
 war {
@@ -78,7 +78,7 @@ dependencies {
 	compile('org.elasticsearch.client:transport:5.6.3')
 	compile('org.elasticsearch:elasticsearch:5.6.3')
 	compile('org.elasticsearch.client:elasticsearch-rest-high-level-client:5.6.3')
-	compile files('libs/qrapids-qma-elastic-0.15.jar')
+	compile files('libs/qrapids-qma-elastic-0.16.jar')
 
 	//API QR Generator
 	compile files('libs/qrapids-qr_generator-0.2.jar')

@@ -136,12 +136,12 @@ public class StrategicIndicatorsController {
         return qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, strategicIndicatorId);
     }
 
-    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId) throws IOException, ElasticsearchStatusException {
-        return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId);
+    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, boolean filterDB) throws IOException, ElasticsearchStatusException {
+        return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, filterDB);
     }
 
     public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorCurrentEvaluation (String strategicIndicatorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
-        return qmaDetailedStrategicIndicators.CurrentEvaluation(strategicIndicatorId, projectExternalId);
+        return qmaDetailedStrategicIndicators.CurrentEvaluation(strategicIndicatorId, projectExternalId, true);
     }
 
     public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsHistoricalEvaluation (String projectExternalId, LocalDate from, LocalDate to) throws IOException, CategoriesException, ElasticsearchStatusException {
@@ -201,11 +201,13 @@ public class StrategicIndicatorsController {
             List<String> projects = projectsController.getAllProjects();
             int i=0;
             while (i<projects.size() && correct) {
+                qmaStrategicIndicators.prepareSIIndex(projects.get(i));
                 correct = assessDateProjectStrategicIndicators(projects.get(i), dateFrom);
                 i++;
             }
         }
         else {
+            qmaStrategicIndicators.prepareSIIndex(projectExternalId);
             correct = assessDateProjectStrategicIndicators(projectExternalId, dateFrom);
         }
         return correct;
@@ -230,7 +232,13 @@ public class StrategicIndicatorsController {
 
     private boolean assessProjectStrategicIndicators(LocalDate evaluationDate, String  projectExternalId, Factors factorsQMA) throws IOException, ProjectNotFoundException {
         // List of ALL the strategic indicators in the local database
-        Project project = projectsController.findProjectByExternalId(projectExternalId);
+        Project project = new Project();
+        try {
+            project = projectsController.findProjectByExternalId(projectExternalId);
+        } catch (ProjectNotFoundException e) {
+            List <String> prj = Arrays.asList(projectExternalId);
+            projectsController.updateDataBaseWithNewProjects(prj);
+        }
         Iterable<Strategic_Indicator> strategicIndicatorIterable = strategicIndicatorRepository.findByProject_Id(project.getId());
 
         boolean correct = true;
@@ -492,7 +500,7 @@ public class StrategicIndicatorsController {
         for(String projectExternalId : projects) {
             List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
             try {
-                dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId);
+                dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, false);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }

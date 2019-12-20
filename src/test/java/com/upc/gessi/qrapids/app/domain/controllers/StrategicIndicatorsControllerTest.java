@@ -280,10 +280,10 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, true)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // When
-        List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorListFound = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorListFound = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true);
 
         // Then
         assertEquals(dtoDetailedStrategicIndicatorList.size(), dtoDetailedStrategicIndicatorListFound.size());
@@ -306,7 +306,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(qmaDetailedStrategicIndicators.CurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId, true)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // When
         List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorListFound = strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId);
@@ -608,6 +608,7 @@ public class StrategicIndicatorsControllerTest {
         verifyNoMoreInteractions(assesSI);
 
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
+        verify(qmaStrategicIndicators, times(1)).prepareSIIndex(eq(project.getExternalId()));
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
         verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(qualityFactors), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
@@ -706,6 +707,7 @@ public class StrategicIndicatorsControllerTest {
         verifyNoMoreInteractions(assesSI);
 
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
+        verify(qmaStrategicIndicators, times(1)).prepareSIIndex(eq(project.getExternalId()));
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
         verifyZeroInteractions(qmaRelations);
@@ -992,7 +994,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId())).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId(), false)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         when(strategicIndicatorRepository.existsByExternalIdAndProject_Id(dtoStrategicIndicatorEvaluation.getId(), project.getId())).thenReturn(false);
 
