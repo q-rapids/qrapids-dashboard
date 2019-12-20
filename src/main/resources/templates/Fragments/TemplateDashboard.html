@@ -66,7 +66,17 @@
                 <li>
                     <a th:href="@{${@environment.getProperty('help.support')}}" target="_tab">Support</a>
                 </li>
+                <li >
+                    <a href="Modals.html" data-toggle="modal" data-target="#aboutModal" >About</a>
+                </li>
             </ul>
+            <div class="modal fade" id="aboutModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div th:replace="Fragments/Modals :: aboutModal"></div>
+                    </div>
+                </div>
+            </div>
         </div>
         <a th:if="${@environment.getProperty('security.enable')}" class="pull-right"
            th:href="@{/profile}">
