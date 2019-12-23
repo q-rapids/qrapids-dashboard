@@ -19,6 +19,39 @@
         </div>
     </th:block>
 
+    <th:block th:fragment="aboutModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="title" style="margin-left: 10px;color: #0177a6;" >
+                <img class="container" th:src="@{/icons/qrapids.png}" src="../../static/icons/qrapids.png" alt="qrapids logo"/>
+                Q-Rapids: Quality-aware rapid software development
+            </h4>
+        </div>
+        <div class="modal-body">
+            <table style="width:100%">
+                <tr>
+                    <td>
+                        <p> Developed by the Software and Service Engineering Group (GESSI) from the Universitat Politècnica de Catalunya (UPC), as part of the Q-Rapids project.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p  th:text="@{${@environment.getProperty('about.custom.text')}}" > </p>
+                    </td>
+                </tr>
+            </table>
+            <hr/>
+            <h6>
+                <p> Software licensed under the <a style=" line-height: initial; float: initial; display: initial; color: #2e6da4; text-decoration: underline; background-color: initial; font-size: 12px; padding: initial" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a> </p>
+                <span> Q-Rapids Dashboard </span>
+                <span> (Open Source Software, available at <a style=" line-height: initial; float: initial; display: initial; color: #2e6da4; text-decoration: underline; background-color: initial; font-size: 12px; padding: initial" href="https://github.com/q-rapids/qrapids-dashboard">GitHub</a>)</span>
+            </h6>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </th:block>
+
     <th:block th:fragment="QRListModal">
         <div class="modal fade" id="QRListModal" role="dialog">
             <div class="modal-dialog">
