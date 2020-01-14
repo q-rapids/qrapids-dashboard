@@ -73,7 +73,8 @@ function clickOnTree(e){
             document.getElementById('weightCheckbox').checked = si.weighted;
             document.getElementById('weightEditButton').disabled = !si.weighted;
             console.log(si.qualityFactorsWeights);
-            weightsForFactors = si.qualityFactorsWeights;
+            if (si.weighted) weightsForFactors = si.qualityFactorsWeights;
+            else weightsForFactors = [];
         }
     });
 }
@@ -149,8 +150,20 @@ function validaCheckbox(){
             $("#weightsItems").empty();
             var i = 0;
             qualityFactors.forEach(function (qf) {
+                var selectedFactor;
+                var found = false;
+                var j = 0;
+                while (j < factors.length && !found) {
+                    if (factors[j].id == qf) {
+                        selectedFactor = factors[j].name;
+                    }
+                    j++;
+                }
                 var id = "editor"+i;
-                $("#weightsItems").append('<tr class="phaseItem"><td>' + qf + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
+                $("#weightsItems").append('<tr class="weightItem"><td>' + selectedFactor + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
+                // add listeners which control if we try to input letters, floats, negative values or zero
+                var cell = document.getElementById(id);
+                cell.addEventListener('keydown', onlyNumbers);
                 i++;
             });
             $("#weightsModal").modal();
@@ -171,6 +184,13 @@ function validaCheckbox(){
     }
 }
 
+function onlyNumbers(e){
+    var key = window.Event ? e.which : e.keyCode;
+    // numbers from 0 to 9 and not
+    if ((key < 48 || key > 57) && (key!==8))
+        e.preventDefault();
+}
+
 function openEdit() {  // This function is called by the checkbox click
     if (document.getElementById('weightCheckbox').checked == true) { // If it is checked
         document.getElementById('weightEditButton').disabled = false; // Then we remove the disabled attribute
@@ -186,11 +206,23 @@ $("#weightEditButton").click(function () {
         var i = 0;
         selector.forEach(function (qf) {
             var id = "editor"+i;
-            if (wff.includes(qf)) {
-                $("#weightsItems").append('<tr class="phaseItem"><td>' + qf + '</td><td id="' + id + '" contenteditable="true">' + Math.floor(wff[wff.indexOf(qf)+1]) +'</tdid>');
-            } else {
-                $("#weightsItems").append('<tr class="phaseItem"><td>' + qf + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
+            var selectedFactor;
+            var found = false;
+            var j = 0;
+            while (j < factors.length && !found) {
+                if (factors[j].id == qf) {
+                    selectedFactor = factors[j].name;
+                }
+                j++;
             }
+            if (wff.includes(qf)) {
+                $("#weightsItems").append('<tr class="weightItem"><td>' + selectedFactor + '</td><td id="' + id + '" contenteditable="true">' + Math.floor(wff[wff.indexOf(qf)+1]) +'</tdid>');
+            } else {
+                $("#weightsItems").append('<tr class="weightItem"><td>' + selectedFactor + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
+            }
+            // add listeners which control if we try to input letters, floats, negative values or zero
+            var cell = document.getElementById(id);
+            cell.addEventListener('keydown', onlyNumbers);
             i++;
         });
         $("#weightsModal").modal();
@@ -223,8 +255,7 @@ $("#submitWeightsButton").click(function () {
     }
     if (!ok) alert ("Check the form fields, there may be one of the following errors:\n" +
         "- Empty fields\n" +
-        "- Non numerical values\n"+
-        "- Zero or negative values");
+        "- Zero value");
     else {
         if (totalSum != 100) alert("Total sum is not equals to 100.");
         else {
@@ -232,6 +263,14 @@ $("#submitWeightsButton").click(function () {
             $("#weightsModal").modal('hide');
         }
     }
+});
+
+$("#closeWeightsButton").click(function () {
+    if (!weightsForFactors.length) {
+        document.getElementById('weightCheckbox').checked = false;
+        document.getElementById('weightEditButton').disabled = true;
+    }
+    $("#weightsModal").modal('hide');
 });
 
 function getSelectedFactors(final) {
