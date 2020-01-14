@@ -583,7 +583,7 @@ public class StrategicIndicatorsTest {
     @Test
     public void getDetailedStrategicIndicatorsCurrentEvaluation() throws Exception {
         // Given
-        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -667,13 +667,13 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
     public void getDetailedStrategicIndicatorsCurrentEvaluationReadError() throws Exception {
-        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1145,7 +1145,7 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true);
         verify(strategicIndicatorsDomainController, times(1)).getDetailedStrategicIndicatorsPrediction(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }

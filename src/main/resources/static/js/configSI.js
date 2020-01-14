@@ -47,6 +47,7 @@ function clickOnTree(e){
     deleteUrl = "/api/strategicIndicators/" + e.target.id;
     if (serverUrl) {
         postUrl = serverUrl + postUrl;
+        deleteUrl = serverUrl + deleteUrl;
     }
     jQuery.ajax({
         dataType: "json",

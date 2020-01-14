@@ -88,6 +88,7 @@ function createNode (element, color, colorBorder) {
     }
 }
 
+
 function createEdge (source, target, aux) { // aux = { sum metrics weights or #factors (no weighted) }
     var weight = source.weight;
     if (aux) {

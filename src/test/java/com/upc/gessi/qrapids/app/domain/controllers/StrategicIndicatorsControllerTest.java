@@ -281,10 +281,10 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, true)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // When
-        List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorListFound = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorListFound = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true);
 
         // Then
         assertEquals(dtoDetailedStrategicIndicatorList.size(), dtoDetailedStrategicIndicatorListFound.size());
@@ -307,7 +307,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(qmaDetailedStrategicIndicators.CurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId, true)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // When
         List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorListFound = strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId);
@@ -615,6 +615,7 @@ public class StrategicIndicatorsControllerTest {
         verifyNoMoreInteractions(assesSI);
 
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
+        verify(qmaStrategicIndicators, times(1)).prepareSIIndex(eq(project.getExternalId()));
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
         verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
@@ -719,6 +720,7 @@ public class StrategicIndicatorsControllerTest {
         verifyNoMoreInteractions(assesSI);
 
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
+        verify(qmaStrategicIndicators, times(1)).prepareSIIndex(eq(project.getExternalId()));
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
         verifyZeroInteractions(qmaRelations);
@@ -1015,7 +1017,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId())).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId(), false)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         when(strategicIndicatorRepository.existsByExternalIdAndProject_Id(dtoStrategicIndicatorEvaluation.getId(), project.getId())).thenReturn(false);
 
@@ -1040,9 +1042,10 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void simulateStrategicIndicatorsAssessment() throws IOException {
+    public void simulateStrategicIndicatorsAssessment() throws IOException, ProjectNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
         List<DTOFactor> dtoFactorList = new ArrayList<>();
@@ -1058,7 +1061,7 @@ public class StrategicIndicatorsControllerTest {
         strategicIndicator.getQuality_factors().add(dtoFactor.getId());
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
-        when(strategicIndicatorRepository.findAll()).thenReturn(strategic_indicatorList);
+        when(strategicIndicatorRepository.findByProject_Id(project.getId())).thenReturn(strategic_indicatorList);
 
         List<SICategory> siCategoryList = domainObjectsBuilder.buildSICategoryList();
         when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
@@ -1070,8 +1073,8 @@ public class StrategicIndicatorsControllerTest {
         verify(qualityFactorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
         verify(qualityFactorsController, times(1)).getFactorLabelFromValue(factorSimulatedValue);
         verifyNoMoreInteractions(qualityFactorsController);
-
-        verify(strategicIndicatorRepository, times(1)).findAll();
+        
+        verify(strategicIndicatorRepository, times(1)).findByProject_Id(project.getId());
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
         verify(siCategoryRepository, times(2)).findAll();

@@ -281,7 +281,6 @@ function drawSimulationNeedle (container, width, height, color) {
     for (i = 0; i < data.length; ++i) {
         var divId = container + "DivChart" + i;
         var svg = d3.select('#'+divId).select("svg");
-
         angle = data[i].value.first * 180 + 90;
 
         //create needle
@@ -291,7 +290,7 @@ function drawSimulationNeedle (container, width, height, color) {
             .startAngle(-0.05)
             .endAngle(0.05);
 
-        //draw the black needle in correct position depending on it's angle
+        //draw the blue needle in correct position depending on it's angle
         svg.append("path")
             .style("fill", color)
             .attr("class", "simulation")
@@ -332,7 +331,6 @@ function sortDataAlphabetically () {
         else return 0;
     }
     data.sort(compare);
-    console.log(data);
 }
 
 function addWarning(div, message) {

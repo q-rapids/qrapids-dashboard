@@ -45,7 +45,7 @@ public class ProjectsController {
         return projects;
     }
 
-    private void updateDataBaseWithNewProjects (List<String> projects) {
+    public void updateDataBaseWithNewProjects (List<String> projects) {
         for (String project : projects) {
             Project projectSaved = projectRepository.findByExternalId(project);
             if (projectSaved == null) {
