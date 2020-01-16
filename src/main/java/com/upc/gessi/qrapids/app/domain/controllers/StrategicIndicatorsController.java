@@ -5,7 +5,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMARelations;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
-import com.upc.gessi.qrapids.app.domain.exceptions.AssessmentErrorException;
+import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
@@ -13,9 +13,6 @@ import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.Strategi
 import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
-import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
-import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorNotFoundException;
 import evaluation.StrategicIndicator;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
@@ -24,14 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Null;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.stream.IntStream;
 
 import static java.lang.Math.abs;
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -91,21 +86,26 @@ public class StrategicIndicatorsController {
     }
 
 
-    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException {
+    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator = getStrategicIndicatorById(strategicIndicatorId);
+        // Actualize Quality Factors
+        boolean weighted = reassignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
         if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
         strategicIndicator.setName(name);
         strategicIndicator.setDescription(description);
-        // Actualize Quality Factors
-        boolean weighted = reassignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
         strategicIndicator.setWeighted(weighted);
         strategicIndicatorRepository.save(strategicIndicator);
         return  strategicIndicator;
     }
 
-    private  boolean reassignQualityFactorsToStrategicIndicator (List<String> quality_factors, Strategic_Indicator strategicIndicator){
+    private  boolean reassignQualityFactorsToStrategicIndicator (List<String> quality_factors, Strategic_Indicator strategicIndicator) throws StrategicIndicatorQualityFactorNotFoundException {
         List<StrategicIndicatorQualityFactors> newQualityFactorsWeights = new ArrayList();
-        //List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findBystrategic_indicator_Id(strategicIndicator.getId());
+        // Delete oldQualityFactorsWeights
+        List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findByStrategic_indicatorId(strategicIndicator);
+        strategicIndicator.setQuality_factors(null);
+        for (StrategicIndicatorQualityFactors old : oldQualityFactorsWeights) {
+            strategicIndicatorQualityFactorsController.deleteStrategicIndicatorQualityFactor(old.getId());
+        }
         boolean weighted = false;
         String f;
         Float w;
@@ -604,7 +604,6 @@ public class StrategicIndicatorsController {
 
     public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException {
         List<String> projects = projectsController.importProjectsAndUpdateDatabase();
-        boolean weighted = false;
         for(String projectExternalId : projects) {
             List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
             try {

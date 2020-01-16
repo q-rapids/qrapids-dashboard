@@ -35,18 +35,18 @@ public class StrategicIndicatorQualityFactors implements Serializable {
     public StrategicIndicatorQualityFactors(String quality_factor, float weight, Strategic_Indicator strategic_indicator) {
         setQuality_factor(quality_factor);
         setWeight(weight);
-        setStrategicIndicator(strategic_indicator);
+        setStrategic_indicator(strategic_indicator);
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public void setStrategicIndicator(Strategic_Indicator strategicIndicator) {
-        this.strategic_indicator = strategicIndicator;
+    public void setStrategic_indicator(Strategic_Indicator strategic_indicator) {
+        this.strategic_indicator = strategic_indicator;
     }
 
-    public Strategic_Indicator getStrategicIndicator() {
+    public Strategic_Indicator getStrategic_indicator() {
         return strategic_indicator;
     }
 
@@ -65,4 +65,6 @@ public class StrategicIndicatorQualityFactors implements Serializable {
     public float getWeight() {
         return weight;
     }
+
+    public Long getId() { return id; }
 }

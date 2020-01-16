@@ -2,10 +2,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
-import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
-import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorQualityFactorsController;
-import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
@@ -338,9 +335,11 @@ public class StrategicIndicators {
             }
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Strategic_Indicator oldStrategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
-                strategicIndicatorsController.deleteStrategicIndicator(oldStrategicIndicator.getId());
+                /*strategicIndicatorsController.deleteStrategicIndicator(oldStrategicIndicator.getId());
                 Project project = projectsController.findProjectByExternalId(prj);
                 strategicIndicatorsController.saveStrategicIndicator(name, description, file, qualityFactors, project);
+                 */
+                strategicIndicatorsController.editStrategicIndicator(oldStrategicIndicator.getId(), name, description, file, qualityFactors);
                 if (!strategicIndicatorsController.assessStrategicIndicator(name, prj)) {
                     throw new AssessmentErrorException();
                 }
@@ -348,7 +347,7 @@ public class StrategicIndicators {
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
-        } catch (StrategicIndicatorNotFoundException e) {
+        } catch (StrategicIndicatorNotFoundException | StrategicIndicatorQualityFactorNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
         } catch (AssessmentErrorException e) {
