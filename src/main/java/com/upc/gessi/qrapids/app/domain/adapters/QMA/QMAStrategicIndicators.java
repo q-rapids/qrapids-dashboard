@@ -153,7 +153,7 @@ public class QMAStrategicIndicators {
             hasFeedback = false;
             found=false;
             for (Strategic_Indicator dbsi : sis_DB) {
-                if (dbsi.getName().replaceAll("\\s+","").toLowerCase().equals(element.getID())) {
+                if (dbsi.getExternalId().equals(element.getID())) {
                     found = true;
                     id = dbsi.getId();
                     hasBN = dbsi.getNetwork() != null;
