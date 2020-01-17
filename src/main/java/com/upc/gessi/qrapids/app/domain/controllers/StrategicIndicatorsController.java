@@ -88,11 +88,11 @@ public class StrategicIndicatorsController {
 
     public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator = getStrategicIndicatorById(strategicIndicatorId);
-        // Actualize Quality Factors
-        boolean weighted = reassignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
         if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
         strategicIndicator.setName(name);
         strategicIndicator.setDescription(description);
+        // Actualize Quality Factors
+        boolean weighted = reassignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
         strategicIndicator.setWeighted(weighted);
         strategicIndicatorRepository.save(strategicIndicator);
         return  strategicIndicator;

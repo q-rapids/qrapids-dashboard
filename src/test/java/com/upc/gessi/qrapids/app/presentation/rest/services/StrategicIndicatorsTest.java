@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorQualityFactorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
@@ -1909,7 +1910,7 @@ public class StrategicIndicatorsTest {
     }
 
     @Test
-    public void editStrategicIndicator() throws Exception {
+    public void editStrategicIndicator() throws Exception, StrategicIndicatorQualityFactorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
@@ -1958,7 +1959,7 @@ public class StrategicIndicatorsTest {
     }
 
     @Test
-    public void editStrategicIndicatorAssessment() throws Exception {
+    public void editStrategicIndicatorAssessment() throws Exception, StrategicIndicatorQualityFactorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
@@ -2004,7 +2005,7 @@ public class StrategicIndicatorsTest {
     }
 
     @Test
-    public void editStrategicIndicatorAssessmentError() throws Exception {
+    public void editStrategicIndicatorAssessmentError() throws Exception, StrategicIndicatorQualityFactorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
@@ -2080,7 +2081,7 @@ public class StrategicIndicatorsTest {
     }
 
     @Test
-    public void editStrategicIndicatorIntegrityViolation() throws Exception {
+    public void editStrategicIndicatorIntegrityViolation() throws Exception, StrategicIndicatorQualityFactorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);

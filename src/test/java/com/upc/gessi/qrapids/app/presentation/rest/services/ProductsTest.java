@@ -709,7 +709,8 @@ public class ProductsTest {
         LocalDate date = LocalDate.parse(dateString);
         String datasource = "Q-Rapdis Dashboard";
         String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
+        String strategicIndicatorRationale = "Rationale Information";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, strategicIndicatorRationale, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
         dtoStrategicIndicatorEvaluation.setHasFeedback(false);
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
 
@@ -855,7 +856,8 @@ public class ProductsTest {
         LocalDate date = LocalDate.parse(dateString);
         String datasource = "Q-Rapdis Dashboard";
         String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
+        String strategicIndicatorRationale = "Rationale Information";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, strategicIndicatorRationale, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
         dtoStrategicIndicatorEvaluation.setHasFeedback(false);
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
 

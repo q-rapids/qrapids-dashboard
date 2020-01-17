@@ -97,7 +97,8 @@ public class DomainObjectsBuilder {
         Pair<Float, String> strategicIndicatorValuePair = Pair.of(strategicIndicatorValue, strategicIndicatorCategory);
         String datasource = "Q-Rapdis Dashboard";
         String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicator.getExternalId(), strategicIndicator.getName(), strategicIndicator.getDescription(), strategicIndicatorValuePair, dtoSIAssessmentList, LocalDate.now(), datasource, strategicIndicator.getId(), categoriesDescription, false);
+        String strategicIndicatorRationale = "Rationale Information";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicator.getExternalId(), strategicIndicator.getName(), strategicIndicator.getDescription(), strategicIndicatorValuePair, strategicIndicatorRationale, dtoSIAssessmentList, LocalDate.now(), datasource, strategicIndicator.getId(), categoriesDescription, false);
         dtoStrategicIndicatorEvaluation.setHasFeedback(false);
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
 
@@ -279,7 +280,8 @@ public class DomainObjectsBuilder {
         LocalDate date = LocalDate.parse(dateString);
         String datasource = "Q-Rapdis Dashboard";
         String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
+        String strategicIndicatorRationale = "Rationale Information";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, strategicIndicatorRationale, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
         dtoStrategicIndicatorEvaluation.setHasFeedback(false);
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
         return dtoStrategicIndicatorEvaluation;
