@@ -146,7 +146,7 @@ function getChosenProject(currentProjectId) {
     		var idRow = document.createElement('div');
     		idRow.classList.add("productInfoRow");
     		var idP = document.createElement('p');
-    		idP.appendChild(document.createTextNode("Identification name: "));
+    		idP.appendChild(document.createTextNode("Assessment ID: "));
     		idP.setAttribute('style', 'font-size: 18px; margin-right: 1%; width: 40%;');
         	idRow.appendChild(idP);
     		var idP2 = document.createElement("p");
@@ -644,7 +644,7 @@ function newProduct() {
 	var title1Row = document.createElement('div');
 	title1Row.classList.add("productInfoRow");
 	var title1P = document.createElement('p');
-	title1P.appendChild(document.createTextNode("1.Product Information"));
+	title1P.appendChild(document.createTextNode("Step 1 - Fill your product information."));
 	title1P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
 	title1Row.appendChild(title1P);
 	productForm.appendChild(title1Row);
@@ -718,7 +718,7 @@ function newProduct() {
 	var title2Row = document.createElement('div');
 	title2Row.classList.add("productInfoRow");
 	var title2P = document.createElement('p');
-	title2P.appendChild(document.createTextNode("2.Product Composition"));
+	title2P.appendChild(document.createTextNode("Step 2 - Select the corresponding projects."));
 	title2P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
 	title2Row.appendChild(title2P);
 	productForm.appendChild(title2Row);
