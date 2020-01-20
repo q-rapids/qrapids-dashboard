@@ -58,7 +58,10 @@ function clickOnTree(e){
         success: function (si) {
             $("#SIInfo").show();
             $("#SIInfoTitle").text("Strategic Indicator Information");
+            $("div.SIInfoRowID").show();
+            $("#SIAssessmentID").val(si.externalId);
             $("#SIName").val(si.name);
+            $("#SIDescription").attr("placeholder", "Write the strategic indicator description here");
             $("#SIDescription").val(si.description);
             $("#SINetworkLabel").html("Assessment Model: <br/>(leave empty if unchanged)");
             $("#SINetwork").val("");
@@ -81,12 +84,16 @@ function clickOnTree(e){
 
 function newSI() {
     $("#SIInfo").show();
-    $("#SIInfoTitle").text("1. Strategic Indicator Information");
+    $("#SIInfoTitle").text("Step 1 - Fill the strategic indicator information");
+    $("div.SIInfoRowID").hide();
+    $("#SIAssessmentID").val("");
+    $("#SIName").attr("placeholder", "Write the strategic indicator name here");
     $("#SIName").val("");
+    $("#SIDescription").attr("placeholder", "Write the strategic indicator description here");
     $("#SIDescription").val("");
     $("#SINetworkLabel").html("Assessment Model: ");
     $("#SINetwork").val("");
-    $("#SICompositionTitle").text("2. Strategic Indicator Composition");
+    $("#SICompositionTitle").text("Step 2 - Select the corresponding factors");
     $("#deleteSI").hide();
     if (factors.length > 0)
         showFactors();
