@@ -73,7 +73,7 @@ public class StrategicIndicatorsController {
     private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
     public List<Strategic_Indicator> getStrategicIndicatorsByProject (Project project) {
-        return strategicIndicatorRepository.findByProject_Id(project.getId());
+        return strategicIndicatorRepository.findByProject_IdOrderByName(project.getId());
     }
 
     public Strategic_Indicator getStrategicIndicatorById (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {
