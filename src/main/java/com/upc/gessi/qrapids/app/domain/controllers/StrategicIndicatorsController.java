@@ -433,34 +433,31 @@ public class StrategicIndicatorsController {
     private String assessStrategicIndicatorWithoutBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<Float> listFactorsAssessmentValues, List<String> siFactors, List<String> missingFactors, long factorsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException {
         if (!listFactorsAssessmentValues.isEmpty()) {
             float value = 0.f;
-            float weightsum = 0.f;
-            float valuesum = 0.f;
-            if (strategicIndicator.isWeighted()) {
+            List<Float> weights = new ArrayList<>();
+            boolean weighted = strategicIndicator.isWeighted();
+            if (weighted) {
                 List<String> qf_weights = strategicIndicator.getWeights();
-                List<Float> weights = new ArrayList<>();
-                int j = 0;
                 for ( int i = 1; i < qf_weights.size(); i+=2) {
                     weights.add(Float.valueOf(qf_weights.get(i)));
-                    weightsum += Float.valueOf(qf_weights.get(i))/100;
-                    valuesum += (listFactorsAssessmentValues.get(j) * Float.valueOf(qf_weights.get(i))/100);
-                    j++;
                 }
                 value = assesSI.assesSI_weighted(listFactorsAssessmentValues, weights);
             } else {
-                weightsum = Float.valueOf(siFactors.size());
-                for (float v : listFactorsAssessmentValues) {
-                    valuesum += v;
-                }
                 value = assesSI.assesSI(listFactorsAssessmentValues, siFactors.size());
             }
             assessmentValueOrLabel = String.valueOf(value);
             // TODO: add rationale = info to SI
-            String info = "parameters: {evaluationDate=" + evaluationDate.toString() +
-                    ", targetId=" + String.join("-", project, strategicIndicator.getExternalId(), evaluationDate.toString()) +
-                    ", project=" + project + ", targetType=indicators} query-properties: {} executionResults: {weightsum=" +
-                    weightsum + ", numberOfFactors=" + siFactors.size() + ", valuesum=" +
-                    valuesum + "} formula: valuesum / weightsum value:" + value +
-                    " categoria:" + getLabel(value);
+            String info = "factors: {";
+            for (int j = 0; j < siFactors.size(); j++) {
+                String factor_info = " " + siFactors.get(j) + " (value: " +  listFactorsAssessmentValues.get(j) + ", ";
+                if (weighted) factor_info += "weight: " + weights.get(j).intValue() + "%);";
+                else factor_info += "no weighted);";
+                info += factor_info;
+            }
+            if (weighted) {
+                info += " }, formula: weighted average, value: " + value + ", category: " + getLabel(value);
+            } else {
+                info += " }, formula: average, value: " + value + ", category: " + getLabel(value);
+            }
             // saving the SI's assessment
             if (!qmaStrategicIndicators.setStrategicIndicatorValue(
                     project,
