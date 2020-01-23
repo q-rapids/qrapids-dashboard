@@ -11,6 +11,7 @@ import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
@@ -68,6 +69,12 @@ public class StrategicIndicatorsControllerTest {
     private QualityFactorsController qualityFactorsController;
 
     @Mock
+    private StrategicIndicatorQualityFactorsController strategicIndicatorQualityFactorsController;
+
+    @Mock
+    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
+
+    @Mock
     private AssesSI assesSI;
 
     @Mock
@@ -88,7 +95,7 @@ public class StrategicIndicatorsControllerTest {
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
         List<Strategic_Indicator> strategicIndicatorList = new ArrayList<>();
         strategicIndicatorList.add(strategicIndicator);
-        when(strategicIndicatorRepository.findByProject_Id(project.getId())).thenReturn(strategicIndicatorList);
+        when(strategicIndicatorRepository.findByProject_IdOrderByName(project.getId())).thenReturn(strategicIndicatorList);
 
         // When
         List<Strategic_Indicator> strategicIndicatorListFound = strategicIndicatorsController.getStrategicIndicatorsByProject(project);
@@ -128,13 +135,27 @@ public class StrategicIndicatorsControllerTest {
         Project project = domainObjectsBuilder.buildProject();
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
         File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
-
+        //List<StrategicIndicatorQualityFactors> quality_factors = domainObjectsBuilder.buildQualityFactors(strategicIndicator);
+        /*
+        String f;
+        Float w;
+        while (!quality_factors.isEmpty()) {
+            StrategicIndicatorQualityFactors siqf;
+            f = quality_factors.get(0);
+            w = Float.parseFloat(quality_factors.get(1));
+            StrategicIndicatorQualityFactors strategicIndicatorQualityFactor = new StrategicIndicatorQualityFactors(f, w, strategicIndicator);
+            strategicIndicatorQualityFactorsRepository.save(strategicIndicatorQualityFactor);
+            when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator)).thenReturn(strategicIndicatorQualityFactor);
+            quality_factors.remove(1);
+            quality_factors.remove(0);
+        }
+        */
         // When
-        strategicIndicatorsController.saveStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getDescription(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getQuality_factors(), project);
+        strategicIndicatorsController.saveStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getDescription(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getWeights(), project);
 
         // Then
         ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
-        verify(strategicIndicatorRepository, times(1)).save(argument.capture());
+        verify(strategicIndicatorRepository, times(2)).save(argument.capture());
         Strategic_Indicator strategicIndicatorSaved = argument.getValue();
         assertEquals(strategicIndicator.getName(), strategicIndicatorSaved.getName());
         assertEquals(strategicIndicator.getDescription(), strategicIndicatorSaved.getDescription());
@@ -150,7 +171,7 @@ public class StrategicIndicatorsControllerTest {
         when(strategicIndicatorRepository.findById(strategicIndicator.getId())).thenReturn(Optional.of(strategicIndicator));
 
         // When
-        strategicIndicatorsController.editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(), strategicIndicator.getDescription(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getQuality_factors());
+        strategicIndicatorsController.editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(), strategicIndicator.getDescription(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getWeights());
 
         // Then
         ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
@@ -698,7 +719,7 @@ public class StrategicIndicatorsControllerTest {
         }
         Float factorsAverageValue = factorsValuesSum / factorsNumber;
 
-        String strategicIndicatorRationale = "Rationale Information";
+        String strategicIndicatorRationale = "factors: {...}, formula: ..., value: ..., category: ...";
 
         when(assesSI.assesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
 
@@ -724,7 +745,7 @@ public class StrategicIndicatorsControllerTest {
         verify(assesSI, times(1)).assesSI(factorValuesList, 3);
         verifyNoMoreInteractions(assesSI);
 
-        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), eq(strategicIndicatorRationale), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
+        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), anyString(), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
         verify(qmaStrategicIndicators, times(1)).prepareSIIndex(eq(project.getExternalId()));
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
@@ -912,7 +933,7 @@ public class StrategicIndicatorsControllerTest {
         }
         Float factorsAverageValue = factorsValuesSum / factorsNumber;
 
-        String strategicIndicatorRationale = "Rationale Information";
+        String strategicIndicatorRationale = "factors: {...}, formula: ..., value: ..., category: ...";
 
         when(assesSI.assesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
 
@@ -935,7 +956,7 @@ public class StrategicIndicatorsControllerTest {
         verify(assesSI, times(1)).assesSI(factorValuesList, 3);
         verifyNoMoreInteractions(assesSI);
 
-        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), eq(strategicIndicatorRationale), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
+        verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), anyString(), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
         verifyZeroInteractions(qmaRelations);
@@ -1026,9 +1047,13 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
-        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId(), false)).thenReturn(dtoDetailedStrategicIndicatorList);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(dtoDetailedStrategicIndicator.getName(), " ", null, project);
+        strategicIndicator.setId(1L);
+        StrategicIndicatorQualityFactors strategicIndicatorQualityFactor = new StrategicIndicatorQualityFactors(dtoFactor.getId(), -1f, strategicIndicator);
+        strategicIndicatorQualityFactor.setId(1L);
 
-        when(strategicIndicatorRepository.existsByExternalIdAndProject_Id(dtoStrategicIndicatorEvaluation.getId(), project.getId())).thenReturn(false);
+        when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId(), false)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(dtoFactor.getId(), -1f, strategicIndicator)).thenReturn(strategicIndicatorQualityFactor);
 
         // When
         strategicIndicatorsController.fetchStrategicIndicators();
@@ -1036,10 +1061,9 @@ public class StrategicIndicatorsControllerTest {
         // Then
         verify(projectsController, times(1)).importProjectsAndUpdateDatabase();
         verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
-        verify(strategicIndicatorRepository, times(1)).existsByExternalIdAndProject_Id(dtoStrategicIndicatorEvaluation.getId(), project.getId());
 
         ArgumentCaptor<Strategic_Indicator> argumentSI = ArgumentCaptor.forClass(Strategic_Indicator.class);
-        verify(strategicIndicatorRepository, times(1)).save(argumentSI.capture());
+        verify(strategicIndicatorRepository, times(2)).save(argumentSI.capture());
         Strategic_Indicator strategicIndicatorSaved = argumentSI.getValue();
         assertEquals(dtoStrategicIndicatorEvaluation.getName(), strategicIndicatorSaved.getName());
         assertEquals("", strategicIndicatorSaved.getDescription());

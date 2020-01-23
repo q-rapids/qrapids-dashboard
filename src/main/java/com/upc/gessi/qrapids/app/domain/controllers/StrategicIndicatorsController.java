@@ -615,10 +615,7 @@ public class StrategicIndicatorsController {
                     factors.add("-1");
                 }
                 Project project = projectsController.findProjectByExternalId(projectExternalId);
-                Strategic_Indicator newSI = saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
-                if (!strategicIndicatorRepository.existsByExternalIdAndProject_Id(newSI.getExternalId(), project.getId())) {
-                    strategicIndicatorRepository.save(newSI);
-                }
+                saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
             }
         }
     }

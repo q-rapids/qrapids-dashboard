@@ -163,6 +163,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -210,6 +211,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("[].value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("[].probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("[].probabilities[].id")
@@ -301,6 +304,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$.value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$.value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$.value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$.rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$.probabilities", hasSize(3)))
                 .andExpect(jsonPath("$.probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$.probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -351,6 +355,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("probabilities[].id")
@@ -448,6 +454,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -499,6 +506,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("[].value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("[].probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("[].probabilities[].id")
@@ -1285,6 +1294,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -1336,6 +1346,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("[].value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("[].probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("[].probabilities[].id")
@@ -2400,6 +2412,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].value.first", is(HelperFunctions.getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -2447,6 +2460,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("[].value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("[].probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("[].probabilities[].id")
