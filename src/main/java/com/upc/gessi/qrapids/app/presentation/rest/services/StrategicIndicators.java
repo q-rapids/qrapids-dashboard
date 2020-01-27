@@ -319,13 +319,11 @@ public class StrategicIndicators {
         try {
             String name;
             String description;
-            String prj;
             byte[] file = null;
             List<String> qualityFactors;
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
-                prj = request.getParameter("prj");
                 if (network != null) {
                     file = IOUtils.toByteArray(network.getInputStream());
                 }
@@ -336,7 +334,7 @@ public class StrategicIndicators {
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Strategic_Indicator oldStrategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
                 strategicIndicatorsController.editStrategicIndicator(oldStrategicIndicator.getId(), name, description, file, qualityFactors);
-                if (!strategicIndicatorsController.assessStrategicIndicator(name, prj)) {
+                if (!strategicIndicatorsController.assessStrategicIndicator(name, oldStrategicIndicator.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }
             }
@@ -356,16 +354,6 @@ public class StrategicIndicators {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
-    }
-
-    private boolean isSameFactors(List<String> qualityFactors, List<String> strategicIndicatorQualityFactors, boolean sameFactors) {
-        int i = 0;
-        while (i < strategicIndicatorQualityFactors.size() && sameFactors) {
-            if (qualityFactors.indexOf(strategicIndicatorQualityFactors.get(i)) == -1)
-                sameFactors = false;
-            i++;
-        }
-        return sameFactors;
     }
 
     @DeleteMapping("/api/strategicIndicators/{id}")

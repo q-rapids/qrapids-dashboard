@@ -480,7 +480,6 @@ app.controller('TablesCtrl', function($scope, $http) {
             var data = [];
             response.data.forEach(function (strategicIndicatorEval) {
                 strategicIndicatorEval.factors.forEach(function (factor) {
-                    // TODO Rationale DSI
                     var strategicIndicator = {
                         id: strategicIndicatorEval.id,
                         date: strategicIndicatorEval.date,
@@ -490,7 +489,6 @@ app.controller('TablesCtrl', function($scope, $http) {
                         description: factor.description,
                         value: factor.value_description,
                         rationale: factor.rationale
-                        //rationale: "value: " + factor.value
                     };
 
                     //Warnings

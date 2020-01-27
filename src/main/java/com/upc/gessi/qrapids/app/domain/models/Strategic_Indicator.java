@@ -59,11 +59,11 @@ public class Strategic_Indicator implements Serializable {
     public Strategic_Indicator() {
     }
 
-    public Strategic_Indicator(String name, String description, byte[] network, List<StrategicIndicatorQualityFactors> quality_factors, boolean weighted, Project project) {
+    public Strategic_Indicator(String name, String description, byte[] network, List<StrategicIndicatorQualityFactors> qualityFactors, boolean weighted, Project project) {
         setName(name);
         setDescription(description);
         setNetwork(network);
-        setQuality_factors(quality_factors);
+        setQuality_factors(qualityFactors);
         setWeighted(weighted);
         setProject(project);
     }
@@ -123,24 +123,24 @@ public class Strategic_Indicator implements Serializable {
     }
 
     public List<String> getQuality_factors() {
-        List<String> quality_factors = new ArrayList<>();
+        List<String> quality_factors_ids = new ArrayList<>();
         for (int i = 0; i < this.quality_factors.size(); i ++) {
-            quality_factors.add(this.quality_factors.get(i).getQuality_factor());
+            quality_factors_ids.add(this.quality_factors.get(i).getQuality_factor());
         }
-        return quality_factors;
+        return quality_factors_ids;
     }
 
     public List<String> getWeights() {
-        List<String> quality_factors_weights = new ArrayList<>();
+        List<String> qualityFactorsWeights = new ArrayList<>();
         for (int i = 0; i < this.quality_factors.size(); i ++) {
-            quality_factors_weights.add(this.quality_factors.get(i).getQuality_factor());
-            quality_factors_weights.add(String.valueOf(this.quality_factors.get(i).getWeight()));
+            qualityFactorsWeights.add(this.quality_factors.get(i).getQuality_factor());
+            qualityFactorsWeights.add(String.valueOf(this.quality_factors.get(i).getWeight()));
         }
-        return quality_factors_weights;
+        return qualityFactorsWeights;
     }
 
-    public void setQuality_factors(List<StrategicIndicatorQualityFactors> quality_factors) {
-        this.quality_factors = quality_factors;
+    public void setQuality_factors(List<StrategicIndicatorQualityFactors> qualityFactors) {
+        this.quality_factors = qualityFactors;
     }
 
     public Project getProject() {

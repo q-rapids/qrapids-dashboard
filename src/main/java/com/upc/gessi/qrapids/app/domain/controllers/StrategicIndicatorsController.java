@@ -98,10 +98,10 @@ public class StrategicIndicatorsController {
         return  strategicIndicator;
     }
 
-    private  boolean reassignQualityFactorsToStrategicIndicator (List<String> quality_factors, Strategic_Indicator strategicIndicator) throws StrategicIndicatorQualityFactorNotFoundException {
+    private  boolean reassignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator) throws StrategicIndicatorQualityFactorNotFoundException {
         List<StrategicIndicatorQualityFactors> newQualityFactorsWeights = new ArrayList();
         // Delete oldQualityFactorsWeights
-        List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findByStrategic_indicatorId(strategicIndicator);
+        List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findByStrategic_indicator(strategicIndicator);
         strategicIndicator.setQuality_factors(null);
         for (StrategicIndicatorQualityFactors old : oldQualityFactorsWeights) {
             strategicIndicatorQualityFactorsController.deleteStrategicIndicatorQualityFactor(old.getId());
@@ -110,11 +110,11 @@ public class StrategicIndicatorsController {
         String f;
         Float w;
 
-        // generate StrategicIndicatorQualityFactors class objects from List<String> quality_factors
-        while (!quality_factors.isEmpty()) {
+        // generate StrategicIndicatorQualityFactors class objects from List<String> qualityFactors
+        while (!qualityFactors.isEmpty()) {
             StrategicIndicatorQualityFactors siqf;
-            f = quality_factors.get(0);
-            w = Float.parseFloat(quality_factors.get(1));
+            f = qualityFactors.get(0);
+            w = Float.parseFloat(qualityFactors.get(1));
             if (w == -1) {
                 siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
                 weighted = false;
@@ -123,8 +123,8 @@ public class StrategicIndicatorsController {
                 weighted = true;
             }
             newQualityFactorsWeights.add(siqf);
-            quality_factors.remove(1);
-            quality_factors.remove(0);
+            qualityFactors.remove(1);
+            qualityFactors.remove(0);
         }
         // create the association between Strategic Indicator and its Quality Factors
         strategicIndicator.setQuality_factors(newQualityFactorsWeights);
@@ -144,16 +144,16 @@ public class StrategicIndicatorsController {
         return strategicIndicator;
     }
 
-    private boolean assignQualityFactorsToStrategicIndicator (List<String> quality_factors, Strategic_Indicator strategicIndicator ) {
+    private boolean assignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator ) {
         List<StrategicIndicatorQualityFactors> qualityFactorsWeights = new ArrayList();
         boolean weighted = false;
         String f;
         Float w;
-        // generate StrategicIndicatorQualityFactors class objects from List<String> quality_factors
-        while (!quality_factors.isEmpty()) {
+        // generate StrategicIndicatorQualityFactors class objects from List<String> qualityFactors
+        while (!qualityFactors.isEmpty()) {
             StrategicIndicatorQualityFactors siqf;
-            f = quality_factors.get(0);
-            w = Float.parseFloat(quality_factors.get(1));
+            f = qualityFactors.get(0);
+            w = Float.parseFloat(qualityFactors.get(1));
             if (w == -1) {
                 siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
                 weighted = false;
@@ -162,8 +162,8 @@ public class StrategicIndicatorsController {
                 weighted = true;
             }
             qualityFactorsWeights.add(siqf);
-            quality_factors.remove(1);
-            quality_factors.remove(0);
+            qualityFactors.remove(1);
+            qualityFactors.remove(0);
         }
         // create the association between Strategic Indicator and its Quality Factors
         strategicIndicator.setQuality_factors(qualityFactorsWeights);
@@ -432,13 +432,13 @@ public class StrategicIndicatorsController {
 
     private String assessStrategicIndicatorWithoutBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<Float> listFactorsAssessmentValues, List<String> siFactors, List<String> missingFactors, long factorsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException {
         if (!listFactorsAssessmentValues.isEmpty()) {
-            float value = 0.f;
+            float value;
             List<Float> weights = new ArrayList<>();
             boolean weighted = strategicIndicator.isWeighted();
             if (weighted) {
-                List<String> qf_weights = strategicIndicator.getWeights();
-                for ( int i = 1; i < qf_weights.size(); i+=2) {
-                    weights.add(Float.valueOf(qf_weights.get(i)));
+                List<String> qfWeights = strategicIndicator.getWeights();
+                for ( int i = 1; i < qfWeights.size(); i+=2) {
+                    weights.add(Float.valueOf(qfWeights.get(i)));
                 }
                 value = assesSI.assesSI_weighted(listFactorsAssessmentValues, weights);
             } else {
@@ -448,10 +448,10 @@ public class StrategicIndicatorsController {
             // TODO: add rationale = info to SI
             String info = "factors: {";
             for (int j = 0; j < siFactors.size(); j++) {
-                String factor_info = " " + siFactors.get(j) + " (value: " +  listFactorsAssessmentValues.get(j) + ", ";
-                if (weighted) factor_info += "weight: " + weights.get(j).intValue() + "%);";
-                else factor_info += "no weighted);";
-                info += factor_info;
+                String factorInfo = " " + siFactors.get(j) + " (value: " +  listFactorsAssessmentValues.get(j) + ", ";
+                if (weighted) factorInfo += "weight: " + weights.get(j).intValue() + "%);";
+                else factorInfo += "no weighted);";
+                info += factorInfo;
             }
             if (weighted) {
                 info += " }, formula: weighted average, value: " + value + ", category: " + getLabel(value);
@@ -548,14 +548,15 @@ public class StrategicIndicatorsController {
         for (DTOFactor dtoFactor : factorList) {
             factorIds.add(dtoFactor.getId());
             Float weight = 0f;
-            if (strategicIndicator.getNetwork() == null)
+            if (strategicIndicator.getNetwork() == null) {
                 // when SI is not weighted the weight of factor value is 1f
                 if (!strategicIndicator.isWeighted()) {
                     weight = 1f;
                 } else { // when SI is weighted the weight of factor has corresponding value
                     List<String> qfw = strategicIndicator.getWeights();
-                    weight = Float.parseFloat(qfw.get(qfw.indexOf(dtoFactor.getId())+1))/100;
+                    weight = Float.parseFloat(qfw.get(qfw.indexOf(dtoFactor.getId()) + 1)) / 100;
                 }
+            }
             weights.add(weight);
             values.add(dtoFactor.getValue()*weight); // value of weighted factor
             labels.add(qualityFactorsController.getFactorLabelFromValue(dtoFactor.getValue()));

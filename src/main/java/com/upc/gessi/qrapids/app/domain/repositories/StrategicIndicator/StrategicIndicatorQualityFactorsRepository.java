@@ -11,6 +11,6 @@ import java.util.List;
 public interface StrategicIndicatorQualityFactorsRepository extends CrudRepository<StrategicIndicatorQualityFactors, Long> {
 
     @Query("from StrategicIndicatorQualityFactors r  where r.strategic_indicator = :strategicIndicator")
-    List<StrategicIndicatorQualityFactors> findByStrategic_indicatorId(@Param("strategicIndicator") Strategic_Indicator strategicIndicator);
+    List<StrategicIndicatorQualityFactors> findByStrategic_indicator(@Param("strategicIndicator") Strategic_Indicator strategicIndicator);
 
 }

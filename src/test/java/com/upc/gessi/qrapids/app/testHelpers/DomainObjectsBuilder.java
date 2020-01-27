@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.testHelpers;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODecisionQualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
@@ -15,6 +16,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class DomainObjectsBuilder {
+
+    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
 
     public Project buildProject() {
         Long projectId = 1L;
@@ -73,6 +76,33 @@ public class DomainObjectsBuilder {
         strategicIndicator.setWeighted(false);
 
         return strategicIndicator;
+    }
+
+    public Strategic_Indicator addFactorToStrategicIndicator (Strategic_Indicator si, String factorId, float weight) {
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+
+        Long factor1Id = 1L;
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, si);
+        factor1.setId(factor1Id);
+        qualityFactors.add(factor1);
+
+        Long factor2Id = 2L;
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, si);
+        factor2.setId(factor2Id);
+        qualityFactors.add(factor2);
+
+        Long factor3Id = 3L;
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, si);
+        factor3.setId(factor3Id);
+        qualityFactors.add(factor3);
+
+        Long factor4Id = 4L;
+        StrategicIndicatorQualityFactors factor4 = new StrategicIndicatorQualityFactors(factorId, weight, si);
+        factor4.setId(factor4Id);
+        qualityFactors.add(factor4);
+
+        si.setQuality_factors(qualityFactors);
+        return si;
     }
 
     public List<StrategicIndicatorQualityFactors> buildQualityFactors (Strategic_Indicator strategicIndicator) {

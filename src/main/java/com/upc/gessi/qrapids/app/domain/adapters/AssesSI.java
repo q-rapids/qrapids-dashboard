@@ -112,13 +112,13 @@ public class AssesSI {
         return categories;
     }
 
-    public float assesSI_weighted(List<Float> factors_assessment, List<Float> weights) {
+    public float assesSI_weighted(List<Float> factorsAssessment, List<Float> weights) {
         try {
             float total = 0.f;
             float result =0.f;
 
-            for (int i = 0; i < factors_assessment.size(); i++) {
-                total += ((weights.get(i)/100)*factors_assessment.get(i));
+            for (int i = 0; i < factorsAssessment.size(); i++) {
+                total += ((weights.get(i)/100)*factorsAssessment.get(i));
             }
             if (total>0)
                 result = total/1; // sum of weights always is 1 = 100%

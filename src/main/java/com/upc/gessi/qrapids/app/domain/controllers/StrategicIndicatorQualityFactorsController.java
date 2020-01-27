@@ -13,9 +13,9 @@ public class StrategicIndicatorQualityFactorsController {
     @Autowired
     private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
 
-    public StrategicIndicatorQualityFactors saveStrategicIndicatorQualityFactor (String quality_factor, Float weight, Strategic_Indicator strategicIndicator) {
+    public StrategicIndicatorQualityFactors saveStrategicIndicatorQualityFactor (String qualityFactor, Float weight, Strategic_Indicator strategicIndicator) {
         StrategicIndicatorQualityFactors strategicIndicatorQualityFactor;
-        strategicIndicatorQualityFactor = new StrategicIndicatorQualityFactors(quality_factor, weight, strategicIndicator);
+        strategicIndicatorQualityFactor = new StrategicIndicatorQualityFactors(qualityFactor, weight, strategicIndicator);
         strategicIndicatorQualityFactorsRepository.save(strategicIndicatorQualityFactor);
         return strategicIndicatorQualityFactor;
     }

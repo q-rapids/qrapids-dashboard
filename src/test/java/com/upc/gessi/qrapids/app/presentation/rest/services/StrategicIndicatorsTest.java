@@ -1922,14 +1922,16 @@ public class StrategicIndicatorsTest {
     }
 
     @Test
-    public void editStrategicIndicator() throws Exception, StrategicIndicatorQualityFactorNotFoundException {
+    public void editStrategicIndicator() throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
         File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
         strategicIndicator.setNetwork(Files.readAllBytes(networkFile.toPath()));
+
         when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicator.getId())).thenReturn(strategicIndicator);
+        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId())).thenReturn(true);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1937,7 +1939,7 @@ public class StrategicIndicatorsTest {
                 .file(network)
                 .param("name", strategicIndicator.getName())
                 .param("description", strategicIndicator.getDescription())
-                .param("quality_factors", String.join(",", strategicIndicator.getQuality_factors()))
+                .param("quality_factors", String.join(",", strategicIndicator.getWeights()))
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -1957,7 +1959,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("description")
                                         .description("Product description"),
                                 parameterWithName("quality_factors")
-                                        .description("Comma separated values of the quality factors identifiers which belong to the strategic indicator")),
+                                        .description("Comma separated values of the quality factors identifiers which belong to the strategic indicator and their corresponding weights (-1 if no weighted)")),
                         requestParts(
                                 partWithName("network")
                                         .description("Bayesian network file")
@@ -1966,7 +1968,8 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
-        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getQuality_factors()));
+        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getWeights()));
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getProject().getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
@@ -1979,11 +1982,6 @@ public class StrategicIndicatorsTest {
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
         strategicIndicator.setNetwork(Files.readAllBytes(networkFile.toPath()));
 
-        List<String> qualityFactors = new ArrayList<>();
-        qualityFactors.add("codequality");
-        qualityFactors.add("softwarestability");
-        qualityFactors.add("testingperformance");
-
         when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicator.getId())).thenReturn(strategicIndicator);
         when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId())).thenReturn(true);
 
@@ -1993,7 +1991,7 @@ public class StrategicIndicatorsTest {
                 .file(network)
                 .param("name", strategicIndicator.getName())
                 .param("description", strategicIndicator.getDescription())
-                .param("quality_factors", String.join(",", qualityFactors))
+                .param("quality_factors", String.join(",", strategicIndicator.getWeights()))
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -2011,13 +2009,13 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
-        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(qualityFactors));
+        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getWeights()));
         verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
-    public void editStrategicIndicatorAssessmentError() throws Exception, StrategicIndicatorQualityFactorNotFoundException {
+    public void editStrategicIndicatorAssessmentError() throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
@@ -2027,8 +2025,11 @@ public class StrategicIndicatorsTest {
 
         List<String> qualityFactors = new ArrayList<>();
         qualityFactors.add("codequality");
+        qualityFactors.add("-1");
         qualityFactors.add("softwarestability");
+        qualityFactors.add("-1");
         qualityFactors.add("testingperformance");
+        qualityFactors.add("-1");
 
         when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicator.getId())).thenReturn(strategicIndicator);
         when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId())).thenReturn(false);
