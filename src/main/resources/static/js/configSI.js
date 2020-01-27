@@ -60,6 +60,7 @@ function clickOnTree(e){
             $("#SIInfoTitle").text("Strategic Indicator Information");
             $("div.SIInfoRowID").show();
             $("#SIAssessmentID").val(si.externalId);
+            $("#SIName").attr("placeholder", "Write the strategic indicator name here");
             $("#SIName").val(si.name);
             $("#SIDescription").attr("placeholder", "Write the strategic indicator description here");
             $("#SIDescription").val(si.description);

@@ -379,6 +379,7 @@ function getChosenProduct(currentProductId) {
     		inputName.setAttribute('type', 'text');
     		inputName.setAttribute('value', data.name);
     		inputName.setAttribute('style', 'width: 100%;');
+			inputName.setAttribute('placeholder', 'Write the product name here');
     		nameRow.appendChild(inputName);
     		productForm.appendChild(nameRow);
     		
@@ -394,6 +395,7 @@ function getChosenProduct(currentProductId) {
     		inputDescription.value= data.description;
     		inputDescription.setAttribute('style', 'width: 100%;');
     		inputDescription.setAttribute('rows', '3');
+			inputDescription.setAttribute('placeholder', 'Write the product description here');
     		descriptionRow.appendChild(inputDescription);
     		productForm.appendChild(descriptionRow);
     		
@@ -655,23 +657,12 @@ function newProduct() {
 	nameP.appendChild(document.createTextNode("Name*: "));
 	nameP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
 	nameRow.appendChild(nameP);
-	var inputName = document.createElement("textarea");
+	var inputName = document.createElement("input");
 	inputName.setAttribute('id', 'productName');
-	inputName.value = "Write the product name here";
+	inputName.value = "";
 	inputName.setAttribute('rows', '1');
-	inputName.setAttribute('style', 'width: 100%; color:#cbcbcb; border-color: #aaaaaa; border-width: 1px; resize: none;');
-	inputName.addEventListener("focus", function () {
-		if (inputName.value == "Write the product name here") {
-			inputName.setAttribute('style', 'width: 100%; color:#121212; border-color: #aaaaaa; border-width: 1px; resize: none;');
-			inputName.value = "";
-		}
-	});
-	inputName.addEventListener("focusout", function () {
-		if (inputName.value == "") {
-			inputName.setAttribute('style', 'width: 100%; color:#cbcbcb; border-color: #aaaaaa; border-width: 1px; resize: none;');
-			inputName.value = "Write the product name here";
-		}
-	});
+	inputName.setAttribute('style', 'width: 100%;');
+	inputName.setAttribute('placeholder', 'Write the product name here');
 	nameRow.appendChild(inputName);
 	productForm.appendChild(nameRow);
 	
@@ -684,21 +675,10 @@ function newProduct() {
 	descriptionRow.appendChild(descriptionP);
 	var inputDescription = document.createElement("textarea");
 	inputDescription.setAttribute('id', 'productDescription');
-	inputDescription.value= "Write the product description here";
-	inputDescription.setAttribute('style', 'width: 100%; color:#cbcbcb; border-color: #aaaaaa; border-width: 1px;');
+	inputDescription.value= "";
+	inputDescription.setAttribute('style', 'width: 100%;');
 	inputDescription.setAttribute('rows', '3');
-	inputDescription.addEventListener("focus", function () {
-		if (inputDescription.value == "Write the product description here") {
-			inputDescription.setAttribute('style', 'width: 100%; color:#121212; border-color: #aaaaaa; border-width: 1px;');
-			inputDescription.value = "";
-		}
-	});
-	inputDescription.addEventListener("focusout", function () {
-		if (inputDescription.value == "") {
-			inputDescription.setAttribute('style', 'width: 100%; color:#cbcbcb; border-color: #aaaaaa; border-width: 1px;');
-			inputDescription.value = "Write the product description here";
-		}
-	});
+	inputDescription.setAttribute('placeholder', 'Write the product description here');
 	descriptionRow.appendChild(inputDescription);
 	productForm.appendChild(descriptionRow);
 	
