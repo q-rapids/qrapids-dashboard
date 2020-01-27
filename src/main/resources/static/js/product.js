@@ -167,6 +167,7 @@ function getChosenProject(currentProjectId) {
     		inputName.setAttribute('type', 'text');
     		inputName.setAttribute('value', data.name);
     		inputName.setAttribute('style', 'width: 100%;');
+    		inputName.setAttribute('placeholder', 'Write the project name here');
     		nameRow.appendChild(inputName);
     		projectForm.appendChild(nameRow);
     		
@@ -182,23 +183,24 @@ function getChosenProject(currentProjectId) {
     		inputDescription.value= data.description;
     		inputDescription.setAttribute('style', 'width: 100%;');
     		inputDescription.setAttribute('rows', '3');
+    		inputDescription.setAttribute('placeholder', 'Write the project description here');
     		descriptionRow.appendChild(inputDescription);
     		projectForm.appendChild(descriptionRow);
 
 			var backlogIdRow = document.createElement('div');
 			backlogIdRow.classList.add("productInfoRow");
 			var backlogIdP = document.createElement('p');
-			backlogIdP.appendChild(document.createTextNode("Backlog Id: "));
-			backlogIdP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
+			backlogIdP.appendChild(document.createTextNode("Backlog ID:"));
+			backlogIdP.setAttribute('style', 'font-size: 18px; margin-right: 1%; width: 13%');
 			backlogIdRow.appendChild(backlogIdP);
 			var inputBacklogId = document.createElement("input");
 			inputBacklogId.setAttribute('id', 'projectBacklogId');
 			inputBacklogId.setAttribute('type', 'text');
 			var backlogId = "";
-			if (data.backlogId)
-				backlogId = data.backlogId;
+			if (data.backlogId) backlogId = data.backlogId;
 			inputBacklogId.setAttribute('value', backlogId);
 			inputBacklogId.setAttribute('style', 'width: 100%;');
+			inputBacklogId.setAttribute('placeholder', 'Write the project backlog ID here');
 			backlogIdRow.appendChild(inputBacklogId);
 			projectForm.appendChild(backlogIdRow);
     		
