@@ -445,7 +445,6 @@ public class StrategicIndicatorsController {
                 value = assesSI.assesSI(listFactorsAssessmentValues, siFactors.size());
             }
             assessmentValueOrLabel = String.valueOf(value);
-            // TODO: add rationale = info to SI
             String info = "factors: {";
             for (int j = 0; j < siFactors.size(); j++) {
                 String factorInfo = " " + siFactors.get(j) + " (value: " +  listFactorsAssessmentValues.get(j) + ", ";
