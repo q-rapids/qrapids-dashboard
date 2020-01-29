@@ -2,9 +2,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
-import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
-import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
@@ -256,7 +254,9 @@ public class StrategicIndicators {
                         strategic_indicator.getName(),
                         strategic_indicator.getDescription(),
                         strategic_indicator.getNetwork(),
-                        strategic_indicator.getQuality_factors());
+                        strategic_indicator.getQuality_factors(),
+                        strategic_indicator.isWeighted(),
+                        strategic_indicator.getWeights());
                 dtoSIList.add(dtosi);
             }
             return dtoSIList;
@@ -276,7 +276,9 @@ public class StrategicIndicators {
                     strategicIndicator.getName(),
                     strategicIndicator.getDescription(),
                     strategicIndicator.getNetwork(),
-                    strategicIndicator.getQuality_factors());
+                    strategicIndicator.getQuality_factors(),
+                    strategicIndicator.isWeighted(),
+                    strategicIndicator.getWeights());
         } catch (StrategicIndicatorNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
@@ -319,11 +321,9 @@ public class StrategicIndicators {
             String description;
             byte[] file = null;
             List<String> qualityFactors;
-
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
-
                 if (network != null) {
                     file = IOUtils.toByteArray(network.getInputStream());
                 }
@@ -333,19 +333,15 @@ public class StrategicIndicators {
             }
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Strategic_Indicator oldStrategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
-                List<String> strategicIndicatorQualityFactors = oldStrategicIndicator.getQuality_factors();
-                strategicIndicatorsController.editStrategicIndicator(id, name, description, file, qualityFactors);
-
-                boolean sameFactors = (strategicIndicatorQualityFactors.size() == qualityFactors.size());
-                sameFactors = isSameFactors(qualityFactors, strategicIndicatorQualityFactors, sameFactors);
-                if (!sameFactors && !strategicIndicatorsController.assessStrategicIndicator(name, oldStrategicIndicator.getProject().getExternalId())) {
+                strategicIndicatorsController.editStrategicIndicator(oldStrategicIndicator.getId(), name, description, file, qualityFactors);
+                if (!strategicIndicatorsController.assessStrategicIndicator(name, oldStrategicIndicator.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }
             }
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
-        } catch (StrategicIndicatorNotFoundException e) {
+        } catch (StrategicIndicatorNotFoundException | StrategicIndicatorQualityFactorNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
         } catch (AssessmentErrorException e) {
@@ -358,16 +354,6 @@ public class StrategicIndicators {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
-    }
-
-    private boolean isSameFactors(List<String> qualityFactors, List<String> strategicIndicatorQualityFactors, boolean sameFactors) {
-        int i = 0;
-        while (i < strategicIndicatorQualityFactors.size() && sameFactors) {
-            if (qualityFactors.indexOf(strategicIndicatorQualityFactors.get(i)) == -1)
-                sameFactors = false;
-            i++;
-        }
-        return sameFactors;
     }
 
     @DeleteMapping("/api/strategicIndicators/{id}")

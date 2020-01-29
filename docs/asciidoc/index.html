@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v1.1.1, 2020-01-10">
+<meta name="author" content="v1.2, 2020-01-29">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v1.1.1, 2020-01-10</span><br>
+<span id="author" class="author">v1.2, 2020-01-29</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -654,6 +654,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator evaluation rationale</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator categories list</p></td>
@@ -731,7 +736,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 937
+Content-Length: 1013
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -744,6 +749,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
+  "rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -905,6 +911,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator evaluation rationale</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>probabilities</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator categories list</p></td>
@@ -982,8 +993,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 933
 Content-Type: application/json;charset=UTF-8
+Content-Length: 1009
 
 {
   "id" : "processperformance",
@@ -995,6 +1006,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
+  "rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -1142,6 +1154,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator evaluation rationale</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator categories list</p></td>
@@ -1219,7 +1236,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 937
+Content-Length: 1013
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -1232,6 +1249,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
+  "rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -1379,6 +1397,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator evaluation rationale</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator categories list</p></td>
@@ -1456,7 +1479,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 934
+Content-Length: 1010
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -1469,6 +1492,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
+  "rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -1684,12 +1708,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-01-10"
+    "formattedDate" : "2020-01-29"
   } ]
 } ]</code></pre>
 </div>
@@ -1909,12 +1933,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-01-10"
+    "formattedDate" : "2020-01-29"
   } ]
 } ]</code></pre>
 </div>
@@ -2120,12 +2144,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-01-10"
+    "formattedDate" : "2020-01-29"
   } ]
 } ]</code></pre>
 </div>
@@ -2353,12 +2377,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-01-10"
+    "formattedDate" : "2020-01-29"
   } ]
 } ]</code></pre>
 </div>
@@ -2564,12 +2588,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-01-10"
+    "formattedDate" : "2020-01-29"
   } ]
 } ]</code></pre>
 </div>
@@ -2789,12 +2813,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-01-10"
+    "formattedDate" : "2020-01-29"
   } ]
 } ]</code></pre>
 </div>
@@ -2891,6 +2915,16 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].weighted</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator is weighted or not</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].qualityFactorsWeights</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors composing the strategic indicator with their corresponding weights</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2899,7 +2933,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 238
+Content-Length: 371
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2908,7 +2942,9 @@ Content-Type: application/json;charset=UTF-8
   "name" : "Product Quality",
   "description" : "Quality of the product built",
   "network" : null,
-  "qualityFactors" : [ "codequality", "softwarestability", "testingstatus" ]
+  "qualityFactors" : [ "codequality", "softwarestability", "testingstatus" ],
+  "weighted" : false,
+  "qualityFactorsWeights" : [ "codequality", "-1.0", "softwarestability", "-1.0", "testingstatus", "-1.0" ]
 } ]</code></pre>
 </div>
 </div>
@@ -2992,6 +3028,16 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator quality factors identifiers list</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>weighted</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator&#8217;s boolean field which identify if it is weighted or not</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>qualityFactorsWeights</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator quality factors identifiers and weights list (-1.0 represent non weighted Strategic indicator)</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3000,7 +3046,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 9184
+Content-Length: 9317
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -3009,7 +3055,9 @@ Content-Type: application/json;charset=UTF-8
   "name" : "Product Quality",
   "description" : "Quality of the product built",
   "network" : "Ly8gfi0+W0RORVQtMV0tPn4NCg0KLy8gRmlsZSBjcmVhdGVkIGJ5IGFuIHVubGljZW5zZWQgdXNlciB1c2luZyBOZXRpY2EgNi4wNCBvbiBNYXIgMjAsIDIwMTggYXQgMTA6NDU6MTEgVVRDLg0KDQpibmV0IHByb2R1Y3RxdWFsaXR5IHsNCkF1dG9Db21waWxlID0gVFJVRTsNCmF1dG91cGRhdGUgPSBUUlVFOw0Kd2hlbmNoYW5nZWQgPSAxNTIxNTQxMTc5Ow0KDQp2aXN1YWwgVjEgew0KCWRlZmRpc3Bmb3JtID0gQkVMSUVGQkFSUzsNCglub2RlbGFiZWxpbmcgPSBUSVRMRTsNCglOb2RlTWF4TnVtRW50cmllcyA9IDUwOw0KCW5vZGVmb250ID0gZm9udCB7c2hhcGU9ICJBcmlhbCI7IHNpemU9IDk7fTsNCglsaW5rZm9udCA9IGZvbnQge3NoYXBlPSAiQXJpYWwiOyBzaXplPSA5O307DQoJU2hvd0xpbmtTdHJlbmd0aHMgPSAxOw0KCXdpbmRvd3Bvc24gPSAoMiwgNSwgOTMyLCA2MzcpOw0KCXJlc29sdXRpb24gPSA3MjsNCglkcmF3aW5nYm91bmRzID0gKDEwODAsIDcyMCk7DQoJc2hvd3BhZ2VicmVha3MgPSBGQUxTRTsNCgl1c2VncmlkID0gVFJVRTsNCglncmlkc3BhY2UgPSAoNiwgNik7DQoJTm9kZVNldCBOb2RlIHtCdWlsdEluID0gMTsgQ29sb3IgPSAweDAwZTFlMWUxO307DQoJTm9kZVNldCBOYXR1cmUge0J1aWx0SW4gPSAxOyBDb2xvciA9IDB4MDBmOGVlZDI7fTsNCglOb2RlU2V0IERldGVybWluaXN0aWMge0J1aWx0SW4gPSAxOyBDb2xvciA9IDB4MDBkM2NhYTY7fTsNCglOb2RlU2V0IEZpbmRpbmcge0J1aWx0SW4gPSAxOyBDb2xvciA9IDB4MDBjOGM4Yzg7fTsNCglOb2RlU2V0IENvbnN0YW50IHtCdWlsdEluID0gMTsgQ29sb3IgPSAweDAwZmZmZmZmO307DQoJTm9kZVNldCBDb25zdGFudFZhbHVlIHtCdWlsdEluID0gMTsgQ29sb3IgPSAweDAwZmZmZmI0O307DQoJTm9kZVNldCBVdGlsaXR5IHtCdWlsdEluID0gMTsgQ29sb3IgPSAweDAwZmZiZGJkO307DQoJTm9kZVNldCBEZWNpc2lvbiB7QnVpbHRJbiA9IDE7IENvbG9yID0gMHgwMGRlZThmZjt9Ow0KCU5vZGVTZXQgRG9jdW1lbnRhdGlvbiB7QnVpbHRJbiA9IDE7IENvbG9yID0gMHgwMGYwZmFmYTt9Ow0KCU5vZGVTZXQgVGl0bGUge0J1aWx0SW4gPSAxOyBDb2xvciA9IDB4MDBmZmZmZmY7fTsNCglQcmludGVyU2V0dGluZyBBIHsNCgkJbWFyZ2lucyA9ICgxMjcwLCAxMjcwLCAxMjcwLCAxMjcwKTsNCgkJfTsNCgl9Ow0KDQpub2RlIGNvZGVxdWFsaXR5IHsNCglkaXNjcmV0ZSA9IFRSVUU7DQoJc3RhdGVzID0gKExvdywgTWVkaXVtLCBIaWdoKTsNCglraW5kID0gTkFUVVJFOw0KCWNoYW5jZSA9IENIQU5DRTsNCglwYXJlbnRzID0gKCk7DQoJcHJvYnMgPSANCgkJLy8gTG93ICAgICAgICAgIE1lZGl1bSAgICAgICBIaWdoICAgICAgICAgDQoJCSAgKDAuMjUsICAgICAgICAwLjQsICAgICAgICAgMC4zNSk7DQoJd2hlbmNoYW5nZWQgPSAxNTIxNTQxMTUxOw0KCWJlbGllZiA9ICgwLjI1LCAwLjQsIDAuMzUpOw0KCXZpc3VhbCBWMSB7DQoJCWNlbnRlciA9ICg5NiwgNDIpOw0KCQloZWlnaHQgPSAxOw0KCQl9Ow0KCX07DQoNCm5vZGUgc29mdHdhcmVzdGFiaWxpdHkgew0KCWRpc2NyZXRlID0gVFJVRTsNCglzdGF0ZXMgPSAoTG93LCBNZWRpdW0sIEhpZ2gpOw0KCWtpbmQgPSBOQVRVUkU7DQoJY2hhbmNlID0gQ0hBTkNFOw0KCXBhcmVudHMgPSAoKTsNCglwcm9icyA9IA0KCQkvLyBMb3cgICAgICAgICAgTWVkaXVtICAgICAgIEhpZ2ggICAgICAgICANCgkJICAoMC4xLCAgICAgICAgIDAuMywgICAgICAgICAwLjYpOw0KCXdoZW5jaGFuZ2VkID0gMTUyMTU0MTE2NjsNCgliZWxpZWYgPSAoMC4xLCAwLjMsIDAuNik7DQoJdmlzdWFsIFYxIHsNCgkJY2VudGVyID0gKDM2NiwgNDIpOw0KCQloZWlnaHQgPSA0Ow0KCQl9Ow0KCX07DQoNCm5vZGUgdGVzdGluZ3N0YXR1cyB7DQoJZGlzY3JldGUgPSBUUlVFOw0KCXN0YXRlcyA9IChMb3csIE1lZGl1bSwgSGlnaCk7DQoJa2luZCA9IE5BVFVSRTsNCgljaGFuY2UgPSBDSEFOQ0U7DQoJcGFyZW50cyA9ICgpOw0KCXByb2JzID0gDQoJCS8vIExvdyAgICAgICAgICBNZWRpdW0gICAgICAgSGlnaCAgICAgICAgIA0KCQkgICgwLjIsICAgICAgICAgMC42LCAgICAgICAgIDAuMik7DQoJd2hlbmNoYW5nZWQgPSAxNTIxNTQxMTc5Ow0KCWJlbGllZiA9ICgwLjIsIDAuNiwgMC4yKTsNCgl2aXN1YWwgVjEgew0KCQljZW50ZXIgPSAoNjE4LCA0Mik7DQoJCWhlaWdodCA9IDI7DQoJCX07DQoJfTsNCg0Kbm9kZSBwcm9kdWN0cXVhbGl0eSB7DQoJZGlzY3JldGUgPSBUUlVFOw0KCXN0YXRlcyA9IChMb3csIE1lZGl1bSwgSGlnaCk7DQoJa2luZCA9IE5BVFVSRTsNCgljaGFuY2UgPSBDSEFOQ0U7DQoJcGFyZW50cyA9IChjb2RlcXVhbGl0eSwgc29mdHdhcmVzdGFiaWxpdHksIHRlc3RpbmdzdGF0dXMpOw0KCXByb2JzID0gDQoJCS8vIExvdyAgICAgICAgICBNZWRpdW0gICAgICAgSGlnaCAgICAgICAgICAvLyBDb2RlUXVhbGl0eSBTdGFiaWxpdHkgVGVzdGluZ1N0YXR1cyANCgkJICAoMSwgICAgICAgICAgIDAsICAgICAgICAgICAwLCAgICAgICAgICAgIC8vIExvdyAgICAgICAgIExvdyAgICAgICBMb3cgICAgICAgICAgIA0KCQkgICAwLjk1LCAgICAgICAgMC4wNSwgICAgICAgIDAsICAgICAgICAgICAgLy8gTG93ICAgICAgICAgTG93ICAgICAgIE1lZGl1bSAgICAgICAgDQoJCSAgIDAuNzEsICAgICAgICAwLjA5LCAgICAgICAgMC4yLCAgICAgICAgICAvLyBMb3cgICAgICAgICBMb3cgICAgICAgSGlnaCAgICAgICAgICANCgkJICAgMC44LCAgICAgICAgIDAuMiwgICAgICAgICAwLCAgICAgICAgICAgIC8vIExvdyAgICAgICAgIE1lZGl1bSAgICBMb3cgICAgICAgICAgIA0KCQkgICAwLjU3Mzc1LCAgICAgMC4zMzM3NSwgICAgIDAuMDkyNSwgICAgICAgLy8gTG93ICAgICAgICAgTWVkaXVtICAgIE1lZGl1bSAgICAgICAgDQoJCSAgIDAuNDU1LCAgICAgICAwLjI3NzUsICAgICAgMC4yNjc1LCAgICAgICAvLyBMb3cgICAgICAgICBNZWRpdW0gICAgSGlnaCAgICAgICAgICANCgkJICAgMC4zOTYyNSwgICAgIDAuNDE1LCAgICAgICAwLjE4ODc1LCAgICAgIC8vIExvdyAgICAgICAgIEhpZ2ggICAgICBMb3cgICAgICAgICAgIA0KCQkgICAwLjM5OTM3NSwgICAgMC40MTgxMjUsICAgIDAuMTgyNSwgICAgICAgLy8gTG93ICAgICAgICAgSGlnaCAgICAgIE1lZGl1bSAgICAgICAgDQoJCSAgIDAuMjgwNjI1LCAgICAwLjM2MTg3NSwgICAgMC4zNTc1LCAgICAgICAvLyBMb3cgICAgICAgICBIaWdoICAgICAgSGlnaCAgICAgICAgICANCgkJICAgMC42NTA2MjUsICAgIDAuMjI4MTI1LCAgICAwLjEyMTI1LCAgICAgIC8vIE1lZGl1bSAgICAgIExvdyAgICAgICBMb3cgICAgICAgICAgIA0KCQkgICAwLjk1LCAgICAgICAgMC4wNSwgICAgICAgIDAsICAgICAgICAgICAgLy8gTWVkaXVtICAgICAgTG93ICAgICAgIE1lZGl1bSAgICAgICAgDQoJCSAgIDAuNTM1LCAgICAgICAwLjE3NSwgICAgICAgMC4yOSwgICAgICAgICAvLyBNZWRpdW0gICAgICBMb3cgICAgICAgSGlnaCAgICAgICAgICANCgkJICAgMC4zOTU2MjUsICAgIDAuNDE1NjI1LCAgICAwLjE4ODc1LCAgICAgIC8vIE1lZGl1bSAgICAgIE1lZGl1bSAgICBMb3cgICAgICAgICAgIA0KCQkgICAwLjM5ODc1LCAgICAgMC40MTg3NSwgICAgIDAuMTgyNSwgICAgICAgLy8gTWVkaXVtICAgICAgTWVkaXVtICAgIE1lZGl1bSAgICAgICAgDQoJCSAgIDAuMjgsICAgICAgICAwLjM2MjUsICAgICAgMC4zNTc1LCAgICAgICAvLyBNZWRpdW0gICAgICBNZWRpdW0gICAgSGlnaCAgICAgICAgICANCgkJICAgMC4wNSwgICAgICAgIDAuODUsICAgICAgICAwLjEsICAgICAgICAgIC8vIE1lZGl1bSAgICAgIEhpZ2ggICAgICBMb3cgICAgICAgICAgIA0KCQkgICAwLjIyNDM3NSwgICAgMC41MDMxMjUsICAgIDAuMjcyNSwgICAgICAgLy8gTWVkaXVtICAgICAgSGlnaCAgICAgIE1lZGl1bSAgICAgICAgDQoJCSAgIDAsICAgICAgICAgICAwLjIsICAgICAgICAgMC44LCAgICAgICAgICAvLyBNZWRpdW0gICAgICBIaWdoICAgICAgSGlnaCAgICAgICAgICANCgkJICAgMC41NTA2MjUsICAgIDAuMzM4MTI1LCAgICAwLjExMTI1LCAgICAgIC8vIEhpZ2ggICAgICAgIExvdyAgICAgICBMb3cgICAgICAgICAgIA0KCQkgICAwLjU1Mzc1LCAgICAgMC4zNDEyNSwgICAgIDAuMTA1LCAgICAgICAgLy8gSGlnaCAgICAgICAgTG93ICAgICAgIE1lZGl1bSAgICAgICAgDQoJCSAgIDAuNDM1LCAgICAgICAwLjI4NSwgICAgICAgMC4yOCwgICAgICAgICAvLyBIaWdoICAgICAgICBMb3cgICAgICAgSGlnaCAgICAgICAgICANCgkJICAgMC4yOTU2MjUsICAgIDAuNTI1NjI1LCAgICAwLjE3ODc1LCAgICAgIC8vIEhpZ2ggICAgICAgIE1lZGl1bSAgICBMb3cgICAgICAgICAgIA0KCQkgICAwLCAgICAgICAgICAgMC43LCAgICAgICAgIDAuMywgICAgICAgICAgLy8gSGlnaCAgICAgICAgTWVkaXVtICAgIE1lZGl1bSAgICAgICAgDQoJCSAgIDAuMTgsICAgICAgICAwLjQ3MjUsICAgICAgMC4zNDc1LCAgICAgICAvLyBIaWdoICAgICAgICBNZWRpdW0gICAgSGlnaCAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgIDAuNiwgICAgICAgICAwLjQsICAgICAgICAgIC8vIEhpZ2ggICAgICAgIEhpZ2ggICAgICBMb3cgICAgICAgICAgIA0KCQkgICAwLCAgICAgICAgICAgMC45LCAgICAgICAgIDAuMSwgICAgICAgICAgLy8gSGlnaCAgICAgICAgSGlnaCAgICAgIE1lZGl1bSAgICAgICAgDQoJCSAgIDAuMDA1NjI1LCAgICAwLjU1Njg3NTEsICAgMC40Mzc1KTsgICAgICAvLyBIaWdoICAgICAgICBIaWdoICAgICAgSGlnaCAgICAgICAgICA7DQoJbnVtY2FzZXMgPSANCgkJICAgICAgICAgICAgICAgICAvLyBDb2RlUXVhbGl0eSBTdGFiaWxpdHkgVGVzdGluZ1N0YXR1cyANCgkJICAoMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBMb3cgICAgICAgTG93ICAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBMb3cgICAgICAgTWVkaXVtICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBMb3cgICAgICAgSGlnaCAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBNZWRpdW0gICAgTG93ICAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBNZWRpdW0gICAgTWVkaXVtICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBNZWRpdW0gICAgSGlnaCAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBIaWdoICAgICAgTG93ICAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBIaWdoICAgICAgTWVkaXVtICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBMb3cgICAgICAgICBIaWdoICAgICAgSGlnaCAgICAgICAgICANCgkJICAgLTEsICAgICAgICAgICAvLyBNZWRpdW0gICAgICBMb3cgICAgICAgTG93ICAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBNZWRpdW0gICAgICBMb3cgICAgICAgTWVkaXVtICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBNZWRpdW0gICAgICBMb3cgICAgICAgSGlnaCAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBNZWRpdW0gICAgICBNZWRpdW0gICAgTG93ICAgICAgICAgICANCgkJICAgLTEsICAgICAgICAgICAvLyBNZWRpdW0gICAgICBNZWRpdW0gICAgTWVkaXVtICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBNZWRpdW0gICAgICBNZWRpdW0gICAgSGlnaCAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBNZWRpdW0gICAgICBIaWdoICAgICAgTG93ICAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBNZWRpdW0gICAgICBIaWdoICAgICAgTWVkaXVtICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBNZWRpdW0gICAgICBIaWdoICAgICAgSGlnaCAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBMb3cgICAgICAgTG93ICAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBMb3cgICAgICAgTWVkaXVtICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBMb3cgICAgICAgSGlnaCAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBNZWRpdW0gICAgTG93ICAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBNZWRpdW0gICAgTWVkaXVtICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBNZWRpdW0gICAgSGlnaCAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBIaWdoICAgICAgTG93ICAgICAgICAgICANCgkJICAgMCwgICAgICAgICAgICAvLyBIaWdoICAgICAgICBIaWdoICAgICAgTWVkaXVtICAgICAgICANCgkJICAgMSk7ICAgICAgICAgICAvLyBIaWdoICAgICAgICBIaWdoICAgICAgSGlnaCAgICAgICAgICA7DQoJd2hlbmNoYW5nZWQgPSAwOw0KCWJlbGllZiA9ICgwLjI2NDM2NjIsIDAuNDk4OTk2MywgMC4yMzY2Mzc1KTsNCgl2aXN1YWwgVjEgew0KCQljZW50ZXIgPSAoMzcyLCAyNTgpOw0KCQloZWlnaHQgPSAzOw0KCQl9Ow0KCX07DQpFbGltT3JkZXIgPSAoY29kZXF1YWxpdHksIHNvZnR3YXJlc3RhYmlsaXR5LCB0ZXN0aW5nc3RhdHVzLCBwcm9kdWN0cXVhbGl0eSk7DQp9Ow0K",
-  "qualityFactors" : [ "codequality", "softwarestability", "testingstatus" ]
+  "qualityFactors" : [ "codequality", "softwarestability", "testingstatus" ],
+  "weighted" : false,
+  "qualityFactorsWeights" : [ "codequality", "-1.0", "softwarestability", "-1.0", "testingstatus", "-1.0" ]
 }</code></pre>
 </div>
 </div>
@@ -3128,7 +3176,7 @@ Content-Type: application/json;charset=UTF-8
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>quality_factors</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Comma separated values of the quality factors identifiers which belong to the strategic indicator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Comma separated values of the quality factors identifiers which belong to the strategic indicator and their corresponding weights (-1 if no weighted)</p></td>
 </tr>
 </tbody>
 </table>
@@ -3163,7 +3211,7 @@ Content-Type: application/json;charset=UTF-8
     -F 'network=@network.dne;type=text/plain' \
     -F 'name=Product Quality' \
     -F 'description=Quality of the product built' \
-    -F 'quality_factors=codequality,softwarestability,testingstatus'</code></pre>
+    -F 'quality_factors=codequality,-1.0,softwarestability,-1.0,testingstatus,-1.0'</code></pre>
 </div>
 </div>
 </div>
@@ -3488,6 +3536,11 @@ This operation is deprecated. Please, use <a href="#_assess_strategic_indicators
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator evaluation rationale</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator categories list</p></td>
@@ -3565,7 +3618,7 @@ This operation is deprecated. Please, use <a href="#_assess_strategic_indicators
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 878
+Content-Length: 954
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -3578,6 +3631,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
+  "rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -4038,7 +4092,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4225,7 +4279,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4390,7 +4444,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4577,7 +4631,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4770,7 +4824,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -4991,7 +5045,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 1, 10 ],
+    "date" : [ 2020, 1, 29 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -5144,12 +5198,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-01-10"
+  "formattedDate" : "2020-01-29"
 } ]</code></pre>
 </div>
 </div>
@@ -5312,12 +5366,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-01-10"
+  "formattedDate" : "2020-01-29"
 }</code></pre>
 </div>
 </div>
@@ -5496,12 +5550,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-01-10"
+  "formattedDate" : "2020-01-29"
 } ]</code></pre>
 </div>
 </div>
@@ -5799,7 +5853,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5967,7 +6021,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6135,7 +6189,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6289,7 +6343,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6465,7 +6519,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6641,7 +6695,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6815,7 +6869,7 @@ Content-Length: 466
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -7017,7 +7071,7 @@ Content-Length: 466
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 1, 10 ],
+  "date" : [ 2020, 1, 29 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -7328,7 +7382,7 @@ Content-Length: 257
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1578658543080,
+  "date" : 1580294291020,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -8124,7 +8178,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1578658542591,
+  "date" : 1580294290567,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8313,7 +8367,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : 3,
-  "date" : 1578658546392,
+  "date" : 1580294293936,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8328,7 +8382,7 @@ Content-Type: application/json;charset=UTF-8
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1578658546392,
+    "date" : 1580294293936,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -8472,7 +8526,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1578658546532,
+  "date" : 1580294294046,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8995,7 +9049,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : 2,
   "type" : "ADD",
-  "date" : 1578658544001,
+  "date" : 1580294291874,
   "author" : null,
   "rationale" : "User comments",
   "patternId" : 100,
@@ -9208,7 +9262,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "strategicIndicatorId" : 1,
-  "date" : "2020-01-10",
+  "date" : "2020-01-29",
   "author" : null,
   "oldValue" : 0.6,
   "newValue" : 0.75
@@ -10293,6 +10347,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator evaluation rationale</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator categories list</p></td>
@@ -10370,7 +10429,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 877
+Content-Length: 953
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -10383,6 +10442,7 @@ Content-Type: application/json;charset=UTF-8
     "second" : "Good"
   },
   "value_description" : "Good (0.80)",
+  "rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -10509,6 +10569,11 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator value and category</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator evaluation rationale</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].second[].probabilities</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator categories list</p></td>
@@ -10586,7 +10651,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 995
+Content-Length: 1073
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -10601,6 +10666,7 @@ Content-Type: application/json;charset=UTF-8
       "second" : "Good"
     },
     "value_description" : "Good (0.80)",
+    "rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
     "probabilities" : [ {
       "id" : 10,
       "label" : "Good",
@@ -10717,7 +10783,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-01-10' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-01-29' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -10769,7 +10835,7 @@ Content-Length: 137
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "date" : "2020-01-13",
+  "date" : "2020-02-01",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -10861,10 +10927,10 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-  "dateFrom" : "2019-12-26",
+  "dateFrom" : "2020-01-14",
   "name" : "Development",
   "description" : "Implementation of project functionalities",
-  "dateTo" : "2020-01-25"
+  "dateTo" : "2020-02-13"
 } ]</code></pre>
 </div>
 </div>
@@ -10875,7 +10941,7 @@ Content-Length: 156
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-01-10 13:15:23 +0100
+Last updated 2020-01-29 11:41:22 +0100
 </div>
 </div>
 </body>

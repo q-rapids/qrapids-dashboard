@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.testHelpers;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODecisionQualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
@@ -15,6 +16,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class DomainObjectsBuilder {
+
+    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
 
     public Project buildProject() {
         Long projectId = 1L;
@@ -43,20 +46,84 @@ public class DomainObjectsBuilder {
         return alert;
     }
 
+    // build Strategic Indicator without weights
     public Strategic_Indicator buildStrategicIndicator (Project project) {
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Product Quality";
         String strategicIndicatorDescription = "Quality of the product built";
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "codequality";
-        qualityFactors.add(factor1);
-        String factor2 = "softwarestability";
-        qualityFactors.add(factor2);
-        String factor3 = "testingstatus";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, project);
         strategicIndicator.setId(strategicIndicatorId);
+
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+
+        Long factor1Id = 1L;
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator);
+        factor1.setId(factor1Id);
+        qualityFactors.add(factor1);
+
+        Long factor2Id = 2L;
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator);
+        factor2.setId(factor2Id);
+        qualityFactors.add(factor2);
+
+        Long factor3Id = 3L;
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator);
+        factor3.setId(factor3Id);
+        qualityFactors.add(factor3);
+
+        strategicIndicator.setQuality_factors(qualityFactors);
+        strategicIndicator.setWeighted(false);
+
         return strategicIndicator;
+    }
+
+    public Strategic_Indicator addFactorToStrategicIndicator (Strategic_Indicator si, String factorId, float weight) {
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+
+        Long factor1Id = 1L;
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, si);
+        factor1.setId(factor1Id);
+        qualityFactors.add(factor1);
+
+        Long factor2Id = 2L;
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, si);
+        factor2.setId(factor2Id);
+        qualityFactors.add(factor2);
+
+        Long factor3Id = 3L;
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, si);
+        factor3.setId(factor3Id);
+        qualityFactors.add(factor3);
+
+        Long factor4Id = 4L;
+        StrategicIndicatorQualityFactors factor4 = new StrategicIndicatorQualityFactors(factorId, weight, si);
+        factor4.setId(factor4Id);
+        qualityFactors.add(factor4);
+
+        si.setQuality_factors(qualityFactors);
+        return si;
+    }
+
+    public List<StrategicIndicatorQualityFactors> buildQualityFactors (Strategic_Indicator strategicIndicator) {
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+
+        Long factor1Id = 1L;
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator);
+        factor1.setId(factor1Id);
+        qualityFactors.add(factor1);
+
+        Long factor2Id = 2L;
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator);
+        factor2.setId(factor2Id);
+        qualityFactors.add(factor2);
+
+        Long factor3Id = 3L;
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator);
+        factor3.setId(factor3Id);
+        qualityFactors.add(factor3);
+
+        return qualityFactors;
     }
 
     public DTOStrategicIndicatorEvaluation buildDtoStrategicIndicatorEvaluation (Strategic_Indicator strategicIndicator) {
@@ -91,7 +158,8 @@ public class DomainObjectsBuilder {
         Pair<Float, String> strategicIndicatorValuePair = Pair.of(strategicIndicatorValue, strategicIndicatorCategory);
         String datasource = "Q-Rapdis Dashboard";
         String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicator.getExternalId(), strategicIndicator.getName(), strategicIndicator.getDescription(), strategicIndicatorValuePair, dtoSIAssessmentList, LocalDate.now(), datasource, strategicIndicator.getId(), categoriesDescription, false);
+        String strategicIndicatorRationale = "factors: {...}, formula: ..., value: ..., category: ...";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicator.getExternalId(), strategicIndicator.getName(), strategicIndicator.getDescription(), strategicIndicatorValuePair, strategicIndicatorRationale, dtoSIAssessmentList, LocalDate.now(), datasource, strategicIndicator.getId(), categoriesDescription, false);
         dtoStrategicIndicatorEvaluation.setHasFeedback(false);
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
 
@@ -273,7 +341,8 @@ public class DomainObjectsBuilder {
         LocalDate date = LocalDate.parse(dateString);
         String datasource = "Q-Rapdis Dashboard";
         String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
+        String strategicIndicatorRationale = "factors: {...}, formula: ..., value: ..., category: ...";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, strategicIndicatorRationale, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
         dtoStrategicIndicatorEvaluation.setHasFeedback(false);
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
         return dtoStrategicIndicatorEvaluation;

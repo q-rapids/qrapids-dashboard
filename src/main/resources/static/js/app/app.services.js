@@ -55,7 +55,8 @@ app.controller('TablesCtrl', function($scope, $http) {
                     date: strategicIndicatorEval.date,
                     description: strategicIndicatorEval.description,
                     value: strategicIndicatorEval.value_description,
-                    categories: strategicIndicatorEval.categories_description
+                    categories: strategicIndicatorEval.categories_description,
+                    rationale: strategicIndicatorEval.rationale
                 });
             });
             $scope.data = data;
@@ -479,7 +480,6 @@ app.controller('TablesCtrl', function($scope, $http) {
             var data = [];
             response.data.forEach(function (strategicIndicatorEval) {
                 strategicIndicatorEval.factors.forEach(function (factor) {
-
                     var strategicIndicator = {
                         id: strategicIndicatorEval.id,
                         date: strategicIndicatorEval.date,

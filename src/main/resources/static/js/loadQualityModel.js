@@ -25,6 +25,7 @@ function loadData() {
 function buildTree(strategicIndicators) {
     var qmnodes = new Map();
     var qmedges = new Map();
+    console.log(strategicIndicators);
     for (var i = 0; i < strategicIndicators.length; i++) {
         var strategicIndicator = strategicIndicators[i];
         var node = createNode(strategicIndicator, siColor, strategicIndicator.color);
@@ -34,10 +35,17 @@ function buildTree(strategicIndicators) {
         for (var j = 0; j < strategicIndicator.factors.length; j++) {
             var factor = strategicIndicator.factors[j];
             var node = createNode(factor, factorColor, factorColor);
-            if (!qmnodes.has(factor.id))
-                qmnodes.set(factor.id, node);
-            if (!qmedges.has(factor.id+"-"+strategicIndicator.id))
-                qmedges.set(factor.id+"-"+strategicIndicator.id, createEdge(factor, strategicIndicator));
+            if (factor.weight== 1){
+                if (!qmnodes.has(factor.id))
+                    qmnodes.set(factor.id, node);
+                if (!qmedges.has(factor.id+"-"+strategicIndicator.id))
+                    qmedges.set(factor.id+"-"+strategicIndicator.id, createEdge(factor, strategicIndicator, strategicIndicator.factors.length));
+            } else {
+                if (!qmnodes.has(factor.id))
+                    qmnodes.set(factor.id, node);
+                if (!qmedges.has(factor.id+"-"+strategicIndicator.id))
+                    qmedges.set(factor.id+"-"+strategicIndicator.id, createEdge(factor, strategicIndicator));
+            }
             var metricsWeights = sumMetricsWeights(factor.metrics);
 
             for (var k = 0; k < factor.metrics.length; k++) {
@@ -80,12 +88,16 @@ function createNode (element, color, colorBorder) {
     }
 }
 
-function createEdge (source, target, aux) { // aux = sum metrics weights
+
+function createEdge (source, target, aux) { // aux = { sum metrics weights or #factors (no weighted) }
     var weight = source.weight;
     if (aux) {
         weight = ((parseFloat(weight)/aux) * 100).toFixed(0) + "%"; // weight percentage
     }
-    else weight = null; // it's indifferent which weight has factor, we won't show it
+    else {
+        if (weight == 0) weight = null;
+        else weight = (parseFloat(weight) * 100).toFixed(0) + "%"; // weight percentage
+    }
     return {
         data: {
             source: source.id,

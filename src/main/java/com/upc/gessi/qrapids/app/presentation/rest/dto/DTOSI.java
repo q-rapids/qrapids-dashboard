@@ -9,14 +9,18 @@ public class DTOSI {
     private String description;
     private byte[] network;
     private List<String> qualityFactors;
+    private boolean weighted;
+    private List<String> qualityFactorsWeights;
 
-    public DTOSI(Long id, String externalId, String name, String description, byte[] network, List<String> qualityFactors) {
+    public DTOSI(Long id, String externalId, String name, String description, byte[] network, List<String> qualityFactors, boolean weighted, List<String> qualityFactorsWeights) {
         this.id = id;
         this.externalId = externalId;
         this.name = name;
         this.description = description;
         this.network = network;
         this.qualityFactors = qualityFactors;
+        this.weighted = weighted;
+        this.qualityFactorsWeights = qualityFactorsWeights;
     }
 
     public Long getId() {
@@ -66,4 +70,10 @@ public class DTOSI {
     public void setQualityFactors(List<String> qualityFactors) {
         this.qualityFactors = qualityFactors;
     }
+
+    public void setWeighted(boolean weighted) { this.weighted = weighted; }
+
+    public boolean isWeighted() { return weighted; }
+
+    public List<String> getQualityFactorsWeights() { return qualityFactorsWeights; }
 }

@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator;
 
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,26 +37,31 @@ public class StrategicIndicatorRepositoryTest {
 
         String strategicIndicator1Name = "Product Quality";
         String strategicIndicator1Description = "Quality of the product built";
-        List<String> qualityFactors1 = new ArrayList<>();
-        String factor1 = "codequality";
+        Strategic_Indicator strategicIndicator1 = new Strategic_Indicator(strategicIndicator1Name, strategicIndicator1Description, null, project);
+        List<StrategicIndicatorQualityFactors> qualityFactors1 = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator1);
         qualityFactors1.add(factor1);
-        String factor2 = "softwarestability";
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator1);
         qualityFactors1.add(factor2);
-        String factor3 = "testingstatus";
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator1);
         qualityFactors1.add(factor3);
-        Strategic_Indicator strategicIndicator1 = new Strategic_Indicator(strategicIndicator1Name, strategicIndicator1Description, null, qualityFactors1, project);
+        strategicIndicator1.setQuality_factors(qualityFactors1);
+        strategicIndicator1.setWeighted(false);
         entityManager.persist(strategicIndicator1);
+
 
         String strategicIndicator2Name = "Blocking";
         String strategicIndicator2Description = "Blocking elements";
-        List<String> qualityFactors2 = new ArrayList<>();
-        String factor4 = "blockingcode";
+        Strategic_Indicator strategicIndicator2 = new Strategic_Indicator(strategicIndicator2Name, strategicIndicator2Description, null, project);
+        List<StrategicIndicatorQualityFactors> qualityFactors2 = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor4 = new StrategicIndicatorQualityFactors("blockingcode", -1, strategicIndicator2);
         qualityFactors2.add(factor4);
-        String factor5 = "testingstatus";
+        StrategicIndicatorQualityFactors factor5 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator2);
         qualityFactors2.add(factor5);
-        String factor6 = "qualityissuespecification";
+        StrategicIndicatorQualityFactors factor6 = new StrategicIndicatorQualityFactors( "qualityissuespecification", -1, strategicIndicator2);
         qualityFactors2.add(factor6);
-        Strategic_Indicator strategicIndicator2 = new Strategic_Indicator(strategicIndicator2Name, strategicIndicator2Description, null, qualityFactors2, project);
+        strategicIndicator2.setQuality_factors(qualityFactors2);
+        strategicIndicator2.setWeighted(false);
         entityManager.persistAndFlush(strategicIndicator2);
 
         // When
@@ -82,26 +88,30 @@ public class StrategicIndicatorRepositoryTest {
 
         String strategicIndicator1Name = "Product Quality";
         String strategicIndicator1Description = "Quality of the product built";
-        List<String> qualityFactors1 = new ArrayList<>();
-        String factor1 = "codequality";
+        Strategic_Indicator strategicIndicator1 = new Strategic_Indicator(strategicIndicator1Name, strategicIndicator1Description, null, project1);
+        List<StrategicIndicatorQualityFactors> qualityFactors1 = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator1);
         qualityFactors1.add(factor1);
-        String factor2 = "softwarestability";
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator1);
         qualityFactors1.add(factor2);
-        String factor3 = "testingstatus";
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator1);
         qualityFactors1.add(factor3);
-        Strategic_Indicator strategicIndicator1 = new Strategic_Indicator(strategicIndicator1Name, strategicIndicator1Description, null, qualityFactors1, project1);
+        strategicIndicator1.setQuality_factors(qualityFactors1);
+        strategicIndicator1.setWeighted(false);
         entityManager.persist(strategicIndicator1);
 
         String strategicIndicator2Name = "Blocking";
         String strategicIndicator2Description = "Blocking elements";
-        List<String> qualityFactors2 = new ArrayList<>();
-        String factor4 = "blockingcode";
+        Strategic_Indicator strategicIndicator2 = new Strategic_Indicator(strategicIndicator2Name, strategicIndicator2Description, null, project2);
+        List<StrategicIndicatorQualityFactors> qualityFactors2 = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor4 = new StrategicIndicatorQualityFactors("blockingcode", -1, strategicIndicator2);
         qualityFactors2.add(factor4);
-        String factor5 = "testingstatus";
+        StrategicIndicatorQualityFactors factor5 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator2);
         qualityFactors2.add(factor5);
-        String factor6 = "qualityissuespecification";
+        StrategicIndicatorQualityFactors factor6 = new StrategicIndicatorQualityFactors( "qualityissuespecification", -1, strategicIndicator2);
         qualityFactors2.add(factor6);
-        Strategic_Indicator strategicIndicator2 = new Strategic_Indicator(strategicIndicator2Name, strategicIndicator2Description, null, qualityFactors2, project2);
+        strategicIndicator2.setQuality_factors(qualityFactors2);
+        strategicIndicator2.setWeighted(false);
         entityManager.persistAndFlush(strategicIndicator2);
 
         // When
@@ -124,14 +134,16 @@ public class StrategicIndicatorRepositoryTest {
 
         String strategicIndicator1Name = "Product Quality";
         String strategicIndicator1Description = "Quality of the product built";
-        List<String> qualityFactors1 = new ArrayList<>();
-        String factor1 = "codequality";
+        Strategic_Indicator strategicIndicator1 = new Strategic_Indicator(strategicIndicator1Name, strategicIndicator1Description, null, project);
+        List<StrategicIndicatorQualityFactors> qualityFactors1 = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator1);
         qualityFactors1.add(factor1);
-        String factor2 = "softwarestability";
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator1);
         qualityFactors1.add(factor2);
-        String factor3 = "testingstatus";
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator1);
         qualityFactors1.add(factor3);
-        Strategic_Indicator strategicIndicator1 = new Strategic_Indicator(strategicIndicator1Name, strategicIndicator1Description, null, qualityFactors1, project);
+        strategicIndicator1.setQuality_factors(qualityFactors1);
+        strategicIndicator1.setWeighted(false);
         entityManager.persistAndFlush(strategicIndicator1);
 
         // When
