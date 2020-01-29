@@ -138,7 +138,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<StrategicIndicatorQualityFactors> qualityFactors = domainObjectsBuilder.buildQualityFactors(strategicIndicator);
         for (StrategicIndicatorQualityFactors qf : qualityFactors) {
-            when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(qf.getQuality_factor(),qf.getWeight(), any(Strategic_Indicator.class))).thenReturn(qf);
+            when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(qf.getQuality_factor()),eq(qf.getWeight()), any(Strategic_Indicator.class))).thenReturn(qf);
         }
 
         // When
@@ -160,6 +160,11 @@ public class StrategicIndicatorsControllerTest {
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
         File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
         when(strategicIndicatorRepository.findById(strategicIndicator.getId())).thenReturn(Optional.of(strategicIndicator));
+
+        List<StrategicIndicatorQualityFactors> qualityFactors = domainObjectsBuilder.buildQualityFactors(strategicIndicator);
+        for (StrategicIndicatorQualityFactors qf : qualityFactors) {
+            when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(qf.getQuality_factor()),eq(qf.getWeight()), any(Strategic_Indicator.class))).thenReturn(qf);
+        }
 
         // When
         strategicIndicatorsController.editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(), strategicIndicator.getDescription(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getWeights());
@@ -714,7 +719,7 @@ public class StrategicIndicatorsControllerTest {
 
         when(assesSI.assesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
 
-        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), eq(strategicIndicatorRationale), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
+        //when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), eq(strategicIndicatorRationale), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
 
         // When
         boolean correct = strategicIndicatorsController.assessStrategicIndicators(project.getExternalId(), null);
@@ -928,7 +933,7 @@ public class StrategicIndicatorsControllerTest {
 
         when(assesSI.assesSI(factorValuesList, 3)).thenReturn(factorsAverageValue);
 
-        when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), eq(strategicIndicatorRationale), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
+        //when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), eq(strategicIndicatorRationale), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
 
         // When
         boolean correct = strategicIndicatorsController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
@@ -1040,7 +1045,7 @@ public class StrategicIndicatorsControllerTest {
 
         when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId(), false)).thenReturn(dtoDetailedStrategicIndicatorList);
         // TODO NullPointerException
-        //when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(dtoFactor.getId(),-1f,any(Strategic_Indicator.class))).thenReturn(new StrategicIndicatorQualityFactors(dtoFactor.getId(),-1f,any(Strategic_Indicator.class)));
+        when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(dtoFactor.getId()),eq(-1f),any(Strategic_Indicator.class))).thenAnswer(invocation -> new StrategicIndicatorQualityFactors(dtoFactor.getId(),-1f,any(Strategic_Indicator.class)));
 
         // When
         strategicIndicatorsController.fetchStrategicIndicators();
