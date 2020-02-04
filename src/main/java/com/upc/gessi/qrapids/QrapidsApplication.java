@@ -7,10 +7,8 @@ import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.presentation.rest.services.Alerts;
-import com.upc.gessi.qrapids.app.presentation.rest.services.QualityFactors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -47,18 +45,18 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		List<MetricCategory> metricCategoryList = context.getBean(MetricsController.class).getMetricCategories();
 		try {
 			// Declare default categories
-			List<Map<String, String>> categories = new ArrayList<Map<String, String>>();
-			Map<String,String> cat1 = new HashMap<String, String>();
+			List<Map<String, String>> categories = new ArrayList<>();
+			Map<String,String> cat1 = new HashMap<>();
 			cat1.put("color", "#00ff00");
 			cat1.put("name", "Good");
 			cat1.put("upperThreshold", "100");
 			categories.add(cat1);
-			Map<String,String> cat2 = new HashMap<String, String>();
+			Map<String,String> cat2 = new HashMap<>();
 			cat2.put("color", "#ff8000");
-			cat2.put("name", "Neutral");
+			cat2.put("name", "Normal");
 			cat2.put("upperThreshold", "67");
 			categories.add(cat2);
-			Map<String,String> cat3 = new HashMap<String, String>();
+			Map<String,String> cat3 = new HashMap<>();
 			cat3.put("color", "#ff0000");
 			cat3.put("name", "Bad");
 			cat3.put("upperThreshold", "33");
