@@ -195,6 +195,18 @@
         </div>
         <script type="text/javascript" th:src="@{/js/projectsSelector.js}"></script>
     </th:block>
+    <th:block th:fragment="RepresentationMode">
+        <div class="btn-group" style="display: flex; justify-content: flex-end; margin-right: 5px;">
+            <button id="Radar" type="button" onclick="menuNav(time + viewMode + 'Radar')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment with radar charts">
+                <img class="icons" th:src="@{/icons/radar_chart.png}"
+                     src="../../static/icons/radar_chart.png" alt="radar chart representation"/>
+            </button>
+            <button id="Stacked" type="button" onclick="menuNav(time + viewMode + 'Stacked')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment with stacked bar charts">
+                <img class="icons" th:src="@{/icons/stacked_bar_chart.png}"
+                     src="../../static/icons/stacked_bar_chart.png" alt="stacked bar chart representation"/>
+            </button>
+        </div>
+    </th:block>
 </body>
 <th:block th:fragment="scriptsHistoric">
     <script type="text/javascript" th:src="@{/js/scriptDatePicker.js}"></script>

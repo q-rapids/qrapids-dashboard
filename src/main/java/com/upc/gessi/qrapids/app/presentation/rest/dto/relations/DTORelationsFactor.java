@@ -5,6 +5,7 @@ import java.util.List;
 
 public class DTORelationsFactor {
     private String id;
+    private String name;
     private String value;
     private String weight;
     private List<DTORelationsMetric> metrics;
@@ -16,6 +17,7 @@ public class DTORelationsFactor {
 
     public DTORelationsFactor(DTORelationsFactor factor) {
         this.id = factor.getId();
+        this.name = factor.getName();
         this.value = factor.getValue();
         this.weight = factor.getWeight();
         this.metrics = factor.getMetrics();
@@ -55,5 +57,13 @@ public class DTORelationsFactor {
 
     public void setMetric(DTORelationsMetric metric) {
         this.metrics.add(metric);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }

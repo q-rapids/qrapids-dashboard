@@ -742,7 +742,7 @@ public class StrategicIndicatorsController {
         return category.getColor();
     }
 
-    public List<DTORelationsSI> getQualityModel(String projectExternalId, LocalDate date) throws IOException {
+    public List<DTORelationsSI> getQualityModel(String projectExternalId, LocalDate date) throws IOException, CategoriesException {
         return qmaRelations.getRelations(projectExternalId, date);
     }
 
