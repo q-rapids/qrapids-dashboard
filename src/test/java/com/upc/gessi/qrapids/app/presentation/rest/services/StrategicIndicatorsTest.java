@@ -2585,15 +2585,18 @@ public class StrategicIndicatorsTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoRelationsSI.getId())))
+                .andExpect(jsonPath("$[0].name", is(dtoRelationsSI.getName())))
                 .andExpect(jsonPath("$[0].value", is(dtoRelationsSI.getValue())))
                 .andExpect(jsonPath("$[0].valueDescription", is(dtoRelationsSI.getValueDescription())))
                 .andExpect(jsonPath("$[0].color", is(dtoRelationsSI.getColor())))
                 .andExpect(jsonPath("$[0].factors", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoRelationsFactor.getId())))
+                .andExpect(jsonPath("$[0].factors[0].name", is(dtoRelationsFactor.getName())))
                 .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getValue())))
                 .andExpect(jsonPath("$[0].factors[0].weight", is(dtoRelationsFactor.getWeight())))
                 .andExpect(jsonPath("$[0].factors[0].metrics", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].id", is(dtoRelationsMetric.getId())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].name", is(dtoRelationsMetric.getName())))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getValue())))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())))
                 .andDo(document("si/quality-model",
@@ -2609,6 +2612,8 @@ public class StrategicIndicatorsTest {
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
                                 fieldWithPath("[].value")
                                         .description("Strategic indicator assessment value"),
                                 fieldWithPath("[].valueDescription")
@@ -2619,6 +2624,8 @@ public class StrategicIndicatorsTest {
                                         .description("List with all the quality factors composing the strategic indicator"),
                                 fieldWithPath("[].factors[].id")
                                         .description("Quality factor identifier"),
+                                fieldWithPath("[].factors[].name")
+                                        .description("Quality factor name"),
                                 fieldWithPath("[].factors[].value")
                                         .description("Quality factor value"),
                                 fieldWithPath("[].factors[].weight")
@@ -2627,6 +2634,8 @@ public class StrategicIndicatorsTest {
                                         .description("List with all the metrics composing the quality factor"),
                                 fieldWithPath("[].factors[].metrics[].id")
                                         .description("Metric identifier"),
+                                fieldWithPath("[].factors[].metrics[].name")
+                                        .description("Metric name"),
                                 fieldWithPath("[].factors[].metrics[].value")
                                         .description("Metric value"),
                                 fieldWithPath("[].factors[].metrics[].weight")
