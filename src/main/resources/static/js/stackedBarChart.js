@@ -43,7 +43,7 @@ var options = {
     },
     legend: {
         position: 'right',
-        offsetY: 40
+        offsetY: 15
     },
     fill: {
         opacity: 1
@@ -73,6 +73,7 @@ chart.render();
 var myTooltips = [];
 
 function drawChart() {
+
     console.log("titles:");
     console.log(titles);
     console.log("labels:");
@@ -90,43 +91,55 @@ function drawChart() {
         var parts = titles[i];
         categories.push(parts);
         for(j = 0; j < labels[i].length; ++j){
-            if (!mapForChart.has(labels[i][j])) {
+            if (!mapForChart.has(labels[i][j])) { // map doesn't have this label
+                // TODO improve color representation
                 colors.push('#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6));
 
                 var data = [].fill.call({ length: titles.length }, 0);
                 var tooltips = [].fill.call({ length: titles.length }, 0);
 
                 var w = parseFloat(weights[i][j]);
-                if (sumWeights(weights[i]) > 1 || w == 0 ) {
-                    if ( w == 0 ) {
-                        data[i] = parseFloat(values[i][j]) * (1/labels[i].length);
-                        tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length)*100).toFixed(0) + "%)";
-                    }
-                    else {
-                        data[i] = parseFloat(values[i][j]) * (w/labels[i].length);
-                        tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/labels[i].length)*100).toFixed(0) + "%)";
+                var sum = sumWeights(weights[i]);
+                if (sum > 1 || w == 0 ) {
+                    if (metrics) {
+                        data[i] = (parseFloat(values[i][j]/w) * (w/sum)).toFixed(2);
+                        tooltips[i] = parseFloat(values[i][j]/w).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
+                    } else {
+                        if (w == 0) {
+                            data[i] = (parseFloat(values[i][j]) * (1 / labels[i].length)).toFixed(2);
+                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length) * 100).toFixed(0) + "%)";
+                        } else {
+                            data[i] = (parseFloat(values[i][j]) * (w / sum)).toFixed(2);
+                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/sum) * 100).toFixed(0) + "%)";
+                        }
                     }
                 } else {
-                    data[i] = parseFloat(values[i][j]);
+                    data[i] = parseFloat(values[i][j]).toFixed(2);
                     tooltips[i] = (values[i][j]/w).toFixed(2) + " (" + w*100 + "%)";
                 }
                 mapForTooltips.set(labels[i][j], tooltips);
                 mapForChart.set(labels[i][j], data);
-            } else {
+            } else { // map has this label
                 var data = mapForChart.get(labels[i][j]);
                 var tooltips = mapForTooltips.get(labels[i][j]);
                 var w = parseFloat(weights[i][j]);
-                if (sumWeights(weights[i]) > 1 || w == 0 ) {
-                    if ( w == 0 ) {
-                        data[i] = parseFloat(values[i][j]) * (1/labels[i].length);
-                        tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length)*100).toFixed(0) + "%)";
-                    }
-                    else {
-                        data[i] = parseFloat(values[i][j]) * (w/labels[i].length);
-                        tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/labels[i].length)*100).toFixed(0) + "%)";
+                var sum = sumWeights(weights[i]);
+                if ( sum > 1 || w == 0 ) {
+                    if (metrics) {
+                        data[i] = (parseFloat(values[i][j]/w) * (w/sum)).toFixed(2);
+                        tooltips[i] = parseFloat(values[i][j]/w).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
+                    } else {
+                        if ( w == 0 ) {
+                            data[i] = (parseFloat(values[i][j]) * (1/labels[i].length)).toFixed(2);
+                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length)*100).toFixed(0) + "%)";
+                        }
+                        else {
+                            data[i] = (parseFloat(values[i][j]) * (w/sum)).toFixed(2);
+                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
+                        }
                     }
                 } else {
-                    data[i] = parseFloat(values[i][j]);
+                    data[i] = parseFloat(values[i][j]).toFixed(2);
                     tooltips[i] = (values[i][j]/w).toFixed(2) + " (" + w*100 + "%)";
                 }
                 mapForChart.set(labels[i][j], data);

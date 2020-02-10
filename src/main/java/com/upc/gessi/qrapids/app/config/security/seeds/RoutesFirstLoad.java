@@ -49,6 +49,7 @@ public class RoutesFirstLoad {
 
         // Quality Factor
         routes.add( new Route( "Quality Factor - Current Chart", "/QualityFactor/CurrentChart") );
+        routes.add( new Route( "Quality Factor - Current Stacked", "/QualityFactor/CurrentStacked") );
         routes.add( new Route( "Quality Factor - Current Table", "/QualityFactor/CurrentTable") );
 
         routes.add( new Route( "Quality Factor - Historic Table", "/QualityFactor/HistoricTable") );
@@ -64,6 +65,7 @@ public class RoutesFirstLoad {
         routes.add( new Route( "Detailed Strategic Indicators - Current Chart", "/DetailedStrategicIndicators/CurrentChart") );
         routes.add( new Route( "Detailed Strategic Indicators - Current Stacked", "/DetailedStrategicIndicators/CurrentStacked") );
         routes.add( new Route( "Detailed Strategic Indicators - Current Table", "/DetailedStrategicIndicators/CurrentTable") );
+
         routes.add( new Route( "Detailed Strategic Indicators - Historic Table", "/DetailedStrategicIndicators/HistoricTable") );
         routes.add( new Route( "Detailed Strategic Indicators - Historic Chart", "/DetailedStrategicIndicators/HistoricChart") );
 

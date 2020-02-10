@@ -305,7 +305,10 @@ if (time == "Current" && viewMode == "Chart") {
 
 $("#DetailedStrategicIndicatorsPrediction").attr("href", serverUrl + "/DetailedStrategicIndicators/PredictionChart");
 
-$("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + time + viewMode);
+if (time == "Current" && viewMode == "Chart") {
+    $("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + time + viewMode + representationMode);
+} else {
+    $("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + time + viewMode);}
 
 $("#QualityFactorsPrediction").attr("href", serverUrl + "/QualityFactors/PredictionChart");
 

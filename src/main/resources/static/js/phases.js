@@ -264,7 +264,7 @@ function drawHeatmap(phases) {
                 position: 'top',
                 orientation: 'horizontal',
                 offsetX: 0,
-                offsetY: 50
+                offsetY: -15
             }
         });
     });
