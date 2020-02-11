@@ -64,6 +64,9 @@ var options = {
                 formatter: (seriesName) => seriesName,
             },
         },
+    },
+    annotations: {
+        position: 'back'
     }
 };
 
@@ -85,11 +88,11 @@ function drawChart() {
 
     let mapForChart = new Map();
     let mapForTooltips = new Map();
-    var categories = [];
+    var xaxis_cat = [];
     var colors = [];
     for (i = 0; i < titles.length; ++i) {
         var parts = titles[i];
-        categories.push(parts);
+        xaxis_cat.push(parts);
         for(j = 0; j < labels[i].length; ++j){
             if (!mapForChart.has(labels[i][j])) { // map doesn't have this label
                 // TODO improve color representation
@@ -168,22 +171,22 @@ function drawChart() {
 
     chart.updateOptions({  xaxis: {
             type: 'category',
-            categories: categories,
+            categories: xaxis_cat,
         },
         colors: colors,
     });
-// TODO: Categories from DB must be used
+
     chart.addYaxisAnnotation({
-        y: 0.33,
-        strokeDashArray: 5,
-        borderColor: '#ff0000',
-        fillColor: '#ff0000',
+        y: categories[0].pos,
+        strokeDashArray: 0,
+        borderColor: categories[0].color,
+        fillColor: categories[0].color,
     });
     chart.addYaxisAnnotation({
-        y: 0.67,
-        strokeDashArray: 5,
-        borderColor: '#00ff00',
-        fillColor: '#00ff00',
+        y: categories[1].pos,
+        strokeDashArray: 0,
+        borderColor: categories[1].color,
+        fillColor: categories[1].color,
     });
 }
 

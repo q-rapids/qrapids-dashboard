@@ -10,6 +10,8 @@ var labels = [];
 var weights = [];
 var values = [];
 
+var categories = [];
+
 var metrics = true;
 
 function getData() {
@@ -18,6 +20,8 @@ function getData() {
     labels = [];
     weights = [];
     values = [];
+
+    getCategories();
 
     //get data from API
     jQuery.ajax({
@@ -28,10 +32,9 @@ function getData() {
         async: true,
         success: function (data) {
             console.log(data);
-            var url_string = window.location.href;
+            var url_string = parseURLSimple(window.location.href);
             var url = new URL(url_string);
             var id = url.searchParams.get("id");
-            console.log(id);
             if (!id) { // if all Factors are required
                 for(i = 0; i < data.length; i++) { // while DSI
                     for (j = 0; j < data[i].factors.length; ++j) { // while factors
@@ -40,7 +43,6 @@ function getData() {
                         var w = weights.push([]);
                         var v = values.push([]);
                         for (k = 0; k < data[i].factors[j].metrics.length; ++k) { // while metrics
-                            console.log(data[i].factors[j].metrics[k].name);
                             if (data[i].factors[j].metrics[k].name.length < 27)
                                 labels[l-1].push(data[i].factors[j].metrics[k].name);
                             else
@@ -77,5 +79,23 @@ function getData() {
             }
             drawChart();
         }
+    });
+}
+
+function getCategories() {
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/qualityFactors/categories";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    $.getJSON(url).then (function(cat) {
+        categories.push({
+            color: cat[0].color, // high category
+            pos: cat[1].upperThreshold,
+        });
+        categories.push({
+            color: cat[cat.length-1].color, // low category
+            pos: cat[cat.length-1].upperThreshold,
+        });
     });
 }

@@ -10,6 +10,8 @@ var labels = [];
 var weights = [];
 var values = [];
 
+var categories = [];
+
 var metrics = false;
 
 function getData() {
@@ -18,6 +20,8 @@ function getData() {
     labels = [];
     weights = [];
     values = [];
+
+    getCategories();
 
     //get data from API
     jQuery.ajax({
@@ -28,7 +32,7 @@ function getData() {
         async: true,
         success: function (data) {
             console.log(data);
-            var url_string = window.location.href;
+            var url_string = parseURLSimple(window.location.href);
             var url = new URL(url_string);
             var id = url.searchParams.get("id");
             console.log(id);
@@ -72,5 +76,23 @@ function getData() {
             }
             drawChart();
         }
+    });
+}
+
+function getCategories() {
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/strategicIndicators/categories";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    $.getJSON(url).then (function(cat) {
+        categories.push({
+            color: cat[0].color, // high category
+            pos: 1 - 1/cat.length,
+        });
+        categories.push({
+            color: cat[cat.length-1].color, // low category
+            pos: 1/cat.length,
+        });
     });
 }

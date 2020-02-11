@@ -134,7 +134,6 @@ if (currentURL.search("/HistoricTable") !== -1) {
     time = "Current";
 } else if (currentURL.search("/CurrentChart") !== -1){
     viewMode = "Chart";
-    representationMode = "Radar";
     time = "Current";
 }
 
