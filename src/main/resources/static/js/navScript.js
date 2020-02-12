@@ -134,6 +134,7 @@ if (currentURL.search("/HistoricTable") !== -1) {
     time = "Current";
 } else if (currentURL.search("/CurrentChart") !== -1){
     viewMode = "Chart";
+    representationMode = sessionStorage.getItem("representationMode");
     time = "Current";
 }
 
@@ -288,6 +289,7 @@ function disableViewModeAndTimeOption () {
 ///////////////////////////////////////////////////////////////////
 
 if (assessment === "QualityModel" || assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
+else if (assessment === "DetailedStrategicIndicators" || assessment === "QualityFactors" ) $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode + representationMode);
 else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
@@ -453,9 +455,9 @@ function navBack(toDetailed) {
     }
     else {
         if (toDetailed)
-            urlNav = "../DetailedStrategicIndicators/" + time + viewMode;
+            urlNav = "../DetailedStrategicIndicators/" + time + viewMode + representationMode;
         else
-            urlNav = "../QualityFactors/" + time + viewMode;
+            urlNav = "../QualityFactors/" + time + viewMode + representationMode;
     }
     if (siid.length !== 0 && si.length !== 0) {
         urlNav = urlNav + "?id=" + siid + "&name=" + si;

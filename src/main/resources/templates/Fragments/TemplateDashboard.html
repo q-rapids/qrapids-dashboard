@@ -146,6 +146,14 @@
         <span id = "arrow"></span>
         <a id="origin" onclick="navBack(false)"></a></p>
     <p th:fragment="navLinkQF" style="margin-left: 20px; font-size: medium; font-family: Arial "><a id="originSIQF" onclick="menuNav('../DetailedStrategicIndicators/' + time + viewMode)"></a></p>
+    <script>
+        var f;
+        if (time == 'Current' && viewMode == 'Chart') {
+            document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode + representationMode);
+        } else {
+            document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode);
+        }
+    </script>
     <th:block th:fragment="HistoricChart">
         <br/>
         <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
