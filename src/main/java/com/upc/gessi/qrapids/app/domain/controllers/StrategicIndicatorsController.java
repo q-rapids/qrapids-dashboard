@@ -546,7 +546,7 @@ public class StrategicIndicatorsController {
         List<String> labels = new ArrayList<>();
         for (DTOFactor dtoFactor : factorList) {
             factorIds.add(dtoFactor.getId());
-            Float weight = 0f;
+            Float weight = -1f; // when SI is computed with network
             if (strategicIndicator.getNetwork() == null) {
                 // when SI is not weighted the weight of factor value is 1f
                 if (!strategicIndicator.isWeighted()) {

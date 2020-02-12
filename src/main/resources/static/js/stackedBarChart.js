@@ -67,6 +67,9 @@ var options = {
     },
     annotations: {
         position: 'back'
+    },
+    dataLabels: {
+        enabled: true,
     }
 };
 
@@ -90,6 +93,7 @@ function drawChart() {
     let mapForTooltips = new Map();
     var xaxis_cat = [];
     var colors = [];
+    var dataLabels = true;
     for (i = 0; i < titles.length; ++i) {
         var parts = titles[i];
         xaxis_cat.push(parts);
@@ -103,7 +107,7 @@ function drawChart() {
 
                 var w = parseFloat(weights[i][j]);
                 var sum = sumWeights(weights[i]);
-                if (sum > 1 || w == 0 ) {
+                if (sum > 1 || w == 0 || w == -1) { // if w == 0 means old data; if w == -1 means SI with Bayesian Network
                     if (metrics) {
                         data[i] = (parseFloat(values[i][j]/w) * (w/sum)).toFixed(2);
                         tooltips[i] = parseFloat(values[i][j]/w).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
@@ -111,6 +115,10 @@ function drawChart() {
                         if (w == 0) {
                             data[i] = (parseFloat(values[i][j]) * (1 / labels[i].length)).toFixed(2);
                             tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length) * 100).toFixed(0) + "%)";
+                        } else if (w == -1) {
+                            dataLabels = false;
+                            data[i] = (parseFloat(values[i][j]) * (1 / labels[i].length)).toFixed(2);
+                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (NA)";
                         } else {
                             data[i] = (parseFloat(values[i][j]) * (w / sum)).toFixed(2);
                             tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/sum) * 100).toFixed(0) + "%)";
@@ -127,7 +135,7 @@ function drawChart() {
                 var tooltips = mapForTooltips.get(labels[i][j]);
                 var w = parseFloat(weights[i][j]);
                 var sum = sumWeights(weights[i]);
-                if ( sum > 1 || w == 0 ) {
+                if ( sum > 1 || w == 0 || w == -1) {
                     if (metrics) {
                         data[i] = (parseFloat(values[i][j]/w) * (w/sum)).toFixed(2);
                         tooltips[i] = parseFloat(values[i][j]/w).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
@@ -135,8 +143,11 @@ function drawChart() {
                         if ( w == 0 ) {
                             data[i] = (parseFloat(values[i][j]) * (1/labels[i].length)).toFixed(2);
                             tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length)*100).toFixed(0) + "%)";
-                        }
-                        else {
+                        } else if (w == -1) {
+                            dataLabels = false;
+                            data[i] = (parseFloat(values[i][j]) * (1/labels[i].length)).toFixed(2);
+                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (NA)";
+                        } else {
                             data[i] = (parseFloat(values[i][j]) * (w/sum)).toFixed(2);
                             tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
                         }
@@ -174,7 +185,11 @@ function drawChart() {
             categories: xaxis_cat,
         },
         colors: colors,
+        dataLabels: {
+            enabled: dataLabels,
+        }
     });
+
 
     chart.addYaxisAnnotation({
         y: categories[0].pos,
