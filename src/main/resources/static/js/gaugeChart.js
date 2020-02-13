@@ -46,7 +46,6 @@ function getData(width, height, showButtons, chartHyperlinked, color) {
                 alert("Datasource connection failed.");
         }
     });
-    console.log(data);
 }
 
 function seeFeedback(i){
@@ -72,6 +71,8 @@ function seeFeedback(i){
 
 function drawChart(container, width, height, showButtons, chartHyperlinked, color) {
     sortDataAlphabetically();
+    console.log("dibuixar en gauge chart");
+    console.log(data);
     if (color == null) {
         color = "#000";
     }
@@ -280,13 +281,13 @@ function drawSimulationNeedle (container, width, height, color) {
     sortDataAlphabetically();
     for (i = 0; i < data.length; ++i) {
         var divId = container + "DivChart" + i;
-        var svg = d3.select('#'+divId).select("svg");
+        var svg = d3.select('#' + divId).select("svg");
         angle = data[i].value.first * 180 + 90;
 
         //create needle
         var arc2 = d3.arc()
             .innerRadius(0)
-            .outerRadius(100*width/250)
+            .outerRadius(100 * width / 250)
             .startAngle(-0.05)
             .endAngle(0.05);
 
@@ -295,12 +296,12 @@ function drawSimulationNeedle (container, width, height, color) {
             .style("fill", color)
             .attr("class", "simulation")
             .attr("d", arc2)
-            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ") translate(" + -100*width/250 * Math.cos((angle - 90) / 180 * Math.PI) + "," + -100*width/250 * Math.sin((angle - 90) / 180 * Math.PI) + ") rotate(" + angle + ")");
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ") translate(" + -100 * width / 250 * Math.cos((angle - 90) / 180 * Math.PI) + "," + -100 * width / 250 * Math.sin((angle - 90) / 180 * Math.PI) + ") rotate(" + angle + ")");
 
         //create small circle at needle base
         var arc3 = d3.arc()
             .innerRadius(0)
-            .outerRadius(10*width/250)
+            .outerRadius(10 * width / 250)
             .startAngle(0)
             .endAngle(Math.PI * 2);
 
@@ -314,13 +315,29 @@ function drawSimulationNeedle (container, width, height, color) {
         svg.append("text")
             .attr("class", "simulation")
             .attr("x", 0)
-            .attr("y", 50*width/250 + 50)
+            .attr("y", 50 * width / 250 + 50)
             .attr("text-anchor", "middle")
             .attr("font-family", "sans-serif")
             .attr("fill", color)
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
             .style("font-size", "16px")
             .text(data[i].value_description);
+
+        // TODO draw adequate icon in each case
+        svg.append("polygon") // increase icon
+            .attr("points", "180,10 170,25 190,25 180,10" )
+            .attr("style", "fill:lime;stroke:green;stroke-width:1");
+
+        svg.append("polygon") // decrease icon
+            .attr("points", "180,25 170,10 190,10 180,25" )
+            .attr("style", "fill:red;stroke:darkred;stroke-width:1");
+
+        svg.append("polygon") // steady icon
+            .attr("points", "170,11 190,11 190,15 170,15" )
+            .attr("style", "fill:dodgerblue;stroke:steelblue;stroke-width:1");
+        svg.append("polygon") // steady icon
+            .attr("points", "170,24 190,24 190,20 170,20" )
+            .attr("style", "fill:dodgerblue;stroke:steelblue;stroke-width:1");
     }
 }
 
