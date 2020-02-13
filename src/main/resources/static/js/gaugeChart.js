@@ -189,6 +189,7 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         else valueDescriptionColor = color;
 
         svg.append("text")
+            .attr("class", "text"+i)
             .attr("x", 0)
             .attr("y", 50*width/250 + 25)
             .attr("text-anchor", "middle")
@@ -323,21 +324,28 @@ function drawSimulationNeedle (container, width, height, color) {
             .style("font-size", "16px")
             .text(data[i].value_description);
 
-        // TODO draw adequate icon in each case
-        svg.append("polygon") // increase icon
-            .attr("points", "180,10 170,25 190,25 180,10" )
-            .attr("style", "fill:lime;stroke:green;stroke-width:1");
+        svg.selectAll('polygon').remove();
 
-        svg.append("polygon") // decrease icon
-            .attr("points", "180,25 170,10 190,10 180,25" )
-            .attr("style", "fill:red;stroke:darkred;stroke-width:1");
+        var beforeText = $( "text.text"+i ).text();
+        var beforeValue = beforeText.split("(");
+        beforeValue = parseFloat(beforeValue[1]);
 
-        svg.append("polygon") // steady icon
-            .attr("points", "170,11 190,11 190,15 170,15" )
-            .attr("style", "fill:dodgerblue;stroke:steelblue;stroke-width:1");
-        svg.append("polygon") // steady icon
-            .attr("points", "170,24 190,24 190,20 170,20" )
-            .attr("style", "fill:dodgerblue;stroke:steelblue;stroke-width:1");
+        if (beforeValue < data[i].value.first.toFixed(2)) {
+            svg.append("polygon") // increase icon
+                .attr("points", "180,10 170,25 190,25 180,10" )
+                .attr("style", "fill:lime;stroke:green;stroke-width:1");
+        } else if ( beforeValue > data[i].value.first.toFixed(2)) {
+            svg.append("polygon") // decrease icon
+                .attr("points", "180,25 170,10 190,10 180,25" )
+                .attr("style", "fill:red;stroke:darkred;stroke-width:1");
+        } else {
+            svg.append("polygon") // steady icon
+                .attr("points", "170,11 190,11 190,15 170,15" )
+                .attr("style", "fill:dodgerblue;stroke:steelblue;stroke-width:1");
+            svg.append("polygon") // steady icon
+                .attr("points", "170,24 190,24 190,20 170,20" )
+                .attr("style", "fill:dodgerblue;stroke:steelblue;stroke-width:1");
+        }
     }
 }
 
