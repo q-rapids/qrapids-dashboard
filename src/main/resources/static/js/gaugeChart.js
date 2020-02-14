@@ -324,25 +324,50 @@ function drawSimulationNeedle (container, width, height, color) {
             .style("font-size", "16px")
             .text(data[i].value_description);
 
-        svg.selectAll('polygon').remove();
-
         var beforeText = $( "text.text"+i ).text();
         var beforeValue = beforeText.split("(");
         beforeValue = parseFloat(beforeValue[1]);
+        var afterValue = data[i].value.first.toFixed(2);
 
-        if (beforeValue < data[i].value.first.toFixed(2)) {
+        if (beforeValue < afterValue) {
+            var inc = ((afterValue - beforeValue)/beforeValue)*100;
             svg.append("polygon") // increase icon
-                .attr("points", "180,10 170,25 190,25 180,10" )
+                .attr("class", "simulation")
+                .attr("points", "160,10 150,25 170,25 160,10" )
                 .attr("style", "fill:lime;stroke:green;stroke-width:1");
-        } else if ( beforeValue > data[i].value.first.toFixed(2)) {
+            svg.append("text")
+                .attr("class", "simulation")
+                .attr("x", 86)
+                .attr("y", -97)
+                .attr("text-anchor", "middle")
+                .attr("font-family", "sans-serif")
+                .attr("fill", "green")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+                .style("font-size", "12px")
+                .text(inc.toFixed(0) + "%");
+        } else if ( beforeValue > afterValue) {
+            var dec = ((beforeValue - afterValue)/beforeValue)*100;
             svg.append("polygon") // decrease icon
-                .attr("points", "180,25 170,10 190,10 180,25" )
+                .attr("class", "simulation")
+                .attr("points", "160,25 150,10 170,10 160,25" )
                 .attr("style", "fill:red;stroke:darkred;stroke-width:1");
+            svg.append("text")
+                .attr("class", "simulation")
+                .attr("x", 86)
+                .attr("y", -97)
+                .attr("text-anchor", "middle")
+                .attr("font-family", "sans-serif")
+                .attr("fill", "darkred")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+                .style("font-size", "12px")
+                .text(dec.toFixed(0) + "%");
         } else {
             svg.append("polygon") // steady icon
+                .attr("class", "simulation")
                 .attr("points", "170,11 190,11 190,15 170,15" )
                 .attr("style", "fill:dodgerblue;stroke:steelblue;stroke-width:1");
             svg.append("polygon") // steady icon
+                .attr("class", "simulation")
                 .attr("points", "170,24 190,24 190,20 170,20" )
                 .attr("style", "fill:dodgerblue;stroke:steelblue;stroke-width:1");
         }
