@@ -25,7 +25,6 @@ function drawChart() {
         var ctx = document.createElement('canvas');
         ctx.id = 'canvas' + i;
         ctx.width = 400;
-        //ctx.height = 350;
         ctx.style.display = "inline";
         document.getElementById("radarChart").appendChild(div).appendChild(ctx);
         div.appendChild(p).appendChild(a);
@@ -37,7 +36,7 @@ function drawChart() {
             type: 'radar',
             data: {
                 labels: labels[i],
-                datasets: [{
+                datasets: [{ // data
                     label: titles[i],
                     backgroundColor: 'rgba(1, 119, 166, 0.2)',
                     borderColor: 'rgb(1, 119, 166)',
@@ -45,6 +44,30 @@ function drawChart() {
                     pointBorderColor: 'rgb(1, 119, 166)',
                     data: values[i],
                     fill: true
+                },
+                { // TODO high category from DB
+                    label: "Good",
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(0, 255, 0, 0.5)',
+                    borderColor: 'rgba(0, 255, 0, 0.5)',
+                    pointBorderWidth: 0,
+                    pointHitRadius: 0,
+                    pointBackgroundColor: 'rgba(0, 0, 0, 0)',
+                    pointBorderColor: 'rgba(0, 0, 0, 0)',
+                    data: [0.67, 0.67, 0.67],
+                    fill: false
+                },
+                { // TODO low category from DB
+                    label: "Bad",
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    borderColor: 'rgba(255, 0, 0, 0.5)',
+                    pointHitRadius: 0,
+                    pointBorderWidth: 0,
+                    pointBackgroundColor: 'rgba(0, 0, 0, 0)',
+                    pointBorderColor: 'rgba(0, 0, 0, 0)',
+                    data: [0.33, 0.33, 0.33],
+                    fill: false
                 }]
             },
             options: {
@@ -62,7 +85,14 @@ function drawChart() {
                         min: 0,
                         max: 1,
                         maxTicksLimit: 5
+                        //precision: 3,
+                        //stepSize: 0.33
+                    },
+                    /*
+                    gridLines: {
+                        color: ['rgba(255, 0, 0, 0.5)','rgba(0, 255, 0, 0.5)','rgba(0, 0, 0, 0.1)']
                     }
+                    */
                 }
             }
         });
