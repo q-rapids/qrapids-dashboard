@@ -31,44 +31,44 @@ function drawChart() {
         ctx.getContext("2d");
         if (labels[i].length === 2) {
             labels[i].push(null);
+        } /* else if (labels[i].length === 1) {
+            labels[i].push(null);
+            labels[i].push(null);
+        }*/
+        var dataset = [];
+        var t = titles[i].split("<br/>");
+        dataset.push({ // data
+            label: t[0],
+            backgroundColor: 'rgba(1, 119, 166, 0.2)',
+            borderColor: 'rgb(1, 119, 166)',
+            pointBackgroundColor: 'rgb(1, 119, 166)',
+            pointBorderColor: 'rgb(1, 119, 166)',
+            data: values[i],
+            fill: false
+        });
+        for (var k = categories.length-1; k >= 0; --k) {
+            var fill = categories.length-1-k;
+            if (k == categories.length-1) fill = true;
+            dataset.push({
+                label: categories[k].name,
+                borderWidth: 1,
+                backgroundColor: hexToRgbA(categories[k].color, 0.3),
+                borderColor: hexToRgbA(categories[k].color, 0.3),
+                pointHitRadius: 0,
+                pointHoverRadius: 0,
+                pointRadius: 1.5,
+                pointBorderWidth: 0,
+                pointBackgroundColor: hexToRgbA(categories[k].color, 0.5), //'rgba(0, 0, 0, 0)',
+                pointBorderColor: hexToRgbA(categories[k].color, 0.5), //'rgba(0, 0, 0, 0)',
+                data: [].fill.call({ length: labels[i].length }, categories[k].upperThreshold),
+                fill: fill
+            })
         }
         window.myLine = new Chart(ctx, {    //draw chart with the following config
             type: 'radar',
             data: {
                 labels: labels[i],
-                datasets: [{ // data
-                    label: titles[i],
-                    backgroundColor: 'rgba(1, 119, 166, 0.2)',
-                    borderColor: 'rgb(1, 119, 166)',
-                    pointBackgroundColor: 'rgb(1, 119, 166)',
-                    pointBorderColor: 'rgb(1, 119, 166)',
-                    data: values[i],
-                    fill: true
-                },
-                { // TODO high category from DB
-                    label: "Good",
-                    borderWidth: 1,
-                    backgroundColor: 'rgba(0, 255, 0, 0.5)',
-                    borderColor: 'rgba(0, 255, 0, 0.5)',
-                    pointBorderWidth: 0,
-                    pointHitRadius: 0,
-                    pointBackgroundColor: 'rgba(0, 0, 0, 0)',
-                    pointBorderColor: 'rgba(0, 0, 0, 0)',
-                    data: [0.67, 0.67, 0.67],
-                    fill: false
-                },
-                { // TODO low category from DB
-                    label: "Bad",
-                    borderWidth: 1,
-                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
-                    borderColor: 'rgba(255, 0, 0, 0.5)',
-                    pointHitRadius: 0,
-                    pointBorderWidth: 0,
-                    pointBackgroundColor: 'rgba(0, 0, 0, 0)',
-                    pointBorderColor: 'rgba(0, 0, 0, 0)',
-                    data: [0.33, 0.33, 0.33],
-                    fill: false
-                }]
+                datasets: dataset
             },
             options: {
                 title: {
@@ -85,14 +85,12 @@ function drawChart() {
                         min: 0,
                         max: 1,
                         maxTicksLimit: 5
-                        //precision: 3,
-                        //stepSize: 0.33
-                    },
-                    /*
-                    gridLines: {
-                        color: ['rgba(255, 0, 0, 0.5)','rgba(0, 255, 0, 0.5)','rgba(0, 0, 0, 0.1)']
                     }
-                    */
+                },
+                tooltips: {
+                    filter: function (tooltipItem) {
+                        return tooltipItem.datasetIndex === 0;
+                    }
                 }
             }
         });
@@ -123,6 +121,19 @@ function addWarning(div, message) {
     warning.style.color = "yellow";
     warning.style.textShadow = "-2px 0 2px black, 0 2px 2px black, 2px 0 2px black, 0 -2px 2px black";
     div.append(warning);
+}
+
+function hexToRgbA(hex,a=1){ // (hex color, opacity)
+    var c;
+    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        c= hex.substring(1).split('');
+        if(c.length== 3){
+            c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        }
+        c= '0x'+c.join('');
+        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+ a +')';
+    }
+    throw new Error('Bad Hex');
 }
 
 window.onload = function() {

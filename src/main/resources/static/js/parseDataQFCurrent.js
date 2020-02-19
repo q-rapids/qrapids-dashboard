@@ -12,12 +12,16 @@ var titles = [];
 var labels = [];
 var ids = [];
 var values = [];
+var categories = [];
 
 function getData() {
     titles = [];
     labels = [];
     ids = [];
     values = [];
+    categories = [];
+
+    getCategories();
 
     //get data from API
     jQuery.ajax({
@@ -49,4 +53,15 @@ function getData() {
     console.log(titles);
     console.log(labels);
     console.log(values);
+}
+
+function getCategories() {
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/qualityFactors/categories";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    $.getJSON(url).then (function(cat) {
+        categories = cat;
+    });
 }
