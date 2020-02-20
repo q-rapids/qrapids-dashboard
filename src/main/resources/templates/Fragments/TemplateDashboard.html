@@ -145,15 +145,17 @@
         <a id="originSI" onclick="navBack(true)"></a>
         <span id = "arrow"></span>
         <a id="origin" onclick="navBack(false)"></a></p>
-    <p th:fragment="navLinkQF" style="margin-left: 20px; font-size: medium; font-family: Arial "><a id="originSIQF" onclick="menuNav('../DetailedStrategicIndicators/' + time + viewMode)"></a></p>
+    <p th:fragment="navLinkQF" style="margin-left: 20px; font-size: medium; font-family: Arial ">
+        <a id="originSIQF" onclick="myFunction()"></a>
     <script>
-        var f;
-        if (time == 'Current' && viewMode == 'Chart') {
-            document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode + representationMode);
-        } else {
-            document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode);
+        function myFunction() {
+            if (time == 'Current' && viewMode == 'Chart') {
+                document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode + representationMode);
+            } else {
+                document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode);
+            }
         }
-    </script>
+    </script></p>
     <th:block th:fragment="HistoricChart">
         <br/>
         <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">

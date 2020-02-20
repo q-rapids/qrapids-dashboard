@@ -1,3 +1,12 @@
+var colors = [  '#ff9933','#33cc33','#ff5050','#ccc935',
+                '#c060c9','#0177a6','#f44336','#9c27b0',
+                '#2196f3','#00897B','#7986CB','#8bc34a',
+                '#d46119','#c22723','#f0dc37','#45edc7',
+                '#607d8b','#F06292','#673ab7','#cddc39',
+                '#3f51b5','#00bcd4','#ff5722', '#4caf50',
+                '#03a9f4','#ffc107','#dc3866','#9e9e9e',
+                '#795548','#000000'];
+
 var options = {
     series: [],
     chart: {
@@ -79,29 +88,15 @@ chart.render();
 var myTooltips = [];
 
 function drawChart() {
-
-    console.log("titles:");
-    console.log(titles);
-    console.log("labels:");
-    console.log(labels);
-    console.log("weights:");
-    console.log(weights);
-    console.log("values:");
-    console.log(values);
-
     let mapForChart = new Map();
     let mapForTooltips = new Map();
     var xaxis_cat = [];
-    var colors = [];
     var dataLabels = true;
     for (i = 0; i < titles.length; ++i) {
         var parts = titles[i];
         xaxis_cat.push(parts);
         for(j = 0; j < labels[i].length; ++j){
             if (!mapForChart.has(labels[i][j])) { // map doesn't have this label
-                // TODO improve color representation
-                colors.push('#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6));
-
                 var data = [].fill.call({ length: titles.length }, 0);
                 var tooltips = [].fill.call({ length: titles.length }, 0);
 
@@ -176,20 +171,31 @@ function drawChart() {
             values: value
         });
     }
-    console.log(myTooltips);
+
     console.log(series);
+
     chart.updateSeries(series);
-
-    chart.updateOptions({  xaxis: {
-            type: 'category',
-            categories: xaxis_cat,
-        },
-        colors: colors,
-        dataLabels: {
-            enabled: dataLabels,
-        }
-    });
-
+    if (series.length < 30) {
+        chart.updateOptions({  xaxis: {
+                type: 'category',
+                categories: xaxis_cat,
+            },
+            colors: colors,
+            dataLabels: {
+                enabled: dataLabels,
+            }
+        });
+    } else {
+        chart.updateOptions({  xaxis: {
+                type: 'category',
+                categories: xaxis_cat,
+            },
+            colors: randomColors(series.length),
+            dataLabels: {
+                enabled: dataLabels,
+            }
+        });
+    }
 
     chart.addYaxisAnnotation({
         y: categories[0].pos,
@@ -203,6 +209,14 @@ function drawChart() {
         borderColor: categories[1].color,
         fillColor: categories[1].color,
     });
+}
+
+function randomColors(size) {
+    var colors = [];
+    for (var c = 0; c < size; c++){
+        colors.push('#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6));
+    }
+    return colors;
 }
 
 function sumWeights(weights) {
