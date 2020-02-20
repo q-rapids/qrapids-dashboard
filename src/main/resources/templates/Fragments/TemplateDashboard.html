@@ -145,7 +145,17 @@
         <a id="originSI" onclick="navBack(true)"></a>
         <span id = "arrow"></span>
         <a id="origin" onclick="navBack(false)"></a></p>
-    <p th:fragment="navLinkQF" style="margin-left: 20px; font-size: medium; font-family: Arial "><a id="originSIQF" onclick="menuNav('../DetailedStrategicIndicators/' + time + viewMode)"></a></p>
+    <p th:fragment="navLinkQF" style="margin-left: 20px; font-size: medium; font-family: Arial ">
+        <a id="originSIQF" onclick="myFunction()"></a>
+    <script>
+        function myFunction() {
+            if (time == 'Current' && viewMode == 'Chart') {
+                document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode + representationMode);
+            } else {
+                document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode);
+            }
+        }
+    </script></p>
     <th:block th:fragment="HistoricChart">
         <br/>
         <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
@@ -194,6 +204,18 @@
             </div>
         </div>
         <script type="text/javascript" th:src="@{/js/projectsSelector.js}"></script>
+    </th:block>
+    <th:block th:fragment="RepresentationMode">
+        <div class="btn-group" style="display: flex; justify-content: flex-end; margin-right: 5px;">
+            <button id="Radar" type="button" onclick="menuNav(time + viewMode + 'Radar')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment with radar charts">
+                <img class="icons" th:src="@{/icons/radar_chart.png}"
+                     src="../../static/icons/radar_chart.png" alt="radar chart representation"/>
+            </button>
+            <button id="Stacked" type="button" onclick="menuNav(time + viewMode + 'Stacked')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment with stacked bar charts">
+                <img class="icons" th:src="@{/icons/stacked_bar_chart.png}"
+                     src="../../static/icons/stacked_bar_chart.png" alt="stacked bar chart representation"/>
+            </button>
+        </div>
     </th:block>
 </body>
 <th:block th:fragment="scriptsHistoric">

@@ -81,7 +81,7 @@ function createNode (element, color, colorBorder) {
     return {
         data: {
             id: element.id,
-            label: element.id + ": " + parseValue(value),
+            label: element.name + ": " + parseValue(value),
             color: color,
             colorBorder: colorBorder
         }

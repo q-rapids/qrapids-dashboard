@@ -1,5 +1,5 @@
 var currentURL = window.location.href;
-var viewMode, time, assessment, prediction, products, simulation, configuration, userName;
+var viewMode, representationMode, time, assessment, prediction, products, simulation, configuration, userName;
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -82,6 +82,9 @@ checkPhases();
 if (!(viewMode = sessionStorage.getItem("viewMode"))) {
     viewMode = "Chart";
 }
+if (!(representationMode = sessionStorage.getItem("representationMode"))) {
+    representationMode = "Radar";
+}
 if (!(time = sessionStorage.getItem("time"))) {
     time = "Current";
 }
@@ -101,8 +104,13 @@ if (!(simulation = sessionStorage.getItem("simulation"))) {
     simulation = "Factors";
 }
 
+//Store state in sessionStorage
+sessionStorage.setItem("viewMode", viewMode);
+sessionStorage.setItem("representationMode", representationMode);
+sessionStorage.setItem("time", time);
+
 ///////////////////////////////////////////////////////////////////
-///// Customising View Mode options ///////////////////////////////
+///// Customising View and Representation Mode options ////////////
 ///////////////////////////////////////////////////////////////////
 
 // 1.- Customising the ViewMode buttons depending on the selected option in the main menu
@@ -116,17 +124,28 @@ if (currentURL.search("/HistoricTable") !== -1) {
 } else if (currentURL.search("/HistoricChart") !== -1) {
     viewMode = "Chart";
     time = "Historic";
+}  else if (currentURL.search("/CurrentChartRadar") !== -1){
+    viewMode = "Chart";
+    representationMode = "Radar";
+    time = "Current";
+} else if (currentURL.search("/CurrentChartStacked") !== -1){
+    viewMode = "Chart";
+    representationMode = "Stacked";
+    time = "Current";
 } else if (currentURL.search("/CurrentChart") !== -1){
     viewMode = "Chart";
+    representationMode = sessionStorage.getItem("representationMode");
     time = "Current";
 }
 
 //Store state in sessionStorage
 sessionStorage.setItem("viewMode", viewMode);
+sessionStorage.setItem("representationMode", representationMode);
 sessionStorage.setItem("time", time);
 
 // Highlighting the enabled options depending on the View Mode and Time options selected
 $("#" + viewMode).css("background-color", "#ffc380");
+$("#" + representationMode).css("background-color", "#ffc380");
 $("#" + time).css("background-color", "#ffc380");
 
 
@@ -270,6 +289,7 @@ function disableViewModeAndTimeOption () {
 ///////////////////////////////////////////////////////////////////
 
 if (assessment === "QualityModel" || assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
+else if (assessment === "DetailedStrategicIndicators" || assessment === "QualityFactors" ) $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode + representationMode);
 else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
@@ -278,11 +298,18 @@ $("#StrategicIndicatorsAssessment").attr("href", serverUrl + "/StrategicIndicato
 
 $("#StrategicIndicatorsPrediction").attr("href", serverUrl + "/StrategicIndicators/PredictionChart");
 
-$("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode);
+if (time == "Current" && viewMode == "Chart") {
+    $("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode + representationMode);
+} else {
+    $("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode);
+}
 
 $("#DetailedStrategicIndicatorsPrediction").attr("href", serverUrl + "/DetailedStrategicIndicators/PredictionChart");
 
-$("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + time + viewMode);
+if (time == "Current" && viewMode == "Chart") {
+    $("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + time + viewMode + representationMode);
+} else {
+    $("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + time + viewMode);}
 
 $("#QualityFactorsPrediction").attr("href", serverUrl + "/QualityFactors/PredictionChart");
 
@@ -428,9 +455,9 @@ function navBack(toDetailed) {
     }
     else {
         if (toDetailed)
-            urlNav = "../DetailedStrategicIndicators/" + time + viewMode;
+            urlNav = "../DetailedStrategicIndicators/" + time + viewMode + representationMode;
         else
-            urlNav = "../QualityFactors/" + time + viewMode;
+            urlNav = "../QualityFactors/" + time + viewMode + representationMode;
     }
     if (siid.length !== 0 && si.length !== 0) {
         urlNav = urlNav + "?id=" + siid + "&name=" + si;
