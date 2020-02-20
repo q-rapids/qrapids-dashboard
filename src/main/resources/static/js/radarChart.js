@@ -31,10 +31,10 @@ function drawChart() {
         ctx.getContext("2d");
         if (labels[i].length === 2) {
             labels[i].push(null);
-        } /* else if (labels[i].length === 1) {
+        } else if (labels[i].length === 1) {
             labels[i].push(null);
             labels[i].push(null);
-        }*/
+        }
         var dataset = [];
         var t = titles[i].split("<br/>");
         dataset.push({ // data
@@ -56,10 +56,10 @@ function drawChart() {
                 borderColor: hexToRgbA(categories[k].color, 0.3),
                 pointHitRadius: 0,
                 pointHoverRadius: 0,
-                pointRadius: 1.5,
+                pointRadius: 0,
                 pointBorderWidth: 0,
-                pointBackgroundColor: hexToRgbA(categories[k].color, 0.5), //'rgba(0, 0, 0, 0)',
-                pointBorderColor: hexToRgbA(categories[k].color, 0.5), //'rgba(0, 0, 0, 0)',
+                pointBackgroundColor: 'rgba(0, 0, 0, 0)',
+                pointBorderColor: 'rgba(0, 0, 0, 0)',
                 data: [].fill.call({ length: labels[i].length }, categories[k].upperThreshold),
                 fill: fill
             })
