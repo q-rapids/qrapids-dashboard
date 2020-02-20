@@ -334,7 +334,7 @@ function drawSimulationNeedle (container, width, height, color) {
             svg.append("polygon") // increase icon
                 .attr("class", "simulation")
                 .attr("points", "160,10 150,25 170,25 160,10" )
-                .attr("style", "fill:lime;stroke:green;stroke-width:1");
+                .attr("style", "fill:green;stroke:green;stroke-width:1");
             svg.append("text")
                 .attr("class", "simulation")
                 .attr("x", 86)
@@ -350,7 +350,7 @@ function drawSimulationNeedle (container, width, height, color) {
             svg.append("polygon") // decrease icon
                 .attr("class", "simulation")
                 .attr("points", "160,25 150,10 170,10 160,25" )
-                .attr("style", "fill:red;stroke:darkred;stroke-width:1");
+                .attr("style", "fill:darkred;stroke:darkred;stroke-width:1");
             svg.append("text")
                 .attr("class", "simulation")
                 .attr("x", 86)
