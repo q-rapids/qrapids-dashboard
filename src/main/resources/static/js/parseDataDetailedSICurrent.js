@@ -9,12 +9,17 @@ var labels = [];
 var values = [];
 var warnings = [];
 
+var categories = [];
+
 function getData() {
     //empty previous data
     titles = [];
     ids = [];
     labels = [];
     values = [];
+    categories = [];
+
+    getCategories();
 
     //get data from API
     jQuery.ajax({
@@ -80,5 +85,28 @@ function getData() {
             $("#assessmentDate").text(assessmentDate.toLocaleDateString());
             drawChart();
         }
+    });
+}
+
+function getCategories() {
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/strategicIndicators/categories";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    $.getJSON(url).then (function(cat) {
+        categories.push({
+            name: cat[0].name, // high category
+            color: cat[0].color,
+            upperThreshold: 1,
+        });
+        for (var i = 1; i < cat.length; i++) {
+            categories.push({
+                name: cat[i].name, // high category
+                color: cat[i].color,
+                upperThreshold: categories[i-1].upperThreshold - 1/cat.length,
+            });
+        }
+        console.log(categories);
     });
 }
