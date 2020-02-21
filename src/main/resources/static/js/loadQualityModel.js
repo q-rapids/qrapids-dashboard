@@ -35,7 +35,7 @@ function buildTree(strategicIndicators) {
         for (var j = 0; j < strategicIndicator.factors.length; j++) {
             var factor = strategicIndicator.factors[j];
             var node = createNode(factor, factorColor, factorColor);
-            if (factor.weight== 1){
+            if (factor.weight == 1 || factor.weight == 0){
                 if (!qmnodes.has(factor.id))
                     qmnodes.set(factor.id, node);
                 if (!qmedges.has(factor.id+"-"+strategicIndicator.id))
@@ -73,7 +73,7 @@ function createNode (element, color, colorBorder) {
     var value;
     if (element.valueDescription) value = element.valueDescription;
     else {
-        if (element.weight && element.weight != 0) {
+        if (element.weight && element.weight != 0 && element.weight != -1) {
             var w = parseFloat(element.weight);
             value = parseFloat(element.value)/w;
         } else value = element.value;
@@ -92,10 +92,11 @@ function createNode (element, color, colorBorder) {
 function createEdge (source, target, aux) { // aux = { sum metrics weights or #factors (no weighted) }
     var weight = source.weight;
     if (aux) {
-        weight = ((parseFloat(weight)/aux) * 100).toFixed(0) + "%"; // weight percentage
+        if ( weight == 0 ) weight = ((parseFloat(1)/aux) * 100).toFixed(0) + "%"; // weight percentage
+        else weight = ((parseFloat(weight)/aux) * 100).toFixed(0) + "%"; // weight percentage
     }
     else {
-        if (weight == 0) weight = null;
+        if (weight == -1) weight = null;
         else weight = (parseFloat(weight) * 100).toFixed(0) + "%"; // weight percentage
     }
     return {
