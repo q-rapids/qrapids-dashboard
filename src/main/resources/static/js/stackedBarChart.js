@@ -105,23 +105,23 @@ function drawChart() {
                 if (sum > 1 || w == 0 || w == -1) { // if w == 0 means old data; if w == -1 means SI with Bayesian Network
                     if (metrics) {
                         data[i] = (parseFloat(values[i][j]/w) * (w/sum)).toFixed(2);
-                        tooltips[i] = parseFloat(values[i][j]/w).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
+                        tooltips[i] = parseFloat(values[i][j]/w).toFixed(2) + " (" + ((w/sum)*100).toFixed() + "%)";
                     } else {
                         if (w == 0) {
                             data[i] = (parseFloat(values[i][j]) * (1 / labels[i].length)).toFixed(2);
-                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length) * 100).toFixed(0) + "%)";
+                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length) * 100).toFixed() + "%)";
                         } else if (w == -1) {
                             dataLabels = false;
                             data[i] = (parseFloat(values[i][j]) * (1 / labels[i].length)).toFixed(2);
                             tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (NA)";
                         } else {
                             data[i] = (parseFloat(values[i][j]) * (w / sum)).toFixed(2);
-                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/sum) * 100).toFixed(0) + "%)";
+                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/sum) * 100).toFixed() + "%)";
                         }
                     }
                 } else {
                     data[i] = parseFloat(values[i][j]).toFixed(2);
-                    tooltips[i] = (values[i][j]/w).toFixed(2) + " (" + w*100 + "%)";
+                    tooltips[i] = (values[i][j]/w).toFixed(2) + " (" + (w*100).toFixed() + "%)";
                 }
                 mapForTooltips.set(labels[i][j], tooltips);
                 mapForChart.set(labels[i][j], data);
@@ -133,23 +133,23 @@ function drawChart() {
                 if ( sum > 1 || w == 0 || w == -1) {
                     if (metrics) {
                         data[i] = (parseFloat(values[i][j]/w) * (w/sum)).toFixed(2);
-                        tooltips[i] = parseFloat(values[i][j]/w).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
+                        tooltips[i] = parseFloat(values[i][j]/w).toFixed(2) + " (" + ((w/sum)*100).toFixed() + "%)";
                     } else {
                         if ( w == 0 ) {
                             data[i] = (parseFloat(values[i][j]) * (1/labels[i].length)).toFixed(2);
-                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length)*100).toFixed(0) + "%)";
+                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length)*100).toFixed() + "%)";
                         } else if (w == -1) {
                             dataLabels = false;
                             data[i] = (parseFloat(values[i][j]) * (1/labels[i].length)).toFixed(2);
                             tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (NA)";
                         } else {
                             data[i] = (parseFloat(values[i][j]) * (w/sum)).toFixed(2);
-                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
+                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/sum)*100).toFixed() + "%)";
                         }
                     }
                 } else {
                     data[i] = parseFloat(values[i][j]).toFixed(2);
-                    tooltips[i] = (values[i][j]/w).toFixed(2) + " (" + w*100 + "%)";
+                    tooltips[i] = (values[i][j]/w).toFixed(2) + " (" + (w*100).toFixed() + "%)";
                 }
                 mapForChart.set(labels[i][j], data);
                 mapForTooltips.set(labels[i][j], tooltips);
@@ -173,6 +173,7 @@ function drawChart() {
     }
 
     console.log(series);
+    console.log(myTooltips);
 
     chart.updateSeries(series);
     if (series.length < 30) {

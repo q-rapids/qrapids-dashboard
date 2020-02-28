@@ -5,8 +5,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller("/QualityModel")
 public class QualityModelController {
-    @RequestMapping("/QualityModel")
-    public String CurrentChart(){
-        return "QualityModel/QualityModel";
+    @RequestMapping("/QualityModelGraph")
+    public String CurrentChartGraph(){
+        return "QualityModel/QualityModelGraph";
+    }
+    @RequestMapping("/QualityModelSunburst")
+    public String CurrentChartSunburst(){
+        return "QualityModel/QualityModelSunburst";
     }
 }
