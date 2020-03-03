@@ -62,19 +62,28 @@ function makeChart(strategicIndicators) {
                 labels.push(metric.name);
                 parents.push(strategicIndicator.id + '/' + factor.id);
                 if ( w == 0 || w == 1) {
-                    values.push(metric.value * 1/metricsWeights * 1/strategicIndicator.factors.length);
+                    /*if (metric.value == 0) {
+                        values.push(0.0000002);
+                    } else {*/
+                        values.push(metric.value * 1/metricsWeights * 1/strategicIndicator.factors.length);
+                    //}
                     // make tooltip for Metric
                     hovertext.push('<b>' + metric.name + ": " + '</b>' + parseFloat(metric.value).toFixed(2) +
                         " (" + (1/metricsWeights*100).toFixed(0) + "%" +
                         " over " + factor.name + ")");
                 }
                 else {
-                    values.push(metric.value * metric.weight/metricsWeights * factor.weight);
+                    /*if (metric.value == 0) {
+                        values.push(0.0000002);
+                    } else {*/
+                        values.push(metric.value * metric.weight/metricsWeights * factor.weight);
+                    //}
                     // make tooltip for Metric
                     hovertext.push('<b>' + metric.name + ": " + '</b>' + parseFloat(metric.value).toFixed(2) +
                         " (" + (metric.weight/metricsWeights*100).toFixed(0) + "%" +
                         " over " + factor.name + ")");
                 }
+
             }
         }
     }
@@ -105,12 +114,13 @@ function makeChart(strategicIndicators) {
         leaf: {opacity: 0.4},
         marker: {line: {width: 2}},
         textposition: 'inside',
-        insidetextorientation: 'auto',
+        insidetextorientation: 'radial',
         branchvalues: 'total'
     }];
     var layout = {
         showlegend: true,
         margin: {l: 0, r: 0, b: 0, t: 0},
+        width: 600, height: 600,
         sunburstcolorway:d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, data.length + 1)),
         font: {
             family: 'Courier New, monospace',
@@ -119,6 +129,37 @@ function makeChart(strategicIndicators) {
         },
         extendsunburstcolorway: true
     };
+
+    /* Legends HTML
+    var legendContainer = d3.select("#legend").append("div").classed('legends clearfix', true);
+
+    var legend = legendContainer.selectAll('.legend') // selecting elements with class 'legend'
+        .data(color) // refers to an array of labels from our dataset
+        .enter() // creates placeholder
+        .append('div') // replace placeholders with g elements
+        .attr('class', 'legend');// each g is given a legend class
+
+// adding colored squares to legend
+    legend.append('div').classed('rect', true) // append rectangle squares to legend
+        .style('background-color', function (d) { return color[d.key]; }) // each fill is passed a color
+        .style('border', function (d) { return '1px solid ' + color[d.key]; }) // each fill is passed a color
+        .on('click', function(d) {
+            if(d3.select(this).classed('clicked')) {
+                d3.select(this).classed('clicked', false)
+                    .style('background-color', function(d) { return color[d.key]; });
+                // filter data and rerender
+            } else {
+                d3.select(this).classed('clicked', true)
+                    .style('background-color', 'transparent');
+                // filter data and rerender
+            }
+        })
+
+// adding text to legend
+    legend.append('span')
+        .text(function(d) { return d.key; }); // return label
+
+*/
 
     Plotly.newPlot('SunburstChart', data, layout, {displaylogo: false, responsive: true});
 }

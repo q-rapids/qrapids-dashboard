@@ -2551,11 +2551,11 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].color", is(dtoRelationsSI.getColor())))
                 .andExpect(jsonPath("$[0].factors", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoRelationsFactor.getId())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getWeightedValue())))
                 .andExpect(jsonPath("$[0].factors[0].weight", is(dtoRelationsFactor.getWeight())))
                 .andExpect(jsonPath("$[0].factors[0].metrics", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].id", is(dtoRelationsMetric.getId())))
-                .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getWeightedValue())))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())));
 
         // Verify mock interactions
@@ -2592,12 +2592,12 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoRelationsFactor.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoRelationsFactor.getName())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getWeightedValue())))
                 .andExpect(jsonPath("$[0].factors[0].weight", is(dtoRelationsFactor.getWeight())))
                 .andExpect(jsonPath("$[0].factors[0].metrics", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].id", is(dtoRelationsMetric.getId())))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].name", is(dtoRelationsMetric.getName())))
-                .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getWeightedValue())))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())))
                 .andDo(document("si/quality-model",
                         preprocessRequest(prettyPrint()),
