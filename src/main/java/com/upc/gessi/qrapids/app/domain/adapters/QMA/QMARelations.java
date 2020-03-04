@@ -68,7 +68,7 @@ public class QMARelations {
         return doubleArray;
     }
 
-    public List<DTORelationsSI> getRelations (String prj, LocalDate date) throws IOException, CategoriesException {
+    public List<DTORelationsSI> getRelations (String prj, LocalDate date) throws IOException, CategoriesException, ArithmeticException {
         qmacon.initConnexion();
         List<RelationDTO> relationDTOS;
         // get relations from elasticsearch
@@ -82,7 +82,7 @@ public class QMARelations {
         return RelationDTOToDTORelationSI(relationDTOS, siEval, qfEval);
     }
 
-    private List<DTORelationsSI> RelationDTOToDTORelationSI (List<RelationDTO> relationDTOS, List<DTOStrategicIndicatorEvaluation> siEval, List<DTOQualityFactor> qfEval) {
+    private List<DTORelationsSI> RelationDTOToDTORelationSI (List<RelationDTO> relationDTOS, List<DTOStrategicIndicatorEvaluation> siEval, List<DTOQualityFactor> qfEval) throws ArithmeticException {
         Map<String, DTORelationsSI> strategicIndicatorsMap = new HashMap<>();
         Map<String, DTORelationsFactor> factorsMap = new HashMap<>();
         Map<String, DTORelationsMetric> metricsMap = new HashMap<>();
@@ -109,14 +109,18 @@ public class QMARelations {
                     w = 1/nFactors;
                     f.setWeight(String.valueOf(w));
                     f.setWeightedValue(String.valueOf(Float.parseFloat(f.getAssessmentValue()) * Float.parseFloat(f.getWeight())));
-                } else if (Float.parseFloat(f.getWeight()) == -1) { // Define weightedValue for factor with BN case (-1)
+                } else if (w == -1) { // Define weightedValue for factor with BN case (-1)
                     f.setWeightedValue(String.valueOf(Float.parseFloat(f.getAssessmentValue()) * 1/si.getFactors().size()));
                 }
                 float sum = sumMetricsWeights(f.getMetrics());
                 for (DTORelationsMetric m : f.getMetrics()) {
                     // Define weight percentage & weightedValue for metrics
-                    m.setWeight(String.valueOf((Float.parseFloat(m.getWeight())/sum)));
-                    m.setWeightedValue(String.valueOf(Float.parseFloat(m.getAssessmentValue())*Float.parseFloat(m.getWeight())));
+                    if (sum != 0) {
+                        m.setWeight(String.valueOf((Float.parseFloat(m.getWeight())/sum)));
+                        m.setWeightedValue(String.valueOf(Float.parseFloat(m.getAssessmentValue())*Float.parseFloat(m.getWeight())));
+                    } else {
+                        throw new ArithmeticException("/ by 0: sum of metrics weights is zero.");
+                    }
                 }
             }
         }

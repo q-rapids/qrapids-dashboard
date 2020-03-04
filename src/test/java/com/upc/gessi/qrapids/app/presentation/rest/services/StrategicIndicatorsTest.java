@@ -2551,12 +2551,14 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].color", is(dtoRelationsSI.getColor())))
                 .andExpect(jsonPath("$[0].factors", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoRelationsFactor.getId())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getWeightedValue())))
+                .andExpect(jsonPath("$[0].factors[0].weightedValue", is(dtoRelationsFactor.getWeightedValue())))
                 .andExpect(jsonPath("$[0].factors[0].weight", is(dtoRelationsFactor.getWeight())))
+                .andExpect(jsonPath("$[0].factors[0].assessmentValue", is(dtoRelationsFactor.getAssessmentValue())))
                 .andExpect(jsonPath("$[0].factors[0].metrics", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].id", is(dtoRelationsMetric.getId())))
-                .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getWeightedValue())))
-                .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())));
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].weightedValue", is(dtoRelationsMetric.getWeightedValue())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].assessmentValue", is(dtoRelationsMetric.getAssessmentValue())));
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getQualityModel(projectExternalId, null);
@@ -2592,13 +2594,15 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoRelationsFactor.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoRelationsFactor.getName())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getWeightedValue())))
+                .andExpect(jsonPath("$[0].factors[0].weightedValue", is(dtoRelationsFactor.getWeightedValue())))
                 .andExpect(jsonPath("$[0].factors[0].weight", is(dtoRelationsFactor.getWeight())))
+                .andExpect(jsonPath("$[0].factors[0].assessmentValue", is(dtoRelationsFactor.getAssessmentValue())))
                 .andExpect(jsonPath("$[0].factors[0].metrics", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].id", is(dtoRelationsMetric.getId())))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].name", is(dtoRelationsMetric.getName())))
-                .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getWeightedValue())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].weightedValue", is(dtoRelationsMetric.getWeightedValue())))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].assessmentValue", is(dtoRelationsMetric.getAssessmentValue())))
                 .andDo(document("si/quality-model",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -2626,20 +2630,24 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].factors[].name")
                                         .description("Quality factor name"),
-                                fieldWithPath("[].factors[].value")
-                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].weightedValue")
+                                        .description("Quality factor weighted value"),
                                 fieldWithPath("[].factors[].weight")
                                         .description("Quality factor weight in the strategic indicator assessment"),
+                                fieldWithPath("[].factors[].assessmentValue")
+                                        .description("Quality factor assessment value"),
                                 fieldWithPath("[].factors[].metrics")
                                         .description("List with all the metrics composing the quality factor"),
                                 fieldWithPath("[].factors[].metrics[].id")
                                         .description("Metric identifier"),
                                 fieldWithPath("[].factors[].metrics[].name")
                                         .description("Metric name"),
-                                fieldWithPath("[].factors[].metrics[].value")
-                                        .description("Metric value"),
+                                fieldWithPath("[].factors[].metrics[].weightedValue")
+                                        .description("Metric weighted value"),
                                 fieldWithPath("[].factors[].metrics[].weight")
-                                        .description("Metric weight in the computation of the quality factor"))
+                                        .description("Metric weight in the computation of the quality factor"),
+                                fieldWithPath("[].factors[].metrics[].assessmentValue")
+                                    .description("Metric assessment value"))
                 ));
 
         // Verify mock interactions

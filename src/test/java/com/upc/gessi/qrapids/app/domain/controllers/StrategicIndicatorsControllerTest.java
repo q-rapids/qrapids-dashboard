@@ -525,7 +525,7 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void assessStrategicIndicators() throws IOException, CategoriesException, ProjectNotFoundException {
+    public void assessStrategicIndicators() throws IOException, CategoriesException, ArithmeticException, ProjectNotFoundException {
         Project project = domainObjectsBuilder.buildProject();
         when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
