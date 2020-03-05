@@ -8,7 +8,8 @@ if (serverUrl) {
 var titles = [];
 var labels = [];
 var weights = [];
-var values = [];
+var weightedValues = [];
+var assessmentValues = [];
 
 var categories = [];
 
@@ -19,7 +20,8 @@ function getData() {
     titles = [];
     labels = [];
     weights = [];
-    values = [];
+    weightedValues = [];
+    assessmentValues = [];
 
     getCategories();
 
@@ -41,7 +43,8 @@ function getData() {
                     titles.push(data[i].name + ": &nbsp;" + data[i].valueDescription);
                     labels.push([]);
                     weights.push([]);
-                    values.push([]);
+                    weightedValues.push([]);
+                    assessmentValues.push([]);
                     for (j = 0; j < data[i].factors.length; j++) { // while factors
                         //for each factor save name to labels vector and value to values vector
                         if (data[i].factors[j].name.length < 27)
@@ -49,7 +52,8 @@ function getData() {
                         else
                             labels[i].push(data[i].factors[j].name.slice(0, 23) + "...");
                         weights[i].push(data[i].factors[j].weight);
-                        values[i].push(data[i].factors[j].value);
+                        weightedValues[i].push(data[i].factors[j].weightedValue);
+                        assessmentValues[i].push(data[i].factors[j].assessmentValue);
                     }
                 }
             } else { // if individual DSI is required
@@ -63,7 +67,8 @@ function getData() {
                 titles.push(d.name + ": &nbsp;" + d.valueDescription);
                 labels.push([]);
                 weights.push([]);
-                values.push([]);
+                weightedValues.push([]);
+                assessmentValues.push([]);
                 for (j = 0; j < d.factors.length; ++j) {
                     //for each factor save name to labels vector and value to values vector
                     if (d.factors[j].name.length < 27)
@@ -71,7 +76,8 @@ function getData() {
                     else
                         labels[0].push(d.factors[j].name.slice(0, 23) + "...");
                     weights[0].push(d.factors[j].weight);
-                    values[0].push(d.factors[j].value);
+                    weightedValues[0].push(d.factors[j].weightedValue);
+                    assessmentValues[0].push(d.factors[j].assessmentValue);
                 }
             }
             drawChart();
