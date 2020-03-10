@@ -102,7 +102,7 @@ function getCategories() {
         });
         for (var i = 1; i < cat.length; i++) {
             categories.push({
-                name: cat[i].name, // high category
+                name: cat[i].name,
                 color: cat[i].color,
                 upperThreshold: categories[i-1].upperThreshold - 1/cat.length,
             });

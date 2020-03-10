@@ -106,13 +106,12 @@ function drawChart() {
                     data[i] = (parseFloat(weightedValues[i][j])).toFixed(2);
                     tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (NA)";
                 } else {
-                    if (metrics) {
-                        data[i] = (parseFloat(weightedValues[i][j])).toFixed(2);
-                        tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (" + (w*100).toFixed() + "%)";
+                    if (weightedValues[i][j] === "0.0") {
+                        data[i] = parseFloat("0.02").toFixed(2);
                     } else {
                         data[i] = parseFloat(weightedValues[i][j]).toFixed(2);
-                        tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (" + (w*100).toFixed() + "%)";
                     }
+                    tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (" + (w*100).toFixed() + "%)";
                 }
                 mapForTooltips.set(labels[i][j], tooltips);
                 mapForChart.set(labels[i][j], data);
@@ -126,13 +125,12 @@ function drawChart() {
                     data[i] = (parseFloat(weightedValues[i][j])).toFixed(2);
                     tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (NA)";
                 } else {
-                    if (metrics) {
-                        data[i] = (parseFloat(weightedValues[i][j])).toFixed(2);
-                        tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (" + (w*100).toFixed() + "%)";
+                    if (weightedValues[i][j] === "0.0") {
+                        data[i] = parseFloat("0.02").toFixed(2);
                     } else {
                         data[i] = parseFloat(weightedValues[i][j]).toFixed(2);
-                        tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (" + (w*100).toFixed() + "%)";
                     }
+                    tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (" + (w*100).toFixed() + "%)";
                 }
                 mapForChart.set(labels[i][j], data);
                 mapForTooltips.set(labels[i][j], tooltips);
