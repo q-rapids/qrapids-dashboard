@@ -1,5 +1,5 @@
 var currentURL = window.location.href;
-var viewMode, representationMode, time, assessment, prediction, products, simulation, configuration, userName;
+var viewMode, representationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -85,6 +85,9 @@ if (!(viewMode = sessionStorage.getItem("viewMode"))) {
 if (!(representationMode = sessionStorage.getItem("representationMode"))) {
     representationMode = "Radar";
 }
+if (!(qmMode = sessionStorage.getItem("qmMode"))) {
+    qmMode = "Graph";
+}
 if (!(time = sessionStorage.getItem("time"))) {
     time = "Current";
 }
@@ -107,13 +110,14 @@ if (!(simulation = sessionStorage.getItem("simulation"))) {
 //Store state in sessionStorage
 sessionStorage.setItem("viewMode", viewMode);
 sessionStorage.setItem("representationMode", representationMode);
+sessionStorage.setItem("qmMode", qmMode);
 sessionStorage.setItem("time", time);
 
-///////////////////////////////////////////////////////////////////
-///// Customising View and Representation Mode options ////////////
-///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+///// Customising View, Representation and Quality Model Mode options ////////////
+///////////////////////////////////////////////////////////////////////////////////////
 
-// 1.- Customising the ViewMode buttons depending on the selected option in the main menu
+// 1.- Customising the ViewMode, RepresentationMode and qmMode buttons depending on the selected option in the main menu
 // This part also fills the variables viewMode and Time used bellow
 if (currentURL.search("/HistoricTable") !== -1) {
     viewMode = "Table";
@@ -138,14 +142,22 @@ if (currentURL.search("/HistoricTable") !== -1) {
     time = "Current";
 }
 
+if (currentURL.search("/QualityModelGraph") !== -1) {
+    qmMode = "Graph";
+} else if (currentURL.search("/QualityModelSunburst") !== -1) {
+    qmMode = "Sunburst";
+}
+
 //Store state in sessionStorage
 sessionStorage.setItem("viewMode", viewMode);
 sessionStorage.setItem("representationMode", representationMode);
+sessionStorage.setItem("qmMode", qmMode);
 sessionStorage.setItem("time", time);
 
 // Highlighting the enabled options depending on the View Mode and Time options selected
 $("#" + viewMode).css("background-color", "#ffc380");
 $("#" + representationMode).css("background-color", "#ffc380");
+$("#" + qmMode).css("background-color", "#ffc380");
 $("#" + time).css("background-color", "#ffc380");
 
 
@@ -288,7 +300,8 @@ function disableViewModeAndTimeOption () {
 //         --> time and viewMode variables filled
 ///////////////////////////////////////////////////////////////////
 
-if (assessment === "QualityModel" || assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
+if (assessment === "QualityModel") $("#Assessment").attr("href", serverUrl + "/" + assessment + qmMode);
+else if ( assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
 else if (assessment === "DetailedStrategicIndicators" || assessment === "QualityFactors" ) $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode + representationMode);
 else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
@@ -331,7 +344,7 @@ $("#QualityRequirements").attr("href", serverUrl + "/QualityRequirements");
 
 $("#Decisions").attr("href", serverUrl + "/Decisions");
 
-$("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel");
+$("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel" + qmMode);
 
 $("#PhasesAssessment").attr("href", serverUrl + "/Phases");
 

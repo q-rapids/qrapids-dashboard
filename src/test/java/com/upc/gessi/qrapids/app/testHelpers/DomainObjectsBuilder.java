@@ -563,7 +563,7 @@ public class DomainObjectsBuilder {
         String metricValue = "0.8";
         String metricWeight = "1";
         DTORelationsMetric dtoRelationsMetric = new DTORelationsMetric(metricId);
-        dtoRelationsMetric.setValue(metricValue);
+        dtoRelationsMetric.setWeightedValue(metricValue);
         dtoRelationsMetric.setWeight(metricWeight);
         List<DTORelationsMetric> dtoRelationsMetricList = new ArrayList<>();
         dtoRelationsMetricList.add(dtoRelationsMetric);
@@ -572,7 +572,7 @@ public class DomainObjectsBuilder {
         String factorValue = "0.8";
         String factorWeight = "1";
         DTORelationsFactor dtoRelationsFactor = new DTORelationsFactor(factorId);
-        dtoRelationsFactor.setValue(factorValue);
+        dtoRelationsFactor.setWeightedValue(factorValue);
         dtoRelationsFactor.setWeight(factorWeight);
         dtoRelationsFactor.setMetrics(dtoRelationsMetricList);
         List<DTORelationsFactor> dtoRelationsFactorList = new ArrayList<>();

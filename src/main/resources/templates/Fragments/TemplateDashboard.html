@@ -217,6 +217,18 @@
             </button>
         </div>
     </th:block>
+    <th:block th:fragment="QualityModelView">
+        <div class="btn-group" style="display: flex; justify-content: flex-end; margin-right: 5px;">
+            <button id="Graph" type="button" onclick="menuNav('QualityModelGraph')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View quality model with graph chart">
+                <img class="icons" th:src="@{/icons/tree_chart.png}"
+                     src="../../static/icons/tree_chart.png" alt="graph chart representation"/>
+            </button>
+            <button id="Sunburst" type="button" onclick="menuNav('QualityModelSunburst')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View quality model with sunburst chart">
+                <img class="icons" th:src="@{/icons/sunburst_chart.png}"
+                     src="../../static/icons/sunburst_chart.png" alt="sunburst chart representation"/>
+            </button>
+        </div>
+    </th:block>
 </body>
 <th:block th:fragment="scriptsHistoric">
     <script type="text/javascript" th:src="@{/js/scriptDatePicker.js}"></script>

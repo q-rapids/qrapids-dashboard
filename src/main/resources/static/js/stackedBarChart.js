@@ -101,55 +101,36 @@ function drawChart() {
                 var tooltips = [].fill.call({ length: titles.length }, 0);
 
                 var w = parseFloat(weights[i][j]);
-                var sum = sumWeights(weights[i]);
-                if (sum > 1 || w == 0 || w == -1) { // if w == 0 means old data; if w == -1 means SI with Bayesian Network
-                    if (metrics) {
-                        data[i] = (parseFloat(values[i][j]/w) * (w/sum)).toFixed(2);
-                        tooltips[i] = parseFloat(values[i][j]/w).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
-                    } else {
-                        if (w == 0) {
-                            data[i] = (parseFloat(values[i][j]) * (1 / labels[i].length)).toFixed(2);
-                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length) * 100).toFixed(0) + "%)";
-                        } else if (w == -1) {
-                            dataLabels = false;
-                            data[i] = (parseFloat(values[i][j]) * (1 / labels[i].length)).toFixed(2);
-                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (NA)";
-                        } else {
-                            data[i] = (parseFloat(values[i][j]) * (w / sum)).toFixed(2);
-                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/sum) * 100).toFixed(0) + "%)";
-                        }
-                    }
+                if (w == -1) { // if w == -1 means SI with Bayesian Network
+                    dataLabels = false;
+                    data[i] = (parseFloat(weightedValues[i][j])).toFixed(2);
+                    tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (NA)";
                 } else {
-                    data[i] = parseFloat(values[i][j]).toFixed(2);
-                    tooltips[i] = (values[i][j]/w).toFixed(2) + " (" + w*100 + "%)";
+                    if (weightedValues[i][j] === "0.0") {
+                        data[i] = parseFloat("0.02").toFixed(2);
+                    } else {
+                        data[i] = parseFloat(weightedValues[i][j]).toFixed(2);
+                    }
+                    tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (" + (w*100).toFixed() + "%)";
                 }
                 mapForTooltips.set(labels[i][j], tooltips);
                 mapForChart.set(labels[i][j], data);
             } else { // map has this label
                 var data = mapForChart.get(labels[i][j]);
                 var tooltips = mapForTooltips.get(labels[i][j]);
+
                 var w = parseFloat(weights[i][j]);
-                var sum = sumWeights(weights[i]);
-                if ( sum > 1 || w == 0 || w == -1) {
-                    if (metrics) {
-                        data[i] = (parseFloat(values[i][j]/w) * (w/sum)).toFixed(2);
-                        tooltips[i] = parseFloat(values[i][j]/w).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
-                    } else {
-                        if ( w == 0 ) {
-                            data[i] = (parseFloat(values[i][j]) * (1/labels[i].length)).toFixed(2);
-                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((1/labels[i].length)*100).toFixed(0) + "%)";
-                        } else if (w == -1) {
-                            dataLabels = false;
-                            data[i] = (parseFloat(values[i][j]) * (1/labels[i].length)).toFixed(2);
-                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (NA)";
-                        } else {
-                            data[i] = (parseFloat(values[i][j]) * (w/sum)).toFixed(2);
-                            tooltips[i] = parseFloat(values[i][j]).toFixed(2) + " (" + ((w/sum)*100).toFixed(0) + "%)";
-                        }
-                    }
+                if (w == -1) {
+                    dataLabels = false;
+                    data[i] = (parseFloat(weightedValues[i][j])).toFixed(2);
+                    tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (NA)";
                 } else {
-                    data[i] = parseFloat(values[i][j]).toFixed(2);
-                    tooltips[i] = (values[i][j]/w).toFixed(2) + " (" + w*100 + "%)";
+                    if (weightedValues[i][j] === "0.0") {
+                        data[i] = parseFloat("0.02").toFixed(2);
+                    } else {
+                        data[i] = parseFloat(weightedValues[i][j]).toFixed(2);
+                    }
+                    tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (" + (w*100).toFixed() + "%)";
                 }
                 mapForChart.set(labels[i][j], data);
                 mapForTooltips.set(labels[i][j], tooltips);
@@ -172,13 +153,20 @@ function drawChart() {
         });
     }
 
+    console.log(xaxis_cat);
     console.log(series);
+    console.log(myTooltips);
 
     chart.updateSeries(series);
     if (series.length < 30) {
         chart.updateOptions({  xaxis: {
                 type: 'category',
                 categories: xaxis_cat,
+                labels: {
+                    rotate: -60,
+                    rotateAlways: false,
+                    maxHeight: 700,
+                }
             },
             colors: colors,
             dataLabels: {
@@ -218,16 +206,6 @@ function randomColors(size) {
     }
     return colors;
 }
-
-function sumWeights(weights) {
-    var sum = 0;
-    for(var j = 0; j < weights.length; ++j) {
-        sum += parseFloat(weights[j]);
-    }
-    return sum;
-}
-
-
 
 window.onload = function() {
     getData();

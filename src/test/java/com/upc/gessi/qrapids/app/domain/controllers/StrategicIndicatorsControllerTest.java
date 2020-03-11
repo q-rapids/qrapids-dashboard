@@ -525,7 +525,7 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void assessStrategicIndicators() throws IOException, CategoriesException, ProjectNotFoundException {
+    public void assessStrategicIndicators() throws IOException, CategoriesException, ArithmeticException, ProjectNotFoundException {
         Project project = domainObjectsBuilder.buildProject();
         when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
@@ -590,10 +590,20 @@ public class StrategicIndicatorsControllerTest {
         factorValuesList.add(factor2Value);
         factorValuesList.add(factor3Value);
 
+        List<Float> factorWeightsList = new ArrayList<>();
+        factorWeightsList.add(0.33333334f);
+        factorWeightsList.add(0.33333334f);
+        factorWeightsList.add(0.33333334f);
+
+        List<Float> factorWeightedValuesList = new ArrayList<>();
+
         int factorsNumber = factorValuesList.size();
         Float factorsValuesSum = 0f;
+        int i = 0;
         for (Float factorValue : factorValuesList) {
             factorsValuesSum += factorValue;
+            factorWeightedValuesList.add(factorValue * factorWeightsList.get(i));
+            i++;
         }
         Float factorsAverageValue = factorsValuesSum / factorsNumber;
 
@@ -603,16 +613,12 @@ public class StrategicIndicatorsControllerTest {
 
         when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), anyString(),ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(true);
 
-        List<Float> factorWeightsList = new ArrayList<>();
-        factorWeightsList.add(1f);
-        factorWeightsList.add(1f);
-        factorWeightsList.add(1f);
         List<String> factorCategoryNamesList = new ArrayList<>();
         factorCategoryNamesList.add("Good");
         factorCategoryNamesList.add("Good");
         factorCategoryNamesList.add("Neutral");
 
-        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
+        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorWeightedValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
 
         // When
         boolean correct = strategicIndicatorsController.assessStrategicIndicators(project.getExternalId(), null);
@@ -638,7 +644,7 @@ public class StrategicIndicatorsControllerTest {
         verify(qmaStrategicIndicators, times(1)).prepareSIIndex(eq(project.getExternalId()));
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
-        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
+        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorWeightedValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
         verifyNoMoreInteractions(qmaRelations);
     }
 
@@ -811,10 +817,20 @@ public class StrategicIndicatorsControllerTest {
         factorValuesList.add(factor2Value);
         factorValuesList.add(factor3Value);
 
+        List<Float> factorWeightsList = new ArrayList<>();
+        factorWeightsList.add(0.33333334f);
+        factorWeightsList.add(0.33333334f);
+        factorWeightsList.add(0.33333334f);
+
+        List<Float> factorWeightedValuesList = new ArrayList<>();
+
         int factorsNumber = factorValuesList.size();
         Float factorsValuesSum = 0f;
+        int i = 0;
         for (Float factorValue : factorValuesList) {
             factorsValuesSum += factorValue;
+            factorWeightedValuesList.add(factorValue*factorWeightsList.get(i));
+            i++;
         }
         Float factorsAverageValue = factorsValuesSum / factorsNumber;
 
@@ -824,16 +840,12 @@ public class StrategicIndicatorsControllerTest {
 
         when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), anyString(), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(true);
 
-        List<Float> factorWeightsList = new ArrayList<>();
-        factorWeightsList.add(1f);
-        factorWeightsList.add(1f);
-        factorWeightsList.add(1f);
         List<String> factorCategoryNamesList = new ArrayList<>();
         factorCategoryNamesList.add("Good");
         factorCategoryNamesList.add("Good");
         factorCategoryNamesList.add("Neutral");
 
-        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
+        when(qmaRelations.setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorWeightedValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()))).thenReturn(true);
 
         // When
         boolean correct = strategicIndicatorsController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
@@ -855,7 +867,7 @@ public class StrategicIndicatorsControllerTest {
         verify(qmaStrategicIndicators, times(1)).setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), anyString(), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L));
         verifyNoMoreInteractions(qmaStrategicIndicators);
 
-        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
+        verify(qmaRelations, times(1)).setStrategicIndicatorFactorRelation(eq(project.getExternalId()), eq(strategicIndicator.getQuality_factors()), eq(strategicIndicator.getExternalId()), ArgumentMatchers.any(LocalDate.class), eq(factorWeightsList), eq(factorWeightedValuesList), eq(factorCategoryNamesList), eq(factorsAverageValue.toString()));
         verifyNoMoreInteractions(qmaRelations);
     }
 

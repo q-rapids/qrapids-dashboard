@@ -62,6 +62,14 @@ function getCategories() {
         url = serverUrl + url;
     }
     $.getJSON(url).then (function(cat) {
-        categories = cat;
+        for (var i = 0; i < cat.length; i++) {
+            //categories = cat;
+            categories.push({
+                name: cat[i].name,
+                color: cat[i].color,
+                upperThreshold: cat[i].upperThreshold,
+            });
+        }
+        console.log(categories);
     });
 }
