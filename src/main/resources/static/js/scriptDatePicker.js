@@ -212,7 +212,6 @@ function next14Days () {
 
 function parseDate(date) {
     var date = new Date(date);
-    console.log(date);
     var dd = date.getDate();
     var mm = date.getMonth() + 1; //January is 0!
     var yyyy = date.getFullYear();

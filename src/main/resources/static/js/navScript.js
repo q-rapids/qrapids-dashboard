@@ -302,7 +302,13 @@ function disableViewModeAndTimeOption () {
 
 if (assessment === "QualityModel") $("#Assessment").attr("href", serverUrl + "/" + assessment + qmMode);
 else if ( assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
-else if (assessment === "DetailedStrategicIndicators" || assessment === "QualityFactors" ) $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode + representationMode);
+else if (assessment === "DetailedStrategicIndicators" || assessment === "QualityFactors" ) {
+    if (time == "Current" && viewMode == "Chart") {
+        $("#Assessment").attr("href", serverUrl + "/" + assessment + "/" + time + viewMode + representationMode);
+    } else {
+        $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
+    }
+}
 else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
@@ -467,10 +473,19 @@ function navBack(toDetailed) {
             urlNav = "../QualityFactors/PredictionChart";
     }
     else {
-        if (toDetailed)
-            urlNav = "../DetailedStrategicIndicators/" + time + viewMode + representationMode;
-        else
-            urlNav = "../QualityFactors/" + time + viewMode + representationMode;
+        if (toDetailed) {
+            if (time == 'Current' && viewMode == 'Chart') {
+                urlNav = "../DetailedStrategicIndicators/" + time + viewMode + representationMode;
+            } else {
+                urlNav = "../DetailedStrategicIndicators/" + time + viewMode;
+            }
+        } else {
+            if (time == 'Current' && viewMode == 'Chart') {
+                urlNav = "../QualityFactors/" + time + viewMode + representationMode;
+            } else {
+                urlNav = "../QualityFactors/" + time + viewMode;
+            }
+        }
     }
     if (siid.length !== 0 && si.length !== 0) {
         urlNav = urlNav + "?id=" + siid + "&name=" + si;
