@@ -250,16 +250,18 @@ function drawHeatmap(phases) {
         }
     });
     HeatMap.updateSeries(s);
-    phases.forEach(function (p) {
+    var x = 93;
+    for (var i = 0; i < phases.length; i++) {
+        x += (180*i);
         HeatMap.addXaxisAnnotation({
-            x: p.name,
+            x: x,
             strokeDashArray: 0,
             borderColor: 'transparent',
             fillColor: 'transparent',
             label: {
                 borderColor: '#c2c2c2',
                 borderWidth: 0,
-                text: "(" + p.from + " / " + p.to + ")",
+                text: "(" + phases[i].from + " / " + phases[i].to + ")",
                 textAnchor: 'middle',
                 position: 'top',
                 orientation: 'horizontal',
@@ -267,7 +269,8 @@ function drawHeatmap(phases) {
                 offsetY: -15
             }
         });
-    });
+        x = 93;
+    }
 }
 
 function mode(arr) {
