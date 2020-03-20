@@ -1,5 +1,5 @@
 var currentURL = window.location.href;
-var viewMode, time, assessment, prediction, products, simulation, configuration, userName;
+var viewMode, representationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -82,6 +82,12 @@ checkPhases();
 if (!(viewMode = sessionStorage.getItem("viewMode"))) {
     viewMode = "Chart";
 }
+if (!(representationMode = sessionStorage.getItem("representationMode"))) {
+    representationMode = "Radar";
+}
+if (!(qmMode = sessionStorage.getItem("qmMode"))) {
+    qmMode = "Graph";
+}
 if (!(time = sessionStorage.getItem("time"))) {
     time = "Current";
 }
@@ -101,11 +107,17 @@ if (!(simulation = sessionStorage.getItem("simulation"))) {
     simulation = "Factors";
 }
 
-///////////////////////////////////////////////////////////////////
-///// Customising View Mode options ///////////////////////////////
-///////////////////////////////////////////////////////////////////
+//Store state in sessionStorage
+sessionStorage.setItem("viewMode", viewMode);
+sessionStorage.setItem("representationMode", representationMode);
+sessionStorage.setItem("qmMode", qmMode);
+sessionStorage.setItem("time", time);
 
-// 1.- Customising the ViewMode buttons depending on the selected option in the main menu
+////////////////////////////////////////////////////////////////////////////////////////
+///// Customising View, Representation and Quality Model Mode options ////////////
+///////////////////////////////////////////////////////////////////////////////////////
+
+// 1.- Customising the ViewMode, RepresentationMode and qmMode buttons depending on the selected option in the main menu
 // This part also fills the variables viewMode and Time used bellow
 if (currentURL.search("/HistoricTable") !== -1) {
     viewMode = "Table";
@@ -116,17 +128,36 @@ if (currentURL.search("/HistoricTable") !== -1) {
 } else if (currentURL.search("/HistoricChart") !== -1) {
     viewMode = "Chart";
     time = "Historic";
+}  else if (currentURL.search("/CurrentChartRadar") !== -1){
+    viewMode = "Chart";
+    representationMode = "Radar";
+    time = "Current";
+} else if (currentURL.search("/CurrentChartStacked") !== -1){
+    viewMode = "Chart";
+    representationMode = "Stacked";
+    time = "Current";
 } else if (currentURL.search("/CurrentChart") !== -1){
     viewMode = "Chart";
+    representationMode = sessionStorage.getItem("representationMode");
     time = "Current";
+}
+
+if (currentURL.search("/QualityModelGraph") !== -1) {
+    qmMode = "Graph";
+} else if (currentURL.search("/QualityModelSunburst") !== -1) {
+    qmMode = "Sunburst";
 }
 
 //Store state in sessionStorage
 sessionStorage.setItem("viewMode", viewMode);
+sessionStorage.setItem("representationMode", representationMode);
+sessionStorage.setItem("qmMode", qmMode);
 sessionStorage.setItem("time", time);
 
 // Highlighting the enabled options depending on the View Mode and Time options selected
 $("#" + viewMode).css("background-color", "#ffc380");
+$("#" + representationMode).css("background-color", "#ffc380");
+$("#" + qmMode).css("background-color", "#ffc380");
 $("#" + time).css("background-color", "#ffc380");
 
 
@@ -269,7 +300,9 @@ function disableViewModeAndTimeOption () {
 //         --> time and viewMode variables filled
 ///////////////////////////////////////////////////////////////////
 
-if (assessment === "QualityModel" || assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
+if (assessment === "QualityModel") $("#Assessment").attr("href", serverUrl + "/" + assessment + qmMode);
+else if ( assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
+else if (assessment === "DetailedStrategicIndicators" || assessment === "QualityFactors" ) $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode + representationMode);
 else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
@@ -278,11 +311,18 @@ $("#StrategicIndicatorsAssessment").attr("href", serverUrl + "/StrategicIndicato
 
 $("#StrategicIndicatorsPrediction").attr("href", serverUrl + "/StrategicIndicators/PredictionChart");
 
-$("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode);
+if (time == "Current" && viewMode == "Chart") {
+    $("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode + representationMode);
+} else {
+    $("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode);
+}
 
 $("#DetailedStrategicIndicatorsPrediction").attr("href", serverUrl + "/DetailedStrategicIndicators/PredictionChart");
 
-$("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + time + viewMode);
+if (time == "Current" && viewMode == "Chart") {
+    $("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + time + viewMode + representationMode);
+} else {
+    $("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + time + viewMode);}
 
 $("#QualityFactorsPrediction").attr("href", serverUrl + "/QualityFactors/PredictionChart");
 
@@ -304,7 +344,7 @@ $("#QualityRequirements").attr("href", serverUrl + "/QualityRequirements");
 
 $("#Decisions").attr("href", serverUrl + "/Decisions");
 
-$("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel");
+$("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel" + qmMode);
 
 $("#PhasesAssessment").attr("href", serverUrl + "/Phases");
 
@@ -428,9 +468,9 @@ function navBack(toDetailed) {
     }
     else {
         if (toDetailed)
-            urlNav = "../DetailedStrategicIndicators/" + time + viewMode;
+            urlNav = "../DetailedStrategicIndicators/" + time + viewMode + representationMode;
         else
-            urlNav = "../QualityFactors/" + time + viewMode;
+            urlNav = "../QualityFactors/" + time + viewMode + representationMode;
     }
     if (siid.length !== 0 && si.length !== 0) {
         urlNav = urlNav + "?id=" + siid + "&name=" + si;

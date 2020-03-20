@@ -12,12 +12,16 @@ var titles = [];
 var labels = [];
 var ids = [];
 var values = [];
+var categories = [];
 
 function getData() {
     titles = [];
     labels = [];
     ids = [];
     values = [];
+    categories = [];
+
+    getCategories();
 
     //get data from API
     jQuery.ajax({
@@ -49,4 +53,22 @@ function getData() {
     console.log(titles);
     console.log(labels);
     console.log(values);
+}
+
+function getCategories() {
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/metrics/categories";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    $.getJSON(url).then (function(cat) {
+        for (var i = 0; i < cat.length; i++) {
+            categories.push({
+                name: cat[i].name,
+                color: cat[i].color,
+                upperThreshold: cat[i].upperThreshold,
+            });
+        }
+        console.log(categories);
+    });
 }

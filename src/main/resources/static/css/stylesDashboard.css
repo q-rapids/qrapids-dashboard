@@ -226,3 +226,14 @@ canvas {
     border-collapse: collapse;
     padding: 5px;
 }
+
+.weightsTable{
+    width: 100%;
+    border: 1px solid gray;
+}
+
+.weightItem > th, .weightItem > td {
+    border: 1px solid gray;
+    border-collapse: collapse;
+    padding: 5px;
+}

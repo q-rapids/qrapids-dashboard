@@ -5,8 +5,10 @@ import java.util.List;
 
 public class DTORelationsFactor {
     private String id;
-    private String value;
+    private String name;
+    private String weightedValue;
     private String weight;
+    private String assessmentValue;
     private List<DTORelationsMetric> metrics;
 
     public DTORelationsFactor(String id) {
@@ -16,9 +18,11 @@ public class DTORelationsFactor {
 
     public DTORelationsFactor(DTORelationsFactor factor) {
         this.id = factor.getId();
-        this.value = factor.getValue();
+        this.name = factor.getName();
+        this.weightedValue = factor.getWeightedValue();
         this.weight = factor.getWeight();
         this.metrics = factor.getMetrics();
+        this.assessmentValue = factor.getAssessmentValue();
     }
 
     public String getId() {
@@ -29,12 +33,12 @@ public class DTORelationsFactor {
         this.id = id;
     }
 
-    public String getValue() {
-        return value;
+    public String getWeightedValue() {
+        return weightedValue;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setWeightedValue(String weightedValue) {
+        this.weightedValue = weightedValue;
     }
 
     public String getWeight() {
@@ -55,5 +59,21 @@ public class DTORelationsFactor {
 
     public void setMetric(DTORelationsMetric metric) {
         this.metrics.add(metric);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAssessmentValue() {
+        return assessmentValue;
+    }
+
+    public void setAssessmentValue(String assessmentValue) {
+        this.assessmentValue = assessmentValue;
     }
 }

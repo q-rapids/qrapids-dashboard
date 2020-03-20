@@ -7,8 +7,10 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorQualityFactorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
+import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
@@ -161,6 +163,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -208,6 +211,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("[].value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("[].probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("[].probabilities[].id")
@@ -299,6 +304,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$.value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$.value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$.value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$.rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$.probabilities", hasSize(3)))
                 .andExpect(jsonPath("$.probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$.probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -349,6 +355,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("probabilities[].id")
@@ -446,6 +454,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -497,6 +506,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("[].value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("[].probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("[].probabilities[].id")
@@ -1283,6 +1294,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -1334,6 +1346,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("[].value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("[].probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("[].probabilities[].id")
@@ -1653,15 +1667,19 @@ public class StrategicIndicatorsTest {
         String strategicIndicatorExternalId = "productquality";
         String strategicIndicatorName = "Product Quality";
         String strategicIndicatorDescription = "Quality of the product built";
-        List<String> qualityFactors = new ArrayList<>();
-        String factor1 = "codequality";
-        qualityFactors.add(factor1);
-        String factor2 = "softwarestability";
-        qualityFactors.add(factor2);
-        String factor3 = "testingstatus";
-        qualityFactors.add(factor3);
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, qualityFactors, project);
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, project);
         strategicIndicator.setId(strategicIndicatorId);
+
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator);
+        qualityFactors.add(factor1);
+        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator);
+        qualityFactors.add(factor2);
+        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator);
+        qualityFactors.add(factor3);
+
+        strategicIndicator.setQuality_factors(qualityFactors);
+        strategicIndicator.setWeighted(false);
 
         List<Strategic_Indicator> strategicIndicatorList = new ArrayList<>();
         strategicIndicatorList.add(strategicIndicator);
@@ -1682,9 +1700,11 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].description", is(strategicIndicatorDescription)))
                 .andExpect(jsonPath("$[0].network", is(nullValue())))
                 .andExpect(jsonPath("$[0].qualityFactors", hasSize(3)))
-                .andExpect(jsonPath("$[0].qualityFactors[0]", is(factor1)))
-                .andExpect(jsonPath("$[0].qualityFactors[1]", is(factor2)))
-                .andExpect(jsonPath("$[0].qualityFactors[2]", is(factor3)))
+                .andExpect(jsonPath("$[0].qualityFactors[0]", is("codequality")))
+                .andExpect(jsonPath("$[0].qualityFactors[1]", is("softwarestability")))
+                .andExpect(jsonPath("$[0].qualityFactors[2]", is("testingstatus")))
+                .andExpect(jsonPath("$[0].weighted", is(strategicIndicator.isWeighted())))
+                .andExpect(jsonPath("$[0].qualityFactorsWeights", is(strategicIndicator.getWeights())))
                 .andDo(document("si/get-all",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1705,7 +1725,11 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("[].qualityFactors")
                                         .description("List of the quality factors composing the strategic indicator"),
                                 fieldWithPath("[].qualityFactors[]")
-                                        .description("Quality factor name"))
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].weighted")
+                                        .description("Strategic indicator is weighted or not"),
+                                fieldWithPath("[].qualityFactorsWeights")
+                                        .description("List of the quality factors composing the strategic indicator with their corresponding weights"))
                 ));
 
         // Verify mock interactions
@@ -1740,6 +1764,8 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$.qualityFactors[0]", is(strategicIndicator.getQuality_factors().get(0))))
                 .andExpect(jsonPath("$.qualityFactors[1]", is(strategicIndicator.getQuality_factors().get(1))))
                 .andExpect(jsonPath("$.qualityFactors[2]", is(strategicIndicator.getQuality_factors().get(2))))
+                .andExpect(jsonPath("$.weighted", is(strategicIndicator.isWeighted())))
+                .andExpect(jsonPath("$.qualityFactorsWeights", is(strategicIndicator.getWeights())))
                 .andDo(document("si/get-one",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -1758,7 +1784,11 @@ public class StrategicIndicatorsTest {
                                 fieldWithPath("network")
                                         .description("Strategic indicator bayesian network"),
                                 fieldWithPath("qualityFactors")
-                                        .description("Strategic indicator quality factors identifiers list"))
+                                        .description("Strategic indicator quality factors identifiers list"),
+                                fieldWithPath("weighted")
+                                        .description("Strategic indicator's boolean field which identify if it is weighted or not"),
+                                fieldWithPath("qualityFactorsWeights")
+                                        .description("Strategic indicator quality factors identifiers and weights list (-1.0 represent non weighted Strategic indicator)"))
                 ));
 
         // Verify mock interactions
@@ -1899,7 +1929,9 @@ public class StrategicIndicatorsTest {
         File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
         strategicIndicator.setNetwork(Files.readAllBytes(networkFile.toPath()));
+
         when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicator.getId())).thenReturn(strategicIndicator);
+        when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId())).thenReturn(true);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1907,7 +1939,7 @@ public class StrategicIndicatorsTest {
                 .file(network)
                 .param("name", strategicIndicator.getName())
                 .param("description", strategicIndicator.getDescription())
-                .param("quality_factors", String.join(",", strategicIndicator.getQuality_factors()))
+                .param("quality_factors", String.join(",", strategicIndicator.getWeights()))
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -1927,7 +1959,7 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("description")
                                         .description("Product description"),
                                 parameterWithName("quality_factors")
-                                        .description("Comma separated values of the quality factors identifiers which belong to the strategic indicator")),
+                                        .description("Comma separated values of the quality factors identifiers which belong to the strategic indicator and their corresponding weights (-1 if no weighted)")),
                         requestParts(
                                 partWithName("network")
                                         .description("Bayesian network file")
@@ -1936,23 +1968,19 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
-        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getQuality_factors()));
+        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getWeights()));
+        verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getProject().getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
-    public void editStrategicIndicatorAssessment() throws Exception {
+    public void editStrategicIndicatorAssessment() throws Exception, StrategicIndicatorQualityFactorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
         File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
         strategicIndicator.setNetwork(Files.readAllBytes(networkFile.toPath()));
-
-        List<String> qualityFactors = new ArrayList<>();
-        qualityFactors.add("codequality");
-        qualityFactors.add("softwarestability");
-        qualityFactors.add("testingperformance");
 
         when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicator.getId())).thenReturn(strategicIndicator);
         when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId())).thenReturn(true);
@@ -1963,7 +1991,7 @@ public class StrategicIndicatorsTest {
                 .file(network)
                 .param("name", strategicIndicator.getName())
                 .param("description", strategicIndicator.getDescription())
-                .param("quality_factors", String.join(",", qualityFactors))
+                .param("quality_factors", String.join(",", strategicIndicator.getWeights()))
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -1981,7 +2009,7 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
-        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(qualityFactors));
+        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getWeights()));
         verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
@@ -1997,8 +2025,11 @@ public class StrategicIndicatorsTest {
 
         List<String> qualityFactors = new ArrayList<>();
         qualityFactors.add("codequality");
+        qualityFactors.add("-1");
         qualityFactors.add("softwarestability");
+        qualityFactors.add("-1");
         qualityFactors.add("testingperformance");
+        qualityFactors.add("-1");
 
         when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicator.getId())).thenReturn(strategicIndicator);
         when(strategicIndicatorsDomainController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId())).thenReturn(false);
@@ -2063,7 +2094,7 @@ public class StrategicIndicatorsTest {
     }
 
     @Test
-    public void editStrategicIndicatorIntegrityViolation() throws Exception {
+    public void editStrategicIndicatorIntegrityViolation() throws Exception, StrategicIndicatorQualityFactorNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
@@ -2382,6 +2413,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].value.first", is(HelperFunctions.getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -2429,6 +2461,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("[].value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("[].probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("[].probabilities[].id")
@@ -2517,12 +2551,14 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].color", is(dtoRelationsSI.getColor())))
                 .andExpect(jsonPath("$[0].factors", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoRelationsFactor.getId())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].weightedValue", is(dtoRelationsFactor.getWeightedValue())))
                 .andExpect(jsonPath("$[0].factors[0].weight", is(dtoRelationsFactor.getWeight())))
+                .andExpect(jsonPath("$[0].factors[0].assessmentValue", is(dtoRelationsFactor.getAssessmentValue())))
                 .andExpect(jsonPath("$[0].factors[0].metrics", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].id", is(dtoRelationsMetric.getId())))
-                .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getValue())))
-                .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())));
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].weightedValue", is(dtoRelationsMetric.getWeightedValue())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].assessmentValue", is(dtoRelationsMetric.getAssessmentValue())));
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getQualityModel(projectExternalId, null);
@@ -2551,17 +2587,22 @@ public class StrategicIndicatorsTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoRelationsSI.getId())))
+                .andExpect(jsonPath("$[0].name", is(dtoRelationsSI.getName())))
                 .andExpect(jsonPath("$[0].value", is(dtoRelationsSI.getValue())))
                 .andExpect(jsonPath("$[0].valueDescription", is(dtoRelationsSI.getValueDescription())))
                 .andExpect(jsonPath("$[0].color", is(dtoRelationsSI.getColor())))
                 .andExpect(jsonPath("$[0].factors", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoRelationsFactor.getId())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(dtoRelationsFactor.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].name", is(dtoRelationsFactor.getName())))
+                .andExpect(jsonPath("$[0].factors[0].weightedValue", is(dtoRelationsFactor.getWeightedValue())))
                 .andExpect(jsonPath("$[0].factors[0].weight", is(dtoRelationsFactor.getWeight())))
+                .andExpect(jsonPath("$[0].factors[0].assessmentValue", is(dtoRelationsFactor.getAssessmentValue())))
                 .andExpect(jsonPath("$[0].factors[0].metrics", hasSize(1)))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].id", is(dtoRelationsMetric.getId())))
-                .andExpect(jsonPath("$[0].factors[0].metrics[0].value", is(dtoRelationsMetric.getValue())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].name", is(dtoRelationsMetric.getName())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].weightedValue", is(dtoRelationsMetric.getWeightedValue())))
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].weight", is(dtoRelationsMetric.getWeight())))
+                .andExpect(jsonPath("$[0].factors[0].metrics[0].assessmentValue", is(dtoRelationsMetric.getAssessmentValue())))
                 .andDo(document("si/quality-model",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -2575,6 +2616,8 @@ public class StrategicIndicatorsTest {
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
                                 fieldWithPath("[].value")
                                         .description("Strategic indicator assessment value"),
                                 fieldWithPath("[].valueDescription")
@@ -2585,18 +2628,26 @@ public class StrategicIndicatorsTest {
                                         .description("List with all the quality factors composing the strategic indicator"),
                                 fieldWithPath("[].factors[].id")
                                         .description("Quality factor identifier"),
-                                fieldWithPath("[].factors[].value")
-                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].factors[].weightedValue")
+                                        .description("Quality factor weighted value"),
                                 fieldWithPath("[].factors[].weight")
                                         .description("Quality factor weight in the strategic indicator assessment"),
+                                fieldWithPath("[].factors[].assessmentValue")
+                                        .description("Quality factor assessment value"),
                                 fieldWithPath("[].factors[].metrics")
                                         .description("List with all the metrics composing the quality factor"),
                                 fieldWithPath("[].factors[].metrics[].id")
                                         .description("Metric identifier"),
-                                fieldWithPath("[].factors[].metrics[].value")
-                                        .description("Metric value"),
+                                fieldWithPath("[].factors[].metrics[].name")
+                                        .description("Metric name"),
+                                fieldWithPath("[].factors[].metrics[].weightedValue")
+                                        .description("Metric weighted value"),
                                 fieldWithPath("[].factors[].metrics[].weight")
-                                        .description("Metric weight in the computation of the quality factor"))
+                                        .description("Metric weight in the computation of the quality factor"),
+                                fieldWithPath("[].factors[].metrics[].assessmentValue")
+                                    .description("Metric assessment value"))
                 ));
 
         // Verify mock interactions

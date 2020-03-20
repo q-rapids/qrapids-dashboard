@@ -5,18 +5,14 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMARelations;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
-import com.upc.gessi.qrapids.app.domain.exceptions.AssessmentErrorException;
-import com.upc.gessi.qrapids.app.domain.models.Factors;
-import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.models.SICategory;
-import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.exceptions.*;
+import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
+import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
-import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
-import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorNotFoundException;
 import evaluation.StrategicIndicator;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
@@ -68,10 +64,16 @@ public class StrategicIndicatorsController {
     @Autowired
     private QMARelations qmaRelations;
 
+    @Autowired
+    private StrategicIndicatorQualityFactorsController strategicIndicatorQualityFactorsController;
+
+    @Autowired
+    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
+
     private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
     public List<Strategic_Indicator> getStrategicIndicatorsByProject (Project project) {
-        return strategicIndicatorRepository.findByProject_Id(project.getId());
+        return strategicIndicatorRepository.findByProject_IdOrderByName(project.getId());
     }
 
     public Strategic_Indicator getStrategicIndicatorById (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {
@@ -83,20 +85,89 @@ public class StrategicIndicatorsController {
         }
     }
 
-    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException {
+
+    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator = getStrategicIndicatorById(strategicIndicatorId);
         if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
         strategicIndicator.setName(name);
         strategicIndicator.setDescription(description);
-        strategicIndicator.setQuality_factors(qualityFactors);
+        // Actualize Quality Factors
+        boolean weighted = reassignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
+        strategicIndicator.setWeighted(weighted);
         strategicIndicatorRepository.save(strategicIndicator);
         return  strategicIndicator;
     }
 
+    private  boolean reassignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator) throws StrategicIndicatorQualityFactorNotFoundException {
+        List<StrategicIndicatorQualityFactors> newQualityFactorsWeights = new ArrayList();
+        // Delete oldQualityFactorsWeights
+        List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findByStrategic_indicator(strategicIndicator);
+        strategicIndicator.setQuality_factors(null);
+        for (StrategicIndicatorQualityFactors old : oldQualityFactorsWeights) {
+            strategicIndicatorQualityFactorsController.deleteStrategicIndicatorQualityFactor(old.getId());
+        }
+        boolean weighted = false;
+        String f;
+        Float w;
+
+        // generate StrategicIndicatorQualityFactors class objects from List<String> qualityFactors
+        while (!qualityFactors.isEmpty()) {
+            StrategicIndicatorQualityFactors siqf;
+            f = qualityFactors.get(0);
+            w = Float.parseFloat(qualityFactors.get(1));
+            if (w == -1) {
+                siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
+                weighted = false;
+            } else {
+                siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
+                weighted = true;
+            }
+            newQualityFactorsWeights.add(siqf);
+            qualityFactors.remove(1);
+            qualityFactors.remove(0);
+        }
+        // create the association between Strategic Indicator and its Quality Factors
+        strategicIndicator.setQuality_factors(newQualityFactorsWeights);
+        return weighted;
+    }
+
+
     public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) {
-        Strategic_Indicator strategicIndicator = new Strategic_Indicator(name, description, file, qualityFactors, project);
+        Strategic_Indicator strategicIndicator;
+        // create Strategic Indicator minim (without quality factors and weighted)
+        strategicIndicator = new Strategic_Indicator(name, description, file, project);
+        strategicIndicatorRepository.save(strategicIndicator);
+        // Associate it with Quality Factors (set weighted)
+        boolean weighted = assignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
+        strategicIndicator.setWeighted(weighted);
         strategicIndicatorRepository.save(strategicIndicator);
         return strategicIndicator;
+    }
+
+    private boolean assignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator ) {
+        List<StrategicIndicatorQualityFactors> qualityFactorsWeights = new ArrayList();
+        boolean weighted = false;
+        String f;
+        Float w;
+        // generate StrategicIndicatorQualityFactors class objects from List<String> qualityFactors
+        while (!qualityFactors.isEmpty()) {
+            StrategicIndicatorQualityFactors siqf;
+            f = qualityFactors.get(0);
+            w = Float.parseFloat(qualityFactors.get(1));
+            if (w == -1) {
+                siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
+                weighted = false;
+            } else {
+                siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
+                weighted = true;
+            }
+            qualityFactorsWeights.add(siqf);
+            qualityFactors.remove(1);
+            qualityFactors.remove(0);
+        }
+        // create the association between Strategic Indicator and its Quality Factors
+        strategicIndicator.setQuality_factors(qualityFactorsWeights);
+        return weighted;
     }
 
     public void deleteStrategicIndicator (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {
@@ -361,8 +432,31 @@ public class StrategicIndicatorsController {
 
     private String assessStrategicIndicatorWithoutBayesianNetwork(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<Float> listFactorsAssessmentValues, List<String> siFactors, List<String> missingFactors, long factorsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException {
         if (!listFactorsAssessmentValues.isEmpty()) {
-            float value = assesSI.assesSI(listFactorsAssessmentValues, siFactors.size());
+            float value;
+            List<Float> weights = new ArrayList<>();
+            boolean weighted = strategicIndicator.isWeighted();
+            if (weighted) {
+                List<String> qfWeights = strategicIndicator.getWeights();
+                for ( int i = 1; i < qfWeights.size(); i+=2) {
+                    weights.add(Float.valueOf(qfWeights.get(i)));
+                }
+                value = assesSI.assesSI_weighted(listFactorsAssessmentValues, weights);
+            } else {
+                value = assesSI.assesSI(listFactorsAssessmentValues, siFactors.size());
+            }
             assessmentValueOrLabel = String.valueOf(value);
+            String info = "factors: {";
+            for (int j = 0; j < siFactors.size(); j++) {
+                String factorInfo = " " + siFactors.get(j) + " (value: " +  listFactorsAssessmentValues.get(j) + ", ";
+                if (weighted) factorInfo += "weight: " + weights.get(j).intValue() + "%);";
+                else factorInfo += "no weighted);";
+                info += factorInfo;
+            }
+            if (weighted) {
+                info += " }, formula: weighted average, value: " + value + ", category: " + getLabel(value);
+            } else {
+                info += " }, formula: average, value: " + value + ", category: " + getLabel(value);
+            }
             // saving the SI's assessment
             if (!qmaStrategicIndicators.setStrategicIndicatorValue(
                     project,
@@ -370,6 +464,7 @@ public class StrategicIndicatorsController {
                     strategicIndicator.getName(),
                     strategicIndicator.getDescription(),
                     value,
+                    info,
                     evaluationDate,
                     null,
                     missingFactors,
@@ -391,12 +486,14 @@ public class StrategicIndicatorsController {
         if (!valueAndLabel.getFirst().isNaN()) {
             assessmentValueOrLabel = valueAndLabel.getSecond();
             // saving the SI's assessment
+            String info = "";
             if (!qmaStrategicIndicators.setStrategicIndicatorValue(
                     project,
                     strategicIndicator.getExternalId(),
                     strategicIndicator.getName(),
                     strategicIndicator.getDescription(),
                     valueAndLabel.getFirst(),
+                    info,
                     evaluationDate,
                     assessment,
                     missingFactors,
@@ -449,11 +546,22 @@ public class StrategicIndicatorsController {
         List<String> labels = new ArrayList<>();
         for (DTOFactor dtoFactor : factorList) {
             factorIds.add(dtoFactor.getId());
-            Float weight = 0f;
-            if (strategicIndicator.getNetwork() == null)
-                weight = 1f;
+            Float weight = -1f; // when SI is computed with network
+            if (strategicIndicator.getNetwork() == null) {
+                // when SI is not weighted the weight of factor value is computed as average
+                if (!strategicIndicator.isWeighted()) {
+                    weight = 1f/factorList.size();
+                } else { // when SI is weighted the weight of factor has corresponding value
+                    List<String> qfw = strategicIndicator.getWeights();
+                    weight = Float.parseFloat(qfw.get(qfw.indexOf(dtoFactor.getId()) + 1)) / 100;
+                }
+            }
             weights.add(weight);
-            values.add(dtoFactor.getValue());
+            if (weight == -1f){
+                values.add(dtoFactor.getValue()*1f/factorList.size()); // value for representation (average)
+            } else {
+                values.add(dtoFactor.getValue() * weight); // value of weighted factor
+            }
             labels.add(qualityFactorsController.getFactorLabelFromValue(dtoFactor.getValue()));
         }
         correct = saveFactorSIRelation(project, factorIds, strategicIndicator.getExternalId(), evaluationDate, weights, values, labels, assessmentValueOrLabel);
@@ -508,12 +616,10 @@ public class StrategicIndicatorsController {
                 List<String> factors = new ArrayList<>();
                 for (DTOFactor f : dtoDetailedStrategicIndicator.getFactors()) {
                     factors.add(f.getId());
+                    factors.add("-1");
                 }
                 Project project = projectsController.findProjectByExternalId(projectExternalId);
-                Strategic_Indicator newSI = new Strategic_Indicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
-                if (!strategicIndicatorRepository.existsByExternalIdAndProject_Id(newSI.getExternalId(), project.getId())) {
-                    strategicIndicatorRepository.save(newSI);
-                }
+                saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
             }
         }
     }
@@ -542,7 +648,9 @@ public class StrategicIndicatorsController {
                 result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+","").toLowerCase(),
                         si.getName(),
                         si.getDescription(),
-                        Pair.of(value, getLabel(value)), assessment,
+                        Pair.of(value, getLabel(value)),
+                        "",
+                        assessment,
                         null,
                         "Simulation",
                         si.getId(),
@@ -555,6 +663,7 @@ public class StrategicIndicatorsController {
                         si.getName(),
                         si.getDescription(),
                         Pair.of(value, getLabel(value)),
+                        "",
                         getCategories(),
                         null,
                         "Simulation",
@@ -637,7 +746,7 @@ public class StrategicIndicatorsController {
         return category.getColor();
     }
 
-    public List<DTORelationsSI> getQualityModel(String projectExternalId, LocalDate date) throws IOException {
+    public List<DTORelationsSI> getQualityModel(String projectExternalId, LocalDate date) throws IOException, CategoriesException, ArithmeticException {
         return qmaRelations.getRelations(projectExternalId, date);
     }
 

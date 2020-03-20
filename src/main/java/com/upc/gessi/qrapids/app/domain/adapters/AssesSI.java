@@ -111,4 +111,24 @@ public class AssesSI {
         }
         return categories;
     }
+
+    public float assesSI_weighted(List<Float> factorsAssessment, List<Float> weights) {
+        try {
+            float total = 0.f;
+            float result =0.f;
+
+            for (int i = 0; i < factorsAssessment.size(); i++) {
+                total += ((weights.get(i)/100)*factorsAssessment.get(i));
+            }
+            if (total>0)
+                result = total/1; // sum of weights always is 1 = 100%
+
+            return result;
+
+        } catch (Exception e) {
+            Logger logger = LoggerFactory.getLogger(AssesSI.class);
+            logger.error(e.getMessage(), e);
+            return 0.f;
+        }
+    }
 }

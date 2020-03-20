@@ -301,5 +301,39 @@
         </div>
     </th:block>
 
+    <th:block th:fragment="weightsModal">
+        <div class="modal fade" id="weightsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Weighted average</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p> You have chosen the weighted average option, complete the weights for each factor.</p>
+                        <p>(Remember that the total sum of the weights has to be 100%)</p>
+                    </div>
+                    <div class="modal-body">
+                        <table id="weightsTable" class="weightsTable">
+                            <thead>
+                            <tr class="weightItem">
+                                <th>Selected Factors</th>
+                                <th>Weight (%)</th>
+                            </tr>
+                            </thead>
+                            <tbody id = "weightsItems">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="submitWeightsButton" type="button" class="btn btn-primary pull-right">Accept</button>
+                        <button id="closeWeightsButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
 </body>
 </html>

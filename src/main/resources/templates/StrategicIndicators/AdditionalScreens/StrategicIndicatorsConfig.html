@@ -27,6 +27,10 @@
             <div class="SIInfoRow">
                 <p id = "SIInfoTitle" style="font-size: 36px; margin-right: 1%">1. Strategic Indicator Information</p>
             </div>
+            <div class="SIInfoRowID" style="display:none;">
+                <p style="font-size: 18px; margin-right: 1%; width: 40%;">Assessment ID: </p>
+                <input id="SIAssessmentID" style="border:none; font-size: 18px; margin-right: 1%; width: 100%;" readonly></input>
+            </div>
             <div class="SIInfoRow">
                 <p style="font-size: 18px; margin-right: 1%">Name*: </p>
                 <input id="SIName" rows="1" style="width: 100%;"></input>
@@ -58,8 +62,12 @@
                 <div class="selectionColumn" style="width: 100%">
                     <p style="font-size: 18px; margin-bottom: 1%">Selected Factors*: </p>
                     <select id="selFactorsBox" multiple="multiple" style="height: 150px;">
-
                     </select>
+                    <form>
+                        <input type="checkbox" id="weightCheckbox" onchange="openEdit()"> Weighted average &nbsp;&nbsp;&nbsp;
+                        <button id="weightEditButton" disabled="true">···</button>
+                        <div th:replace="Fragments/Modals :: weightsModal"></div>
+                    </form>
                 </div>
             </div>
             <div class="SIInfoRow" style="justify-content: space-between">

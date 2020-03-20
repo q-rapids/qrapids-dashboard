@@ -9,12 +9,17 @@ var labels = [];
 var values = [];
 var warnings = [];
 
+var categories = [];
+
 function getData() {
     //empty previous data
     titles = [];
     ids = [];
     labels = [];
     values = [];
+    categories = [];
+
+    getCategories();
 
     //get data from API
     jQuery.ajax({
@@ -80,5 +85,23 @@ function getData() {
             $("#assessmentDate").text(assessmentDate.toLocaleDateString());
             drawChart();
         }
+    });
+}
+
+function getCategories() {
+    var serverUrl = sessionStorage.getItem("serverUrl");
+    var url = "/api/qualityFactors/categories";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    $.getJSON(url).then (function(cat) {
+        for (var i = 0; i < cat.length; i++) {
+            categories.push({
+                name: cat[i].name,
+                color: cat[i].color,
+                upperThreshold: cat[i].upperThreshold,
+            });
+        }
+        console.log(categories);
     });
 }

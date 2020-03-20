@@ -25,12 +25,12 @@ function loadData() {
 function buildTree(strategicIndicators) {
     var qmnodes = new Map();
     var qmedges = new Map();
+    console.log(strategicIndicators);
     for (var i = 0; i < strategicIndicators.length; i++) {
         var strategicIndicator = strategicIndicators[i];
         var node = createNode(strategicIndicator, siColor, strategicIndicator.color);
         if (!qmnodes.has(strategicIndicator.id))
             qmnodes.set(strategicIndicator.id, node);
-
         for (var j = 0; j < strategicIndicator.factors.length; j++) {
             var factor = strategicIndicator.factors[j];
             var node = createNode(factor, factorColor, factorColor);
@@ -38,54 +38,40 @@ function buildTree(strategicIndicators) {
                 qmnodes.set(factor.id, node);
             if (!qmedges.has(factor.id+"-"+strategicIndicator.id))
                 qmedges.set(factor.id+"-"+strategicIndicator.id, createEdge(factor, strategicIndicator));
-            var metricsWeights = sumMetricsWeights(factor.metrics);
-
             for (var k = 0; k < factor.metrics.length; k++) {
                 var metric = factor.metrics[k];
                 var node = createNode(metric, metricColor, metricColor);
                 if (!qmnodes.has(metric.id))
                     qmnodes.set(metric.id, node);
                 if (!qmedges.has(metric.id+"-"+factor.id))
-                    qmedges.set(metric.id+"-"+factor.id, createEdge(metric, factor, metricsWeights));
+                    qmedges.set(metric.id+"-"+factor.id, createEdge(metric, factor));
             }
         }
     }
     displayData(Array.from(qmnodes.values()), Array.from(qmedges.values()));
 }
 
-function sumMetricsWeights(elements){
-    var totalWeight = 0;
-    for (var i = 0; i < elements.length; i++){
-        totalWeight += parseFloat(elements[i].weight);
-    }
-    return totalWeight;
-}
-
 function createNode (element, color, colorBorder) {
     var value;
     if (element.valueDescription) value = element.valueDescription;
     else {
-        if (element.weight && element.weight != 0) {
-            var w = parseFloat(element.weight);
-            value = parseFloat(element.value)/w;
-        } else value = element.value;
+        value = element.assessmentValue;
     }
     return {
         data: {
             id: element.id,
-            label: element.id + ": " + parseValue(value),
+            label: element.name + ": " + parseValue(value),
             color: color,
             colorBorder: colorBorder
         }
     }
 }
 
-function createEdge (source, target, aux) { // aux = sum metrics weights
+
+function createEdge (source, target) {
     var weight = source.weight;
-    if (aux) {
-        weight = ((parseFloat(weight)/aux) * 100).toFixed(0) + "%"; // weight percentage
-    }
-    else weight = null; // it's indifferent which weight has factor, we won't show it
+    if (weight == -1) weight = null;
+    else weight = (parseFloat(weight) * 100).toFixed(0) + "%"; // weight percentage
     return {
         data: {
             source: source.id,

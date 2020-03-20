@@ -264,9 +264,9 @@ function drawHeatmap(phases) {
                 text: "(" + phases[i].from + " / " + phases[i].to + ")",
                 textAnchor: 'middle',
                 position: 'top',
-                orientation: 'horitzontal',
-                offsetX: x,
-                offsetY: 50
+                orientation: 'horizontal',
+                offsetX: 0,
+                offsetY: -15
             }
         });
         x = 93;

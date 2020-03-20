@@ -709,7 +709,8 @@ public class ProductsTest {
         LocalDate date = LocalDate.parse(dateString);
         String datasource = "Q-Rapdis Dashboard";
         String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
+        String strategicIndicatorRationale = "factors: {...}, formula: ..., value: ..., category: ...";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, strategicIndicatorRationale, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
         dtoStrategicIndicatorEvaluation.setHasFeedback(false);
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
 
@@ -731,6 +732,7 @@ public class ProductsTest {
                 .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -778,6 +780,8 @@ public class ProductsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("[].value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("[].probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("[].probabilities[].id")
@@ -855,7 +859,8 @@ public class ProductsTest {
         LocalDate date = LocalDate.parse(dateString);
         String datasource = "Q-Rapdis Dashboard";
         String categoriesDescription = "[Good (0,67), Neutral (0,33), Bad (0,00)]";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
+        String strategicIndicatorRationale = "factors: {...}, formula: ..., value: ..., category: ...";
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(strategicIndicatorId, strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, strategicIndicatorRationale, dtoSIAssessmentList, date, datasource, strategicIndicatorDbId, categoriesDescription, false);
         dtoStrategicIndicatorEvaluation.setHasFeedback(false);
         dtoStrategicIndicatorEvaluation.setForecastingError(null);
 
@@ -883,6 +888,7 @@ public class ProductsTest {
                 .andExpect(jsonPath("$[0].second[0].value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].second[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
                 .andExpect(jsonPath("$[0].second[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].second[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].second[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].second[0].probabilities[0].id", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].second[0].probabilities[0].label", is(dtoStrategicIndicatorEvaluation.getProbabilities().get(0).getLabel())))
@@ -934,6 +940,8 @@ public class ProductsTest {
                                         .description("Strategic indicator category"),
                                 fieldWithPath("[].second[].value_description")
                                         .description("Readable strategic indicator value and category"),
+                                fieldWithPath("[].second[].rationale")
+                                        .description("Strategic indicator evaluation rationale"),
                                 fieldWithPath("[].second[].probabilities")
                                         .description("Strategic indicator categories list"),
                                 fieldWithPath("[].second[].probabilities[].id")

@@ -9,7 +9,9 @@
     <div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
     <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
     <br/>
+    <br/>
     <div class="container" id="tableCurrent" ng-init="getStratInd('../DetailedStrategicIndicators/CurrentTable')">
+        <br/>
         <br/>
         <span><b>Search:</b></span> <input ng-model="f"></input>
         <br/>
@@ -47,6 +49,12 @@
                         <span class="caret"></span>
                     </span>
                 </th>
+                <th ng-click="sortBy('rationale')">Rationale
+                    <span ng-show="sortType == 'rationale' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'rationale' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
                 <th ng-click="sortBy('warning')">Warning
                     <span ng-show="sortType == 'warning' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'warning' &amp;&amp; !sortReverse" class="dropup">
@@ -62,6 +70,7 @@
                 <td id="description">{{d.description}}</td>
                 <td id="value" ng-class="{'color-red': (d.lowerThreshold > d.value.first), 'color-green': (d.value.first > d.upperThreshold)}">{{d.value_description}}</td>
                 <td id="categories">{{d.categories_description}}</td>
+                <td id="rationale">{{d.rationale}}</td>
                 <td style="white-space: pre;" id="warning">{{d.warning}}</td>
             </tr>
             </tbody>

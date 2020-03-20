@@ -146,7 +146,7 @@ function getChosenProject(currentProjectId) {
     		var idRow = document.createElement('div');
     		idRow.classList.add("productInfoRow");
     		var idP = document.createElement('p');
-    		idP.appendChild(document.createTextNode("Identification name: "));
+    		idP.appendChild(document.createTextNode("Assessment ID: "));
     		idP.setAttribute('style', 'font-size: 18px; margin-right: 1%; width: 40%;');
         	idRow.appendChild(idP);
     		var idP2 = document.createElement("p");
@@ -167,6 +167,7 @@ function getChosenProject(currentProjectId) {
     		inputName.setAttribute('type', 'text');
     		inputName.setAttribute('value', data.name);
     		inputName.setAttribute('style', 'width: 100%;');
+    		inputName.setAttribute('placeholder', 'Write the project name here');
     		nameRow.appendChild(inputName);
     		projectForm.appendChild(nameRow);
     		
@@ -182,23 +183,24 @@ function getChosenProject(currentProjectId) {
     		inputDescription.value= data.description;
     		inputDescription.setAttribute('style', 'width: 100%;');
     		inputDescription.setAttribute('rows', '3');
+    		inputDescription.setAttribute('placeholder', 'Write the project description here');
     		descriptionRow.appendChild(inputDescription);
     		projectForm.appendChild(descriptionRow);
 
 			var backlogIdRow = document.createElement('div');
 			backlogIdRow.classList.add("productInfoRow");
 			var backlogIdP = document.createElement('p');
-			backlogIdP.appendChild(document.createTextNode("Backlog Id: "));
-			backlogIdP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
+			backlogIdP.appendChild(document.createTextNode("Backlog ID:"));
+			backlogIdP.setAttribute('style', 'font-size: 18px; margin-right: 1%; width: 13%');
 			backlogIdRow.appendChild(backlogIdP);
 			var inputBacklogId = document.createElement("input");
 			inputBacklogId.setAttribute('id', 'projectBacklogId');
 			inputBacklogId.setAttribute('type', 'text');
 			var backlogId = "";
-			if (data.backlogId)
-				backlogId = data.backlogId;
+			if (data.backlogId) backlogId = data.backlogId;
 			inputBacklogId.setAttribute('value', backlogId);
 			inputBacklogId.setAttribute('style', 'width: 100%;');
+			inputBacklogId.setAttribute('placeholder', 'Write the project backlog ID here');
 			backlogIdRow.appendChild(inputBacklogId);
 			projectForm.appendChild(backlogIdRow);
     		
@@ -379,6 +381,7 @@ function getChosenProduct(currentProductId) {
     		inputName.setAttribute('type', 'text');
     		inputName.setAttribute('value', data.name);
     		inputName.setAttribute('style', 'width: 100%;');
+			inputName.setAttribute('placeholder', 'Write the product name here');
     		nameRow.appendChild(inputName);
     		productForm.appendChild(nameRow);
     		
@@ -394,6 +397,7 @@ function getChosenProduct(currentProductId) {
     		inputDescription.value= data.description;
     		inputDescription.setAttribute('style', 'width: 100%;');
     		inputDescription.setAttribute('rows', '3');
+			inputDescription.setAttribute('placeholder', 'Write the product description here');
     		descriptionRow.appendChild(inputDescription);
     		productForm.appendChild(descriptionRow);
     		
@@ -644,7 +648,7 @@ function newProduct() {
 	var title1Row = document.createElement('div');
 	title1Row.classList.add("productInfoRow");
 	var title1P = document.createElement('p');
-	title1P.appendChild(document.createTextNode("1.Product Information"));
+	title1P.appendChild(document.createTextNode("Step 1 - Fill your product information"));
 	title1P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
 	title1Row.appendChild(title1P);
 	productForm.appendChild(title1Row);
@@ -655,23 +659,12 @@ function newProduct() {
 	nameP.appendChild(document.createTextNode("Name*: "));
 	nameP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
 	nameRow.appendChild(nameP);
-	var inputName = document.createElement("textarea");
+	var inputName = document.createElement("input");
 	inputName.setAttribute('id', 'productName');
-	inputName.value = "Write the product name here";
+	inputName.value = "";
 	inputName.setAttribute('rows', '1');
-	inputName.setAttribute('style', 'width: 100%; color:#cbcbcb; border-color: #aaaaaa; border-width: 1px; resize: none;');
-	inputName.addEventListener("focus", function () {
-		if (inputName.value == "Write the product name here") {
-			inputName.setAttribute('style', 'width: 100%; color:#121212; border-color: #aaaaaa; border-width: 1px; resize: none;');
-			inputName.value = "";
-		}
-	});
-	inputName.addEventListener("focusout", function () {
-		if (inputName.value == "") {
-			inputName.setAttribute('style', 'width: 100%; color:#cbcbcb; border-color: #aaaaaa; border-width: 1px; resize: none;');
-			inputName.value = "Write the product name here";
-		}
-	});
+	inputName.setAttribute('style', 'width: 100%;');
+	inputName.setAttribute('placeholder', 'Write the product name here');
 	nameRow.appendChild(inputName);
 	productForm.appendChild(nameRow);
 	
@@ -684,21 +677,10 @@ function newProduct() {
 	descriptionRow.appendChild(descriptionP);
 	var inputDescription = document.createElement("textarea");
 	inputDescription.setAttribute('id', 'productDescription');
-	inputDescription.value= "Write the product description here";
-	inputDescription.setAttribute('style', 'width: 100%; color:#cbcbcb; border-color: #aaaaaa; border-width: 1px;');
+	inputDescription.value= "";
+	inputDescription.setAttribute('style', 'width: 100%;');
 	inputDescription.setAttribute('rows', '3');
-	inputDescription.addEventListener("focus", function () {
-		if (inputDescription.value == "Write the product description here") {
-			inputDescription.setAttribute('style', 'width: 100%; color:#121212; border-color: #aaaaaa; border-width: 1px;');
-			inputDescription.value = "";
-		}
-	});
-	inputDescription.addEventListener("focusout", function () {
-		if (inputDescription.value == "") {
-			inputDescription.setAttribute('style', 'width: 100%; color:#cbcbcb; border-color: #aaaaaa; border-width: 1px;');
-			inputDescription.value = "Write the product description here";
-		}
-	});
+	inputDescription.setAttribute('placeholder', 'Write the product description here');
 	descriptionRow.appendChild(inputDescription);
 	productForm.appendChild(descriptionRow);
 	
@@ -718,7 +700,7 @@ function newProduct() {
 	var title2Row = document.createElement('div');
 	title2Row.classList.add("productInfoRow");
 	var title2P = document.createElement('p');
-	title2P.appendChild(document.createTextNode("2.Product Composition"));
+	title2P.appendChild(document.createTextNode("Step 2 - Select the corresponding projects"));
 	title2P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
 	title2Row.appendChild(title2P);
 	productForm.appendChild(title2Row);

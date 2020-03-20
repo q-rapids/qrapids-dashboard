@@ -5,6 +5,7 @@ import java.util.List;
 
 public class DTORelationsSI {
     private String id;
+    private String name;
     private String value;
     private String valueDescription;
     private String color;
@@ -57,5 +58,13 @@ public class DTORelationsSI {
 
     public void setFactor(DTORelationsFactor factor) {
         this.factors.add(factor);
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }

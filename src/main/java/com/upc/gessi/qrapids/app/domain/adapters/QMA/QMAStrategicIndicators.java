@@ -100,6 +100,7 @@ public class QMAStrategicIndicators {
                                               String strategicIndicatorName,
                                               String strategicIndicatorDescription,
                                               Float value,
+                                              String info,
                                               LocalDate date,
                                               List<DTOSIAssessment> assessment,
                                               List<String> missingFactors,
@@ -113,6 +114,7 @@ public class QMAStrategicIndicators {
                                                             strategicIndicatorName,
                                                             strategicIndicatorDescription,
                                                             value,
+                                                            info,
                                                             date,
                                                             null,
                                                             missingFactors,
@@ -124,6 +126,7 @@ public class QMAStrategicIndicators {
                                                             strategicIndicatorName,
                                                             strategicIndicatorDescription,
                                                             value,
+                                                            info,
                                                             date,
                                                             listDTOSIAssessmentToEstimationEvaluationDTO(assessment),
                                                             missingFactors,
@@ -150,7 +153,7 @@ public class QMAStrategicIndicators {
             hasFeedback = false;
             found=false;
             for (Strategic_Indicator dbsi : sis_DB) {
-                if (dbsi.getName().replaceAll("\\s+","").toLowerCase().equals(element.getID())) {
+                if (dbsi.getExternalId().equals(element.getID())) {
                     found = true;
                     id = dbsi.getId();
                     hasBN = dbsi.getNetwork() != null;
@@ -204,6 +207,7 @@ public class QMAStrategicIndicators {
                 element.getName(),
                 element.getDescription(),
                 Pair.of(value, strategicIndicatorsController.getLabel(value)),
+                evaluation.getRationale(),
                 new ArrayList<>(categories),
                 evaluation.getEvaluationDate(),
                 evaluation.getDatasource(),

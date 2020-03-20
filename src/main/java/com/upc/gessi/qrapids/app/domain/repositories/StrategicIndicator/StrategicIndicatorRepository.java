@@ -8,6 +8,7 @@ import java.util.List;
 public interface StrategicIndicatorRepository extends CrudRepository<Strategic_Indicator, Long> {
     Strategic_Indicator findByName (String name);
     List<Strategic_Indicator> findByProject_Id (Long projectId);
+    List<Strategic_Indicator> findByProject_IdOrderByName (Long projectId);
     Strategic_Indicator findByNameAndProject_Id (String name, Long projectId);
     boolean existsByExternalIdAndProject_Id (String externalId, Long projectId);
 }
