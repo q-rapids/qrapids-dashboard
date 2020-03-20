@@ -90,21 +90,16 @@ function getData() {
 
 function getCategories() {
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/strategicIndicators/categories";
+    var url = "/api/qualityFactors/categories";
     if (serverUrl) {
         url = serverUrl + url;
     }
     $.getJSON(url).then (function(cat) {
-        categories.push({
-            name: cat[0].name, // high category
-            color: cat[0].color,
-            upperThreshold: 1,
-        });
-        for (var i = 1; i < cat.length; i++) {
+        for (var i = 0; i < cat.length; i++) {
             categories.push({
                 name: cat[i].name,
                 color: cat[i].color,
-                upperThreshold: categories[i-1].upperThreshold - 1/cat.length,
+                upperThreshold: cat[i].upperThreshold,
             });
         }
         console.log(categories);

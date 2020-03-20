@@ -57,13 +57,12 @@ function getData() {
 
 function getCategories() {
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/qualityFactors/categories";
+    var url = "/api/metrics/categories";
     if (serverUrl) {
         url = serverUrl + url;
     }
     $.getJSON(url).then (function(cat) {
         for (var i = 0; i < cat.length; i++) {
-            //categories = cat;
             categories.push({
                 name: cat[i].name,
                 color: cat[i].color,
