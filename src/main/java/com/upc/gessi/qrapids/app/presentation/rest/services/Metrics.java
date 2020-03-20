@@ -109,10 +109,10 @@ public class Metrics {
 
     @RequestMapping("/api/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetric> getMetricsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String techinique, @RequestParam("horizon") String horizon) throws IOException {
+    public List<DTOMetric> getMetricsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
         try {
             List<DTOMetric> currentEvaluation = metricsController.getAllMetricsCurrentEvaluation(prj);
-            return metricsController.getMetricsPrediction(currentEvaluation, prj, techinique, "7", horizon);
+            return metricsController.getMetricsPrediction(currentEvaluation, prj, technique, "7", horizon);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);

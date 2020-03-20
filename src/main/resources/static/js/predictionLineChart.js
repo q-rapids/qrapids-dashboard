@@ -2,7 +2,7 @@ var timeFormat = 'YYYY-MM-DD';
 var config = [];
 var charts = [];
 
-var colors = ['rgb(1, 119, 166)', 'rgb( 254, 126, 0)', 'rgb( 254, 126, 0)', 'rgb( 255, 177, 101)', 'rgb( 255, 177, 101)'];
+var colors = ['rgb(75, 149, 179)', 'rgb(1, 119, 166)', 'rgb( 254, 126, 0)', 'rgb( 254, 126, 0)', 'rgb( 255, 177, 101)', 'rgb( 255, 177, 101)'];
 
 Chart.plugins.register({
     afterDraw: function(chart) {
@@ -29,6 +29,10 @@ Chart.plugins.register({
 
 function drawChart() {
     config = [];
+    console.log("dins del drawChart");
+    console.log(value);
+    console.log(texts);
+    console.log(labels);
     for (var i = 0; i < texts.length; ++i) {    //create config for each chart
         var c = {
             type: 'line',
@@ -199,7 +203,7 @@ function drawChart() {
                     pointHoverRadius: 1.5,
                     pointRadius: 1.5,
                     pointBorderWidth: 1.5,
-                    fill: 0,
+                    fill: 1,
                     data: value[i][j],
                     showLine: showLine,
                     pointStyle: pointStyle,
