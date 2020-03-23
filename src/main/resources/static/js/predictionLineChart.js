@@ -2,7 +2,10 @@ var timeFormat = 'YYYY-MM-DD';
 var config = [];
 var charts = [];
 
-var colors = ['rgb(75, 149, 179)', 'rgb(1, 119, 166)', 'rgb( 254, 126, 0)', 'rgb( 254, 126, 0)', 'rgb( 255, 177, 101)', 'rgb( 255, 177, 101)'];
+if (isqf || isdsi) // qf and dsi -> no intervals of confidence
+    var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)', 'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
+else // metrics and si -> intervals of confidence
+    var colors = ['rgb(75, 149, 179)', 'rgb(1, 119, 166)', 'rgb( 254, 126, 0)', 'rgb( 254, 126, 0)', 'rgb( 255, 177, 101)', 'rgb( 255, 177, 101)'];
 
 Chart.plugins.register({
     afterDraw: function(chart) {

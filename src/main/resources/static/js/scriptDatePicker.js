@@ -59,20 +59,30 @@ function configureHistoric () {
     $('#datepickerTo').datepicker().value(historicTo);
 
     $('#techniqueDropdownDiv').hide();
+    $('#current_dateDiv').hide();
 }
 
 function configurePrediction () {
-    config.minDate = today;
+    config.maxDate = today;
     $('#datepickerFrom').datepicker(config);
+    config.maxDate = null; // necessary to config min date correctly
+    config.minDate = today;
+    $('#datepickerCurrentDate').datepicker(config);
     $('#datepickerTo').datepicker(config);
 
     $('#intervalsDropdown').append('<li><a onclick="next7Days();$(\'#chartContainer\').empty();getData()" href="#">Next 7 days</a></li>');
     $('#intervalsDropdown').append('<li><a onclick="next14Days();$(\'#chartContainer\').empty();getData()" href="#">Next 14 days</a></li>');
 
-    var predictionFrom = parseDate(today);
-    $('#datepickerFrom').datepicker().value(predictionFrom);
-    $('#datepickerFrom').prop("disabled",true);
-    $('#fromDiv').find("span").css("pointer-events", "none");
+    var predictionFrom = sessionStorage.getItem("predictionFromDate");
+    if (!predictionFrom)
+        back14Days();
+    else $('#datepickerFrom').datepicker().value(predictionFrom);
+
+    var predictionCurrent = parseDate(today);
+    $('#datepickerCurrentDate').datepicker().value(predictionCurrent);
+    $('#current_dateDiv').show();
+    $('#datepickerCurrentDate').prop("disabled",true);
+    $('#current_dateDiv').find("span").css("pointer-events", "none");
 
     var predictionTo = sessionStorage.getItem("predictionToDate");
     if (!predictionTo)
@@ -201,6 +211,14 @@ function next7Days () {
     var textDate = parseDate(date);
     $('#datepickerTo').datepicker().value(textDate);
     sessionStorage.setItem("predictionToDate", textDate);
+    back14Days ();
+}
+
+function back14Days () {
+    var date = new Date().setDate(today.getDate() - 14);
+    var textDate = parseDate(date);
+    $('#datepickerFrom').datepicker().value(textDate);
+    sessionStorage.setItem("predictionFromDate", textDate);
 }
 
 function next14Days () {
@@ -208,6 +226,14 @@ function next14Days () {
     var textDate = parseDate(date);
     $('#datepickerTo').datepicker().value(textDate);
     sessionStorage.setItem("predictionToDate", textDate);
+    back28Days ();
+}
+
+function back28Days () {
+    var date = new Date().setDate(today.getDate() - 28);
+    var textDate = parseDate(date);
+    $('#datepickerFrom').datepicker().value(textDate);
+    sessionStorage.setItem("predictionFromDate", textDate);
 }
 
 function parseDate(date) {
