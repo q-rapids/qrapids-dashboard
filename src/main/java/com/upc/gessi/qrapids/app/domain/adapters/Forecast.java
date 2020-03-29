@@ -304,6 +304,8 @@ public class Forecast {
             metricsMatrix.add(new ArrayList<>());
         }
 
+        LocalDate current = factor.get(0).getMetrics().get(0).getDate();
+
         JsonParser parser = new JsonParser();
         JsonArray data = parser.parse(content.toString()).getAsJsonArray();
         for (int i = 0; i < data.size(); ++i) {
@@ -314,7 +316,7 @@ public class Forecast {
                 getMetricForFactorWithError(metrics, metricsNames, metricsMatrix, object);
             }
             else {
-                getMetricsForFactors(metrics, metricsNames, metricsMatrix, object);
+                getMetricsForFactors(current, metrics, metricsNames, metricsMatrix, object);
             }
         }
 
@@ -324,7 +326,7 @@ public class Forecast {
         return factor;
     }
 
-    private void getMetricsForFactors(Map<String, ArrayList<Integer>> metrics, Map<String, String> metricsNames, List<List<DTOMetric>> metricsMatrix, JsonObject object) {
+    private void getMetricsForFactors(LocalDate current, Map<String, ArrayList<Integer>> metrics, Map<String, String> metricsNames, List<List<DTOMetric>> metricsMatrix, JsonObject object) {
         //check if json values are null
         JsonArray lower80;
         if (!object.get(LOWER_80).isJsonNull()) lower80 = object.getAsJsonArray(LOWER_80);
@@ -349,11 +351,11 @@ public class Forecast {
         String id = object.get(ID).getAsString();
 
         for (Map.Entry<String, ArrayList<Integer>> m : metrics.entrySet()) {
-            buildMetricForFactor(metricsNames, metricsMatrix, lower80, upper80, lower95, upper95, mean, id, m);
+            buildMetricForFactor(metricsNames, metricsMatrix, lower80, upper80, lower95, upper95, mean, id, m, current);
         }
     }
 
-    private void buildMetricForFactor(Map<String, String> metricsNames, List<List<DTOMetric>> metricsMatrix, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, Map.Entry<String, ArrayList<Integer>> m) {
+    private void buildMetricForFactor(Map<String, String> metricsNames, List<List<DTOMetric>> metricsMatrix, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, Map.Entry<String, ArrayList<Integer>> m, LocalDate current) {
         if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
@@ -364,7 +366,7 @@ public class Forecast {
                                 "",
                                 FORECAST_SOURCE,
                                 FORECAST_SOURCE,
-                                LocalDate.now().plusDays((long) j), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                                current.plusDays((long) j + 1), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
                 for (Integer index : m.getValue())
@@ -373,7 +375,7 @@ public class Forecast {
                             "",
                             FORECAST_SOURCE,
                             FORECAST_SOURCE,
-                            LocalDate.now(), null, null, null));
+                            current.plusDays((long) 1), null, null, null));
             }
         }
     }
@@ -452,6 +454,9 @@ public class Forecast {
             factorsMatrix.add(new ArrayList<>());
         }
 
+        // get current date
+        LocalDate current = dsi.get(0).getDate();
+
         JsonParser parser = new JsonParser();
         JsonArray data = parser.parse(content.toString()).getAsJsonArray();
         for (int i = 0; i < data.size(); ++i) {
@@ -461,7 +466,7 @@ public class Forecast {
                 getFactorWithError(factors, factorsNames, factorsMatrix, object);
             }
             else {
-                getFactors(factors, factorsNames, factorsMatrix, object);
+                getFactors(current, factors, factorsNames, factorsMatrix, object);
             }
         }
 
@@ -471,7 +476,7 @@ public class Forecast {
         return dsi;
     }
 
-    private void getFactors(Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, List<List<DTOFactor>> factorsMatrix, JsonObject object) {
+    private void getFactors(LocalDate current, Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, List<List<DTOFactor>> factorsMatrix, JsonObject object) {
         //check if json values are null
         JsonArray lower80;
         if (!object.get(LOWER_80).isJsonNull()) lower80 = object.getAsJsonArray(LOWER_80);
@@ -496,23 +501,23 @@ public class Forecast {
         String id = object.get(ID).getAsString();
 
         for (Map.Entry<String, ArrayList<Integer>> m : factors.entrySet()) {
-            buildFactor(factorsNames, factorsMatrix, lower80, upper80, lower95, upper95, mean, id, m);
+            buildFactor(factorsNames, factorsMatrix, lower80, upper80, lower95, upper95, mean, id, m, current);
         }
     }
 
-    private void buildFactor(Map<String, String> factorsNames, List<List<DTOFactor>> factorsMatrix, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, Map.Entry<String, ArrayList<Integer>> m) {
+    private void buildFactor(Map<String, String> factorsNames, List<List<DTOFactor>> factorsMatrix, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, Map.Entry<String, ArrayList<Integer>> m, LocalDate current) {
         if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
                     float aux = mean.get(j).getAsFloat();
                     for (Integer index : m.getValue())
                         factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
-                                aux, LocalDate.now().plusDays((long) j), FORECAST_SOURCE, FORECAST_SOURCE, null));
+                                aux, current.plusDays((long) j + 1), FORECAST_SOURCE, FORECAST_SOURCE, null));
                 }
             } else {
                 for (Integer index : m.getValue())
                     factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
-                            null, LocalDate.now(), FORECAST_SOURCE, FORECAST_SOURCE, null));
+                            null, current.plusDays((long) 1), FORECAST_SOURCE, FORECAST_SOURCE, null));
             }
         }
     }

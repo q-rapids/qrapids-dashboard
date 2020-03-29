@@ -392,7 +392,8 @@ public class StrategicIndicators {
     private enum TrainType {
         NONE, ONE, ALL
     }
-//TODO: assessSI
+
+    //TODO: assessSI
     @RequestMapping("/api/assessStrategicIndicators")
     @ResponseStatus(HttpStatus.OK)
     public void assesStrategicIndicatorsLegacy(@RequestParam(value = "prj", required=false) String prj,
@@ -491,5 +492,20 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<String> getForecastTechniques() {
         return strategicIndicatorsController.getForecastTechniques();
+    }
+
+    @GetMapping("/api/strategicIndicators/currentDate")
+    @ResponseStatus(HttpStatus.OK)
+    public LocalDate getcurrentDate(@RequestParam(value = "prj") String prj) {
+        try {
+            List<DTOStrategicIndicatorEvaluation> SIs = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
+            return SIs.get(0).getDate();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CategoriesException e) {
+            e.printStackTrace();
+        }
+        // if the response is null
+        return null;
     }
 }

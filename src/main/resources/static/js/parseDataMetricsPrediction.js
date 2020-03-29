@@ -19,27 +19,6 @@ var value = [];
 var errors = [];
 var categories = [];
 
-function getCurrentDate() {
-    // get current data and prepare datapickers
-    jQuery.ajax({
-        dataType: "json",
-        url: url,
-        cache: false,
-        type: "GET",
-        async: true,
-        success: function (metrics) {
-            sessionStorage.setItem("currentDate", metrics[0].date);
-            getData();
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status == 409)
-                alert("Your datasource and DB categories IDs do not match.");
-            else if (jqXHR.status == 400)
-                alert("Datasource connection failed.");
-        }
-    });
-}
-
 function getData() {
     document.getElementById("loader").style.display = "block";
     document.getElementById("chartContainer").style.display = "none";
@@ -49,14 +28,18 @@ function getData() {
     errors = [];
     // use configured datapickers for forecast
     var technique = $("#selectedTechnique").text();
-    var date1 = new Date($('#datepickerFrom').val());
-    var date2 = new Date($('#datepickerTo').val());
-    var timeDiff = date2.getTime() - date1.getTime();
+    var dateFrom = new Date($('#datepickerFrom').val());
+    var dateC = new Date($('#datepickerCurrentDate').val());
+    var dateTo = new Date($('#datepickerTo').val());
+    var timeDiff = dateTo.getTime() - dateC.getTime();
     var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
     if (diffDays < 1) {
         alert('To date has to be bigger than from date');
     } else {
         //get predicted data from API
+
+        // start time of request
+        var t0 = performance.now();
         jQuery.ajax({
             dataType: "json",
             url: urlpred,
@@ -68,18 +51,21 @@ function getData() {
             type: "GET",
             async: true,
             success: function (data) {
+                // stop time of request
+                var t1 = performance.now();
+                console.log("Call to forecast " + technique + " with horizon " + diffDays + " took " + (t1 - t0) + " milliseconds.");
+
                 console.log("Data Prediction M");
                 console.log(data);
-                var d = new Date (data[0].date); // prediction start date
                 //get historical data from API
-                console.log("from: " + parseDate(new Date(data[0].date).setDate(d.getDate()-1-14)));
-                console.log("to: " + parseDate(new Date(data[0].date).setDate(d.getDate()-1)));
+                console.log("from: " + parseDate(dateFrom));
+                console.log("to: " + parseDate(dateC));
                 jQuery.ajax({
                     dataType: "json",
                     url: urlhist,
                     data: {
-                        "from": parseDate(new Date(data[0].date).setDate(d.getDate() - 1 - 14)),
-                        "to": parseDate(new Date(data[0].date).setDate(d.getDate() - 1)),
+                        "from": parseDate(dateFrom),
+                        "to": parseDate(dateC)
                     },
                     cache: false,
                     type: "GET",
@@ -133,7 +119,6 @@ function getData() {
                         if (data[j]) {
                             last = data[j].id;
                             labels[x].push("Predicted data", "80", "80", "95", "95");
-
                             errors.push([data[j].forecastingError]);
                         }
                         while (data[j]) {

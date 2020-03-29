@@ -2,9 +2,12 @@ var timeFormat = 'YYYY-MM-DD';
 var config = [];
 var charts = [];
 
-if (isqf || isdsi) // qf and dsi -> no intervals of confidence
-    var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)', 'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
-else // metrics and si -> intervals of confidence
+if (isqf || isdsi) {// qf and dsi -> no intervals of confidence
+    var colors_hist = ['rgb(75, 149, 179)', 'rgb(242, 177, 111)', 'rgb(110, 212, 110)', 'rgb(255, 135, 135)',
+        'rgb(232, 230, 139)', 'rgb(222, 147, 230)' ];
+    var colors_pred = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)',
+        'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
+} else // metrics and si -> intervals of confidence
     var colors = ['rgb(75, 149, 179)', 'rgb(1, 119, 166)', 'rgb( 254, 126, 0)', 'rgb( 254, 126, 0)', 'rgb( 255, 177, 101)', 'rgb( 255, 177, 101)'];
 
 Chart.plugins.register({
@@ -194,7 +197,15 @@ function drawChart() {
             var pointStyle = 'circle';
             var pointRadius = 3;
             var borderWidth = 1;
-            var color = colors[j % colors.length];
+            var color = [];
+            if (isqf || isdsi) {
+                var num = value[i].length/2;
+                if (j < num) { // if we work with historical data
+                    color = colors_hist[j % colors_hist.length];
+                } else { // if we work with predicted data
+                    color = colors_pred[(j-num) % colors_pred.length];
+                }
+            } else color = colors[j % colors.length];
             // to paint areas for confidence interval series
             if ((labels[i][j] == "80" || labels[i][j] == "95") && prediction) {
                 c.data.datasets.push({
