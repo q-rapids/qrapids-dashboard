@@ -29,6 +29,9 @@ function getData() {
         alert('To date has to be bigger than from date');
     } else {
         //get data from API
+
+        // start time of request
+        var t0 = performance.now();
         jQuery.ajax({
             dataType: "json",
             url: "../api/strategicIndicators/prediction",
@@ -40,6 +43,10 @@ function getData() {
             type: "GET",
             async: true,
             success: function (data) {
+                // stop time of request
+                var t1 = performance.now();
+                alert("Call to forecast " + technique + " with horizon " + diffDays + " took " + (t1 - t0) + " milliseconds.");
+
                 console.log("Data Prediction SI");
                 console.log(data);
                 //get historical data from API

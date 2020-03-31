@@ -53,7 +53,7 @@ function getData() {
             success: function (data) {
                 // stop time of request
                 var t1 = performance.now();
-                console.log("Call to forecast " + technique + " with horizon " + diffDays + " took " + (t1 - t0) + " milliseconds.");
+                alert("Call to forecast " + technique + " with horizon " + diffDays + " took " + (t1 - t0) + " milliseconds.");
 
                 console.log("Data Prediction M");
                 console.log(data);
