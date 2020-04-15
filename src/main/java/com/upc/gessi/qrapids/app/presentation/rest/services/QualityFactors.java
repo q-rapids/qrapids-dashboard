@@ -191,10 +191,10 @@ public class QualityFactors {
     @ResponseStatus(HttpStatus.OK)
     public LocalDate getcurrentDate(@RequestParam(value = "prj") String prj) {
         try {
-            List<DTOFactor> QFs = qualityFactorsController.getAllFactorsEvaluation(prj);
-            return QFs.get(0).getDate();
+            List<DTOFactor> qfs = qualityFactorsController.getAllFactorsEvaluation(prj);
+            return qfs.get(0).getDate();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         // if the response is null
         return null;

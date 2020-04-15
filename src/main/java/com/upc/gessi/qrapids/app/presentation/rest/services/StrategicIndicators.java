@@ -498,12 +498,10 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public LocalDate getcurrentDate(@RequestParam(value = "prj") String prj) {
         try {
-            List<DTOStrategicIndicatorEvaluation> SIs = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
-            return SIs.get(0).getDate();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (CategoriesException e) {
-            e.printStackTrace();
+            List<DTOStrategicIndicatorEvaluation> si = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
+            return si.get(0).getDate();
+        } catch (IOException | CategoriesException e) {
+            logger.error(e.getMessage(), e);
         }
         // if the response is null
         return null;

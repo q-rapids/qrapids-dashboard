@@ -4,7 +4,6 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOCategoryThreshold;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
@@ -127,10 +126,10 @@ public class Metrics {
     @ResponseStatus(HttpStatus.OK)
     public LocalDate getcurrentDate(@RequestParam(value = "prj") String prj) {
         try {
-            List<DTOMetric> Metrics = metricsController.getAllMetricsCurrentEvaluation(prj);
-            return Metrics.get(0).getDate();
+            List<DTOMetric> metrics = metricsController.getAllMetricsCurrentEvaluation(prj);
+            return metrics.get(0).getDate();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         // if the response is null
         return null;
