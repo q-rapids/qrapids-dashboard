@@ -38,9 +38,6 @@ function getData() {
         alert('To date has to be bigger than from date');
     } else {
         //get predicted data from API
-
-        // start time of request
-        var t0 = performance.now();
         jQuery.ajax({
             dataType: "json",
             url: urlpred,
@@ -52,12 +49,6 @@ function getData() {
             type: "GET",
             async: true,
             success: function (data) {
-                // stop time of request
-                var t1 = performance.now();
-                alert("Call to forecast " + technique + " with horizon " + diffDays + " took " + (t1 - t0) + " milliseconds.");
-
-                console.log("Data Prediction QF");
-                console.log(data);
                 //get historical data from API
                 jQuery.ajax({
                     dataType: "json",
@@ -70,8 +61,6 @@ function getData() {
                     type: "GET",
                     async: true,
                     success: function (data_hist) {
-                        console.log("Historical Data QF");
-                        console.log(data_hist);
                         // generate historical serie of values
                         for (i = 0; i < data_hist.length; ++i) {
                             // order data
@@ -157,9 +146,6 @@ function getData() {
             }
         });
     }
-    console.log(texts);
-    console.log(labels);
-    console.log(value);
 }
 
 function getMetricsCategories () {

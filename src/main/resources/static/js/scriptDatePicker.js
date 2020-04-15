@@ -58,8 +58,10 @@ function configureHistoric () {
     $('#datepickerFrom').datepicker().value(historicFrom);
     $('#datepickerTo').datepicker().value(historicTo);
 
+    // hide prediction related parts
     $('#techniqueDropdownDiv').hide();
     $('#current_dateDiv').hide();
+    $('#showConfidenceDiv').hide();
 }
 
 async function configurePrediction () {
@@ -96,6 +98,8 @@ async function configurePrediction () {
 
     $('#techniqueDropdownDiv').show();
     loadTechniques();
+
+    $('#showConfidenceDiv').show();
 }
 
 function thisWeek() {

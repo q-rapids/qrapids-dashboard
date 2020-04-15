@@ -10,6 +10,9 @@ if (isqf || isdsi) {// qf and dsi -> no intervals of confidence
 } else // metrics and si -> intervals of confidence
     var colors = ['rgb(75, 149, 179)', 'rgb(1, 119, 166)', 'rgb( 254, 126, 0)', 'rgb( 254, 126, 0)', 'rgb( 255, 177, 101)', 'rgb( 255, 177, 101)'];
 
+if (isqf || isdsi) { // qf and dsi -> no intervals of confidence
+    $('#showConfidence').prop("disabled",true);
+}
 Chart.plugins.register({
     afterDraw: function(chart) {
         var allEmpty = true;
@@ -35,10 +38,6 @@ Chart.plugins.register({
 
 function drawChart() {
     config = [];
-    console.log("dins del drawChart");
-    console.log(value);
-    console.log(texts);
-    console.log(labels);
     for (var i = 0; i < texts.length; ++i) {    //create config for each chart
         var c = {
             type: 'line',
@@ -66,7 +65,6 @@ function drawChart() {
                                 if (label.length > maxLength + 3) {
                                     label = label.substring(0, maxLength) + "...";
                                 }
-
                                 return {
                                     text: label,
                                     fillStyle: dataset.backgroundColor,
@@ -79,11 +77,13 @@ function drawChart() {
                         }
                     },
                     onClick: function(e, legendItem) {
+                        // default function
                         var index = legendItem.index;
                         var chart = this.chart;
                         chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
                         chart.update();
-                    }
+                    },
+                    filter: null,
                 },
                 scales: {
                     xAxes: [{
@@ -296,6 +296,27 @@ function drawChart() {
             c.options.annotation.annotations = annotations;
         }
 
+        // filter legend in case of SIs i Metrics
+        if (!isqf && !isdsi) {
+            var filter = function(legendItem) {
+                // hide duplicated 80 and 95 from legend and Predicted data too
+                if (legendItem.index === 3 || legendItem.index === 5 || legendItem.index === 1) {
+                    return false;
+                }
+                return true;
+            };
+            c.options.legend.labels.filter = filter;
+        } else  { // filter legend in case of DSIs and Factors
+            var filter = function(legendItem) {
+                // hide Predicted data from legend
+                if (legendItem.text.includes('Predicted') || legendItem.text.includes('Predic...')) {
+                    return false;
+                }
+                return true;
+            };
+            c.options.legend.labels.filter = filter;
+        }
+
         config.push(c);
     }
 
@@ -347,6 +368,17 @@ function drawChart() {
         $("#fitToContent").prop("checked", false);
         normalRange();
     }
+
+    var show = sessionStorage.getItem("showConfidence");
+    if (show === "true") {
+        $("#showConfidence").prop("checked", true);
+        // show confidence intervals ticked
+        showConfidence();
+    } else {
+        // show confidence intervals not ticked
+        $("#showConfidence").prop("checked", false);
+        notShowConfidence();
+    }
 }
 
 function getMax (datasets) {
@@ -391,11 +423,43 @@ $("#fitToContent").change(function () {
     }
 });
 
+$("#showConfidence").change(function () {
+    if ($(this).is(":checked")) {
+        // show confidence intervals ticked
+        sessionStorage.setItem("showConfidence", "true");
+        showConfidence();
+    } else {
+        // show confidence intervals not ticked
+        sessionStorage.setItem("showConfidence", "false");
+        notShowConfidence();
+    }
+});
+
+function showConfidence() {
+    charts.forEach(function (chart) {
+        for (var i = 1; i < chart.config.data.datasets.length; i++) {
+            if(chart.config.data.datasets[i].label === "80" || chart.config.data.datasets[i].label === "95") {
+                chart.config.data.datasets[i].hidden = false;
+            }
+        }
+        chart.update();
+    });
+}
+
+function notShowConfidence() {
+    charts.forEach(function (chart) {
+        for (var i = 1; i < chart.config.data.datasets.length; i++) {
+            if(chart.config.data.datasets[i].label === "80" || chart.config.data.datasets[i].label === "95") {
+                chart.config.data.datasets[i].hidden = true;
+            }
+        }
+        chart.update();
+    });
+}
 
 
 function fitToContent() {
     charts.forEach(function (chart) {
-        console.log(chart);
         var max = getMax(chart.config.data.datasets);
         var min = getMin(chart.config.data.datasets);
         if (max === min) {
@@ -407,17 +471,55 @@ function fitToContent() {
 
         chart.config.options.legend.onClick = function (e, legendItem) {
             var index = legendItem.index;
-            var c = this.chart;
-            c.data.datasets[index].hidden = !c.data.datasets[index].hidden;
-            var max = getMax(c.data.datasets);
-            var min = getMin(c.data.datasets);
+            var chart = this.chart;
+            if (legendItem.text === "80" || legendItem.text === "95") {
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                chart.data.datasets[index + 1].hidden = !chart.data.datasets[index + 1].hidden;
+            } else if (!isqf && !isdsi) { // hide & show logic for SIs and Metrics
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                if(chart.data.datasets[index].hidden == true) { // if hide hist. data
+                    // for predicted data
+                    chart.data.datasets[index + 1].hidden = true;
+                    // for 80
+                    chart.data.datasets[index + 2].hidden = true;
+                    chart.data.datasets[index + 3].hidden = true;
+                    //for 95
+                    chart.data.datasets[index + 4].hidden = true;
+                    chart.data.datasets[index + 5].hidden = true;
+                } else { // if show hist. data
+                    // for predicted data
+                    chart.data.datasets[index + 1].hidden = false;
+                    var show = sessionStorage.getItem("showConfidence");
+                    if (show == "true") {
+                        // for 80
+                        chart.data.datasets[index + 2].hidden = false;
+                        chart.data.datasets[index + 3].hidden = false;
+                        //for 95
+                        chart.data.datasets[index + 4].hidden = false;
+                        chart.data.datasets[index + 5].hidden = false;
+                    } else if (show == "false") {
+                        // for 80
+                        chart.data.datasets[index + 2].hidden = true;
+                        chart.data.datasets[index + 3].hidden = true;
+                        //for 95
+                        chart.data.datasets[index + 4].hidden = true;
+                        chart.data.datasets[index + 5].hidden = true;
+                    }
+                }
+            } else { // hide & show logic for DSIs and Factors
+                var num = chart.data.datasets.length/2;
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                chart.data.datasets[index + num].hidden = !chart.data.datasets[index + num].hidden;
+            }
+            var max = getMax(chart.data.datasets);
+            var min = getMin(chart.data.datasets);
             if (max === min) {
                 max += 0.001;
                 min -= 0.001;
             }
-            c.options.scales.yAxes[0].ticks.max = max;
-            c.options.scales.yAxes[0].ticks.min = min;
-            c.update();
+            chart.options.scales.yAxes[0].ticks.max = max;
+            chart.options.scales.yAxes[0].ticks.min = min;
+            chart.update();
         };
 
         chart.update();
@@ -432,7 +534,45 @@ function normalRange() {
         chart.config.options.legend.onClick = function(e, legendItem) {
             var index = legendItem.index;
             var chart = this.chart;
-            chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+            if (legendItem.text === "80" || legendItem.text === "95") {
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                chart.data.datasets[index + 1].hidden = !chart.data.datasets[index + 1].hidden;
+            } else if (!isqf && !isdsi) { // hide & show logic for SIs and Metrics
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                if(chart.data.datasets[index].hidden == true) { // if hide hist. data
+                    // for predicted data
+                    chart.data.datasets[index + 1].hidden = true;
+                    // for 80
+                    chart.data.datasets[index + 2].hidden = true;
+                    chart.data.datasets[index + 3].hidden = true;
+                    //for 95
+                    chart.data.datasets[index + 4].hidden = true;
+                    chart.data.datasets[index + 5].hidden = true;
+                } else { // if show hist. data
+                    // for predicted data
+                    chart.data.datasets[index + 1].hidden = false;
+                    var show = sessionStorage.getItem("showConfidence");
+                    if (show == "true") {
+                        // for 80
+                        chart.data.datasets[index + 2].hidden = false;
+                        chart.data.datasets[index + 3].hidden = false;
+                        //for 95
+                        chart.data.datasets[index + 4].hidden = false;
+                        chart.data.datasets[index + 5].hidden = false;
+                    } else if (show == "false") {
+                        // for 80
+                        chart.data.datasets[index + 2].hidden = true;
+                        chart.data.datasets[index + 3].hidden = true;
+                        //for 95
+                        chart.data.datasets[index + 4].hidden = true;
+                        chart.data.datasets[index + 5].hidden = true;
+                    }
+                }
+            } else { // hide & show logic for DSIs and Factors
+                var num = chart.data.datasets.length/2;
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                chart.data.datasets[index + num].hidden = !chart.data.datasets[index + num].hidden;
+            }
             chart.update();
         };
 

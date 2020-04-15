@@ -29,9 +29,6 @@ function getData() {
         alert('To date has to be bigger than from date');
     } else {
         //get data from API
-
-        // start time of request
-        var t0 = performance.now();
         jQuery.ajax({
             dataType: "json",
             url: "../api/strategicIndicators/prediction",
@@ -43,12 +40,6 @@ function getData() {
             type: "GET",
             async: true,
             success: function (data) {
-                // stop time of request
-                var t1 = performance.now();
-                alert("Call to forecast " + technique + " with horizon " + diffDays + " took " + (t1 - t0) + " milliseconds.");
-
-                console.log("Data Prediction SI");
-                console.log(data);
                 //get historical data from API
                 jQuery.ajax({
                     dataType: "json",
@@ -61,9 +52,6 @@ function getData() {
                     type: "GET",
                     async: true,
                     success: function (data_hist) {
-                        console.log("Historical Data SI");
-                        console.log(data_hist);
-
                         j = 0;
                         var line_hist = [];
                         if (data_hist[j]) {
@@ -153,12 +141,10 @@ function getData() {
                     alert("Datasource connection failed.");
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("chartContainer").style.display = "block";
-                document.getElementById("chartContainer").innerHTML = "Error " + xhr.status;
+                document.getElementById("chartContainer").innerHTML = "Error " + jqXHR.status;
             }
         });
     }
-    console.log(value);
-    console.log(texts);
 }
 
 window.onload = function() {

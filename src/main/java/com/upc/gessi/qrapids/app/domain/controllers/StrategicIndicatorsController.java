@@ -243,6 +243,7 @@ public class StrategicIndicatorsController {
     }
 
     public void trainForecastModelsSingleProject(String project, String technique) throws IOException {
+        // TODO train SIs
         List<DTOMetric> metrics = metricsController.getAllMetricsCurrentEvaluation(project);
         qmaForecast.trainMetricForecast(metrics, "7", project, technique);
 
