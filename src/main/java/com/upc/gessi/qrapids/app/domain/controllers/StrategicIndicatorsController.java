@@ -227,8 +227,8 @@ public class StrategicIndicatorsController {
         return qmaDetailedStrategicIndicators.HistoricalData(strategicIndicatorId, from, to, projectExternalId);
     }
 
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction (String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException {
-        return qmaForecast.ForecastSI(technique, freq, horizon, projectExternalId);
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction (List<DTOStrategicIndicatorEvaluation> si, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException {
+        return qmaForecast.ForecastSI(si,technique, freq, horizon, projectExternalId);
     }
 
     public List<DTODetailedStrategicIndicator> getDetailedStrategicIndicatorsPrediction (List<DTODetailedStrategicIndicator> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException {
@@ -242,13 +242,15 @@ public class StrategicIndicatorsController {
         }
     }
 
-    public void trainForecastModelsSingleProject(String project, String technique) throws IOException {
-        // TODO train SIs
+    public void trainForecastModelsSingleProject(String project, String technique) throws IOException, CategoriesException {
         List<DTOMetric> metrics = metricsController.getAllMetricsCurrentEvaluation(project);
         qmaForecast.trainMetricForecast(metrics, "7", project, technique);
 
         List<DTOQualityFactor> factors = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(project);
         qmaForecast.trainFactorForecast(factors, "7", project, technique);
+
+        List<DTOStrategicIndicatorEvaluation> strategicIndicators = getAllStrategicIndicatorsCurrentEvaluation(project);
+        qmaForecast.trainStrategicIndicatorForecast(strategicIndicators, "7", project, technique);
     }
 
     public boolean assessStrategicIndicators(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {

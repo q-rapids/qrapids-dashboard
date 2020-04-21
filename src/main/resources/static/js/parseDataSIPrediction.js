@@ -99,19 +99,27 @@ function getData() {
                         j = 0;
                         x = 0;
                         var line = [];
+                        var line80l = [];
+                        var line80u = [];
+                        var line95l = [];
+                        var line95u = [];
                         if (data[j]) {
                             last = data[j].id;
-                            labels[x].push("Predicted data");
+                            labels[x].push("Predicted data", "80", "80", "95", "95");
                             errors.push([data[j].forecastingError]);
                         }
                         while (data[j]) {
                             //check if we are still on the same Strategic Indicator
                             if (data[j].id !== last) {
-                                value[x].push(line);
+                                value[x].push(line, line80l, line80u, line95l, line95u);
                                 line = [];
+                                line80l = [];
+                                line80u = [];
+                                line95l = [];
+                                line95u = [];
                                 last = data[j].id;
                                 x++;
-                                labels[x].push("Predicted data");
+                                labels[x].push("Predicted data", "80", "80", "95", "95");
                                 errors.push([data[j].forecastingError]);
                             }
                             //push date and value to line vector
@@ -121,13 +129,29 @@ function getData() {
                                         x: data[j].date,
                                         y: data[j].value.first
                                     });
+                                    line80l.push({
+                                        x: data[j].date,
+                                        y: data[j].confidence80.second
+                                    });
+                                    line80u.push({
+                                        x: data[j].date,
+                                        y: data[j].confidence80.first
+                                    });
+                                    line95l.push({
+                                        x: data[j].date,
+                                        y: data[j].confidence95.second
+                                    });
+                                    line95u.push({
+                                        x: data[j].date,
+                                        y: data[j].confidence95.first
+                                    });
                                 }
                             }
                             ++j;
                         }
                         //push line vector to values vector for the last metric
                         if (data[j - 1])
-                            value[x].push(line);
+                            value[x].push(line, line80l, line80u, line95l, line95u);
                         document.getElementById("loader").style.display = "none";
                         document.getElementById("chartContainer").style.display = "block";
                         drawChart();

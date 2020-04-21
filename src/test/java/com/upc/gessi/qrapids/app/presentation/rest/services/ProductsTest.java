@@ -731,6 +731,8 @@ public class ProductsTest {
                 .andExpect(jsonPath("$[0].description", is(dtoStrategicIndicatorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].confidence80", is(nullValue())))
+                .andExpect(jsonPath("$[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
                 .andExpect(jsonPath("$[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
@@ -778,6 +780,10 @@ public class ProductsTest {
                                         .description("Strategic indicator numerical value"),
                                 fieldWithPath("[].value.second")
                                         .description("Strategic indicator category"),
+                                fieldWithPath("[].confidence80")
+                                        .description("Strategic indicator forecasting 80% confidence interval"),
+                                fieldWithPath("[].confidence95")
+                                        .description("Strategic indicator forecasting 95% confidence interval"),
                                 fieldWithPath("[].value_description")
                                         .description("Readable strategic indicator value and category"),
                                 fieldWithPath("[].rationale")
@@ -887,6 +893,8 @@ public class ProductsTest {
                 .andExpect(jsonPath("$[0].second[0].description", is(dtoStrategicIndicatorEvaluation.getDescription())))
                 .andExpect(jsonPath("$[0].second[0].value.first", is(getFloatAsDouble(dtoStrategicIndicatorEvaluation.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].second[0].value.second", is(dtoStrategicIndicatorEvaluation.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].second[0].confidence80", is(nullValue())))
+                .andExpect(jsonPath("$[0].second[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].second[0].value_description", is(dtoStrategicIndicatorEvaluation.getValue_description())))
                 .andExpect(jsonPath("$[0].second[0].rationale", is(dtoStrategicIndicatorEvaluation.getRationale())))
                 .andExpect(jsonPath("$[0].second[0].probabilities", hasSize(3)))
@@ -938,6 +946,10 @@ public class ProductsTest {
                                         .description("Strategic indicator numerical value"),
                                 fieldWithPath("[].second[].value.second")
                                         .description("Strategic indicator category"),
+                                fieldWithPath("[].second[].confidence80")
+                                        .description("Strategic indicator forecasting 80% confidence interval"),
+                                fieldWithPath("[].second[].confidence95")
+                                        .description("Strategic indicator forecasting 95% confidence interval"),
                                 fieldWithPath("[].second[].value_description")
                                         .description("Readable strategic indicator value and category"),
                                 fieldWithPath("[].second[].rationale")

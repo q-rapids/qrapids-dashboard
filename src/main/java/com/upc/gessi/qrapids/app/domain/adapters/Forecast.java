@@ -34,6 +34,7 @@ public class Forecast {
     private static final String HORIZON_QUERY = "&horizon=";
     private static final String TECHNIQUE_QUERY = "&technique=";
     private static final String METRIC_QUERY = "&metric=";
+    private static final String STRATEGIC_INDICATOR_QUERY = "&strategic_indicator=";
     private static final String HOST_QUERY = "&host=";
     private static final String PORT_QUERY = "&port=";
     private static final String PATH_QUERY = "&path=";
@@ -116,6 +117,14 @@ public class Forecast {
             elements.add(factor.getId());
         }
         trainForecastRequest(elements, Constants.INDEX_FACTORS, freq, prj, technique);
+    }
+
+    public void trainStrategicIndicatorForecast(List<DTOStrategicIndicatorEvaluation> strategicIndicators, String freq, String prj, String technique) {
+        List<String> elements = new ArrayList<>();
+        for (DTOStrategicIndicatorEvaluation si : strategicIndicators) {
+            elements.add(si.getId());
+        }
+        trainForecastRequest(elements, Constants.INDEX_STRATEGIC_INDICATORS, freq, prj, technique);
     }
 
     private void trainForecastRequest(List<String> elements, String index, String freq, String prj, String technique) {
@@ -548,7 +557,139 @@ public class Forecast {
         }
     }
 
-    public List<DTOStrategicIndicatorEvaluation> ForecastSI(String technique, String freq, String horizon, String prj) throws IOException {
+    public List<DTOStrategicIndicatorEvaluation> ForecastSI(List<DTOStrategicIndicatorEvaluation> si,String technique, String freq, String horizon, String prj) throws IOException {
+        StringBuffer urlString = new StringBuffer(url + "/api/StrategicIndicators/Forecast?index_strategic_indicators=");
+        if (prefix == null) prefix = "";
+        urlString.append(URLEncoder.encode(prefix + Constants.INDEX_STRATEGIC_INDICATORS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
+        urlString.append(HORIZON_QUERY).append(URLEncoder.encode(horizon, UTF_8));
+        urlString.append(TECHNIQUE_QUERY).append(URLEncoder.encode(technique, UTF_8));
+        for(DTOStrategicIndicatorEvaluation s : si) {
+            urlString.append(STRATEGIC_INDICATOR_QUERY).append(URLEncoder.encode(s.getId(), UTF_8));
+        }
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
+        urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
+        urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
+        urlString.append(PWD_QUERY).append(URLEncoder.encode(connection.getPassword(), UTF_8));
+        URL url = new URL(urlString.toString());
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod(GET);
+
+        con.setRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
+
+        int status = con.getResponseCode();
+        if (status == 200) {
+            return getStrategicIndicatorEvaluation(si, con);
+        }
+        return null;
+    }
+
+    private List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorEvaluation(List<DTOStrategicIndicatorEvaluation> si, HttpURLConnection con) throws IOException {
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer content = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        con.disconnect();
+
+        List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
+
+        JsonParser parser = new JsonParser();
+        JsonArray data = parser.parse(content.toString()).getAsJsonArray();
+        for (int i = 0; i < data.size(); ++i) {
+            JsonObject object = data.get(i).getAsJsonObject();
+
+            //check if error occurred
+            if (!object.get(ERROR).isJsonNull()) {
+                getStrategicIndicatorWithError(si, result, object);
+            }
+            else {
+                getStrategicIndicators(si, result, object);
+            }
+        }
+        return result;
+    }
+
+    private void getStrategicIndicators(List<DTOStrategicIndicatorEvaluation> si, List<DTOStrategicIndicatorEvaluation> result, JsonObject object) {
+        //check if json values are null
+        JsonArray lower80;
+        if (!object.get(LOWER_80).isJsonNull()) lower80 = object.getAsJsonArray(LOWER_80);
+        else lower80 = new JsonArray();
+
+        JsonArray upper80;
+        if (!object.get(UPPER_80).isJsonNull()) upper80 = object.getAsJsonArray(UPPER_80);
+        else upper80 = new JsonArray();
+
+        JsonArray lower95;
+        if (!object.get(LOWER_95).isJsonNull()) lower95 = object.getAsJsonArray(LOWER_95);
+        else lower95 = new JsonArray();
+
+        JsonArray upper95;
+        if (!object.get(UPPER_95).isJsonNull()) upper95 = object.getAsJsonArray(UPPER_95);
+        else upper95 = new JsonArray();
+
+        JsonArray mean;
+        if (!object.get(MEAN).isJsonNull()) mean = object.getAsJsonArray(MEAN);
+        else mean = new JsonArray();
+
+        String id = object.get(ID).getAsString();
+
+        for (DTOStrategicIndicatorEvaluation s : si) {
+            buildStrategicIndicator(result, lower80, upper80, lower95, upper95, mean, id, s);
+        }
+    }
+
+    private void buildStrategicIndicator(List<DTOStrategicIndicatorEvaluation> result, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, DTOStrategicIndicatorEvaluation s) {
+        if (s.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
+            if (lower80.size() > 0) {
+                for (int j = 0; j < lower80.size(); ++j) {
+                    float aux = mean.get(j).getAsFloat();
+                    result.add(new DTOStrategicIndicatorEvaluation(s.getId(),
+                            s.getName(),
+                            s.getDescription(),
+                            Pair.of(aux, strategicIndicatorsController.getLabel(aux)),
+                            Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()),
+                            Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat()),
+                            "Forecast",
+                            strategicIndicatorsController.getCategories(),
+                            s.getDate().plusDays((long) j + 1),
+                            s.getDatasource(),
+                            s.getDbId(),
+                            strategicIndicatorsController.getCategories().toString(),
+                            s.isHasBN()));
+                }
+            } else {
+                result.add (new DTOStrategicIndicatorEvaluation(s.getId(),
+                        s.getName(),
+                        s.getDescription(),
+                        null,
+                        null,
+                        null,
+                        "",
+                        strategicIndicatorsController.getCategories(),
+                        s.getDate().plusDays((long) 1),
+                        s.getDatasource(),
+                        s.getDbId(),
+                        strategicIndicatorsController.getCategories().toString(),
+                        s.isHasBN()));
+            }
+        }
+    }
+
+    private void getStrategicIndicatorWithError(List<DTOStrategicIndicatorEvaluation> si, List<DTOStrategicIndicatorEvaluation> result, JsonObject object) {
+        String error = object.get(ERROR).getAsString();
+        String id = object.get(ID).getAsString();
+        for (DTOStrategicIndicatorEvaluation s : si) {
+            if (s.getId().equals(id)) {
+                result.add(new DTOStrategicIndicatorEvaluation(id, s.getName(), error));
+            }
+        }
+    }
+
+    public List<DTOStrategicIndicatorEvaluation> ForecastSIDeprecated(String technique, String freq, String horizon, String prj) throws IOException {
         List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj, true), technique, freq, horizon, prj);
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
         String categoriesDescription = strategicIndicatorsController.getCategories().toString();

@@ -27,6 +27,8 @@ public class DTOStrategicIndicatorEvaluation {
     private String categories_description;
     private boolean hasBN;
     private boolean hasFeedback;
+    private Pair<Float, Float> confidence80;
+    private Pair<Float, Float> confidence95;
     private String forecastingError;
     private int mismatchDays;
     private List<String> missingFactors;
@@ -49,6 +51,22 @@ public class DTOStrategicIndicatorEvaluation {
         setName(name);
         setDescription(description);
         setValue(value);
+        setRationale(rationale);
+        setProbabilities(probabilities);
+        setDate(date);
+        setDbId(dbId);
+        setDatasource(datasource);
+        setCategories_description(categories);
+        setHasBN(hasBN);
+    }
+
+    public DTOStrategicIndicatorEvaluation(String id, String name, String description, Pair<Float, String> value, Pair<Float, Float> confidence80, Pair<Float, Float> confidence95, String rationale, List<DTOSIAssessment> probabilities, LocalDate date, String datasource, Long dbId, String categories, boolean hasBN) {
+        setId(id);
+        setName(name);
+        setDescription(description);
+        setValue(value);
+        setConfidence80(confidence80);
+        setConfidence95(confidence95);
         setRationale(rationale);
         setProbabilities(probabilities);
         setDate(date);
@@ -101,7 +119,6 @@ public class DTOStrategicIndicatorEvaluation {
         if (description != null)
             this.description = description;
     }
-
 
     public Pair<Float, String> getValue() {
         return value;
@@ -207,5 +224,21 @@ public class DTOStrategicIndicatorEvaluation {
 
     public void setMissingFactors(List<String> missingFactors) {
         this.missingFactors = missingFactors;
+    }
+
+    public void setConfidence80(Pair<Float, Float> confidence80) {
+        this.confidence80 = confidence80;
+    }
+
+    public Pair<Float, Float> getConfidence80() {
+        return confidence80;
+    }
+
+    public void setConfidence95(Pair<Float, Float> confidence95) {
+        this.confidence95 = confidence95;
+    }
+
+    public Pair<Float, Float> getConfidence95() {
+        return confidence95;
     }
 }
