@@ -653,7 +653,7 @@ public class Forecast {
                             Pair.of(aux, strategicIndicatorsController.getLabel(aux)),
                             Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()),
                             Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat()),
-                            "Forecast",
+                            FORECAST_SOURCE,
                             strategicIndicatorsController.getCategories(),
                             s.getDate().plusDays((long) j + 1),
                             s.getDatasource(),
