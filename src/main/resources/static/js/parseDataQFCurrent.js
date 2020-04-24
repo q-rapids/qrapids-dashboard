@@ -21,8 +21,6 @@ function getData() {
     values = [];
     categories = [];
 
-    getCategories();
-
     //get data from API
     jQuery.ajax({
         dataType: "json",
@@ -46,30 +44,24 @@ function getData() {
                     values[i].push(data[i].metrics[j].value);
                 }
             }
-            drawChart();
+            getMetricsCategories();
         }
     });
 
     console.log(titles);
+    console.log("labels");
     console.log(labels);
     console.log(values);
 }
 
-function getCategories() {
-    var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/qualityFactors/categories";
-    if (serverUrl) {
-        url = serverUrl + url;
-    }
-    $.getJSON(url).then (function(cat) {
-        for (var i = 0; i < cat.length; i++) {
-            //categories = cat;
-            categories.push({
-                name: cat[i].name,
-                color: cat[i].color,
-                upperThreshold: cat[i].upperThreshold,
-            });
+function getMetricsCategories() {
+    jQuery.ajax({
+        url: "../api/metrics/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
+            drawChart();
         }
-        console.log(categories);
     });
 }

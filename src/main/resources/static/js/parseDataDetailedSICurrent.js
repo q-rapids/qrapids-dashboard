@@ -19,8 +19,6 @@ function getData() {
     values = [];
     categories = [];
 
-    getCategories();
-
     //get data from API
     jQuery.ajax({
         dataType: "json",
@@ -83,30 +81,19 @@ function getData() {
                 warnings.push(messages);
             }
             $("#assessmentDate").text(assessmentDate.toLocaleDateString());
-            drawChart();
+            getFactorsCategories();
         }
     });
 }
 
-function getCategories() {
-    var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/strategicIndicators/categories";
-    if (serverUrl) {
-        url = serverUrl + url;
-    }
-    $.getJSON(url).then (function(cat) {
-        categories.push({
-            name: cat[0].name, // high category
-            color: cat[0].color,
-            upperThreshold: 1,
-        });
-        for (var i = 1; i < cat.length; i++) {
-            categories.push({
-                name: cat[i].name,
-                color: cat[i].color,
-                upperThreshold: categories[i-1].upperThreshold - 1/cat.length,
-            });
+function getFactorsCategories() {
+    jQuery.ajax({
+        url: "../api/qualityFactors/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
+            drawChart();
         }
-        console.log(categories);
     });
 }

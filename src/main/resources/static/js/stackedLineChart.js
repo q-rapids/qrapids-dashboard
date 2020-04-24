@@ -283,25 +283,21 @@ function drawChart() {
         var a = document.createElement('a');
         var currentURL = window.location.href;
         if (isdsi) {  //if it is a Stacked Line Chart for Detailed Strategic Indicators
-            if (currentURL.match("/PredictionChart")) urlLink = "../QualityFactors/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
-            else urlLink = "../QualityFactors/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
+            urlLink = "../QualityFactors/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             a.setAttribute("href", urlLink);
         } else if (isqf) { //if it is a Stacked Line Chart for Quality Factors
             var name = getParameterByName('name');
             var id = getParameterByName('id');
             if (name.length != 0) {//if we know from which Detailed Strategic Indicator we are coming
-                if (currentURL.match("/PredictionChart")) urlLink = "../Metrics/PredictionChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
-                else urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
+                urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
             }
             else {
-                if (currentURL.match("/PredictionChart")) urlLink = "../Metrics/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
-                else urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
+                urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             }
             a.setAttribute("href", urlLink);
         } else if (isSi) {
             //if its a SI chart make it a hyperlink
-            if (currentURL.match("/PredictionChart")) urlLink = "../DetailedStrategicIndicators/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
-            else urlLink = "../DetailedStrategicIndicators/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
+            urlLink = "../DetailedStrategicIndicators/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             a.setAttribute("href", urlLink);
         }
         a.innerHTML = texts[i];
