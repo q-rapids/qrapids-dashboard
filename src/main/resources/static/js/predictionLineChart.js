@@ -2,10 +2,17 @@ var timeFormat = 'YYYY-MM-DD';
 var config = [];
 var charts = [];
 
-var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)', 'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
-var decisionIgnoreColor = 'rgb(189,0,0)';
-var decisionAddColor = 'rgb(62,208,62)';
+if (isqf || isdsi) {// qf and dsi -> no intervals of confidence
+    var colors_hist = ['rgb(75, 149, 179)', 'rgb(242, 177, 111)', 'rgb(110, 212, 110)', 'rgb(255, 135, 135)',
+        'rgb(232, 230, 139)', 'rgb(222, 147, 230)' ];
+    var colors_pred = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)',
+        'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
+} else // metrics and si -> intervals of confidence
+    var colors = ['rgb(75, 149, 179)', 'rgb(1, 119, 166)', 'rgb( 254, 126, 0)', 'rgb( 254, 126, 0)', 'rgb( 255, 177, 101)', 'rgb( 255, 177, 101)'];
 
+if (isqf || isdsi) { // qf and dsi -> no intervals of confidence
+    $('#showConfidence').prop("disabled",true);
+}
 Chart.plugins.register({
     afterDraw: function(chart) {
         var allEmpty = true;
@@ -58,7 +65,6 @@ function drawChart() {
                                 if (label.length > maxLength + 3) {
                                     label = label.substring(0, maxLength) + "...";
                                 }
-
                                 return {
                                     text: label,
                                     fillStyle: dataset.backgroundColor,
@@ -71,11 +77,13 @@ function drawChart() {
                         }
                     },
                     onClick: function(e, legendItem) {
+                        // default function
                         var index = legendItem.index;
                         var chart = this.chart;
                         chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
                         chart.update();
-                    }
+                    },
+                    filter: null,
                 },
                 scales: {
                     xAxes: [{
@@ -147,7 +155,7 @@ function drawChart() {
 
                             bodyLines.forEach(function(body, i) {
                                 var colors = tooltipModel.labelColors[i];
-                                var style = 'background:' + colors.backgroundColor;
+                                var style = 'background:' + colors.backgroundColor.replace(', 0.3)', ')').replace('rgba', 'rgb');
                                 style += '; border-color:' + colors.borderColor;
                                 style += '; border-width: 2px';
                                 var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
@@ -189,35 +197,47 @@ function drawChart() {
             var pointStyle = 'circle';
             var pointRadius = 3;
             var borderWidth = 1;
-            var color = colors[j % colors.length];
-            // special logic to show decisions in historical views
-            if (value[i][j][0] && value[i][j][0].y >= 1.1) {
-                showLine = false;
-                pointRadius = 5;
-                borderWidth = 2;
-                // on axis y = 1.1 is shown added decisions
-                if (value[i][j][0].y === 1.1) {
-                    color = decisionAddColor;
-                    pointStyle = 'cross';
+            var color = [];
+            if (isqf || isdsi) {
+                var num = value[i].length/2;
+                if (j < num) { // if we work with historical data
+                    color = colors_hist[j % colors_hist.length];
+                } else { // if we work with predicted data
+                    color = colors_pred[(j-num) % colors_pred.length];
                 }
-                // on axis y = 1.2 is shown ignored decisions
-                if (value[i][j][0].y === 1.2) {
-                    color = decisionIgnoreColor;
-                    pointStyle = 'crossRot';
-                }
+            } else color = colors[j % colors.length];
+            // to paint areas for confidence interval series
+            if ((labels[i][j] == "80" || labels[i][j] == "95") && prediction) {
+                c.data.datasets.push({
+                    label: labels[i][j],
+                    hidden: false,
+                    backgroundColor: color.replace(')', ', 0.3)').replace('rgb', 'rgba'),
+                    borderColor: color.replace(')', ', 0.3)').replace('rgb', 'rgba'),
+                    pointHitRadius: 1.5,
+                    pointHoverRadius: 1.5,
+                    pointRadius: 1.5,
+                    pointBorderWidth: 1.5,
+                    fill: 1,
+                    data: value[i][j],
+                    showLine: showLine,
+                    pointStyle: pointStyle,
+                    radius: pointRadius,
+                    borderWidth: borderWidth
+                });
+            } else { // to paint mean serie
+                c.data.datasets.push({
+                    label: labels[i][j],
+                    hidden: false,
+                    backgroundColor: color,
+                    borderColor: color,
+                    fill: false,
+                    data: value[i][j],
+                    showLine: showLine,
+                    pointStyle: pointStyle,
+                    radius: pointRadius,
+                    borderWidth: borderWidth
+                });
             }
-            c.data.datasets.push({
-                label: labels[i][j],
-                hidden: false,
-                backgroundColor: color,
-                borderColor: color,
-                fill: false,
-                data: value[i][j],
-                showLine: showLine,
-                pointStyle: pointStyle,
-                radius: pointRadius,
-                borderWidth: borderWidth
-            });
 
             if (!showLine) {
                 c.options.tooltips.callbacks = {
@@ -276,6 +296,27 @@ function drawChart() {
             c.options.annotation.annotations = annotations;
         }
 
+        // filter legend in case of SIs i Metrics
+        if (!isqf && !isdsi) {
+            var filter = function(legendItem) {
+                // hide duplicated 80 and 95 from legend and Predicted data too
+                if (legendItem.index === 3 || legendItem.index === 5 || legendItem.index === 1) {
+                    return false;
+                }
+                return true;
+            };
+            c.options.legend.labels.filter = filter;
+        } else  { // filter legend in case of DSIs and Factors
+            var filter = function(legendItem) {
+                // hide Predicted data from legend
+                if (legendItem.text.includes('Predicted') || legendItem.text.includes('Predic...')) {
+                    return false;
+                }
+                return true;
+            };
+            c.options.legend.labels.filter = filter;
+        }
+
         config.push(c);
     }
 
@@ -283,21 +324,21 @@ function drawChart() {
         var a = document.createElement('a');
         var currentURL = window.location.href;
         if (isdsi) {  //if it is a Stacked Line Chart for Detailed Strategic Indicators
-            urlLink = "../QualityFactors/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
+            urlLink = "../QualityFactors/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
             a.setAttribute("href", urlLink);
         } else if (isqf) { //if it is a Stacked Line Chart for Quality Factors
             var name = getParameterByName('name');
             var id = getParameterByName('id');
             if (name.length != 0) {//if we know from which Detailed Strategic Indicator we are coming
-                urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
+                urlLink = "../Metrics/PredictionChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
             }
             else {
-                urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
+                urlLink = "../Metrics/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
             }
             a.setAttribute("href", urlLink);
         } else if (isSi) {
             //if its a SI chart make it a hyperlink
-            urlLink = "../DetailedStrategicIndicators/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
+            urlLink = "../DetailedStrategicIndicators/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
             a.setAttribute("href", urlLink);
         }
         a.innerHTML = texts[i];
@@ -326,6 +367,17 @@ function drawChart() {
     } else {
         $("#fitToContent").prop("checked", false);
         normalRange();
+    }
+
+    var show = sessionStorage.getItem("showConfidence");
+    if (show === "true") {
+        $("#showConfidence").prop("checked", true);
+        // show confidence intervals ticked
+        showConfidence();
+    } else {
+        // show confidence intervals not ticked
+        $("#showConfidence").prop("checked", false);
+        notShowConfidence();
     }
 }
 
@@ -371,11 +423,43 @@ $("#fitToContent").change(function () {
     }
 });
 
+$("#showConfidence").change(function () {
+    if ($(this).is(":checked")) {
+        // show confidence intervals ticked
+        sessionStorage.setItem("showConfidence", "true");
+        showConfidence();
+    } else {
+        // show confidence intervals not ticked
+        sessionStorage.setItem("showConfidence", "false");
+        notShowConfidence();
+    }
+});
+
+function showConfidence() {
+    charts.forEach(function (chart) {
+        for (var i = 1; i < chart.config.data.datasets.length; i++) {
+            if(chart.config.data.datasets[i].label === "80" || chart.config.data.datasets[i].label === "95") {
+                chart.config.data.datasets[i].hidden = false;
+            }
+        }
+        chart.update();
+    });
+}
+
+function notShowConfidence() {
+    charts.forEach(function (chart) {
+        for (var i = 1; i < chart.config.data.datasets.length; i++) {
+            if(chart.config.data.datasets[i].label === "80" || chart.config.data.datasets[i].label === "95") {
+                chart.config.data.datasets[i].hidden = true;
+            }
+        }
+        chart.update();
+    });
+}
 
 
 function fitToContent() {
     charts.forEach(function (chart) {
-        console.log(chart);
         var max = getMax(chart.config.data.datasets);
         var min = getMin(chart.config.data.datasets);
         if (max === min) {
@@ -387,17 +471,55 @@ function fitToContent() {
 
         chart.config.options.legend.onClick = function (e, legendItem) {
             var index = legendItem.index;
-            var c = this.chart;
-            c.data.datasets[index].hidden = !c.data.datasets[index].hidden;
-            var max = getMax(c.data.datasets);
-            var min = getMin(c.data.datasets);
+            var chart = this.chart;
+            if (legendItem.text === "80" || legendItem.text === "95") {
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                chart.data.datasets[index + 1].hidden = !chart.data.datasets[index + 1].hidden;
+            } else if (!isqf && !isdsi) { // hide & show logic for SIs and Metrics
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                if(chart.data.datasets[index].hidden == true) { // if hide hist. data
+                    // for predicted data
+                    chart.data.datasets[index + 1].hidden = true;
+                    // for 80
+                    chart.data.datasets[index + 2].hidden = true;
+                    chart.data.datasets[index + 3].hidden = true;
+                    //for 95
+                    chart.data.datasets[index + 4].hidden = true;
+                    chart.data.datasets[index + 5].hidden = true;
+                } else { // if show hist. data
+                    // for predicted data
+                    chart.data.datasets[index + 1].hidden = false;
+                    var show = sessionStorage.getItem("showConfidence");
+                    if (show == "true") {
+                        // for 80
+                        chart.data.datasets[index + 2].hidden = false;
+                        chart.data.datasets[index + 3].hidden = false;
+                        //for 95
+                        chart.data.datasets[index + 4].hidden = false;
+                        chart.data.datasets[index + 5].hidden = false;
+                    } else if (show == "false") {
+                        // for 80
+                        chart.data.datasets[index + 2].hidden = true;
+                        chart.data.datasets[index + 3].hidden = true;
+                        //for 95
+                        chart.data.datasets[index + 4].hidden = true;
+                        chart.data.datasets[index + 5].hidden = true;
+                    }
+                }
+            } else { // hide & show logic for DSIs and Factors
+                var num = chart.data.datasets.length/2;
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                chart.data.datasets[index + num].hidden = !chart.data.datasets[index + num].hidden;
+            }
+            var max = getMax(chart.data.datasets);
+            var min = getMin(chart.data.datasets);
             if (max === min) {
                 max += 0.001;
                 min -= 0.001;
             }
-            c.options.scales.yAxes[0].ticks.max = max;
-            c.options.scales.yAxes[0].ticks.min = min;
-            c.update();
+            chart.options.scales.yAxes[0].ticks.max = max;
+            chart.options.scales.yAxes[0].ticks.min = min;
+            chart.update();
         };
 
         chart.update();
@@ -412,7 +534,45 @@ function normalRange() {
         chart.config.options.legend.onClick = function(e, legendItem) {
             var index = legendItem.index;
             var chart = this.chart;
-            chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+            if (legendItem.text === "80" || legendItem.text === "95") {
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                chart.data.datasets[index + 1].hidden = !chart.data.datasets[index + 1].hidden;
+            } else if (!isqf && !isdsi) { // hide & show logic for SIs and Metrics
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                if(chart.data.datasets[index].hidden == true) { // if hide hist. data
+                    // for predicted data
+                    chart.data.datasets[index + 1].hidden = true;
+                    // for 80
+                    chart.data.datasets[index + 2].hidden = true;
+                    chart.data.datasets[index + 3].hidden = true;
+                    //for 95
+                    chart.data.datasets[index + 4].hidden = true;
+                    chart.data.datasets[index + 5].hidden = true;
+                } else { // if show hist. data
+                    // for predicted data
+                    chart.data.datasets[index + 1].hidden = false;
+                    var show = sessionStorage.getItem("showConfidence");
+                    if (show == "true") {
+                        // for 80
+                        chart.data.datasets[index + 2].hidden = false;
+                        chart.data.datasets[index + 3].hidden = false;
+                        //for 95
+                        chart.data.datasets[index + 4].hidden = false;
+                        chart.data.datasets[index + 5].hidden = false;
+                    } else if (show == "false") {
+                        // for 80
+                        chart.data.datasets[index + 2].hidden = true;
+                        chart.data.datasets[index + 3].hidden = true;
+                        //for 95
+                        chart.data.datasets[index + 4].hidden = true;
+                        chart.data.datasets[index + 5].hidden = true;
+                    }
+                }
+            } else { // hide & show logic for DSIs and Factors
+                var num = chart.data.datasets.length/2;
+                chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
+                chart.data.datasets[index + num].hidden = !chart.data.datasets[index + num].hidden;
+            }
             chart.update();
         };
 

@@ -3,10 +3,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOCategoryThreshold;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -188,5 +185,18 @@ public class QualityFactors {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
+    }
+
+    @GetMapping("/api/qualityFactors/currentDate")
+    @ResponseStatus(HttpStatus.OK)
+    public LocalDate getcurrentDate(@RequestParam(value = "prj") String prj) {
+        try {
+            List<DTOFactor> qfs = qualityFactorsController.getAllFactorsEvaluation(prj);
+            return qfs.get(0).getDate();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        // if the response is null
+        return null;
     }
 }

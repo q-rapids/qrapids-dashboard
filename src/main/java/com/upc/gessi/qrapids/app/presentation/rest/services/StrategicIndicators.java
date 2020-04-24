@@ -186,11 +186,12 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
-            return strategicIndicatorsController.getStrategicIndicatorsPrediction(technique, "7", horizon, prj);
+            List<DTOStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
+            return strategicIndicatorsController.getStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (IOException e) {
+        } catch (IOException | CategoriesException  e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
@@ -392,7 +393,8 @@ public class StrategicIndicators {
     private enum TrainType {
         NONE, ONE, ALL
     }
-//TODO: assessSI
+
+    //TODO: assessSI
     @RequestMapping("/api/assessStrategicIndicators")
     @ResponseStatus(HttpStatus.OK)
     public void assesStrategicIndicatorsLegacy(@RequestParam(value = "prj", required=false) String prj,
@@ -491,5 +493,18 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<String> getForecastTechniques() {
         return strategicIndicatorsController.getForecastTechniques();
+    }
+
+    @GetMapping("/api/strategicIndicators/currentDate")
+    @ResponseStatus(HttpStatus.OK)
+    public LocalDate getcurrentDate(@RequestParam(value = "prj") String prj) {
+        try {
+            List<DTOStrategicIndicatorEvaluation> si = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
+            return si.get(0).getDate();
+        } catch (IOException | CategoriesException e) {
+            logger.error(e.getMessage(), e);
+        }
+        // if the response is null
+        return null;
     }
 }

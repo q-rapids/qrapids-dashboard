@@ -419,17 +419,29 @@ public class StrategicIndicatorsControllerTest {
     @Test
     public void getStrategicIndicatorsPrediction() throws IOException {
         // Given
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        dtoStrategicIndicatorEvaluation.setDatasource("Forecast");
+        dtoStrategicIndicatorEvaluation.setRationale("Forecast");
+        float first80 = 0.97473043f;
+        float second80 = 0.9745246f;
+        Pair<Float, Float> confidence80 = Pair.of(first80, second80);
+        dtoStrategicIndicatorEvaluation.setConfidence80(confidence80);
+        float first95 = 0.9747849f;
+        float second95 = 0.97447014f;
+        Pair<Float, Float> confidence95 = Pair.of(first95, second95);
+        dtoStrategicIndicatorEvaluation.setConfidence95(confidence95);
+        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();
+        dtoStrategicIndicatorEvaluationList.add(dtoStrategicIndicatorEvaluation);
+
         String projectExternalId = "test";
         String technique = "PROPHET";
         String horizon = "7";
         String freq = "7";
-        DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
-        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();
-        dtoStrategicIndicatorEvaluationList.add(dtoStrategicIndicatorEvaluation);
-        when(qmaForecast.ForecastSI(technique, freq, horizon, projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
+
+        when(qmaForecast.ForecastSI(dtoStrategicIndicatorEvaluationList,technique, freq, horizon, projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         // When
-        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationListFound = strategicIndicatorsController.getStrategicIndicatorsPrediction(technique, freq, horizon, projectExternalId);
+        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationListFound = strategicIndicatorsController.getStrategicIndicatorsPrediction(dtoStrategicIndicatorEvaluationList, technique, freq, horizon, projectExternalId);
 
         // Then
         assertEquals(dtoStrategicIndicatorEvaluationList.size(), dtoStrategicIndicatorEvaluationListFound.size());
@@ -498,7 +510,7 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void trainForecastModelsSingleProject() throws IOException {
+    public void trainForecastModelsSingleProject() throws IOException, CategoriesException {
         // Given
         String projectExternalId = "test";
 
@@ -514,6 +526,12 @@ public class StrategicIndicatorsControllerTest {
 
         when(qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoQualityFactorList);
 
+        DTOStrategicIndicatorEvaluation dtoStrategicIndicator = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
+        List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorList = new ArrayList<>();
+        dtoStrategicIndicatorList.add(dtoStrategicIndicator);
+
+        when(strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenReturn(dtoStrategicIndicatorList);
+
         String technique = "PROPHET";
 
         // When
@@ -522,6 +540,7 @@ public class StrategicIndicatorsControllerTest {
         // Then
         verify(qmaForecast, times(1)).trainMetricForecast(dtoMetricList, "7", projectExternalId, technique);
         verify(qmaForecast, times(1)).trainFactorForecast(dtoQualityFactorList, "7", projectExternalId, technique);
+        verify(qmaForecast, times(1)).trainStrategicIndicatorForecast(dtoStrategicIndicatorList, "7", projectExternalId, technique);
     }
 
     @Test

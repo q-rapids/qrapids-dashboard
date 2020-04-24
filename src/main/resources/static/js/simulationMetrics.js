@@ -32,6 +32,30 @@ function getMetricsCategoriesAndShow () {
     });
 }
 
+function getMetricsCategories (titles, ids, labels, values) {
+    var url = "../api/metrics/categories";
+    $.ajax({
+        url : url,
+        type: "GET",
+        success: function (response) {
+            categories = response;
+            showFactors(titles, ids, labels, values);
+        }
+    });
+}
+
+function getFactorsCategories (titles, ids, labels, values) {
+    var url = "../api/qualityFactors/categories";
+    $.ajax({
+        url : url,
+        type: "GET",
+        success: function (response) {
+            categories = response;
+            showDetailedStrategicIndicators(titles, ids, labels, values)
+        }
+    });
+}
+
 function showMetricsSliders () {
     // Metrics categories
     var rangeHighlights = [];
@@ -154,7 +178,7 @@ function getDetailedStrategicIndicators () {
                     });
                 }
             }
-            showDetailedStrategicIndicators(titles, ids, labels, values);
+            getFactorsCategories (titles, ids, labels, values);
         }
     });
 }
@@ -179,19 +203,43 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
             labels[i].push(null);
             //values[i].push(null);
         }
+        var dataset = [];
+        dataset.push({
+            label: titles[i],
+            backgroundColor: 'rgba(105, 105, 105, 0.2)',
+            borderColor: currentColor,
+            pointBackgroundColor: currentColor,
+            pointBorderColor: currentColor,
+            data: values[i],
+            fill: false
+        });
+        var cat = categories;
+        cat.sort(function (a, b) {
+            return b.upperThreshold - a.upperThreshold;
+        });
+        for (var k = cat.length-1; k >= 0; --k) {
+            var fill = cat.length-1-k;
+            if (k == cat.length-1) fill = true;
+            dataset.push({
+                label: cat[k].name,
+                borderWidth: 1,
+                backgroundColor: hexToRgbA(cat[k].color, 0.3),
+                borderColor: hexToRgbA(cat[k].color, 0.3),
+                pointHitRadius: 0,
+                pointHoverRadius: 0,
+                pointRadius: 0,
+                pointBorderWidth: 0,
+                pointBackgroundColor: 'rgba(0, 0, 0, 0)',
+                pointBorderColor: 'rgba(0, 0, 0, 0)',
+                data: [].fill.call({ length: labels[i].length }, cat[k].upperThreshold),
+                fill: fill
+            })
+        }
         var chart = new Chart(ctx, {    //draw chart with the following config
             type: 'radar',
             data: {
                 labels: labels[i],
-                datasets: [{
-                    label: titles[i],
-                    backgroundColor: 'rgba(105, 105, 105, 0.2)',
-                    borderColor: currentColor,
-                    pointBackgroundColor: currentColor,
-                    pointBorderColor: currentColor,
-                    data: values[i],
-                    fill: true
-                }]
+                datasets: dataset
             },
             options: {
                 title: {
@@ -254,7 +302,8 @@ function getFactors () {
                 }
             }
             checkMetricsSliders();
-            showFactors(titles, ids, labels, values);
+            getMetricsCategories(titles, ids, labels, values);
+            //showFactors(titles, ids, labels, values);
         }
     });
 }
@@ -300,21 +349,47 @@ function showFactors (titles, ids, labels, values) {
         ctx.getContext("2d");
         if (labels[i].length === 2) {
             labels[i].push(null);
-            //values[i].push(null);
+        } else if (labels[i].length === 1) {
+            labels[i].push(null);
+            labels[i].push(null);
+        }
+        var dataset = [];
+        dataset.push({
+            label: titles[i],
+            backgroundColor: 'rgba(105, 105, 105, 0.2)',
+            borderColor: currentColor,
+            pointBackgroundColor: currentColor,
+            pointBorderColor: currentColor,
+            data: values[i],
+            fill: false
+        });
+        var cat = categories;
+        cat.sort(function (a, b) {
+            return b.upperThreshold - a.upperThreshold;
+        });
+        for (var k = cat.length-1; k >= 0; --k) {
+            var fill = cat.length-1-k;
+            if (k == cat.length-1) fill = true;
+            dataset.push({
+                label: cat[k].name,
+                borderWidth: 1,
+                backgroundColor: hexToRgbA(cat[k].color, 0.3),
+                borderColor: hexToRgbA(cat[k].color, 0.3),
+                pointHitRadius: 0,
+                pointHoverRadius: 0,
+                pointRadius: 0,
+                pointBorderWidth: 0,
+                pointBackgroundColor: 'rgba(0, 0, 0, 0)',
+                pointBorderColor: 'rgba(0, 0, 0, 0)',
+                data: [].fill.call({ length: labels[i].length }, cat[k].upperThreshold),
+                fill: fill
+            })
         }
         var chart = new Chart(ctx, {    //draw chart with the following config
             type: 'radar',
             data: {
                 labels: labels[i],
-                datasets: [{
-                    label: titles[i],
-                    backgroundColor: 'rgba(105, 105, 105, 0.2)',
-                    borderColor: currentColor,
-                    pointBackgroundColor: currentColor,
-                    pointBorderColor: currentColor,
-                    data: values[i],
-                    fill: true
-                }]
+                datasets: dataset
             },
             options: {
                 title: {
@@ -335,6 +410,7 @@ function showFactors (titles, ids, labels, values) {
                 }
             }
         });
+        console.log(chart);
         factorsCharts.push(chart);
         window.myLine = chart;
     }
@@ -360,7 +436,7 @@ $('#apply').click(function () {
             pointBackgroundColor: simulationColor,
             pointBorderColor: simulationColor,
             data: [],
-            fill: true
+            fill: false
         };
         for (var j = 0; j < qualityFactor.metrics.length; j++) {
             var metric = qualityFactor.metrics[j];
@@ -370,10 +446,14 @@ $('#apply').click(function () {
             dataset.data.push(newMetric.value);
         }
 
-        if (factorsCharts[i].data.datasets.length > 1)
+        if (factorsCharts[i].data.datasets.length > 4)
             factorsCharts[i].data.datasets[0].data = dataset.data;
-        else
+        else {
             factorsCharts[i].data.datasets.unshift(dataset);
+            // change categories fill property (we add simulated data)
+            factorsCharts[i].data.datasets[3].fill = factorsCharts[i].data.datasets[3].fill +1;
+            factorsCharts[i].data.datasets[4].fill = factorsCharts[i].data.datasets[4].fill +1;
+        }
         factorsCharts[i].update();
     }
 
@@ -404,7 +484,7 @@ $('#apply').click(function () {
                     pointBackgroundColor: simulationColor,
                     pointBorderColor: simulationColor,
                     data: [],
-                    fill: true
+                    fill: false
                 };
                 for (var j = 0; j < strategicIndicator.factors.length; j++) {
                     var factor = strategicIndicator.factors[j];
@@ -415,10 +495,14 @@ $('#apply').click(function () {
                         dataset.data.push(newFactor.value);
                 }
 
-                if (detailedCharts[i].data.datasets.length > 1)
+                if (detailedCharts[i].data.datasets.length > 4)
                     detailedCharts[i].data.datasets[0].data = dataset.data;
-                else
+                else {
                     detailedCharts[i].data.datasets.unshift(dataset);
+                    // change categories fill property (we add simulated data)
+                    detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill +1;
+                    detailedCharts[i].data.datasets[4].fill = detailedCharts[i].data.datasets[4].fill +1;
+                }
                 detailedCharts[i].update();
             }
             simulateSI(qualityFactors);
@@ -469,18 +553,37 @@ $('#restore').click(function () {
 
 function removeSimulation() {
     d3.selectAll('.simulation').remove();
-    if (factorsCharts[0].data.datasets.length > 1) {
+    if (factorsCharts[0].data.datasets.length > 4) {
         for (var i = 0; i < factorsCharts.length; i++) {
             factorsCharts[i].data.datasets.shift();
+            // change categories fill property (we remove simulated data)
+            factorsCharts[i].data.datasets[2].fill = factorsCharts[i].data.datasets[2].fill -1;
+            factorsCharts[i].data.datasets[3].fill = factorsCharts[i].data.datasets[3].fill -1;
             factorsCharts[i].update();
         }
     }
-    if (detailedCharts[0].data.datasets.length > 1) {
+    if (detailedCharts[0].data.datasets.length > 4) {
         for (var i = 0; i < detailedCharts.length; i++) {
             detailedCharts[i].data.datasets.shift();
+            // change categories fill property (we remove simulated data)
+            detailedCharts[i].data.datasets[2].fill = detailedCharts[i].data.datasets[2].fill -1;
+            detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill -1;
             detailedCharts[i].update();
         }
     }
+}
+
+function hexToRgbA(hex,a=1){ // (hex color, opacity)
+    var c;
+    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        c= hex.substring(1).split('');
+        if(c.length== 3){
+            c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        }
+        c= '0x'+c.join('');
+        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+ a +')';
+    }
+    throw new Error('Bad Hex');
 }
 
 window.onload = function() {

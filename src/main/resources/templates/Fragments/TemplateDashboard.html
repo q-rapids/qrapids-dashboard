@@ -160,31 +160,51 @@
         <br/>
         <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
             <form class="form-inline well" style="float: right">
-                <div class="form-group" id="fitToContentDiv" style="margin-right: 10px">
-                    <input type="checkbox" class="form-check-input" id="fitToContent">
-                    <label class="control-label" for="fitToContent">Fit to content</label>
-                </div>
-                <div class="form-group dropdown" id="techniqueDropdownDiv">
-                    <label class="control-label">Technique: </label>
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                        <span id="selectedTechnique" th:text="${@environment.getProperty('forecast.technique')}"></span>
-                        <span class="caret"></span>
-                    </button>
-                    <ul id="techniqueDropdown" class="dropdown-menu dropdown-menu-right"></ul>
-                </div>
-                <div class="form-group" id="fromDiv">
-                    <label class="control-label">From: </label>
-                    <input id="datepickerFrom" width="250" class="form-control"/>
-                </div>
-                <div class="form-group">
-                    <label class="control-label"> To: </label>
-                    <input id="datepickerTo" width="250" class="form-control"/>
-                </div>
-                <button id="applyButton" type="button" class="btn btn-default">Apply</button>
-                <div class="form-group dropdown">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
-                    <ul id="intervalsDropdown" class="dropdown-menu dropdown-menu-right"></ul>
-                </div>
+                <table style="width:100%">
+                    <tr>
+                        <td>
+                            <div class="form-group" id="fitToContentDiv" style="margin-right: 10px">
+                                <input type="checkbox" class="form-check-input" id="fitToContent">
+                                <label class="control-label" for="fitToContent">Fit to content</label>
+                            </div>
+                        </td>
+                        <td rowspan="2">
+                            <div class="form-group dropdown" id="techniqueDropdownDiv">
+                                <label class="control-label">Technique: </label>
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <span id="selectedTechnique" th:text="${@environment.getProperty('forecast.technique')}"></span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul id="techniqueDropdown" class="dropdown-menu dropdown-menu-right"></ul>
+                            </div>
+                            <div class="form-group" id="fromDiv">
+                                <label class="control-label">From: </label>
+                                <input id="datepickerFrom" width="250" class="form-control"/>
+                            </div>
+                            <div class="form-group" id="current_dateDiv">
+                                <label class="control-label">Current: </label>
+                                <input id="datepickerCurrentDate" width="250" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label"> To: </label>
+                                <input id="datepickerTo" width="250" class="form-control"/>
+                            </div>
+                            <button id="applyButton" type="button" class="btn btn-default">Apply</button>
+                            <div class="form-group dropdown">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
+                                <ul id="intervalsDropdown" class="dropdown-menu dropdown-menu-right"></ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group" id="showConfidenceDiv" style="margin-right: 10px">
+                                <input type="checkbox" class="form-check-input" id="showConfidence">
+                                <label class="control-label" for="showConfidence">Show confidence intervals</label>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </form>
         </div>
         <br/>
