@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <link rel="stylesheet" th:href="@{/css/products.css}" />
+</head>
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<br/>
+<div id="ReportingView">
+    <div id="ProjectSelector">
+        <h3>Select a project</h3>
+        <ul id="ElementList" class="list-group">
+        </ul>
+    </div>
+    <div id="ReportingInfo">
+        <h2>Q-Rapids Reporting Tool</h2>
+        <div id="RedirectToReport">
+            <p id="DefaultReport">Please select a project from the ones available in the left side.</p>
+            <p id="NoReport" style="display: none">There are no reports created in the JasperServer.</p>
+        </div>
+        <div id="tableREPdiv" class="table-editable" style="display: none">
+            <table id="tableREP" class="table">
+                <thead>
+                    <th>Report Name</th>
+                </thead>
+            </table>
+            <br/>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" th:src="@{/js/reporting.js}"></script>
+</html>
