@@ -1,49 +1,95 @@
-var projects = []
+var dirs = []
 var serverUrl = sessionStorage.getItem("serverUrl");
 
-function readProjects(){
+var jasperserverURL;
+var jasperserverUser;
+var jasperserverPassword;
+
+function getJasperserverInfo() {
+    var url = "/api/jasperserverInfo";
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            jasperserverURL = data[0];
+            jasperserverUser = data[1];
+            jasperserverPassword = data[2];
+            // we login before make other requests
+            $.ajax({
+                type: "POST",
+                url: jasperserverURL + "/rest/login",
+                data: {
+                    j_username: jasperserverUser,
+                    j_password: jasperserverPassword
+                },
+                success: function (data, textStatus, xhr) {
+                    console.log("login response status: " + xhr.status);
+                    readDirectories();
+                }
+            });
+
+        }
+    });
+}
+
+function readDirectories(){
     $.ajax({
         dataType: "json",
-        url: "http://localhost:8082/jasperserver/rest_v2/resources?type=reportUnit",
+        url: jasperserverURL + "/rest_v2/resources?type=reportUnit",
         type: "GET",
         contentType: "application/x-www-form-urlencoded",
         data: {
-            j_username:"joeuser",
-            j_password:"joeuser"
+            j_username:jasperserverUser,
+            j_password:jasperserverPassword
         },
         success: function (data){
             for (i=0; i < data.resourceLookup.length; i++){
-                if(data.resourceLookup[i].uri.includes("QRapids")){
+                // choose resource where in uri there is a Q-Rapids directory!
+                if(data.resourceLookup[i].uri.includes("/Q_Rapids/")){
                     tmp = data.resourceLookup[i].uri.split("/");
-                    if (!projects.includes(tmp[3])) projects.push(tmp[3]);
+                    // the last one is a report, one before is its directory
+                    if (!dirs.includes(tmp[tmp.length-2])) dirs.push(tmp[tmp.length-2]);
                 }
             }
-            if (projects && projects.length){
-                for (i = 0; i < projects.length; i++) {
+            if (dirs && dirs.length){
+                // first we need to sort directories in a case-insensitive way
+                dirs.sort((a,b) => (a.toLowerCase() > b.toLowerCase()) ? 1 : ((b.toLowerCase() > a.toLowerCase()) ? -1 : 0));
+                // then make a list of buttons
+                var dirsList = dirs.slice();
+                for (i = 0; i < dirsList.length; i++) {
+                    // change _ to space or -
+                    if (dirsList[i] == "Q_Rapids") dirsList[i] = dirsList[i].replace("_","-");
+                    else {
+                        while (dirsList[i].includes("_"))
+                            dirsList[i] = dirsList[i].replace("_"," ");
+                    }
                     var opt = document.createElement("li");
-                    opt.setAttribute('id', (projects[i] + 'Button'));
+                    opt.setAttribute('id', (dirs[i] + 'Button'));
                     opt.setAttribute('class', 'list-group-item category-element');
-                    opt.setAttribute('onclick', 'showRInfo($(this), \"' + projects[i] + '\" )');
-                    opt.innerHTML = projects[i];
+                    opt.setAttribute('onclick', 'showRInfo($(this), \"' + dirs[i] + '\" )');
+                    opt.innerHTML = dirsList[i];
                     document.getElementById("ElementList").appendChild(opt);
                 }
             }
             else{
                 var opt = document.createElement("li");
                 opt.setAttribute('class', 'list-group-item category-element');
-                opt.innerHTML = "No QRapids' projects available in the server.";
+                opt.innerHTML = "No Q-Rapids' reports available in the server.";
                 document.getElementById("ElementList").appendChild(opt);
-                $("#DefaultReport").hide();
-                $("#NoReport").show();
             }
-
         }
     });
 };
 
-function showRInfo(selectedElement, prjName){
+function showRInfo(selectedElement, dirName){
     selectElement(selectedElement);
-    linkWithJasper(prjName);
+    linkWithJasper(dirName);
 }
 
 function selectElement (selectedElement) {
@@ -54,60 +100,57 @@ function selectElement (selectedElement) {
     });
 }
 
-function linkWithJasper(prjName){
+function linkWithJasper(dirName){
     $.ajax({
-        url: "http://localhost:8082/jasperserver/rest_v2/resources?type=reportUnit",
+        dataType: "json",
+        url: jasperserverURL + "/rest_v2/resources?type=reportUnit",
         type: "GET",
         contentType: "application/x-www-form-urlencoded",
         data: {
-            j_username:"joeuser",
-            j_password:"joeuser"
+            j_username:jasperserverUser,
+            j_password:jasperserverPassword
         },
         dataType: "json",
         success: function (data) {
-            $("#DefaultReport").hide();
-            $("#NoReport").hide();
             while(document.getElementById("tableREP").hasChildNodes())
                 document.getElementById("tableREP").removeChild(document.getElementById("tableREP").firstChild);
-
-            var headerText = document.createElement("th");
-            headerText.innerText = "Report Name";
-            var row = document.getElementById("tableREP").insertRow(-1);
-            row.appendChild(headerText);
-            row.appendChild(document.createElement("th"));
-            row.appendChild(document.createElement("th"));
-            row.appendChild(document.createElement("th"));
-
+            // add header to table --> made in html
+            // add data rows to table
             for (i=0; i < data.resourceLookup.length; i++){
-                if(data.resourceLookup[i].uri.includes("QRapids/" + prjName)){
-                    var row = document.getElementById("tableREP").insertRow(-1);
-                    var reportName = document.createElement("td");
-                    reportName.appendChild(document.createTextNode(data.resourceLookup[i].label));
-                    row.appendChild(reportName);
+                // find reports for specified directory
+                if(data.resourceLookup[i].uri.includes("/Q_Rapids/")) {
+                    tmp = data.resourceLookup[i].uri.split("/");
+                    // take a look is resource directory is correspond with selected one
+                    if (tmp[tmp.length - 2] == dirName) {
+                        var row = document.getElementById("tableREP").insertRow(-1);
+                        var reportName = document.createElement("td");
+                        reportName.appendChild(document.createTextNode(data.resourceLookup[i].label));
+                        row.appendChild(reportName);
 
-                    var buttonViewTd = document.createElement("td");
-                    var buttonView = document.createElement("button");
-                    buttonView.setAttribute("class", "btn btn-link");
-                    buttonView.setAttribute('onclick', 'onClickBt(\"' + prjName + '\", \"' + data.resourceLookup[i].label + '\", \"html\" )');
-                    buttonView.innerText = "View as HTML";
-                    buttonViewTd.appendChild(buttonView);
-                    row.appendChild(buttonViewTd);
+                        var buttonViewTd = document.createElement("td");
+                        var buttonView = document.createElement("button");
+                        buttonView.setAttribute("class", "btn btn-link");
+                        buttonView.setAttribute('onclick', 'onClickBt(\"' + data.resourceLookup[i].uri + '\", \"html\" )');
+                        buttonView.innerText = "View as HTML";
+                        buttonViewTd.appendChild(buttonView);
+                        row.appendChild(buttonViewTd);
 
-                    var buttonPDFtd = document.createElement("td");
-                    var buttonPDF = document.createElement("button");
-                    buttonPDF.setAttribute("class", "btn btn-link");
-                    buttonPDF.setAttribute('onclick', 'onClickBt(\"' + prjName + '\", \"' + data.resourceLookup[i].label + '\", \"pdf\" )');
-                    buttonPDF.innerText = "Save as PDF";
-                    buttonPDFtd.appendChild(buttonPDF);
-                    row.appendChild(buttonPDFtd);
+                        var buttonPDFtd = document.createElement("td");
+                        var buttonPDF = document.createElement("button");
+                        buttonPDF.setAttribute("class", "btn btn-link");
+                        buttonPDF.setAttribute('onclick', 'onClickBt(\"' + data.resourceLookup[i].uri + '\", \"pdf\" )');
+                        buttonPDF.innerText = "Save as PDF";
+                        buttonPDFtd.appendChild(buttonPDF);
+                        row.appendChild(buttonPDFtd);
 
-                    var buttonPPTtd = document.createElement("td");
-                    var buttonPPT = document.createElement("button");
-                    buttonPPT.setAttribute("class", "btn btn-link");
-                    buttonPPT.setAttribute('onclick', 'onClickBt(\"' + prjName + '\", \"' + data.resourceLookup[i].label + '\", \"pptx\" )');
-                    buttonPPT.innerText = "Save as PowerPoint";
-                    buttonPPTtd.appendChild(buttonPPT);
-                    row.appendChild(buttonPPTtd);
+                        var buttonPPTtd = document.createElement("td");
+                        var buttonPPT = document.createElement("button");
+                        buttonPPT.setAttribute("class", "btn btn-link");
+                        buttonPPT.setAttribute('onclick', 'onClickBt(\"' + data.resourceLookup[i].uri + '\", \"pptx\" )');
+                        buttonPPT.innerText = "Save as PowerPoint";
+                        buttonPPTtd.appendChild(buttonPPT);
+                        row.appendChild(buttonPPTtd);
+                    }
                 }
             }
             $("#tableREPdiv").show();
@@ -118,15 +161,26 @@ function linkWithJasper(prjName){
     });
 }
 
-function onClickBt(prjName, reportName, repType){
-    var urlV = "http://localhost:8082/jasperserver/rest_v2/reports/reports/QRapids/" + prjName + "/" + reportName + "." + repType;
-    while (urlV.includes(" "))
-        urlV = urlV.replace(" ","_");
-    while(urlV.includes("-"))
-        urlV = urlV.replace("-","_")
+function onClickBt(uriReport, repType){
+     // get project id from project selector
+    var p = sessionStorage.getItem("prj");
+    var urlV = jasperserverURL + "/rest_v2/reports" + uriReport + "." + repType + "?projID=" + p
+        + "&from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val()
+        +"&j_username=" + jasperserverUser + "&j_password="+jasperserverPassword; // remove credentials from url
+    console.log(urlV);
     window.open(urlV);
 }
 
+// search function
+$(document).ready(function(){
+    $("#searchInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#tableREP tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});
+
 window.onload = function() {
-    readProjects();
+    getJasperserverInfo();
 };

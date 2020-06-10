@@ -7,35 +7,36 @@
 <body>
 <div th:replace="Fragments/Template :: logo"></div>
 <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
-<br/>
+<div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+<br/><br/>
+<br/><br/>
 <div id="ReportingView">
     <div id="ProjectSelector">
-        <h3>Select a project</h3>
         <ul id="ElementList" class="list-group">
         </ul>
     </div>
     <div id="ReportingInfo">
-        <h2>Q-Rapids Reporting Tool</h2>
-        <div id="RedirectToReport">
-            <p id="DefaultReport">Please select a project from the ones available in the left side.</p>
-            <p id="NoReport" style="display: none">There are no reports created in the JasperServer.</p>
-        </div>
         <div id="tableREPdiv" class="table-editable" style="display: none">
-            <table id="tableREP" class="table">
-                <thead>
-                    <th>Report Name</th>
-                </thead>
-            </table>
+            <div class="container" >
+                <span><b> &nbsp; Search:</b></span> <input id="searchInput" type="text">
+                <br/><br/>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Report Name</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableREP">
+                    </tbody>
+                </table>
+            </div>
             <br/>
         </div>
     </div>
 </div>
-
-
-
-
-
-
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
 <script type="text/javascript" th:src="@{/js/reporting.js}"></script>

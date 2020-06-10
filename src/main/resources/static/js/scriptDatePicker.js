@@ -12,7 +12,7 @@ var config = {
 };
 
 var currentURL = window.location.href;
-if (currentURL.search("/Historic") !== -1) {
+if ((currentURL.search("/Historic") !== -1) || (currentURL.search("/Reporting") !== -1)) {
     configureHistoric();
 } else if (currentURL.search("/Prediction") !== -1) {
     configurePrediction();
@@ -23,12 +23,19 @@ function configureHistoric () {
     $('#datepickerFrom').datepicker(config);
     $('#datepickerTo').datepicker(config);
 
-    $('#intervalsDropdown').append('<li><a onclick="thisWeek();$(\'#chartContainer\').empty();getData()" href="#">This week</a></li>');
-    $('#intervalsDropdown').append('<li><a onclick="last7Days();$(\'#chartContainer\').empty();getData()" href="#">Last 7 days</a></li>');
-    $('#intervalsDropdown').append('<li><a onclick="last14Days();$(\'#chartContainer\').empty();getData()" href="#">Last 14 days</a></li>');
-    $('#intervalsDropdown').append('<li><a onclick="thisMonth();$(\'#chartContainer\').empty();getData()" href="#">This month</a></li>');
-    $('#intervalsDropdown').append('<li><a onclick="thisYear();$(\'#chartContainer\').empty();getData()" href="#">This year</a></li>');
-
+    if (window.location.href.search("/Reporting") !== -1) { // reporting page intervals
+        $('#intervalsDropdown').append('<li><a onclick="thisWeek();" href="#">This week</a></li>');
+        $('#intervalsDropdown').append('<li><a onclick="last7Days();" href="#">Last 7 days</a></li>');
+        $('#intervalsDropdown').append('<li><a onclick="last14Days();" href="#">Last 14 days</a></li>');
+        $('#intervalsDropdown').append('<li><a onclick="thisMonth();" href="#">This month</a></li>');
+        $('#intervalsDropdown').append('<li><a onclick="thisYear();" href="#">This year</a></li>');
+    } else { // historic page intervals
+        $('#intervalsDropdown').append('<li><a onclick="thisWeek();$(\'#chartContainer\').empty();getData()" href="#">This week</a></li>');
+        $('#intervalsDropdown').append('<li><a onclick="last7Days();$(\'#chartContainer\').empty();getData()" href="#">Last 7 days</a></li>');
+        $('#intervalsDropdown').append('<li><a onclick="last14Days();$(\'#chartContainer\').empty();getData()" href="#">Last 14 days</a></li>');
+        $('#intervalsDropdown').append('<li><a onclick="thisMonth();$(\'#chartContainer\').empty();getData()" href="#">This month</a></li>');
+        $('#intervalsDropdown').append('<li><a onclick="thisYear();$(\'#chartContainer\').empty();getData()" href="#">This year</a></li>');
+    }
     var historicFrom;
     var historicTo;
     // we are navegating -> no params
@@ -62,6 +69,11 @@ function configureHistoric () {
     $('#techniqueDropdownDiv').hide();
     $('#current_dateDiv').hide();
     $('#showConfidenceDiv').hide();
+    // hide some parts in reporting page
+    if (window.location.href.search("/Reporting") !== -1) {
+        $('#fitToContentDiv').hide();
+        $('#applyButton').hide();
+    }
 }
 
 async function configurePrediction () {
