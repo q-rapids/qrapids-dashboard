@@ -183,4 +183,15 @@ $(document).ready(function(){
 
 window.onload = function() {
     getJasperserverInfo();
+    // remove projectSelectorDiv old css class and put new one
+    const el = document.querySelector('#projectSelectorDiv');
+    if (el.classList.contains("col-xs-4")) {
+        el.classList.remove("col-xs-4");
+        el.classList.add("col-reporting");
+        $('.col-reporting').css('padding-right', '15px');
+        $('.col-reporting').css('padding-left', '15px');
+        // also correct css of datapicker
+        $('.well').css('margin-top', '10px');
+        $('.well').css('margin-bottom', '10px');
+    }
 };

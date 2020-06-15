@@ -1,4 +1,4 @@
-package com.upc.gessi.qrapids.app.presentation.rest.dto.reporting;
+package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
@@ -7,7 +7,7 @@ import org.springframework.data.util.Pair;
 import java.time.LocalDate;
 import java.util.List;
 
-public class DTOStrategicIndicatorReportInfo {
+public class DTOSICurrentHistoricEvaluation {
     //class attributes
     private String id;
     private Long dbId;
@@ -42,6 +42,14 @@ public class DTOStrategicIndicatorReportInfo {
             return value;
         }
 
+        public String getValue_description() {
+            return value_description;
+        }
+
+        public void setValue_description(String value_description) {
+            this.value_description = value_description;
+        }
+
         public void setRationale(String rationale) {
             this.rationale = rationale;
         }
@@ -59,8 +67,8 @@ public class DTOStrategicIndicatorReportInfo {
         }
     }
 
-    public DTOStrategicIndicatorReportInfo(String id, String prj_name, String name, String description, Pair<Float, String> value, Long dbId,
-                                            String rationale, List<DTOSIAssessment> probabilities, LocalDate date) {
+    public DTOSICurrentHistoricEvaluation(String id, String prj_name, String name, String description, Pair<Float, String> value, Long dbId,
+                                          String rationale, List<DTOSIAssessment> probabilities, LocalDate date) {
         setId(id);
         setPrj_name(prj_name);
         setName(name);

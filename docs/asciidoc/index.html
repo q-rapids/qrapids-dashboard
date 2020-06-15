@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v1.3, 2020-04-24">
+<meta name="author" content="v1.3, 2020-06-15">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v1.3, 2020-04-24</span><br>
+<span id="author" class="author">v1.3, 2020-06-15</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -446,25 +446,26 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_get_current_evaluation">2.1. Get current evaluation</a></li>
 <li><a href="#_get_one_current_evaluation">2.2. Get one current evaluation</a></li>
 <li><a href="#_get_historical_evaluation">2.3. Get historical evaluation</a></li>
-<li><a href="#_get_prediction_evaluation">2.4. Get prediction evaluation</a></li>
-<li><a href="#_get_detailed_current_evaluation">2.5. Get detailed current evaluation</a></li>
-<li><a href="#_get_one_detailed_current_evaluation">2.6. Get one detailed current evaluation</a></li>
-<li><a href="#_get_detailed_historical_evaluation">2.7. Get detailed historical evaluation</a></li>
-<li><a href="#_get_one_detailed_historical_evaluation">2.8. Get one detailed historical evaluation</a></li>
-<li><a href="#_get_detailed_prediction_evaluation">2.9. Get detailed prediction evaluation</a></li>
-<li><a href="#_get_one_detailed_prediction_evaluation">2.10. Get one detailed prediction evaluation</a></li>
-<li><a href="#_get_all_strategic_indicators">2.11. Get all strategic indicators</a></li>
-<li><a href="#_get_one_strategic_indicator">2.12. Get one strategic indicator</a></li>
-<li><a href="#_add_strategic_indicator">2.13. Add strategic indicator</a></li>
-<li><a href="#_update_strategic_indicator">2.14. Update strategic indicator</a></li>
-<li><a href="#_delete_strategic_indicator">2.15. Delete strategic indicator</a></li>
-<li><a href="#_fetch_strategic_indicators">2.16. Fetch strategic indicators</a></li>
-<li><a href="#_assess_strategic_indicators">2.17. Assess strategic indicators</a></li>
-<li><a href="#_assess_strategic_indicators_deprecated">2.18. Assess strategic indicators (deprecated)</a></li>
-<li><a href="#_simulate_strategic_indicators_assessment">2.19. Simulate strategic indicators assessment</a></li>
-<li><a href="#_get_quality_model">2.20. Get quality model</a></li>
-<li><a href="#_get_strategic_indicator_categories">2.21. Get strategic indicator categories</a></li>
-<li><a href="#_set_strategic_indicator_categories">2.22. Set strategic indicator categories</a></li>
+<li><a href="#_get_current_and_historical_evaluation">2.4. Get current and historical evaluation</a></li>
+<li><a href="#_get_prediction_evaluation">2.5. Get prediction evaluation</a></li>
+<li><a href="#_get_detailed_current_evaluation">2.6. Get detailed current evaluation</a></li>
+<li><a href="#_get_one_detailed_current_evaluation">2.7. Get one detailed current evaluation</a></li>
+<li><a href="#_get_detailed_historical_evaluation">2.8. Get detailed historical evaluation</a></li>
+<li><a href="#_get_one_detailed_historical_evaluation">2.9. Get one detailed historical evaluation</a></li>
+<li><a href="#_get_detailed_prediction_evaluation">2.10. Get detailed prediction evaluation</a></li>
+<li><a href="#_get_one_detailed_prediction_evaluation">2.11. Get one detailed prediction evaluation</a></li>
+<li><a href="#_get_all_strategic_indicators">2.12. Get all strategic indicators</a></li>
+<li><a href="#_get_one_strategic_indicator">2.13. Get one strategic indicator</a></li>
+<li><a href="#_add_strategic_indicator">2.14. Add strategic indicator</a></li>
+<li><a href="#_update_strategic_indicator">2.15. Update strategic indicator</a></li>
+<li><a href="#_delete_strategic_indicator">2.16. Delete strategic indicator</a></li>
+<li><a href="#_fetch_strategic_indicators">2.17. Fetch strategic indicators</a></li>
+<li><a href="#_assess_strategic_indicators">2.18. Assess strategic indicators</a></li>
+<li><a href="#_assess_strategic_indicators_deprecated">2.19. Assess strategic indicators (deprecated)</a></li>
+<li><a href="#_simulate_strategic_indicators_assessment">2.20. Simulate strategic indicators assessment</a></li>
+<li><a href="#_get_quality_model">2.21. Get quality model</a></li>
+<li><a href="#_get_strategic_indicator_categories">2.22. Get strategic indicator categories</a></li>
+<li><a href="#_set_strategic_indicator_categories">2.23. Set strategic indicator categories</a></li>
 </ul>
 </li>
 <li><a href="#_quality_factors">3. Quality Factors</a>
@@ -1343,7 +1344,253 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_prediction_evaluation">2.4. Get prediction evaluation</h3>
+<h3 id="_get_current_and_historical_evaluation">2.4. Get current and historical evaluation</h3>
+<div class="sect3">
+<h4 id="_get_current_and_historical_evaluation_request_parameters">Request parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Starting date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_current_and_historical_evaluation_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/current_and_historical?prj=test&amp;from=2019-07-07&amp;to=2019-07-15' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_current_and_historical_evaluation_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].dbId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator database identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].prj_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator project name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].current_value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical current value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].current_value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator current value category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].current_value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator current value and category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].current_rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator current evaluation rationale</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator categories list</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities[].label</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category label</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category probability</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities[].color</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category hexadecimal color</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].probabilities[].upperThreshold</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category upper threshold</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].current_date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator current assessment date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].historicalDataList</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List with all strategic indicator historical evaluations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].historicalDataList[].value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical historical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].historicalDataList[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator historical value category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].historicalDataList[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator historical value and category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].historicalDataList[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator historical evaluation rationale</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].historicalDataList[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator historical assessment date</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_current_and_historical_evaluation_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 1086
+Content-Type: application/json;charset=UTF-8
+
+[ {
+  "id" : "processperformance",
+  "dbId" : 1,
+  "prj_name" : "Test",
+  "name" : "Process Performance",
+  "description" : "Performance of the processes involved in the development",
+  "current_value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "current_value_description" : "Good (0.80)",
+  "current_rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
+  "current_date" : [ 2019, 7, 7 ],
+  "probabilities" : [ {
+    "id" : 10,
+    "label" : "Good",
+    "value" : null,
+    "color" : "#00ff00",
+    "upperThreshold" : 0.66
+  }, {
+    "id" : 11,
+    "label" : "Neutral",
+    "value" : null,
+    "color" : "#ff8000",
+    "upperThreshold" : 0.33
+  }, {
+    "id" : 11,
+    "label" : "Bad",
+    "value" : null,
+    "color" : "#ff0000",
+    "upperThreshold" : 0.0
+  } ],
+  "historicalDataList" : [ {
+    "value" : {
+      "first" : 0.8,
+      "second" : "Good"
+    },
+    "value_description" : "Good (0.80)",
+    "rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
+    "date" : [ 2019, 7, 7 ]
+  } ]
+} ]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_wrong_project_4">HTTP response wrong project</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_categories_error_4">HTTP response categories error</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_error_on_elasticsearch_connection_4">HTTP response error on ElasticSearch connection</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_prediction_evaluation">2.5. Get prediction evaluation</h3>
 <div class="sect3">
 <h4 id="_get_prediction_evaluation_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -1599,7 +1846,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_4">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_5">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -1608,7 +1855,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_detailed_current_evaluation">2.5. Get detailed current evaluation</h3>
+<h3 id="_get_detailed_current_evaluation">2.6. Get detailed current evaluation</h3>
 <div class="sect3">
 <h4 id="_get_detailed_current_evaluation_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -1782,19 +2029,19 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-04-24"
+    "formattedDate" : "2020-06-15"
   } ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_5">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_6">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -1802,7 +2049,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_4">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_5">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -1811,7 +2058,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_one_detailed_current_evaluation">2.6. Get one detailed current evaluation</h3>
+<h3 id="_get_one_detailed_current_evaluation">2.7. Get one detailed current evaluation</h3>
 <div class="sect3">
 <h4 id="_get_one_detailed_current_evaluation_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -2007,19 +2254,19 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-04-24"
+    "formattedDate" : "2020-06-15"
   } ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_6">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_7">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -2027,7 +2274,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_5">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_6">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -2036,7 +2283,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_detailed_historical_evaluation">2.7. Get detailed historical evaluation</h3>
+<h3 id="_get_detailed_historical_evaluation">2.8. Get detailed historical evaluation</h3>
 <div class="sect3">
 <h4 id="_get_detailed_historical_evaluation_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -2218,19 +2465,19 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-04-24"
+    "formattedDate" : "2020-06-15"
   } ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_7">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_8">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -2238,7 +2485,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_6">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_7">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -2247,7 +2494,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_one_detailed_historical_evaluation">2.8. Get one detailed historical evaluation</h3>
+<h3 id="_get_one_detailed_historical_evaluation">2.9. Get one detailed historical evaluation</h3>
 <div class="sect3">
 <h4 id="_get_one_detailed_historical_evaluation_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -2451,19 +2698,19 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-04-24"
+    "formattedDate" : "2020-06-15"
   } ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_8">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_9">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -2471,7 +2718,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_7">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_8">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -2480,7 +2727,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_detailed_prediction_evaluation">2.9. Get detailed prediction evaluation</h3>
+<h3 id="_get_detailed_prediction_evaluation">2.10. Get detailed prediction evaluation</h3>
 <div class="sect3">
 <h4 id="_get_detailed_prediction_evaluation_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -2662,19 +2909,19 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-04-24"
+    "formattedDate" : "2020-06-15"
   } ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_9">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_10">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -2683,7 +2930,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_one_detailed_prediction_evaluation">2.10. Get one detailed prediction evaluation</h3>
+<h3 id="_get_one_detailed_prediction_evaluation">2.11. Get one detailed prediction evaluation</h3>
 <div class="sect3">
 <h4 id="_get_one_detailed_prediction_evaluation_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -2887,19 +3134,19 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
     "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-04-24"
+    "formattedDate" : "2020-06-15"
   } ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_10">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_11">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -2908,7 +3155,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_all_strategic_indicators">2.11. Get all strategic indicators</h3>
+<h3 id="_get_all_strategic_indicators">2.12. Get all strategic indicators</h3>
 <div class="sect3">
 <h4 id="_get_all_strategic_indicators_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3025,7 +3272,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_one_strategic_indicator">2.12. Get one strategic indicator</h3>
+<h3 id="_get_one_strategic_indicator">2.13. Get one strategic indicator</h3>
 <div class="sect3">
 <h4 id="_get_one_strategic_indicator_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3138,7 +3385,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_add_strategic_indicator">2.13. Add strategic indicator</h3>
+<h3 id="_add_strategic_indicator">2.14. Add strategic indicator</h3>
 <div class="sect3">
 <h4 id="_add_strategic_indicator_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3225,7 +3472,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_update_strategic_indicator">2.14. Update strategic indicator</h3>
+<h3 id="_update_strategic_indicator">2.15. Update strategic indicator</h3>
 <div class="sect3">
 <h4 id="_update_strategic_indicator_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3323,7 +3570,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_delete_strategic_indicator">2.15. Delete strategic indicator</h3>
+<h3 id="_delete_strategic_indicator">2.16. Delete strategic indicator</h3>
 <div class="sect3">
 <h4 id="_delete_strategic_indicator_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3364,7 +3611,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_fetch_strategic_indicators">2.16. Fetch strategic indicators</h3>
+<h3 id="_fetch_strategic_indicators">2.17. Fetch strategic indicators</h3>
 <div class="sect3">
 <h4 id="_fetch_strategic_indicators_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -3383,7 +3630,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_assess_strategic_indicators">2.17. Assess strategic indicators</h3>
+<h3 id="_assess_strategic_indicators">2.18. Assess strategic indicators</h3>
 <div class="sect3">
 <h4 id="_assess_strategic_indicators_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3447,7 +3694,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_assess_strategic_indicators_deprecated">2.18. Assess strategic indicators (deprecated)</h3>
+<h3 id="_assess_strategic_indicators_deprecated">2.19. Assess strategic indicators (deprecated)</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -3523,7 +3770,7 @@ This operation is deprecated. Please, use <a href="#_assess_strategic_indicators
 </div>
 </div>
 <div class="sect2">
-<h3 id="_simulate_strategic_indicators_assessment">2.19. Simulate strategic indicators assessment</h3>
+<h3 id="_simulate_strategic_indicators_assessment">2.20. Simulate strategic indicators assessment</h3>
 <div class="sect3">
 <h4 id="_simulate_strategic_indicators_assessment_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3759,7 +4006,7 @@ Content-Length: 1006
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_quality_model">2.20. Get quality model</h3>
+<h3 id="_get_quality_model">2.21. Get quality model</h3>
 <div class="sect3">
 <h4 id="_get_quality_model_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -3931,7 +4178,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_strategic_indicator_categories">2.21. Get strategic indicator categories</h3>
+<h3 id="_get_strategic_indicator_categories">2.22. Get strategic indicator categories</h3>
 <div class="sect3">
 <h4 id="_get_strategic_indicator_categories_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -4000,7 +4247,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_set_strategic_indicator_categories">2.22. Set strategic indicator categories</h3>
+<h3 id="_set_strategic_indicator_categories">2.23. Set strategic indicator categories</h3>
 <div class="sect3">
 <h4 id="_set_strategic_indicator_categories_request_fields">Request fields</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -4208,7 +4455,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4220,7 +4467,7 @@ Content-Length: 488
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_11">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_12">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -4228,7 +4475,7 @@ Content-Length: 488
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_8">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_9">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -4395,7 +4642,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4407,7 +4654,7 @@ Content-Length: 488
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_12">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_13">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -4415,7 +4662,7 @@ Content-Length: 488
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_9">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_10">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -4443,6 +4690,14 @@ Content-Length: 488
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Starting date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4450,7 +4705,7 @@ Content-Length: 488
 <h4 id="_get_historical_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/current?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2020-06-08&amp;to=2020-06-15' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -4560,7 +4815,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4572,7 +4827,7 @@ Content-Length: 488
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_13">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_14">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -4580,7 +4835,7 @@ Content-Length: 488
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_10">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_11">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -4593,7 +4848,7 @@ Content-Length: 488
 <div class="sect3">
 <h4 id="_get_historical_evaluation_for_strategic_indicator_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/metrics/current</caption>
+<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/metrics/historical</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -4630,6 +4885,14 @@ Content-Length: 488
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Starting date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4637,7 +4900,7 @@ Content-Length: 488
 <h4 id="_get_historical_evaluation_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/current?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2020-06-08&amp;to=2020-06-15' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -4747,7 +5010,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4759,7 +5022,7 @@ Content-Length: 488
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_14">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_15">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -4767,7 +5030,7 @@ Content-Length: 488
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_11">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_12">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -4940,7 +5203,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -4958,7 +5221,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_15">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_16">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -4966,7 +5229,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_12">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_13">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -5161,7 +5424,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 4, 24 ],
+    "date" : [ 2020, 6, 15 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -5179,7 +5442,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_16">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_17">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -5187,7 +5450,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_13">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_14">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -5314,18 +5577,18 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-04-24"
+  "formattedDate" : "2020-06-15"
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_17">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_18">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -5333,7 +5596,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_14">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_15">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -5482,18 +5745,18 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-04-24"
+  "formattedDate" : "2020-06-15"
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_18">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_19">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -5501,7 +5764,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_15">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_16">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -5666,18 +5929,18 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
   "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-04-24"
+  "formattedDate" : "2020-06-15"
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_19">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_20">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -5685,7 +5948,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_16">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_17">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -5969,7 +6232,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5980,7 +6243,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_20">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_21">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -5988,7 +6251,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_17">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_18">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -6137,7 +6400,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6148,7 +6411,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_21">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_22">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -6156,7 +6419,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_18">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_19">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -6305,7 +6568,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6316,7 +6579,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_22">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_23">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -6324,7 +6587,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_19">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_20">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -6459,7 +6722,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6470,7 +6733,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_23">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_24">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -6478,7 +6741,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_20">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_21">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -6635,7 +6898,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6646,7 +6909,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_24">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_25">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -6654,7 +6917,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_21">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_22">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -6811,7 +7074,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6822,7 +7085,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_25">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_26">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -6830,7 +7093,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_22">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_23">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -6985,7 +7248,7 @@ Content-Length: 466
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -7002,7 +7265,7 @@ Content-Length: 466
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_26">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_27">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -7010,7 +7273,7 @@ Content-Length: 466
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_23">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_24">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -7187,7 +7450,7 @@ Content-Length: 466
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 4, 24 ],
+  "date" : [ 2020, 6, 15 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -7204,7 +7467,7 @@ Content-Length: 466
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_27">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_28">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -7212,7 +7475,7 @@ Content-Length: 466
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_24">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_25">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -7498,7 +7761,7 @@ Content-Length: 257
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1587724564167,
+  "date" : 1592222143645,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -7507,7 +7770,7 @@ Content-Length: 257
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_28">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_29">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -7805,7 +8068,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_29">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_30">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -8130,7 +8393,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_30">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_31">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -8294,7 +8557,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1587724563641,
+  "date" : 1592222143394,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8483,7 +8746,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : 3,
-  "date" : 1587724567417,
+  "date" : 1592222146547,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8498,7 +8761,7 @@ Content-Type: application/json;charset=UTF-8
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1587724567417,
+    "date" : 1592222146547,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -8508,7 +8771,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_31">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_32">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -8642,7 +8905,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1587724567533,
+  "date" : 1592222146674,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8712,7 +8975,7 @@ Content-Length: 410
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_32">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_33">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -9165,7 +9428,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : 2,
   "type" : "ADD",
-  "date" : 1587724565107,
+  "date" : 1592222144485,
   "author" : null,
   "rationale" : "User comments",
   "patternId" : 100,
@@ -9378,7 +9641,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "strategicIndicatorId" : 1,
-  "date" : "2020-04-24",
+  "date" : "2020-06-15",
   "author" : null,
   "oldValue" : 0.6,
   "newValue" : 0.75
@@ -9576,7 +9839,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_categories_error_4">HTTP response categories error</h4>
+<h4 id="_http_response_categories_error_5">HTTP response categories error</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
@@ -9584,7 +9847,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_25">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_26">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -10923,7 +11186,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-04-24' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-06-15' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -10975,7 +11238,7 @@ Content-Length: 137
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "date" : "2020-04-27",
+  "date" : "2020-06-18",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -11067,10 +11330,10 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-  "dateFrom" : "2020-04-09",
+  "dateFrom" : "2020-05-31",
   "name" : "Development",
   "description" : "Implementation of project functionalities",
-  "dateTo" : "2020-05-09"
+  "dateTo" : "2020-06-30"
 } ]</code></pre>
 </div>
 </div>
@@ -11081,7 +11344,7 @@ Content-Length: 156
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-24 12:39:16 +0200
+Last updated 2020-06-15 13:57:52 +0200
 </div>
 </div>
 </body>

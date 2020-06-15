@@ -8,33 +8,39 @@
 <body>
 <div th:replace="Fragments/Template :: logo"></div>
 <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
-<div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
-<div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
-    <form class="form-inline well" style="float: right">
-        <div class="form-group">
-            <label class="control-label">From: </label>
-            <input id="datepickerFrom" width="250" class="form-control"/>
-        </div>
-        <div class="form-group">
-            <label class="control-label"> To: </label>
-            <input id="datepickerTo" width="250" class="form-control"/>
-        </div>
-        <div class="form-group dropdown">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
-            <ul class="dropdown-menu dropdown-menu-right">
-                <li><a onclick="thisWeek()" href="#">This week</a></li>
-                <li><a onclick="last7Days()" href="#">Last 7 days</a></li>
-                <li><a onclick="last14Days()" href="#">Last 14 days</a></li>
-                <li><a onclick="thisMonth()" href="#">This month</a></li>
-                <li><a onclick="thisYear()" href="#">This year</a></li>
-            </ul>
-        </div>
-    </form>
-</div>
-<br/><br/>
-<br/><br/>
-<br/><br/>
-<br/><br/>
+<table>
+    <tr>
+        <td style="width: 50%;">
+            <div class="form-group">
+                <div style="margin-top: 1em;padding-left: 15px;padding-right: 15px;" th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+            </div>
+        </td>
+        <td style="width: 50%;">
+            <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
+                <form class="form-inline well" style="float: left">
+                    <div class="form-group">
+                        <label class="control-label">From: </label>
+                        <input id="datepickerFrom" width="250" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"> To: </label>
+                        <input id="datepickerTo" width="250" class="form-control"/>
+                    </div>
+                    <div class="form-group dropdown">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a onclick="thisWeek()" href="#">This week</a></li>
+                            <li><a onclick="last7Days()" href="#">Last 7 days</a></li>
+                            <li><a onclick="last14Days()" href="#">Last 14 days</a></li>
+                            <li><a onclick="thisMonth()" href="#">This month</a></li>
+                            <li><a onclick="thisYear()" href="#">This year</a></li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </td>
+    </tr>
+</table>
 <div id="ReportingView">
     <div id="ProjectSelector">
         <ul id="ElementList" class="list-group">
