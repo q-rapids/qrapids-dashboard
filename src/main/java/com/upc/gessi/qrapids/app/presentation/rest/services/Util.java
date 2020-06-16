@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -24,6 +25,20 @@ public class Util {
 
     @Value("${server.url}")
     private String serverUrl;
+
+    // add jasterserver data
+    @Value("${jasperServer.url}")
+    private String jasperserverURL;
+    @Value("${jasperserver.user}")
+    private String jasperserverUser;
+    @Value("${jasperserver.password}")
+    private String jasperserverPassword;
+
+    @GetMapping("/api/jasperserverInfo")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> jasperserverInfo() {
+        return Arrays.asList(jasperserverURL, jasperserverUser, jasperserverPassword);
+    }
 
     @GetMapping("/api/rawdataDashboard")
     @ResponseStatus(HttpStatus.OK)

@@ -237,3 +237,10 @@ canvas {
     border-collapse: collapse;
     padding: 5px;
 }
+
+col-reporting {
+    width: 50%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+}
