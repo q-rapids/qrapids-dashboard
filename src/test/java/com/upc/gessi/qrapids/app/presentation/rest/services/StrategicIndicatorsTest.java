@@ -14,10 +14,7 @@ import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedStrategicIndicator;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityFactor;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
@@ -108,6 +105,12 @@ public class StrategicIndicatorsTest {
     private DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation;
     private List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();
 
+    private DTOSICurrentHistoricEvaluation dtoSICurrentHistoricEvaluation;
+    private List<DTOSICurrentHistoricEvaluation> dtoSICurrentHistoricEvaluationList = new ArrayList<>();
+
+    private DTOSICurrentHistoricEvaluation.DTOHistoricalData dtoHistoricalData;
+    private List<DTOSICurrentHistoricEvaluation.DTOHistoricalData> dtoHistoricalDataList = new ArrayList<>();
+
     private DTOFactor dtoFactor;
     private DTODetailedStrategicIndicator dtoDetailedStrategicIndicator;
     private List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicatorList = new ArrayList<>();
@@ -126,6 +129,12 @@ public class StrategicIndicatorsTest {
 
         dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
         dtoStrategicIndicatorEvaluationList.add(dtoStrategicIndicatorEvaluation);
+
+        dtoSICurrentHistoricEvaluation = domainObjectsBuilder.buildDTOSICurrentHistoricEvaluation();
+        dtoSICurrentHistoricEvaluationList.add(dtoSICurrentHistoricEvaluation);
+
+        dtoHistoricalData = domainObjectsBuilder.buildDTOHistoricalData();
+        dtoHistoricalDataList.add(dtoHistoricalData);
 
         dtoFactor = domainObjectsBuilder.buildDTOFactor();
         List<DTOFactor> dtoFactorList = new ArrayList<>();
@@ -2741,6 +2750,134 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getForecastTechniques();
+        verifyNoMoreInteractions(strategicIndicatorsDomainController);
+    }
+
+    @Test
+    public void getStrategicIndicatorsCurrentHistoricEvaluation() throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
+
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
+
+        String from = "2019-07-07";
+        LocalDate fromDate = LocalDate.parse(from);
+        String to = "2019-07-15";
+        LocalDate toDate = LocalDate.parse(to);
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenReturn(dtoStrategicIndicatorEvaluationList);
+
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/strategicIndicators/current_and_historical")
+                .param("prj", projectExternalId)
+                .param("from", from)
+                .param("to", to);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(dtoSICurrentHistoricEvaluation.getId())))
+                .andExpect(jsonPath("$[0].dbId", is(dtoSICurrentHistoricEvaluation.getDbId().intValue())))
+                .andExpect(jsonPath("$[0].prj_name", is(dtoSICurrentHistoricEvaluation.getPrj_name())))
+                .andExpect(jsonPath("$[0].name", is(dtoSICurrentHistoricEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoSICurrentHistoricEvaluation.getDescription())))
+                .andExpect(jsonPath("$[0].current_value.first", is(getFloatAsDouble(dtoSICurrentHistoricEvaluation.getCurrent_value().getFirst()))))
+                .andExpect(jsonPath("$[0].current_value.second", is(dtoSICurrentHistoricEvaluation.getCurrent_value().getSecond())))
+                .andExpect(jsonPath("$[0].current_value_description", is(dtoSICurrentHistoricEvaluation.getCurrent_value_description())))
+                .andExpect(jsonPath("$[0].current_rationale", is(dtoSICurrentHistoricEvaluation.getCurrent_rationale())))
+                .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
+                .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(0).getId().intValue())))
+                .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(0).getLabel())))
+                .andExpect(jsonPath("$[0].probabilities[0].value", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(0).getValue())))
+                .andExpect(jsonPath("$[0].probabilities[0].color", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(0).getColor())))
+                .andExpect(jsonPath("$[0].probabilities[0].upperThreshold", is(getFloatAsDouble(dtoSICurrentHistoricEvaluation.getProbabilities().get(0).getUpperThreshold()))))
+                .andExpect(jsonPath("$[0].probabilities[1].id", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(1).getId().intValue())))
+                .andExpect(jsonPath("$[0].probabilities[1].label", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(1).getLabel())))
+                .andExpect(jsonPath("$[0].probabilities[1].value", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(1).getValue())))
+                .andExpect(jsonPath("$[0].probabilities[1].color", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(1).getColor())))
+                .andExpect(jsonPath("$[0].probabilities[1].upperThreshold", is(getFloatAsDouble(dtoSICurrentHistoricEvaluation.getProbabilities().get(1).getUpperThreshold()))))
+                .andExpect(jsonPath("$[0].probabilities[2].id", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(2).getId().intValue())))
+                .andExpect(jsonPath("$[0].probabilities[2].label", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(2).getLabel())))
+                .andExpect(jsonPath("$[0].probabilities[2].value", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(2).getValue())))
+                .andExpect(jsonPath("$[0].probabilities[2].color", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(2).getColor())))
+                .andExpect(jsonPath("$[0].probabilities[2].upperThreshold", is(getFloatAsDouble(dtoSICurrentHistoricEvaluation.getProbabilities().get(2).getUpperThreshold()))))
+                .andExpect(jsonPath("$[0].current_date[0]", is(dtoSICurrentHistoricEvaluation.getCurrent_date().getYear())))
+                .andExpect(jsonPath("$[0].current_date[1]", is(dtoSICurrentHistoricEvaluation.getCurrent_date().getMonthValue())))
+                .andExpect(jsonPath("$[0].current_date[2]", is(dtoSICurrentHistoricEvaluation.getCurrent_date().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].historicalDataList", hasSize(1)))
+                .andExpect(jsonPath("$[0].historicalDataList[0].value.first", is(getFloatAsDouble(dtoHistoricalData.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].historicalDataList[0].value.second", is(dtoHistoricalData.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].historicalDataList[0].value_description", is(dtoHistoricalData.getValue_description())))
+                .andExpect(jsonPath("$[0].historicalDataList[0].rationale", is(dtoHistoricalData.getRationale())))
+                .andExpect(jsonPath("$[0].historicalDataList[0].date[0]", is(dtoHistoricalData.getDate().getYear())))
+                .andExpect(jsonPath("$[0].historicalDataList[0].date[1]", is(dtoHistoricalData.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].historicalDataList[0].date[2]", is(dtoHistoricalData.getDate().getDayOfMonth())))
+                .andDo(document("si/current_and_historical",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("from")
+                                        .description("Starting date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("to")
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Strategic indicator identifier"),
+                                fieldWithPath("[].dbId")
+                                        .description("Strategic indicator database identifier"),
+                                fieldWithPath("[].prj_name")
+                                        .description("Strategic indicator project name"),
+                                fieldWithPath("[].name")
+                                        .description("Strategic indicator name"),
+                                fieldWithPath("[].description")
+                                        .description("Strategic indicator description"),
+                                fieldWithPath("[].current_value.first")
+                                        .description("Strategic indicator numerical current value"),
+                                fieldWithPath("[].current_value.second")
+                                        .description("Strategic indicator current value category"),
+                                fieldWithPath("[].current_value_description")
+                                        .description("Readable strategic indicator current value and category"),
+                                fieldWithPath("[].current_rationale")
+                                        .description("Strategic indicator current evaluation rationale"),
+                                fieldWithPath("[].probabilities")
+                                        .description("Strategic indicator categories list"),
+                                fieldWithPath("[].probabilities[].id")
+                                        .description("Strategic indicator category identifier"),
+                                fieldWithPath("[].probabilities[].label")
+                                        .description("Strategic indicator category label"),
+                                fieldWithPath("[].probabilities[].value")
+                                        .description("Strategic indicator category probability"),
+                                fieldWithPath("[].probabilities[].color")
+                                        .description("Strategic indicator category hexadecimal color"),
+                                fieldWithPath("[].probabilities[].upperThreshold")
+                                        .description("Strategic indicator category upper threshold"),
+                                fieldWithPath("[].current_date")
+                                        .description("Strategic indicator current assessment date"),
+                                fieldWithPath("[].historicalDataList")
+                                        .description("List with all strategic indicator historical evaluations"),
+                                fieldWithPath("[].historicalDataList[].value.first")
+                                        .description("Strategic indicator numerical historical value"),
+                                fieldWithPath("[].historicalDataList[].value.second")
+                                        .description("Strategic indicator historical value category"),
+                                fieldWithPath("[].historicalDataList[].value_description")
+                                        .description("Readable strategic indicator historical value and category"),
+                                fieldWithPath("[].historicalDataList[].rationale")
+                                        .description("Strategic indicator historical evaluation rationale"),
+                                fieldWithPath("[].historicalDataList[].date")
+                                        .description("Strategic indicator historical assessment date"))
+                ));
+
+
+        // Verify mock interactions
+        verify(projectsController, times(1)).findProjectByExternalId(projectExternalId);
+        verifyNoMoreInteractions(projectsController);
+
+        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 

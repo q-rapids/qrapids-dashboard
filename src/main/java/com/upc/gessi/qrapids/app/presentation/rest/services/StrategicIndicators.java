@@ -507,4 +507,40 @@ public class StrategicIndicators {
         // if the response is null
         return null;
     }
+
+    @GetMapping("/api/strategicIndicators/current_and_historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOSICurrentHistoricEvaluation> getStrategicIndicatorsCurrentHistoricEvaluation(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
+        try {
+            Project project = projectsController.findProjectByExternalId(prj);
+            List<DTOStrategicIndicatorEvaluation> current_data = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
+            List<DTOStrategicIndicatorEvaluation> historic_data = strategicIndicatorsController.getAllStrategicIndicatorsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
+            List<DTOSICurrentHistoricEvaluation> result = new ArrayList<>();
+            int j = 0;
+            for (int i = 0; i < current_data.size(); i++) {
+                DTOStrategicIndicatorEvaluation aux = current_data.get(i);
+                DTOSICurrentHistoricEvaluation si_info = new DTOSICurrentHistoricEvaluation(aux.getId(),project.getName(),aux.getName(),aux.getDescription(),
+                        aux.getValue(), aux.getDbId(),aux.getRationale(),aux.getProbabilities(),aux.getDate());
+                List<DTOSICurrentHistoricEvaluation.DTOHistoricalData> si_hist_info = new ArrayList<>();
+                while (j < historic_data.size() && aux.getId().equals(historic_data.get(j).getId())) {
+                    DTOStrategicIndicatorEvaluation hist_aux = historic_data.get(j);
+                    DTOSICurrentHistoricEvaluation.DTOHistoricalData hist_info = new DTOSICurrentHistoricEvaluation.DTOHistoricalData(hist_aux.getValue(),hist_aux.getRationale(),hist_aux.getDate());
+                    si_hist_info.add(hist_info);
+                    j++;
+                }
+                si_info.setHistoricalDataList(si_hist_info);
+                result.add(si_info);
+            }
+            return result;
+        } catch (ElasticsearchStatusException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+        } catch (CategoriesException | ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
 }

@@ -57,6 +57,21 @@ include::{snippets}/si/historical-conflict/http-response.adoc[]
 include::{snippets}/si/historical-read-error/http-response.adoc[]
 :numbered:
 
+=== Get current and historical evaluation
+
+operation::si/current_and_historical[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response categories error
+include::{snippets}/si/historical-conflict/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/si/historical-read-error/http-response.adoc[]
+:numbered:
+
 
 === Get prediction evaluation
 
@@ -279,7 +294,7 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 === Get historical evaluation
 
-operation::qf/current[snippets='request-parameters,curl-request,response-fields,http-response']
+operation::qf/historical[snippets='request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
 
@@ -294,7 +309,7 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 === Get historical evaluation for strategic indicator
 
-operation::qf/current-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+operation::qf/historical-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
 

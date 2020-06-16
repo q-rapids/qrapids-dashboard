@@ -20,7 +20,7 @@ function buildFirstPartOfTree() {
         type: "GET",
         async: true,
         success: function (data) {
-        	var productList = document.getElementById('productList');
+        	var T = document.getElementById('productList');
         	productList.innerHTML = "";
         	var product = document.createElement('li');
         	product.classList.add("list-group-item");

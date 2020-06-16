@@ -205,6 +205,9 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
 } else if (currentURL.search("/Decisions") !== -1) {
     id = "Decisions";
     highlight(id);
+} else if (currentURL.search("/Reporting") !== -1) {
+    id = "Reporting";
+    highlight(id);
 } else if (currentURL.search("/QualityModel") !== -1) {
     id = "QualityModel";
     highlightAndSaveCurrentAssessment(id);
@@ -373,6 +376,8 @@ $("#profileConfig").attr("href", serverUrl + "/profile");
 $("#usersConfig").attr("href", serverUrl + "/users");
 
 $("#usergroupsConfig").attr("href", serverUrl + "/usergroups");
+
+$("#Reporting").attr("href", serverUrl + "/Reporting");
 
 $("#LogoutProfileConfig").attr("href", serverUrl + "/logout_user");
 $("#LogoutProfileConfig").click(function () {
