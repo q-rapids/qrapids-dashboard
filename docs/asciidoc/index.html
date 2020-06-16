@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v1.3, 2020-06-15">
+<meta name="author" content="v1.4, 2020-06-16">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v1.3, 2020-06-15</span><br>
+<span id="author" class="author">v1.4, 2020-06-16</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -1409,7 +1409,7 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator database identifier</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].prj_name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].prjName</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator project name</p></td>
 </tr>
@@ -1424,22 +1424,22 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].current_value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].currentValue.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator numerical current value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].current_value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].currentValue.second</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator current value category</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].current_value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].currentValueDescription</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator current value and category</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].current_rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].currentRationale</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator current evaluation rationale</p></td>
 </tr>
@@ -1474,7 +1474,7 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator category upper threshold</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].current_date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].currentDate</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator current assessment date</p></td>
 </tr>
@@ -1494,7 +1494,7 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator historical value category</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].historicalDataList[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].historicalDataList[].valueDescription</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Readable strategic indicator historical value and category</p></td>
 </tr>
@@ -1516,22 +1516,22 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 1086
+Content-Length: 1079
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "processperformance",
   "dbId" : 1,
-  "prj_name" : "Test",
+  "prjName" : "Test",
   "name" : "Process Performance",
   "description" : "Performance of the processes involved in the development",
-  "current_value" : {
+  "currentValue" : {
     "first" : 0.8,
     "second" : "Good"
   },
-  "current_value_description" : "Good (0.80)",
-  "current_rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
-  "current_date" : [ 2019, 7, 7 ],
+  "currentValueDescription" : "Good (0.80)",
+  "currentRationale" : "factors: {...}, formula: ..., value: ..., category: ...",
+  "currentDate" : [ 2019, 7, 7 ],
   "probabilities" : [ {
     "id" : 10,
     "label" : "Good",
@@ -1556,7 +1556,7 @@ Content-Type: application/json;charset=UTF-8
       "first" : 0.8,
       "second" : "Good"
     },
-    "value_description" : "Good (0.80)",
+    "valueDescription" : "Good (0.80)",
     "rationale" : "factors: {...}, formula: ..., value: ..., category: ...",
     "date" : [ 2019, 7, 7 ]
   } ]
@@ -2029,12 +2029,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-06-15"
+    "formattedDate" : "2020-06-16",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2254,12 +2254,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-06-15"
+    "formattedDate" : "2020-06-16",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2465,12 +2465,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-06-15"
+    "formattedDate" : "2020-06-16",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2698,12 +2698,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-06-15"
+    "formattedDate" : "2020-06-16",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2909,12 +2909,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-06-15"
+    "formattedDate" : "2020-06-16",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -3134,12 +3134,12 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-06-15"
+    "formattedDate" : "2020-06-16",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -4455,7 +4455,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4642,7 +4642,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4705,7 +4705,7 @@ Content-Length: 488
 <h4 id="_get_historical_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2020-06-08&amp;to=2020-06-15' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2020-06-09&amp;to=2020-06-16' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -4815,7 +4815,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4900,7 +4900,7 @@ Content-Length: 488
 <h4 id="_get_historical_evaluation_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2020-06-08&amp;to=2020-06-15' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2020-06-09&amp;to=2020-06-16' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -5010,7 +5010,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -5203,7 +5203,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -5424,7 +5424,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 15 ],
+    "date" : [ 2020, 6, 16 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -5577,12 +5577,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-06-15"
+  "formattedDate" : "2020-06-16",
+  "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
 </div>
@@ -5745,12 +5745,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-06-15"
+  "formattedDate" : "2020-06-16",
+  "strategicIndicators" : [ "processperformance" ]
 }</code></pre>
 </div>
 </div>
@@ -5929,12 +5929,12 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-06-15"
+  "formattedDate" : "2020-06-16",
+  "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
 </div>
@@ -6232,7 +6232,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6400,7 +6400,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6568,7 +6568,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6722,7 +6722,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6898,7 +6898,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -7074,7 +7074,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -7248,7 +7248,7 @@ Content-Length: 466
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -7450,7 +7450,7 @@ Content-Length: 466
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 15 ],
+  "date" : [ 2020, 6, 16 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -7761,7 +7761,7 @@ Content-Length: 257
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1592222143645,
+  "date" : 1592304288018,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -8557,7 +8557,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1592222143394,
+  "date" : 1592304287487,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8746,7 +8746,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : 3,
-  "date" : 1592222146547,
+  "date" : 1592304291593,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8761,7 +8761,7 @@ Content-Type: application/json;charset=UTF-8
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1592222146547,
+    "date" : 1592304291593,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -8905,7 +8905,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1592222146674,
+  "date" : 1592304291708,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -9428,7 +9428,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : 2,
   "type" : "ADD",
-  "date" : 1592222144485,
+  "date" : 1592304288884,
   "author" : null,
   "rationale" : "User comments",
   "patternId" : 100,
@@ -9641,7 +9641,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "strategicIndicatorId" : 1,
-  "date" : "2020-06-15",
+  "date" : "2020-06-16",
   "author" : null,
   "oldValue" : 0.6,
   "newValue" : 0.75
@@ -11186,7 +11186,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-06-15' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-06-16' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -11238,7 +11238,7 @@ Content-Length: 137
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "date" : "2020-06-18",
+  "date" : "2020-06-19",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -11330,10 +11330,10 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-  "dateFrom" : "2020-05-31",
+  "dateFrom" : "2020-06-01",
   "name" : "Development",
   "description" : "Implementation of project functionalities",
-  "dateTo" : "2020-06-30"
+  "dateTo" : "2020-07-01"
 } ]</code></pre>
 </div>
 </div>
@@ -11344,7 +11344,7 @@ Content-Length: 156
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-15 13:57:52 +0200
+Last updated 2020-06-16 12:42:48 +0200
 </div>
 </div>
 </body>

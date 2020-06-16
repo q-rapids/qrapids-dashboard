@@ -66,10 +66,10 @@ public class DTOSICurrentHistoricEvaluation {
         }
     }
 
-    public DTOSICurrentHistoricEvaluation(String id, String prj_name, String name, String description, Pair<Float, String> value, Long dbId,
+    public DTOSICurrentHistoricEvaluation(String id, String prjName, String name, String description, Pair<Float, String> value, Long dbId,
                                           String rationale, List<DTOSIAssessment> probabilities, LocalDate date) {
         setId(id);
-        setPrjName(prj_name);
+        setPrjName(prjName);
         setName(name);
         setDescription(description);
         setCurrentValue(value);

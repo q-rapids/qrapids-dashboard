@@ -1,5 +1,5 @@
 = Q-Rapids Dashboard API REST Documentation
-v1.3, {docdate}
+v1.4, {docdate}
 :toc: left
 
 :sectnums:
