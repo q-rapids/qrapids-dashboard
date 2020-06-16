@@ -37,8 +37,7 @@ public class Util {
     @GetMapping("/api/jasperserverInfo")
     @ResponseStatus(HttpStatus.OK)
     public List<String> jasperserverInfo() {
-        List<String> info = Arrays.asList(jasperserverURL, jasperserverUser, jasperserverPassword);
-        return info;
+        return Arrays.asList(jasperserverURL, jasperserverUser, jasperserverPassword);
     }
 
     @GetMapping("/api/rawdataDashboard")

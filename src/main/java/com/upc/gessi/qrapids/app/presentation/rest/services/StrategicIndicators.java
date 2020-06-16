@@ -513,23 +513,23 @@ public class StrategicIndicators {
     public List<DTOSICurrentHistoricEvaluation> getStrategicIndicatorsCurrentHistoricEvaluation(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             Project project = projectsController.findProjectByExternalId(prj);
-            List<DTOStrategicIndicatorEvaluation> current_data = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
-            List<DTOStrategicIndicatorEvaluation> historic_data = strategicIndicatorsController.getAllStrategicIndicatorsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
+            List<DTOStrategicIndicatorEvaluation> currentData = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
+            List<DTOStrategicIndicatorEvaluation> historicData = strategicIndicatorsController.getAllStrategicIndicatorsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
             List<DTOSICurrentHistoricEvaluation> result = new ArrayList<>();
             int j = 0;
-            for (int i = 0; i < current_data.size(); i++) {
-                DTOStrategicIndicatorEvaluation aux = current_data.get(i);
-                DTOSICurrentHistoricEvaluation si_info = new DTOSICurrentHistoricEvaluation(aux.getId(),project.getName(),aux.getName(),aux.getDescription(),
+            for (int i = 0; i < currentData.size(); i++) {
+                DTOStrategicIndicatorEvaluation aux = currentData.get(i);
+                DTOSICurrentHistoricEvaluation siInfo = new DTOSICurrentHistoricEvaluation(aux.getId(),project.getName(),aux.getName(),aux.getDescription(),
                         aux.getValue(), aux.getDbId(),aux.getRationale(),aux.getProbabilities(),aux.getDate());
-                List<DTOSICurrentHistoricEvaluation.DTOHistoricalData> si_hist_info = new ArrayList<>();
-                while (j < historic_data.size() && aux.getId().equals(historic_data.get(j).getId())) {
-                    DTOStrategicIndicatorEvaluation hist_aux = historic_data.get(j);
+                List<DTOSICurrentHistoricEvaluation.DTOHistoricalData> siHistInfo = new ArrayList<>();
+                while (j < historicData.size() && aux.getId().equals(historicData.get(j).getId())) {
+                    DTOStrategicIndicatorEvaluation hist_aux = historicData.get(j);
                     DTOSICurrentHistoricEvaluation.DTOHistoricalData hist_info = new DTOSICurrentHistoricEvaluation.DTOHistoricalData(hist_aux.getValue(),hist_aux.getRationale(),hist_aux.getDate());
-                    si_hist_info.add(hist_info);
+                    siHistInfo.add(hist_info);
                     j++;
                 }
-                si_info.setHistoricalDataList(si_hist_info);
-                result.add(si_info);
+                siInfo.setHistoricalDataList(siHistInfo);
+                result.add(siInfo);
             }
             return result;
         } catch (ElasticsearchStatusException e) {

@@ -2780,13 +2780,13 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoSICurrentHistoricEvaluation.getId())))
                 .andExpect(jsonPath("$[0].dbId", is(dtoSICurrentHistoricEvaluation.getDbId().intValue())))
-                .andExpect(jsonPath("$[0].prj_name", is(dtoSICurrentHistoricEvaluation.getPrj_name())))
+                .andExpect(jsonPath("$[0].prjName", is(dtoSICurrentHistoricEvaluation.getPrjName())))
                 .andExpect(jsonPath("$[0].name", is(dtoSICurrentHistoricEvaluation.getName())))
                 .andExpect(jsonPath("$[0].description", is(dtoSICurrentHistoricEvaluation.getDescription())))
-                .andExpect(jsonPath("$[0].current_value.first", is(getFloatAsDouble(dtoSICurrentHistoricEvaluation.getCurrent_value().getFirst()))))
-                .andExpect(jsonPath("$[0].current_value.second", is(dtoSICurrentHistoricEvaluation.getCurrent_value().getSecond())))
-                .andExpect(jsonPath("$[0].current_value_description", is(dtoSICurrentHistoricEvaluation.getCurrent_value_description())))
-                .andExpect(jsonPath("$[0].current_rationale", is(dtoSICurrentHistoricEvaluation.getCurrent_rationale())))
+                .andExpect(jsonPath("$[0].currentValue.first", is(getFloatAsDouble(dtoSICurrentHistoricEvaluation.getCurrentValue().getFirst()))))
+                .andExpect(jsonPath("$[0].currentValue.second", is(dtoSICurrentHistoricEvaluation.getCurrentValue().getSecond())))
+                .andExpect(jsonPath("$[0].currentValueDescription", is(dtoSICurrentHistoricEvaluation.getCurrentValueDescription())))
+                .andExpect(jsonPath("$[0].currentRationale", is(dtoSICurrentHistoricEvaluation.getCurrentRationale())))
                 .andExpect(jsonPath("$[0].probabilities", hasSize(3)))
                 .andExpect(jsonPath("$[0].probabilities[0].id", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(0).getId().intValue())))
                 .andExpect(jsonPath("$[0].probabilities[0].label", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(0).getLabel())))
@@ -2803,9 +2803,9 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].probabilities[2].value", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(2).getValue())))
                 .andExpect(jsonPath("$[0].probabilities[2].color", is(dtoSICurrentHistoricEvaluation.getProbabilities().get(2).getColor())))
                 .andExpect(jsonPath("$[0].probabilities[2].upperThreshold", is(getFloatAsDouble(dtoSICurrentHistoricEvaluation.getProbabilities().get(2).getUpperThreshold()))))
-                .andExpect(jsonPath("$[0].current_date[0]", is(dtoSICurrentHistoricEvaluation.getCurrent_date().getYear())))
-                .andExpect(jsonPath("$[0].current_date[1]", is(dtoSICurrentHistoricEvaluation.getCurrent_date().getMonthValue())))
-                .andExpect(jsonPath("$[0].current_date[2]", is(dtoSICurrentHistoricEvaluation.getCurrent_date().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].currentDate[0]", is(dtoSICurrentHistoricEvaluation.getCurrentDate().getYear())))
+                .andExpect(jsonPath("$[0].currentDate[1]", is(dtoSICurrentHistoricEvaluation.getCurrentDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].currentDate[2]", is(dtoSICurrentHistoricEvaluation.getCurrentDate().getDayOfMonth())))
                 .andExpect(jsonPath("$[0].historicalDataList", hasSize(1)))
                 .andExpect(jsonPath("$[0].historicalDataList[0].value.first", is(getFloatAsDouble(dtoHistoricalData.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].historicalDataList[0].value.second", is(dtoHistoricalData.getValue().getSecond())))
@@ -2829,19 +2829,19 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator identifier"),
                                 fieldWithPath("[].dbId")
                                         .description("Strategic indicator database identifier"),
-                                fieldWithPath("[].prj_name")
+                                fieldWithPath("[].prjName")
                                         .description("Strategic indicator project name"),
                                 fieldWithPath("[].name")
                                         .description("Strategic indicator name"),
                                 fieldWithPath("[].description")
                                         .description("Strategic indicator description"),
-                                fieldWithPath("[].current_value.first")
+                                fieldWithPath("[].currentValue.first")
                                         .description("Strategic indicator numerical current value"),
-                                fieldWithPath("[].current_value.second")
+                                fieldWithPath("[].currentValue.second")
                                         .description("Strategic indicator current value category"),
-                                fieldWithPath("[].current_value_description")
+                                fieldWithPath("[].currentValueDescription")
                                         .description("Readable strategic indicator current value and category"),
-                                fieldWithPath("[].current_rationale")
+                                fieldWithPath("[].currentRationale")
                                         .description("Strategic indicator current evaluation rationale"),
                                 fieldWithPath("[].probabilities")
                                         .description("Strategic indicator categories list"),
@@ -2855,7 +2855,7 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator category hexadecimal color"),
                                 fieldWithPath("[].probabilities[].upperThreshold")
                                         .description("Strategic indicator category upper threshold"),
-                                fieldWithPath("[].current_date")
+                                fieldWithPath("[].currentDate")
                                         .description("Strategic indicator current assessment date"),
                                 fieldWithPath("[].historicalDataList")
                                         .description("List with all strategic indicator historical evaluations"),
