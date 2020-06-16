@@ -22,13 +22,13 @@ public class DTOSICurrentHistoricEvaluation {
 
     public static class DTOHistoricalData {
         private Pair<Float, String> value;
-        private String value_description;
+        private String valueDescription;
         private String rationale;
         private LocalDate date;
 
         public DTOHistoricalData(Pair<Float, String> value, String rationale, LocalDate date) {
             setValue(value);
-            this.value_description = StrategicIndicatorsController.buildDescriptiveLabelAndValue(value);
+            this.valueDescription = StrategicIndicatorsController.buildDescriptiveLabelAndValue(value);
             setRationale(rationale);
             setDate(date);
         }
@@ -41,12 +41,12 @@ public class DTOSICurrentHistoricEvaluation {
             return value;
         }
 
-        public String getValue_description() {
-            return value_description;
+        public String getValueDescription() {
+            return valueDescription;
         }
 
-        public void setValue_description(String value_description) {
-            this.value_description = value_description;
+        public void setValueDescription(String valueDescription) {
+            this.valueDescription = valueDescription;
         }
 
         public void setRationale(String rationale) {

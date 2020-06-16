@@ -2809,7 +2809,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].historicalDataList", hasSize(1)))
                 .andExpect(jsonPath("$[0].historicalDataList[0].value.first", is(getFloatAsDouble(dtoHistoricalData.getValue().getFirst()))))
                 .andExpect(jsonPath("$[0].historicalDataList[0].value.second", is(dtoHistoricalData.getValue().getSecond())))
-                .andExpect(jsonPath("$[0].historicalDataList[0].value_description", is(dtoHistoricalData.getValue_description())))
+                .andExpect(jsonPath("$[0].historicalDataList[0].valueDescription", is(dtoHistoricalData.getValueDescription())))
                 .andExpect(jsonPath("$[0].historicalDataList[0].rationale", is(dtoHistoricalData.getRationale())))
                 .andExpect(jsonPath("$[0].historicalDataList[0].date[0]", is(dtoHistoricalData.getDate().getYear())))
                 .andExpect(jsonPath("$[0].historicalDataList[0].date[1]", is(dtoHistoricalData.getDate().getMonthValue())))
@@ -2863,7 +2863,7 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator numerical historical value"),
                                 fieldWithPath("[].historicalDataList[].value.second")
                                         .description("Strategic indicator historical value category"),
-                                fieldWithPath("[].historicalDataList[].value_description")
+                                fieldWithPath("[].historicalDataList[].valueDescription")
                                         .description("Readable strategic indicator historical value and category"),
                                 fieldWithPath("[].historicalDataList[].rationale")
                                         .description("Strategic indicator historical evaluation rationale"),

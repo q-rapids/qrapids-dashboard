@@ -523,9 +523,9 @@ public class StrategicIndicators {
                         aux.getValue(), aux.getDbId(),aux.getRationale(),aux.getProbabilities(),aux.getDate());
                 List<DTOSICurrentHistoricEvaluation.DTOHistoricalData> siHistInfo = new ArrayList<>();
                 while (j < historicData.size() && aux.getId().equals(historicData.get(j).getId())) {
-                    DTOStrategicIndicatorEvaluation hist_aux = historicData.get(j);
-                    DTOSICurrentHistoricEvaluation.DTOHistoricalData hist_info = new DTOSICurrentHistoricEvaluation.DTOHistoricalData(hist_aux.getValue(),hist_aux.getRationale(),hist_aux.getDate());
-                    siHistInfo.add(hist_info);
+                    DTOStrategicIndicatorEvaluation histAux = historicData.get(j);
+                    DTOSICurrentHistoricEvaluation.DTOHistoricalData histInfo = new DTOSICurrentHistoricEvaluation.DTOHistoricalData(histAux.getValue(),histAux.getRationale(),histAux.getDate());
+                    siHistInfo.add(histInfo);
                     j++;
                 }
                 siInfo.setHistoricalDataList(siHistInfo);
