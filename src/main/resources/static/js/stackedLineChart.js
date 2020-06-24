@@ -206,6 +206,8 @@ function drawChart() {
                     pointStyle = 'crossRot';
                 }
             }
+            console.log("data");
+            console.log(value[i][j]);
             c.data.datasets.push({
                 label: labels[i][j],
                 hidden: false,
@@ -213,6 +215,11 @@ function drawChart() {
                 borderColor: color,
                 fill: false,
                 data: value[i][j],
+                trendlineLinear: {
+                    style: color,
+                    lineStyle: "dotted",
+                    width: 2
+                },
                 showLine: showLine,
                 pointStyle: pointStyle,
                 radius: pointRadius,
