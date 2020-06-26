@@ -227,6 +227,8 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
         id = "StrategicIndicators";
     else if (currentURL.match("/Products"))
         id = "Products";
+    else if (currentURL.match("/Profiles"))
+        id = "Profiles";
     else if (currentURL.match("/Categories"))
         id = "Categories";
     else if (currentURL.match("/profile"))
@@ -368,6 +370,8 @@ $("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configurati
 $("#StrategicIndicatorsConfig").attr("href", serverUrl + "/StrategicIndicators/Configuration");
 
 $("#ProductsConfig").attr("href", serverUrl + "/Products/Configuration");
+
+$("#ProfilesConfig").attr("href", serverUrl + "/Profiles/Configuration");
 
 $("#CategoriesConfig").attr("href", serverUrl + "/Categories/Configuration");
 

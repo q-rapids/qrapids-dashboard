@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <link rel="stylesheet" th:href="@{/css/products.css}" />
+</head>
+
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
+<br/>
+<div id="profileView">
+    <div id="profileTree">
+        <div style="display: flex; flex-direction: row; justify-content: center;">
+            <button onclick="newProfile()" class="btn btn-primary" style="font-size: 18px; margin-bottom: 12px">New Profile</button>
+        </div>
+        <br/>
+        <ul id="profileList" class="list-group">
+        </ul>
+    </div>
+    <div id="profileInfo">
+
+    </div>
+</div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+
+
+<script type="text/javascript" th:src="@{/js/profile.js}"></script>
+
+</html>

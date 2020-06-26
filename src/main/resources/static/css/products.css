@@ -1,22 +1,22 @@
 @CHARSET "UTF-8";
 
 
-#productView, #SIConfigView, #CategoriesConfigView, #ReportingView {
+#productView, #profileView, #SIConfigView, #CategoriesConfigView, #ReportingView {
 	display: flex;
 	flex-direction: row;
 }
-#productTree, #SITree, #CategoriesElementSelector, #ProjectSelector {
+#productTree, #profileTree, #SITree, #CategoriesElementSelector, #ProjectSelector {
 	margin: 1%;
 	width: 21%;
 }
 
-#productInfo, #SIInfo, #Categories, #ReportingInfo {
+#productInfo, #profileInfo, #SIInfo, #Categories, #ReportingInfo {
 	margin: 1%;
 	width: 75%;
 	display: flex;
 	flex-direction: column;
 }
-#productForm, #SIForm, #SICategories, #FactorsCategories, #MetricsCategories, #RedirectToReport, #tableREPdiv {
+#productForm, #profileForm, #SIForm, #SICategories, #FactorsCategories, #MetricsCategories, #RedirectToReport, #tableREPdiv {
 	margin: 1%;
 	display: flex;
 	flex-direction: column;
@@ -30,7 +30,7 @@
 	width: 81%;
 }
 
-.productInfoRow, .SIInfoRow, .SIInfoRowID {
+.productInfoRow, .profileInfoRow, .SIInfoRow, .SIInfoRowID {
 	margin: 1%;
 	margin-bottom: 3%;
 	width: 90%;

@@ -428,7 +428,7 @@ function getChosenProduct(currentProductId) {
     		selProjectsCol.classList.add("selectionColumn");
     		selProjectsCol.setAttribute('style', 'width: 100%');
     		var selProjectsP = document.createElement('p');
-    		selProjectsP.appendChild(document.createTextNode("Selected Projects: "));
+    		selProjectsP.appendChild(document.createTextNode("Selected Projects*: "));
     		selProjectsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
     		selProjectsCol.appendChild(selProjectsP);
     		var selProjectsBox = document.createElement('select');
@@ -709,7 +709,7 @@ function newProduct() {
 	selProjectsCol.classList.add("selectionColumn");
 	selProjectsCol.setAttribute('style', 'width: 100%');
 	var selProjectsP = document.createElement('p');
-	selProjectsP.appendChild(document.createTextNode("Selected Projects: "));
+	selProjectsP.appendChild(document.createTextNode("Selected Projects*: "));
 	selProjectsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
 	selProjectsCol.appendChild(selProjectsP);
 	var selProjectsBox = document.createElement('select');

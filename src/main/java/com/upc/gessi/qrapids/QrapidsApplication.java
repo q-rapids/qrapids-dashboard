@@ -1,11 +1,11 @@
 package com.upc.gessi.qrapids;
 
-import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
-import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
-import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
+import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProfile;
 import com.upc.gessi.qrapids.app.presentation.rest.services.Alerts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
         return new BCryptPasswordEncoder();
     }
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		ConfigurableApplicationContext context = SpringApplication.run(QrapidsApplication.class, args);
 
@@ -43,6 +43,10 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		List<SICategory> siCategoryList = context.getBean(StrategicIndicatorsController.class).getStrategicIndicatorCategories();
 		List<QFCategory> factorCategoryList = context.getBean(QualityFactorsController.class).getFactorCategories();
 		List<MetricCategory> metricCategoryList = context.getBean(MetricsController.class).getMetricCategories();
+
+		// Check the profiles in the SQL database and if it's empty create the default one
+		List<DTOProfile> profilesList = context.getBean(ProfilesController.class).getProfiles();
+
 		try {
 			// Declare default categories
 			List<Map<String, String>> categories = new ArrayList<>();
@@ -74,6 +78,17 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 			if (metricCategoryList.size() == 0) {
 				context.getBean(MetricsController.class).newMetricCategories(categories);
 			}
+			// Save Default Profile
+			if (profilesList.size() == 0) {
+				List<String> projects = context.getBean(ProjectsController.class).getAllProjects();
+				List<String> projectsIDs = new ArrayList<>();
+				for (String p: projects) {
+					Project prj = context.getBean(ProjectsController.class).findProjectByExternalId(p);
+					projectsIDs.add(Long.toString(prj.getId()));
+				}
+				context.getBean(ProfilesController.class).newProfile("Default Profile", "All projects are available", projectsIDs);
+			}
+
 		} catch (Exception e) {
 			Logger logger = LoggerFactory.getLogger(Alerts.class);
 			logger.error(e.getMessage(), e);

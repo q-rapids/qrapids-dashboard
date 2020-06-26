@@ -60,6 +60,8 @@ function getProjects() {
     }
 }
 
+
+
 function showProjectSelector (projects) {
     for (var i = 0; i < projects.length; i++) {
         $("#projectsModalItems").append('<button class="list-group-item">' + projects[i] + '</button>');
