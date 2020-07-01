@@ -34,18 +34,7 @@ public class Products {
     private ProductsController productCont;
 
 	private Logger logger = LoggerFactory.getLogger(Products.class);
-	
-	@GetMapping("/api/projects")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOProject> getProjects() {
-	    try {
-            return productCont.getProjects();
-        } catch (Exception e) {
-	        logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
-        }
-    }
-	
+
 	@GetMapping("/api/products")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOProduct> getProducts() {
@@ -62,48 +51,6 @@ public class Products {
 	public DTOProduct getProductById(@PathVariable String id) {
         try {
             return productCont.getProductById(id);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
-        }
-    }
-	
-	@GetMapping("/api/projects/{id}")
-    @ResponseStatus(HttpStatus.OK)
-	public DTOProject getProjectById(@PathVariable String id) {
-        try {
-            return productCont.getProjectById(id);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
-        }
-    }
-	
-	@PutMapping("/api/projects/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void updateProject(@PathVariable Long id, HttpServletRequest request, @RequestParam(value = "logo", required = false) MultipartFile logo) {
-        try {
-        	String externalId = request.getParameter("externalId");
-            String name = request.getParameter(NAME);
-            String description = request.getParameter(DESCRIPTION);
-            String backlogId = request.getParameter("backlogId");
-            byte[] logoBytes = null;
-            if (logo != null) {
-                logoBytes = IOUtils.toByteArray(logo.getInputStream());
-            }
-            if (logoBytes != null && logoBytes.length < 10) {
-            	DTOProject p = productCont.getProjectById(Long.toString(id));
-            	logoBytes = p.getLogo();
-            }
-            if (productCont.checkProjectByName(id, name)) {
-            	DTOProject p = new DTOProject(id, externalId, name, description, logoBytes, true, backlogId);
-            	productCont.updateProject(p);
-            } else {
-                throw new ElementAlreadyPresentException();
-        	}
-        } catch (ElementAlreadyPresentException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Project name already exists");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());

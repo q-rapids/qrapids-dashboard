@@ -485,7 +485,7 @@ public class StrategicIndicatorsControllerTest {
         String projectExternalId = "test";
         projectsList.add(projectExternalId);
 
-        when(projectsController.getAllProjects()).thenReturn(projectsList);
+        when(projectsController.getAllProjectsExternalID()).thenReturn(projectsList);
 
         DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
         List<DTOMetric> dtoMetricList = new ArrayList<>();

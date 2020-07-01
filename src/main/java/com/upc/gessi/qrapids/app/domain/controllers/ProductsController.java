@@ -26,25 +26,6 @@ public class ProductsController {
     private ProductRepository productRep;
     @Autowired
     private QMAStrategicIndicators qmasi;
-
-		
-	public List<DTOProject> getProjects() throws Exception {
-		List<DTOProject> projects = new Vector<DTOProject>();
-		Iterable<Project> projectIterable = projectRep.findAll();
-		List<Project> projectsBD = new ArrayList<>();
-		projectIterable.forEach(projectsBD::add);
-		for (Project p : projectsBD) {
-			DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
-			projects.add(project);
-		}
-		Collections.sort(projects, new Comparator<DTOProject>() {
-	        @Override
-	        public int compare(DTOProject o1, DTOProject o2) {
-	            return o1.getName().compareTo(o2.getName());
-	        }
-	    });
-        return projects;
-    }
 	
 	public List<DTOProduct> getProducts() throws Exception {
 		Iterable<Product> productIterable = productRep.findAll();
@@ -104,25 +85,7 @@ public class ProductsController {
 		}
         return dtoProject;
     }
-	
-	public DTOProject getProjectByExternalId(String externalId) throws Exception {
-		Project p = projectRep.findByExternalId(externalId);
-		DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
-        return project;
-    }
-	
-	public boolean checkProjectByName(Long id, String name) throws Exception {
-		Project p = projectRep.findByName(name);
-        return (p == null || p.getId() == id);
-    }
-	
-	public void updateProject(DTOProject p) {
-		Project project = new Project(p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive());
-		project.setId(p.getId());
-		project.setBacklogId(p.getBacklogId());
-		projectRep.save(project);
-	}
-	
+
 	public boolean checkProductByName(Long id, String name) throws Exception {
 		Product p = productRep.findByName(name);
         return (p == null || p.getId() == id);

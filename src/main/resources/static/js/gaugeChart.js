@@ -43,6 +43,7 @@ function getData(width, height, showButtons, chartHyperlinked, color) {
             if (jqXHR.status == 409)
                 alert("Your datasource and DB categories IDs do not match.");
             else if (jqXHR.status == 400)
+                console.log("gaugeChart.js 1");
                 alert("Datasource connection failed.");
         }
     });
@@ -63,6 +64,7 @@ function seeFeedback(i){
             if (jqXHR.status == 409)
                 alert("Your datasource and DB categories IDs do not match.");
             else if (jqXHR.status == 400)
+                console.log("gaugeChart.js 2");
                 alert("Datasource connection failed.");
         }
     });

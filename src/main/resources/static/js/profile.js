@@ -116,7 +116,7 @@ function clickOnTree(e){
             selProjectsCol.classList.add("selectionColumn");
             selProjectsCol.setAttribute('style', 'width: 100%');
             var selProjectsP = document.createElement('p');
-            selProjectsP.appendChild(document.createTextNode("Selected Projects*: "));
+            selProjectsP.appendChild(document.createTextNode("Allowed Projects*: "));
             selProjectsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
             selProjectsCol.appendChild(selProjectsP);
             var selProjectsBox = document.createElement('select');
@@ -280,7 +280,7 @@ function newProfile() {
     selProjectsCol.classList.add("selectionColumn");
     selProjectsCol.setAttribute('style', 'width: 100%');
     var selProjectsP = document.createElement('p');
-    selProjectsP.appendChild(document.createTextNode("Selected Projects*: "));
+    selProjectsP.appendChild(document.createTextNode("Allowed Projects*: "));
     selProjectsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
     selProjectsCol.appendChild(selProjectsP);
     var selProjectsBox = document.createElement('select');

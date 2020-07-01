@@ -7,8 +7,21 @@
         <div class="modal fade" id="projectsModal" role="dialog" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content">
+                    <div class="modal-body">
+                        <div id="profileSelectorDiv" style="margin-top: 1em;">
+                            <h4 style="display: inline">Profile: </h4>
+                            <div class="dropdown" style="display: inline-grid">
+                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                    <span id = "profilesDropdownText" class="text"> Profiles </span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul id="profilesDropdownItems" class="dropdown-menu dropdown-menu-left">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     <div class="modal-header">
-                        <h4 class="modal-title">Select Project</h4>
+                        <h4 class="modal-title">Available Projects</h4>
                     </div>
                     <div class="modal-body">
                         <div class="list-group" id="projectsModalItems"></div>

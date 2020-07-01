@@ -236,7 +236,7 @@ public class StrategicIndicatorsController {
     }
 
     public void trainForecastModelsAllProjects(String technique) throws IOException, CategoriesException{
-        List<String> projects = projectsController.getAllProjects();
+        List<String> projects = projectsController.getAllProjectsExternalID();
         for (String prj: projects) {
             trainForecastModelsSingleProject(prj, technique);
         }
@@ -272,7 +272,8 @@ public class StrategicIndicatorsController {
 
         // if there is no specific project as a parameter, all the projects are assessed
         if (projectExternalId == null) {
-            List<String> projects = projectsController.getAllProjects();
+            // Every time when SI are computed, we update the table projects in the BD in case new projects appear
+            List<String> projects = projectsController.importProjectsAndUpdateDatabase();
             int i=0;
             while (i<projects.size() && correct) {
                 qmaStrategicIndicators.prepareSIIndex(projects.get(i));
@@ -346,7 +347,7 @@ public class StrategicIndicatorsController {
         Factors factorsQma= new Factors();
 
         // List of component, the SI is assessed for all the components
-        List <String> projects = projectsController.getAllProjects();
+        List <String> projects = projectsController.getAllProjectsExternalID();
 
         // We will compute the evaluation values for the SI for all the components
         for (String prj: projects) {

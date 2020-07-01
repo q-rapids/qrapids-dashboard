@@ -9,6 +9,13 @@ var prj = sessionStorage.getItem("prj");
 if (prj) {
     $("#projectsDropdownText").text(prj);
 }
+/*
+var prf = sessionStorage.getItem("profile_name");
+if (prf) {
+    $("#profilesDropdownText").text(prf);
+    getProjects(sessionStorage.getItem("profile_id"));
+}
+*/
 
 function setProject(project) {
     sessionStorage.setItem("prj", project);
@@ -18,12 +25,17 @@ function setProject(project) {
 // HTTP interceptor
 XMLHttpRequest.prototype.open = (function(open) {
     return function(method,url,async) {
-        if (url.search("/api") !== -1 && url.search("/api/projects/import") === -1 && url.search("/serverUrl") === -1) {
+        var profileID = sessionStorage.getItem("profile_id");
+        if (url.search("/api") !== -1 && url.search("/api/projects/profile") === -1 && url.search("/api/profiles") === -1
+            && url.search("/api/projects/profile?profile_id="+profileID) === -1 && url.search("/serverUrl") === -1) {
+
             var prj = sessionStorage.getItem("prj");
             console.log(url+" Project: "+prj);
-            if (!prj || prj === " ")
-                getProjects();
-            else {
+
+            var prf = sessionStorage.getItem("profile_id");
+            if (!prf || prf === " ") {
+                getProfiles();
+            } else {
                 url = setQueryStringParameter(url, "prj", prj);
                 open.apply(this, arguments);
             }
@@ -34,35 +46,97 @@ XMLHttpRequest.prototype.open = (function(open) {
     };
 })(XMLHttpRequest.prototype.open);
 
-function getProjects() {
-    if (sessionStorage.getItem("projects") && sessionStorage.getItem("projects").length > 0) {
-        showProjectSelector(projects);
-    } else {
+function getProjects(profileID) {
+    if (profileID && profileID != "null") { // if profileID not null --> show specific projects
         jQuery.ajax({
             dataType: "json",
-            url: "../api/projects/import",
+            url: "../api/projects/profile?profile_id=" + profileID,
             cache: false,
             type: "GET",
             async: false,
             success: function (data) {
-                sessionStorage.setItem("projects", JSON.stringify(data));
+                var prj_externalId = [];
+                for (i = 0; i < data.length; i++) {
+                    prj_externalId.push(data[i].externalId);
+                }
+                sessionStorage.setItem("projects", JSON.stringify(prj_externalId));
                 if (data.length === 0) { //For testing purposes
                     setProject(" ");
+                } else {
+                    showProjectSelector(prj_externalId);
                 }
-                else if (data.length === 1) {
-                    setProject(data[0]);
+            }
+        });
+    } else { // if profileID is null --> show all projects
+        jQuery.ajax({
+            dataType: "json",
+            url: "../api/projects/profile",
+            cache: false,
+            type: "GET",
+            async: false,
+            success: function (data) {
+                var prj_externalId = [];
+                for (i = 0; i < data.length; i++) {
+                    prj_externalId.push(data[i].externalId)
                 }
-                else {
-                    showProjectSelector(data);
+                sessionStorage.setItem("projects", JSON.stringify(prj_externalId));
+                if (data.length === 0) { //For testing purposes
+                    setProject(" ");
+                } else {
+                    showProjectSelector(prj_externalId);
                 }
             }
         });
     }
 }
 
+function getProfiles() {
+    if (sessionStorage.getItem("profiles") && sessionStorage.getItem("profiles").length > 0) {
+        // to avoid extra api calls
+        sessionStorage.setItem("profile_id", null);
+        sessionStorage.setItem("profile_name", "Without Profile");
+        $("#profilesDropdownText").text("Without Profile");
+        getProjects(null);
+    } else {
+        jQuery.ajax({
+            dataType: "json",
+            url: "../api/profiles",
+            cache: false,
+            type: "GET",
+            async: false,
+            success: function (data) {
+                var prfNames = [];
+                $("#profilesDropdownItems").append('<li><a onclick="setProfile(\'' + null +','+ "Without Profile" + '\')" href="#">' + "Without Profile" + '</a></li>');
+                for (i = 0; i < data.length; i++) {
+                    prfNames.push(data[i].name);
+                    $("#profilesDropdownItems").append('<li><a onclick="setProfile(\'' + data[i].id + ','+ data[i].name + '\')" href="#">' + data[i].name + '</a></li>');
+                }
+                sessionStorage.setItem("profiles", prfNames);
+                // set default profile
+                //sessionStorage.setItem("profile_id", null);
+                //sessionStorage.setItem("profile_name", "Without Profile");
+                //$("#profilesDropdownText").text("Without Profile");
+                //getProjects(null);
+            }
+        });
+    }
+}
 
+function setProfile(input) {
+    var input = input.split(",");
+    // set profile_id and profile_name in sessionStorage
+    sessionStorage.setItem("profile_id", input[0]); // input[0] = profile id
+    sessionStorage.setItem("profile_name", input[1]); // input[1] = profile name
+    //set profile name in selector
+    $("#profilesDropdownText").text(input[1]);
+    // refresh projects list
+    getProjects(input[0]);
+}
 
 function showProjectSelector (projects) {
+    // clear old project list
+    $("#projectsModalItems").empty()
+    // create new project list
     for (var i = 0; i < projects.length; i++) {
         $("#projectsModalItems").append('<button class="list-group-item">' + projects[i] + '</button>');
     }

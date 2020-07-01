@@ -70,6 +70,7 @@ function getData(width, height, showButtons, chartHyperlinked) {
             if (jqXHR.status == 409)
                 alert("Your datasource and DB categories IDs do not match.");
             else if (jqXHR.status == 400)
+                console.log("productEvaluation.js");
                 alert("Datasource connection failed.");
         }
     });

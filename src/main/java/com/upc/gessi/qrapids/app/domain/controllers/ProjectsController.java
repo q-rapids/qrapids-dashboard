@@ -2,24 +2,30 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.Backlog;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAProjects;
+import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ProjectsController {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private ProfileRepository profileRepository;
 
     @Autowired
     private QMAProjects qmaProjects;
@@ -35,12 +41,58 @@ public class ProjectsController {
         return project;
     }
 
-    public List<String> getAllProjects () throws IOException, CategoriesException {
+    public DTOProject getProjectByExternalId(String externalId) throws Exception {
+        Project p = projectRepository.findByExternalId(externalId);
+        DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
+        return project;
+    }
+
+    public List<DTOProject> getProjects() throws Exception {
+        List<DTOProject> projects = new Vector<DTOProject>();
+        Iterable<Project> projectIterable = projectRepository.findAll();
+        List<Project> projectsBD = new ArrayList<>();
+        projectIterable.forEach(projectsBD::add);
+        for (Project p : projectsBD) {
+            DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
+            projects.add(project);
+        }
+        Collections.sort(projects, new Comparator<DTOProject>() {
+            @Override
+            public int compare(DTOProject o1, DTOProject o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        return projects;
+    }
+
+    public DTOProject getProjectById(String id) throws Exception {
+        Optional<Project> projectOptional = projectRepository.findById(Long.parseLong(id));
+        DTOProject dtoProject = null;
+        if (projectOptional.isPresent()) {
+            Project project = projectOptional.get();
+            dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId());
+        }
+        return dtoProject;
+    }
+
+    public boolean checkProjectByName(Long id, String name) throws Exception {
+        Project p = projectRepository.findByName(name);
+        return (p == null || p.getId() == id);
+    }
+
+    public void updateProject(DTOProject p) {
+        Project project = new Project(p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive());
+        project.setId(p.getId());
+        project.setBacklogId(p.getBacklogId());
+        projectRepository.save(project);
+    }
+
+    public List<String> getAllProjectsExternalID() throws IOException, CategoriesException {
         return qmaProjects.getAssessedProjects();
     }
 
     public List<String> importProjectsAndUpdateDatabase() throws IOException, CategoriesException {
-        List<String> projects = getAllProjects();
+        List<String> projects = getAllProjectsExternalID();
         updateDataBaseWithNewProjects(projects);
         return projects;
     }
@@ -65,4 +117,29 @@ public class ProjectsController {
         return backlog.getPhases(project.getBacklogId(), date);
     }
 
+    public List<DTOProject> getProjectsByProfile(Long id) {
+        List<DTOProject> projects = new Vector<DTOProject>();
+        Iterable<Project> projectIterable;
+        if (id == null) { // Without Profile get all Projects
+            projectIterable = projectRepository.findAll();
+        } else { // With Profile get specific Projects
+            Optional<Profile> profileOptional = profileRepository.findById(id);
+            Profile profile = profileOptional.get();
+            projectIterable = profile.getProjects();
+        }
+        List<Project> projectsBD = new ArrayList<>();
+        projectIterable.forEach(projectsBD::add);
+        for (Project p : projectsBD) {
+            DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
+            projects.add(project);
+        }
+        Collections.sort(projects, new Comparator<DTOProject>() {
+            @Override
+            public int compare(DTOProject o1, DTOProject o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        return projects;
+
+    }
 }

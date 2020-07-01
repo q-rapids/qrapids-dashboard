@@ -44,9 +44,6 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		List<QFCategory> factorCategoryList = context.getBean(QualityFactorsController.class).getFactorCategories();
 		List<MetricCategory> metricCategoryList = context.getBean(MetricsController.class).getMetricCategories();
 
-		// Check the profiles in the SQL database and if it's empty create the default one
-		List<DTOProfile> profilesList = context.getBean(ProfilesController.class).getProfiles();
-
 		try {
 			// Declare default categories
 			List<Map<String, String>> categories = new ArrayList<>();
@@ -78,17 +75,6 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 			if (metricCategoryList.size() == 0) {
 				context.getBean(MetricsController.class).newMetricCategories(categories);
 			}
-			// Save Default Profile
-			if (profilesList.size() == 0) {
-				List<String> projects = context.getBean(ProjectsController.class).getAllProjects();
-				List<String> projectsIDs = new ArrayList<>();
-				for (String p: projects) {
-					Project prj = context.getBean(ProjectsController.class).findProjectByExternalId(p);
-					projectsIDs.add(Long.toString(prj.getId()));
-				}
-				context.getBean(ProfilesController.class).newProfile("Default Profile", "All projects are available", projectsIDs);
-			}
-
 		} catch (Exception e) {
 			Logger logger = LoggerFactory.getLogger(Alerts.class);
 			logger.error(e.getMessage(), e);

@@ -1,6 +1,9 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import java.util.List;
 import javax.persistence.*;
 
@@ -15,6 +18,7 @@ public class Profile {
     private String name;
     @Column(name = "description")
     private String description;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "profile_project",
