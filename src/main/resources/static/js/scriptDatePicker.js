@@ -138,6 +138,7 @@ function getPreviousMonday() {
 }
 
 function loadTechniques () {
+    // TODO
     jQuery.ajax({
         dataType: "json",
         url: "../api/forecastTechniques",
@@ -145,6 +146,8 @@ function loadTechniques () {
         type: "GET",
         async: true,
         success: function (techniques) {
+            console.log("tecniques");
+            console.log(techniques);
             for (i = 0; i < techniques.length; i++) {
                 $("#techniqueDropdown").append('<li><a onclick="setTechnique(\''+techniques[i]+'\')" href="#">'+ techniques[i] +'</a></li>');
             }
