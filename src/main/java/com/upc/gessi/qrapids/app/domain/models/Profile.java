@@ -1,9 +1,5 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
-
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
 import java.util.List;
 import javax.persistence.*;
 

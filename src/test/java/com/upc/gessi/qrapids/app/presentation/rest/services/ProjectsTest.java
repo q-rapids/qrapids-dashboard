@@ -1,37 +1,47 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
+import com.upc.gessi.qrapids.QrapidsApplication;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMilestone;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOPhase;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -128,6 +138,223 @@ public class ProjectsTest {
 
         // Verify mock interactions
         verify(projectsDomainController, times(1)).importProjectsAndUpdateDatabase();
+    }
+
+    @Test
+    public void getProjects() throws Exception {
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        boolean active = true;
+        String projectBacklogId = "999";
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId);
+        List<DTOProject> dtoProjectList = new ArrayList<>();
+        dtoProjectList.add(dtoProject);
+
+        when(projectsDomainController.getProjects()).thenReturn(dtoProjectList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/projects");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(projectId.intValue())))
+                .andExpect(jsonPath("$[0].externalId", is(projectExternalId)))
+                .andExpect(jsonPath("$[0].name", is(projectName)))
+                .andExpect(jsonPath("$[0].description", is(projectDescription)))
+                .andExpect(jsonPath("$[0].logo", is(nullValue())))
+                .andExpect(jsonPath("$[0].active", is(active)))
+                .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
+                .andDo(document("projects/all",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Project identifier"),
+                                fieldWithPath("[].externalId")
+                                        .description("Project external identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Project name"),
+                                fieldWithPath("[].description")
+                                        .description("Project description"),
+                                fieldWithPath("[].logo")
+                                        .description("Project logo file"),
+                                fieldWithPath("[].active")
+                                        .description("Is an active project?"),
+                                fieldWithPath("[].backlogId")
+                                        .description("Project identifier in the backlog"))
+                ));
+
+        // Verify mock interactions
+        verify(projectsDomainController, times(1)).getProjects();
+        verifyNoMoreInteractions(projectsDomainController);
+    }
+
+    @Test
+    public void updateProject() throws Exception {
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        String projectBacklogId = "999";
+        // getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
+        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
+        File file = new File(projectImageUrl.getPath());
+        MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
+
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, logoMultipartFile.getBytes(), true, projectBacklogId);
+
+        when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/projects/{id}", projectId)
+                .file(logoMultipartFile)
+                .param("externalId", projectExternalId)
+                .param("name", projectName)
+                .param("description", projectDescription)
+                .param("backlogId", projectBacklogId)
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("projects/update",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("externalId")
+                                        .description("Project external identifier"),
+                                parameterWithName("name")
+                                        .description("Project name"),
+                                parameterWithName("description")
+                                        .description("Project description"),
+                                parameterWithName("backlogId")
+                                        .description("Project identifier in the backlog")),
+                        requestParts(
+                                partWithName("logo")
+                                        .description("Project logo file")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(projectsDomainController, times(1)).checkProjectByName(projectId, projectName);
+
+        ArgumentCaptor<DTOProject> argument = ArgumentCaptor.forClass(DTOProject.class);
+        verify(projectsDomainController, times(1)).updateProject(argument.capture());
+        assertEquals(dtoProject.getId(), argument.getValue().getId());
+        assertEquals(dtoProject.getExternalId(), argument.getValue().getExternalId());
+        assertEquals(dtoProject.getName(), argument.getValue().getName());
+        assertEquals(dtoProject.getDescription(), argument.getValue().getDescription());
+        assertEquals(dtoProject.getActive(), argument.getValue().getActive());
+        assertEquals(dtoProject.getExternalId(), argument.getValue().getExternalId());
+
+        verifyNoMoreInteractions(projectsDomainController);
+    }
+
+    @Test
+    public void updateProjectNameAlreadyExists() throws Exception {
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        String projectBacklogId = "999";
+// getResource() : The name of a resource is a '/'-separated path name that identifies the resource.
+        URL projectImageUrl = QrapidsApplication.class.getClassLoader().getResource("static" + "/" + "icons" + "/" + "projectDefault.jpg");
+        File file = new File(projectImageUrl.getPath());
+        MockMultipartFile logoMultipartFile = new MockMultipartFile("logo", "logo.jpg", "image/jpeg", Files.readAllBytes(file.toPath()));
+
+        when(projectsDomainController.checkProjectByName(projectId, projectName)).thenReturn(false);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/projects/{id}", projectId)
+                .file(logoMultipartFile)
+                .param("externalId", projectExternalId)
+                .param("name", projectName)
+                .param("description", projectDescription)
+                .param("backlogId", projectBacklogId)
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isConflict())
+                .andDo(document("projects/update-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(projectsDomainController, times(1)).checkProjectByName(projectId, projectName);
+
+        verifyNoMoreInteractions(projectsDomainController);
+    }
+
+    @Test
+    public void getProjectById() throws Exception {
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        boolean active = true;
+        String projectBacklogId = "999";
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId);
+
+        when(projectsDomainController.getProjectById(projectId.toString())).thenReturn(dtoProject);
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/projects/{id}", projectId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(projectId.intValue())))
+                .andExpect(jsonPath("$.externalId", is(projectExternalId)))
+                .andExpect(jsonPath("$.name", is(projectName)))
+                .andExpect(jsonPath("$.description", is(projectDescription)))
+                .andExpect(jsonPath("$.logo", is(nullValue())))
+                .andExpect(jsonPath("$.active", is(active)))
+                .andExpect(jsonPath("$.backlogId", is(projectBacklogId)))
+                .andDo(document("projects/single",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Project identifier")
+                        ),
+                        responseFields(
+                                fieldWithPath("id")
+                                        .description("Project identifier"),
+                                fieldWithPath("externalId")
+                                        .description("Project external identifier"),
+                                fieldWithPath("name")
+                                        .description("Project name"),
+                                fieldWithPath("description")
+                                        .description("Project description"),
+                                fieldWithPath("logo")
+                                        .description("Project logo file"),
+                                fieldWithPath("active")
+                                        .description("Is an active project?"),
+                                fieldWithPath("backlogId")
+                                        .description("Project identifier in the backlog"))
+                ));
+
+        // Verify mock interactions
+        verify(projectsDomainController, times(1)).getProjectById(projectId.toString());
+        verifyNoMoreInteractions(projectsDomainController);
     }
 
     @Test

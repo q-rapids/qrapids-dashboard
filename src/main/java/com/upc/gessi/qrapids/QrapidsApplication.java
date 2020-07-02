@@ -2,10 +2,8 @@ package com.upc.gessi.qrapids;
 
 import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
-import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProfile;
 import com.upc.gessi.qrapids.app.presentation.rest.services.Alerts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

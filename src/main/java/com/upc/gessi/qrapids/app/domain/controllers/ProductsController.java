@@ -75,16 +75,6 @@ public class ProductsController {
 		}
 		return null;
     }
-	
-	public DTOProject getProjectById(String id) throws Exception {
-		Optional<Project> projectOptional = projectRep.findById(Long.parseLong(id));
-		DTOProject dtoProject = null;
-		if (projectOptional.isPresent()) {
-			Project project = projectOptional.get();
-			dtoProject = new DTOProject(project.getId(), project.getExternalId(), project.getName(), project.getDescription(), project.getLogo(), project.getActive(), project.getBacklogId());
-		}
-        return dtoProject;
-    }
 
 	public boolean checkProductByName(Long id, String name) throws Exception {
 		Product p = productRep.findByName(name);

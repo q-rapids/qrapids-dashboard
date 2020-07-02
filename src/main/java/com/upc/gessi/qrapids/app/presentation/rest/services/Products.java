@@ -2,7 +2,6 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.ProductsController;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProduct;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;

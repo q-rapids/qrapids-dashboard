@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ProfileController {
 
     @RequestMapping("/Profiles/Configuration")
-    public String Products(){
+    public String Profiles(){
         return "Profile/Profiles";
     }
 

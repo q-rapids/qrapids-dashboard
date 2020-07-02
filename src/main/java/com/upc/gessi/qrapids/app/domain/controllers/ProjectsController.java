@@ -41,14 +41,13 @@ public class ProjectsController {
         return project;
     }
 
-    public DTOProject getProjectByExternalId(String externalId) throws Exception {
+    public DTOProject getProjectByExternalId(String externalId) throws ProjectNotFoundException {
         Project p = projectRepository.findByExternalId(externalId);
-        DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
-        return project;
+        return new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
     }
 
     public List<DTOProject> getProjects() throws Exception {
-        List<DTOProject> projects = new Vector<DTOProject>();
+        List<DTOProject> projects = new ArrayList<DTOProject>();
         Iterable<Project> projectIterable = projectRepository.findAll();
         List<Project> projectsBD = new ArrayList<>();
         projectIterable.forEach(projectsBD::add);
@@ -65,7 +64,7 @@ public class ProjectsController {
         return projects;
     }
 
-    public DTOProject getProjectById(String id) throws Exception {
+    public DTOProject getProjectById(String id) throws ProjectNotFoundException {
         Optional<Project> projectOptional = projectRepository.findById(Long.parseLong(id));
         DTOProject dtoProject = null;
         if (projectOptional.isPresent()) {
@@ -75,7 +74,7 @@ public class ProjectsController {
         return dtoProject;
     }
 
-    public boolean checkProjectByName(Long id, String name) throws Exception {
+    public boolean checkProjectByName(Long id, String name) throws ProjectNotFoundException {
         Project p = projectRepository.findByName(name);
         return (p == null || p.getId() == id);
     }
@@ -118,7 +117,7 @@ public class ProjectsController {
     }
 
     public List<DTOProject> getProjectsByProfile(Long id) {
-        List<DTOProject> projects = new Vector<DTOProject>();
+        List<DTOProject> projects = new ArrayList<DTOProject>();
         Iterable<Project> projectIterable;
         if (id == null) { // Without Profile get all Projects
             projectIterable = projectRepository.findAll();

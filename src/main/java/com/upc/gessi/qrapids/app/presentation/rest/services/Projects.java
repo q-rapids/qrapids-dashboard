@@ -68,10 +68,10 @@ public class Projects {
 
     @GetMapping("/api/projects/profile")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOProject> getProjectsByProfile(@RequestParam(value = "profile_id", required = false) String profile_id) {
+    public List<DTOProject> getProjectsByProfile(@RequestParam(value = "profile_id", required = false) String profileId) {
         try {
             Long id = null;
-            if (profile_id != null) id = Long.valueOf(profile_id);
+            if (profileId != null) id = Long.valueOf(profileId);
             return projectsController.getProjectsByProfile(id);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
