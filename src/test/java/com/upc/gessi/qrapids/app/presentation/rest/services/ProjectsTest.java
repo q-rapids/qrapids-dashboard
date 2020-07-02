@@ -152,7 +152,7 @@ public class ProjectsTest {
         List<DTOProject> dtoProjectList = new ArrayList<>();
         dtoProjectList.add(dtoProject);
 
-        when(projectsDomainController.getProjects()).thenReturn(dtoProjectList);
+        when(projectsDomainController.getProjects(null)).thenReturn(dtoProjectList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -189,7 +189,62 @@ public class ProjectsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectsDomainController, times(1)).getProjects();
+        verify(projectsDomainController, times(1)).getProjects(null);
+        verifyNoMoreInteractions(projectsDomainController);
+    }
+
+    @Test
+    public void getProjectsByProfile() throws Exception {
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        boolean active = true;
+        String projectBacklogId = "999";
+        DTOProject dtoProject = new DTOProject(projectId, projectExternalId, projectName, projectDescription, null, active, projectBacklogId);
+        List<DTOProject> dtoProjectList = new ArrayList<>();
+        dtoProjectList.add(dtoProject);
+        Long profileID = 1L;
+
+        when(projectsDomainController.getProjects(profileID)).thenReturn(dtoProjectList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/projects")
+                .param("profile_id", String.valueOf(profileID));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(projectId.intValue())))
+                .andExpect(jsonPath("$[0].externalId", is(projectExternalId)))
+                .andExpect(jsonPath("$[0].name", is(projectName)))
+                .andExpect(jsonPath("$[0].description", is(projectDescription)))
+                .andExpect(jsonPath("$[0].logo", is(nullValue())))
+                .andExpect(jsonPath("$[0].active", is(active)))
+                .andExpect(jsonPath("$[0].backlogId", is(projectBacklogId)))
+                .andDo(document("profile/projects/all",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Project identifier"),
+                                fieldWithPath("[].externalId")
+                                        .description("Project external identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Project name"),
+                                fieldWithPath("[].description")
+                                        .description("Project description"),
+                                fieldWithPath("[].logo")
+                                        .description("Project logo file"),
+                                fieldWithPath("[].active")
+                                        .description("Is an active project?"),
+                                fieldWithPath("[].backlogId")
+                                        .description("Project identifier in the backlog"))
+                ));
+
+        // Verify mock interactions
+        verify(projectsDomainController, times(1)).getProjects(profileID);
         verifyNoMoreInteractions(projectsDomainController);
     }
 

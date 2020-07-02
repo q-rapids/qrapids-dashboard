@@ -46,9 +46,11 @@ public class Projects {
 
     @GetMapping("/api/projects")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOProject> getProjects() {
+    public List<DTOProject> getProjects(@RequestParam(value = "profile_id", required = false) String profileId) {
         try {
-            return projectsController.getProjects();
+            Long id = null;
+            if (profileId != null) id = Long.valueOf(profileId);
+            return projectsController.getProjects(id);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -60,19 +62,6 @@ public class Projects {
     public DTOProject getProjectById(@PathVariable String id) {
         try {
             return projectsController.getProjectById(id);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
-        }
-    }
-
-    @GetMapping("/api/projects/profile")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DTOProject> getProjectsByProfile(@RequestParam(value = "profile_id", required = false) String profileId) {
-        try {
-            Long id = null;
-            if (profileId != null) id = Long.valueOf(profileId);
-            return projectsController.getProjectsByProfile(id);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());

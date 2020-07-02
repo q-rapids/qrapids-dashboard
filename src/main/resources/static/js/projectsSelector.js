@@ -26,7 +26,7 @@ function setProject(project) {
 // HTTP interceptor
 XMLHttpRequest.prototype.open = (function(open) {
     return function(method,url,async) {
-        if (url.search("/api") !== -1 && url.search("/api/projects/profile") === -1 && url.search("/api/profiles") === -1
+        if (url.search("/api") !== -1 && url.search("/api/projects") === -1 && url.search("/api/profiles") === -1
             && url.search("/serverUrl") === -1) {
             var prj = sessionStorage.getItem("prj");
             console.log(url+" Project: "+prj);
@@ -50,48 +50,32 @@ XMLHttpRequest.prototype.open = (function(open) {
 
 function getProjects(profileID) {
     console.log("in getProjects()");
+    var url;
     if (profileID && profileID != "null") { // if profileID not null --> show specific projects
-        jQuery.ajax({
-            dataType: "json",
-            url: "../api/projects/profile?profile_id=" + profileID,
-            cache: false,
-            type: "GET",
-            async: false,
-            success: function (data) {
-                var prj_externalId = [];
-                for (i = 0; i < data.length; i++) {
-                    prj_externalId.push(data[i].externalId);
-                }
-                sessionStorage.setItem("projects", JSON.stringify(prj_externalId));
-                if (data.length === 0) { //For testing purposes
-                    setProject(" ");
-                } else {
-                    showProjectSelector(prj_externalId);
-                }
-            }
-        });
+        url = "../api/projects?profile_id=" + profileID;
     } else { // if profileID is null --> show all projects
-        jQuery.ajax({
-            dataType: "json",
-            url: "../api/projects/profile",
-            cache: false,
-            type: "GET",
-            async: false,
-            success: function (data) {
-                var prj_externalId = [];
-                // get externalId from project DTOs
-                for (i = 0; i < data.length; i++) {
-                    prj_externalId.push(data[i].externalId)
-                }
-                sessionStorage.setItem("projects", JSON.stringify(prj_externalId));
-                if (data.length === 0) { //For testing purposes
-                    setProject(" ");
-                } else {
-                    showProjectSelector(prj_externalId);
-                }
-            }
-        });
+        url = "../api/projects";
     }
+    // make API Rest call
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            var prj_externalId = [];
+            for (i = 0; i < data.length; i++) {
+                prj_externalId.push(data[i].externalId);
+            }
+            sessionStorage.setItem("projects", JSON.stringify(prj_externalId));
+            if (data.length === 0) { //For testing purposes
+                setProject(" ");
+            } else {
+                showProjectSelector(prj_externalId);
+            }
+        }
+    });
 }
 
 function getProfiles() {

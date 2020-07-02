@@ -46,9 +46,16 @@ public class ProjectsController {
         return new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
     }
 
-    public List<DTOProject> getProjects() throws Exception {
-        List<DTOProject> projects = new ArrayList<DTOProject>();
-        Iterable<Project> projectIterable = projectRepository.findAll();
+    public List<DTOProject> getProjects(Long id) throws ProjectNotFoundException {
+        List<DTOProject> projects = new ArrayList<>();
+        Iterable<Project> projectIterable;
+        if (id == null) { // Without Profile get all Projects
+            projectIterable = projectRepository.findAll();
+        } else { // With Profile get specific Projects
+            Optional<Profile> profileOptional = profileRepository.findById(id);
+            Profile profile = profileOptional.get();
+            projectIterable = profile.getProjects();
+        }
         List<Project> projectsBD = new ArrayList<>();
         projectIterable.forEach(projectsBD::add);
         for (Project p : projectsBD) {
@@ -114,31 +121,5 @@ public class ProjectsController {
     public List<DTOPhase> getPhasesForProject (String projectExternalId, LocalDate date) throws ProjectNotFoundException {
         Project project = findProjectByExternalId(projectExternalId);
         return backlog.getPhases(project.getBacklogId(), date);
-    }
-
-    public List<DTOProject> getProjectsByProfile(Long id) {
-        List<DTOProject> projects = new ArrayList<DTOProject>();
-        Iterable<Project> projectIterable;
-        if (id == null) { // Without Profile get all Projects
-            projectIterable = projectRepository.findAll();
-        } else { // With Profile get specific Projects
-            Optional<Profile> profileOptional = profileRepository.findById(id);
-            Profile profile = profileOptional.get();
-            projectIterable = profile.getProjects();
-        }
-        List<Project> projectsBD = new ArrayList<>();
-        projectIterable.forEach(projectsBD::add);
-        for (Project p : projectsBD) {
-            DTOProject project = new DTOProject(p.getId(), p.getExternalId(), p.getName(), p.getDescription(), p.getLogo(), p.getActive(), p.getBacklogId());
-            projects.add(project);
-        }
-        Collections.sort(projects, new Comparator<DTOProject>() {
-            @Override
-            public int compare(DTOProject o1, DTOProject o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
-        return projects;
-
     }
 }
