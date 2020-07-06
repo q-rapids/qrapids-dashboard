@@ -175,7 +175,7 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
         highlightAndSaveCurrentPrediction(id);
     else
         highlightAndSaveCurrentAssessment(id);
-} else if (currentURL.search("/QualityFactors/") !== -1) {
+} else if (currentURL.search("/QualityFactors/") !== -1 && !currentURL.match("Configuration")) {
     id = "QualityFactors";
     if (currentURL.search("/Prediction") !== -1)
         highlightAndSaveCurrentPrediction(id);
@@ -224,6 +224,8 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
         id = "StrategicIndicators";
     else if (currentURL.match("/Products"))
         id = "Products";
+    else if (currentURL.match("/QualityFactors"))
+        id = "QualityFactors";
     else if (currentURL.match("/Categories"))
         id = "Categories";
     else if (currentURL.match("/profile"))
@@ -357,6 +359,8 @@ $("#ProductsDetailedEvaluation").attr("href", serverUrl+"/Products/DetailedEvalu
 $("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
 
 $("#StrategicIndicatorsConfig").attr("href", serverUrl + "/StrategicIndicators/Configuration");
+
+$("#QualityFactorsConfig").attr("href", serverUrl + "/QualityFactors/Configuration");
 
 $("#ProductsConfig").attr("href", serverUrl + "/Products/Configuration");
 

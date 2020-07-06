@@ -2,6 +2,8 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOCategoryThreshold;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
@@ -28,6 +30,31 @@ public class Metrics {
     private MetricsController metricsController;
 
     private Logger logger = LoggerFactory.getLogger(Metrics.class);
+
+    @GetMapping("/api/metrics/import")
+    @ResponseStatus(HttpStatus.OK)
+    public void importMetrics() {
+        try {
+            metricsController.importMetricsAndUpdateDatabase();
+        } catch (CategoriesException | ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
+        }
+    }
+
+    @GetMapping("/api/metrics")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Metric> getMetrics(@RequestParam(value = "prj") String prj) {
+        try {
+            return metricsController.getMetricsByProject(prj);
+        } catch (ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
+        }
+    }
 
     @GetMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.OK)

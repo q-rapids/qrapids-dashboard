@@ -39,4 +39,9 @@ public class QualityFactorsController {
     public String PredictionChart(){
         return "QualityFactors/PredictionChart";
     }
+
+    @RequestMapping("/QualityFactors/Configuration")
+    public String Config(){
+        return "QualityFactors/AdditionalScreens/QualityFactorsConfig";
+    }
 }
