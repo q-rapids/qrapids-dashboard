@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
@@ -15,19 +16,16 @@ public class Profile {
     @Column(name = "description")
     private String description;
 
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "profile_project",
-            joinColumns = { @JoinColumn(name = "profile_id") },
-            inverseJoinColumns = { @JoinColumn(name = "project_id") })
-    private List<Project> projects;
+    @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinColumn(name="profile_id")
+    private List<ProfileProjects> profileProjectsList;
 
     public Profile() {}
 
-    public Profile(String name, String description, List<Project> projects) {
+    public Profile(String name, String description, List<Project> projects, boolean allSI) {
         this.name = name;
         this.description = description;
-        this.projects = projects;
+        setProjects(projects, allSI);
     }
 
     public Long getId() {
@@ -55,11 +53,23 @@ public class Profile {
     }
 
     public List<Project> getProjects() {
-        return projects;
+        List<Project> result = new ArrayList<>();
+        for (ProfileProjects pp : this.profileProjectsList) {
+            result.add(pp.project);
+        }
+        return result;
     }
 
-    public void setLogo(List<Project> projects) {
-        this.projects = projects;
+    public List<ProfileProjects> getProfileProjectsList() {
+        return profileProjectsList;
+    }
+
+    public void setProjects(List<Project> projects, boolean allSI) {
+        List<ProfileProjects> pp = new ArrayList<>();
+        for (Project p : projects) {
+            pp.add(new ProfileProjects(this, p, allSI));
+        }
+        this.profileProjectsList = pp;
     }
 
 }

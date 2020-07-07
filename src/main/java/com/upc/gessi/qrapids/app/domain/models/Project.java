@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "project")

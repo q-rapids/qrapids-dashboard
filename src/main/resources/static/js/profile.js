@@ -1,6 +1,6 @@
 var projects; // all projects
 var profileProjects; // only selected profile projects
-var currentProfile;
+var currentProfileID;
 
 function getProjects() {
     var url = "/api/projects";
@@ -67,8 +67,8 @@ function buildProfileList() {
 }
 
 function clickOnTree(e){
-    currentProfile = e.target.id.replace("profile", "");
-    var url = "/api/profiles/" + currentProfile;
+    currentProfileID = e.target.id.replace("profile", "");
+    var url = "/api/profiles/" + currentProfileID;
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -511,7 +511,8 @@ function showSIsList() {
     console.log("show SIs List");
     var allowedProjectsBox = document.getElementById("allowedProjectsBox");
     var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
-    console.log(prjID);
+    var prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
+    console.log(prjExternalID);
 };
 
 function moveItemsLeft() {
@@ -571,7 +572,7 @@ function saveNewProfile() {
 function deleteProfile() {
     if (confirm("Are you sure you want to delete this profile?")) {
 
-        var url = "/api/profiles/" + currentProfile;
+        var url = "/api/profiles/" + currentProfileID;
         if (serverUrl) {
             url = serverUrl + url;
         }
@@ -604,7 +605,7 @@ function saveProfile() {
         formData.append("description", $('#profileDescription').val());
         formData.append("projects", allowedProjects);
 
-        var url = "/api/profiles/" + currentProfile;
+        var url = "/api/profiles/" + currentProfileID;
         if (serverUrl) {
             url = serverUrl + url;
         }

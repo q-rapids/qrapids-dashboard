@@ -2,7 +2,10 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.exceptions.ProfileNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
+import com.upc.gessi.qrapids.app.domain.models.ProfileProjects;
+import com.upc.gessi.qrapids.app.domain.models.ProfileProjectsId;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProfile;
@@ -19,6 +22,9 @@ public class ProfilesController {
     private ProjectRepository projectRep;
     @Autowired
     private ProfileRepository profileRep;
+    @Autowired
+    private ProfileProjectsRepository profileProjectsRep;
+
 
     public boolean checkNewProfileByName(String name) throws ProfileNotFoundException {
         Profile pr = profileRep.findByName(name);
@@ -31,7 +37,8 @@ public class ProfilesController {
             Optional<Project> projectOptional = projectRep.findById(Long.parseLong(projectIds.get(i)));
             projectOptional.ifPresent(projects::add);
         }
-        Profile profile = new Profile(name, description, projects);
+        // TODO not hardcoded allSI
+        Profile profile = new Profile(name, description, projects, true);
         profileRep.save(profile);
     }
 
@@ -85,7 +92,7 @@ public class ProfilesController {
         return profiles;
     }
 
-    public void deleteProduct(Long id) { profileRep.deleteById(id); }
+    public void deleteProfile(Long id) { profileRep.deleteById(id); }
 
     public boolean checkProfileByName(Long id, String name) throws ProfileNotFoundException {
         Profile pr = profileRep.findByName(name);
@@ -93,12 +100,21 @@ public class ProfilesController {
     }
 
     public void updateProfile(Long id, String name, String description, List<String> projectIds) {
+        // TODO delete old ProfileProjects List
+        Optional<Profile> profileOptional = profileRep.findById(id);
+        Profile oldProfile = profileOptional.get();
+        for (ProfileProjects pp: oldProfile.getProfileProjectsList()) {
+            if (profileProjectsRep.existsById(new ProfileProjectsId(pp.getProfile().getId(),pp.getProject().getId())))
+                profileProjectsRep.deleteById(new ProfileProjectsId(pp.getProfile().getId(),pp.getProject().getId()));
+        }
+        // update profile information
         List<Project> projects = new ArrayList<>();
         for (int i=0; i<projectIds.size(); i++) {
             Optional<Project> projectOptional = projectRep.findById(Long.parseLong(projectIds.get(i)));
             projectOptional.ifPresent(projects::add);
         }
-        Profile profile = new Profile(name, description, projects);
+        // TODO not hardcoded allSI
+        Profile profile = new Profile(name, description, projects, true);
         profile.setId(id);
         profileRep.save(profile);
     }

@@ -72,8 +72,8 @@ public class Profiles {
 
     @DeleteMapping("/api/profiles/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteProduct(@PathVariable Long id) {
-        profileCont.deleteProduct(id);
+    public void deleteProfile(@PathVariable Long id) {
+        profileCont.deleteProfile(id);
     }
 
     @PutMapping("/api/profiles/{id}")
