@@ -1,5 +1,7 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
+import javafx.util.Pair;
+
 import java.util.List;
 
 public class DTOProfile {
@@ -7,14 +9,16 @@ public class DTOProfile {
     private String name;
     private String description;
     private List<DTOProject> projects;
+    private List<Pair<Long, Boolean>> allSIs;
 
     public DTOProfile(){}
 
-    public DTOProfile(Long id, String name, String description, List<DTOProject> projects) {
+    public DTOProfile(Long id, String name, String description, List<DTOProject> projects, List<Pair<Long, Boolean>> allSIs) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.projects = projects;
+        this.allSIs = allSIs;
     }
 
     public Long getId() {
@@ -45,7 +49,15 @@ public class DTOProfile {
         return projects;
     }
 
-    public void setProjectIds(List<DTOProject> projects) {
+    public void setProjects(List<DTOProject> projects) {
         this.projects = projects;
+    }
+
+    public List<Pair<Long, Boolean>> getAllSIs() {
+        return allSIs;
+    }
+
+    public void setAllSIs(List<Pair<Long, Boolean>> allSIs) {
+        this.allSIs = allSIs;
     }
 }

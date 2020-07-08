@@ -1,6 +1,7 @@
 var projects; // all projects
-var profileProjects; // only selected profile projects
+var profileProjects; // only selected profile projects (unsaved profile modification)
 var currentProfileID;
+var currentProfile;
 
 function getProjects() {
     var url = "/api/projects";
@@ -79,6 +80,9 @@ function clickOnTree(e){
         type: "GET",
         async: true,
         success: function (data) {
+            // set current profile
+            currentProfile = data;
+
             // set profileProjects variable
             profileProjects = data.projects;
 
@@ -489,6 +493,11 @@ $("#submitProfileSelectProjectsModalBtn").click(function () {
                 opt.innerHTML = prj.name;
                 allowedProjectsBox.appendChild(opt);
             }
+
+            var allowedSIsBox = document.getElementById('allowedSIsBox')
+            // clean allowedSIsBox content
+            allowedSIsBox.innerHTML = "";
+
             // close modal
             $("#profileSelectProjectsModal").modal('hide');
         }
@@ -508,12 +517,53 @@ function showSIsList() {
         2.1 "all si" = true - show all SIs del project
         2.2 "all si" = false - show only specified SIs del project
      */
-    console.log("show SIs List");
     var allowedProjectsBox = document.getElementById("allowedProjectsBox");
     var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
     var prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
     console.log(prjExternalID);
+    if (currentProfile.allSIs.find(x => x.key == prjID)) { // saved project from profile
+        if (currentProfile.allSIs.find(x => x.key == prjID).value) {
+            // "all si" = true - show all SIs del project
+            var url = "/api/strategicIndicators?prj=" + prjExternalID;
+            console.log("get all SIs");
+            fillAllowedSIsBox(url);
+        } else {
+            // "all si" = false - show only specified SIs del project
+        }
+    } else { // new added project to profile
+        // by default show all si
+        var url = "/api/strategicIndicators?prj=" + prjExternalID;
+        console.log("get all SIs");
+        fillAllowedSIsBox(url);
+    }
 };
+
+function fillAllowedSIsBox(url){
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            console.log(data);
+            var allowedSIsBox = document.getElementById('allowedSIsBox')
+            // clean old allowedSIsBox content
+            allowedSIsBox.innerHTML = "";
+            for (var i = 0; i < data.length; i++) {
+                // update allowedSIsBox
+                var opt = document.createElement("option");
+                opt.value = data[i].id;
+                opt.innerHTML = data[i].name;
+                allowedSIsBox.appendChild(opt);
+            }
+
+        }
+    });
+}
 
 function moveItemsLeft() {
     $('#selProjectsBox').find(':selected').appendTo('#avProjectsBox');

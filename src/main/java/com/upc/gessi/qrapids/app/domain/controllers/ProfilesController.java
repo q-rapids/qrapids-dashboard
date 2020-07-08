@@ -1,15 +1,15 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.exceptions.ProfileNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProfileProjectsNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.domain.models.ProfileProjects;
-import com.upc.gessi.qrapids.app.domain.models.ProfileProjectsId;
 import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProfile;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ public class ProfilesController {
     @Autowired
     private ProfileRepository profileRep;
     @Autowired
-    private ProfileProjectsRepository profileProjectsRep;
+    private ProfileProjectsController profileProjectsCont;
 
 
     public boolean checkNewProfileByName(String name) throws ProfileNotFoundException {
@@ -47,9 +47,12 @@ public class ProfilesController {
         if (profileOptional.isPresent()) {
             Profile profile = profileOptional.get();
             List<DTOProject> relatedProjects = new ArrayList<>();
-            for (Project proj : profile.getProjects()) {
-                DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId());
+            List<Pair<Long,Boolean>> relatedAllSIs = new ArrayList<>();
+            for (ProfileProjects pp : profile.getProfileProjectsList()) {
+                DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId());
                 relatedProjects.add(project);
+                Pair<Long,Boolean> allSI = new Pair<Long, Boolean>(pp.getProject().getId(), pp.isAllSI());
+                relatedAllSIs.add(allSI);
             }
             Collections.sort(relatedProjects, new Comparator<DTOProject>() {
                 @Override
@@ -57,7 +60,7 @@ public class ProfilesController {
                     return o1.getName().compareTo(o2.getName());
                 }
             });
-            return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), relatedProjects);
+            return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), relatedProjects, relatedAllSIs);
         }
         return null;
     }
@@ -70,9 +73,12 @@ public class ProfilesController {
         List<DTOProfile> profiles = new ArrayList<>();
         for (Profile pr : profilesBD) {
             List<DTOProject> relatedProjects = new ArrayList<>();
-            for (Project proj : pr.getProjects()) {
-                DTOProject project = new DTOProject(proj.getId(), proj.getExternalId(), proj.getName(), proj.getDescription(), proj.getLogo(), proj.getActive(), proj.getBacklogId());
+            List<Pair<Long,Boolean>> relatedAllSIs = new ArrayList<>();
+            for (ProfileProjects pp : pr.getProfileProjectsList()) {
+                DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId());
                 relatedProjects.add(project);
+                Pair<Long,Boolean> allSI = new Pair<Long, Boolean>(pp.getProject().getId(), pp.isAllSI());
+                relatedAllSIs.add(allSI);
             }
             Collections.sort(relatedProjects, new Comparator<DTOProject>() {
                 @Override
@@ -80,7 +86,7 @@ public class ProfilesController {
                     return o1.getName().compareTo(o2.getName());
                 }
             });
-            DTOProfile profile = new DTOProfile(pr.getId(), pr.getName(), pr.getDescription(), relatedProjects);
+            DTOProfile profile = new DTOProfile(pr.getId(), pr.getName(), pr.getDescription(), relatedProjects, relatedAllSIs);
             profiles.add(profile);
         }
         Collections.sort(profiles, new Comparator<DTOProfile>() {
@@ -99,23 +105,28 @@ public class ProfilesController {
         return (pr == null || pr.getId() == id);
     }
 
-    public void updateProfile(Long id, String name, String description, List<String> projectIds) {
-        // TODO delete old ProfileProjects List
+    public void updateProfile(Long id, String name, String description, List<String> projectIds) throws ProfileProjectsNotFoundException {
         Optional<Profile> profileOptional = profileRep.findById(id);
-        Profile oldProfile = profileOptional.get();
-        for (ProfileProjects pp: oldProfile.getProfileProjectsList()) {
-            if (profileProjectsRep.existsById(new ProfileProjectsId(pp.getProfile().getId(),pp.getProject().getId())))
-                profileProjectsRep.deleteById(new ProfileProjectsId(pp.getProfile().getId(),pp.getProject().getId()));
-        }
+        Profile profile = profileOptional.get();
         // update profile information
-        List<Project> projects = new ArrayList<>();
+        profile.setName(name);
+        profile.setDescription(description);
+        // delete old ProfileProjects List
+        List<ProfileProjects> oldProfileProjectsList = profile.getProfileProjectsList();
+        profile.setProfileProjectsList(null);
+        for (ProfileProjects pp: oldProfileProjectsList) {
+            profileProjectsCont.deleteProfileProject(pp.getId());
+        }
+        // create new ProfileProjects List
+        List<ProfileProjects> newProfileProjectsList = new ArrayList<>();
         for (int i=0; i<projectIds.size(); i++) {
             Optional<Project> projectOptional = projectRep.findById(Long.parseLong(projectIds.get(i)));
-            projectOptional.ifPresent(projects::add);
+            // TODO not hardcoded allSI
+            ProfileProjects pp = profileProjectsCont.saveProfileProject(profile,projectOptional.get(),true);
+            newProfileProjectsList.add(pp);
         }
-        // TODO not hardcoded allSI
-        Profile profile = new Profile(name, description, projects, true);
-        profile.setId(id);
+        // set new ProfileProjects List to this profile
+        profile.setProfileProjectsList(newProfileProjectsList);
         profileRep.save(profile);
     }
 }

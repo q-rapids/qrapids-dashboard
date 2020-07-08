@@ -64,6 +64,10 @@ public class Profile {
         return profileProjectsList;
     }
 
+    public void setProfileProjectsList(List<ProfileProjects> profileProjectsList) {
+        this.profileProjectsList = profileProjectsList;
+    }
+
     public void setProjects(List<Project> projects, boolean allSI) {
         List<ProfileProjects> pp = new ArrayList<>();
         for (Project p : projects) {
