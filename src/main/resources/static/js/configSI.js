@@ -119,7 +119,7 @@ function showFactors () {
 
 function loadFactors (show) {
     $.ajax({
-        url: "../api/qualityFactors",
+        url: "../api/qualityFactors/current",
         type: "GET",
         async: true,
         success: function(data) {

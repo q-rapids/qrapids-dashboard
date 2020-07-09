@@ -4,11 +4,11 @@ import DTOs.Relations.RelationDTO;
 import DTOs.Relations.SourceRelationDTO;
 import DTOs.Relations.TargetRelationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMetric;
@@ -35,7 +35,7 @@ public class QMARelations {
     private StrategicIndicatorsController strategicIndicatorsController;
 
     @Autowired
-    private QualityFactorsController qualityFactorsController;
+    private FactorsController factorsController;
 
     private static final String SI_TYPE = "strategic_indicators";
     private static final String FACTORS_TYPE = "factors";
@@ -78,11 +78,11 @@ public class QMARelations {
             relationDTOS = Relations.getRelations(prj, date);
         // get current evaluations for SI and Quality Factors
         List<DTOStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
-        List<DTOQualityFactor> qfEval = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
+        List<DTODetailedFactorEvaluation> qfEval = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
         return RelationDTOToDTORelationSI(relationDTOS, siEval, qfEval);
     }
 
-    private List<DTORelationsSI> RelationDTOToDTORelationSI (List<RelationDTO> relationDTOS, List<DTOStrategicIndicatorEvaluation> siEval, List<DTOQualityFactor> qfEval) throws ArithmeticException {
+    private List<DTORelationsSI> RelationDTOToDTORelationSI (List<RelationDTO> relationDTOS, List<DTOStrategicIndicatorEvaluation> siEval, List<DTODetailedFactorEvaluation> qfEval) throws ArithmeticException {
         Map<String, DTORelationsSI> strategicIndicatorsMap = new HashMap<>();
         Map<String, DTORelationsFactor> factorsMap = new HashMap<>();
         Map<String, DTORelationsMetric> metricsMap = new HashMap<>();
@@ -135,7 +135,7 @@ public class QMARelations {
         return totalWeight;
     }
 
-    private void buildSIFactorRelation(Map<String, DTORelationsSI> strategicIndicatorsMap, Map<String, DTORelationsFactor> factorsMap, String weight, SourceRelationDTO source, TargetRelationDTO target, List<DTOStrategicIndicatorEvaluation> siEval, List<DTOQualityFactor> qfEval) {
+    private void buildSIFactorRelation(Map<String, DTORelationsSI> strategicIndicatorsMap, Map<String, DTORelationsFactor> factorsMap, String weight, SourceRelationDTO source, TargetRelationDTO target, List<DTOStrategicIndicatorEvaluation> siEval, List<DTODetailedFactorEvaluation> qfEval) {
         DTORelationsSI strategicIndicator;
         DTOStrategicIndicatorEvaluation thisSI = siEval.stream()
                 .filter(si -> target.getID().equals(si.getId()))
@@ -164,7 +164,7 @@ public class QMARelations {
         }
 
         DTORelationsFactor factor;
-        DTOQualityFactor thisFactor = qfEval.stream()
+        DTODetailedFactorEvaluation thisFactor = qfEval.stream()
                 .filter(qf -> source.getID().equals(qf.getId()))
                 .findAny()
                 .orElse(null);
@@ -189,9 +189,9 @@ public class QMARelations {
         strategicIndicator.setFactor(new DTORelationsFactor(factor));
     }
 
-    private void buildFactorMetricRelation(Map<String, DTORelationsFactor> factorsMap, Map<String, DTORelationsMetric> metricsMap, String weight, SourceRelationDTO source, TargetRelationDTO target, List<DTOQualityFactor> qfEval) {
+    private void buildFactorMetricRelation(Map<String, DTORelationsFactor> factorsMap, Map<String, DTORelationsMetric> metricsMap, String weight, SourceRelationDTO source, TargetRelationDTO target, List<DTODetailedFactorEvaluation> qfEval) {
         DTORelationsFactor factor;
-        DTOQualityFactor thisFactor = qfEval.stream()
+        DTODetailedFactorEvaluation thisFactor = qfEval.stream()
                 .filter(qf -> target.getID().equals(qf.getId()))
                 .findAny()
                 .orElse(null);
@@ -204,8 +204,8 @@ public class QMARelations {
         }
 
         DTORelationsMetric metric;
-        List<DTOMetric> metrics = thisFactor.getMetrics();
-        DTOMetric thisMetric = metrics.stream()
+        List<DTOMetricEvaluation> metrics = thisFactor.getMetrics();
+        DTOMetricEvaluation thisMetric = metrics.stream()
                 .filter(m -> source.getID().equals(m.getId()))
                 .findAny()
                 .orElse(null);

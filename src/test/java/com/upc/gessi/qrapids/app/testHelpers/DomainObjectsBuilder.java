@@ -239,23 +239,23 @@ public class DomainObjectsBuilder {
                 null);
     }
 
-    public DTOQualityFactor buildDTOQualityFactor () {
+    public DTODetailedFactorEvaluation buildDTOQualityFactor () {
         String metricId = "fasttests";
         String metricName = "Fast Tests";
         String metricDescription = "Percentage of tests under the testing duration threshold";
         float metricValue = 0.8f;
         LocalDate evaluationDate = LocalDate.now();
         String metricRationale = "parameters: {...}, formula: ...";
-        DTOMetric dtoMetric = new DTOMetric(metricId, metricName, metricDescription, null, metricRationale, evaluationDate, metricValue);
-        List<DTOMetric> dtoMetricList = new ArrayList<>();
-        dtoMetricList.add(dtoMetric);
+        DTOMetricEvaluation dtoMetricEvaluation = new DTOMetricEvaluation(metricId, metricName, metricDescription, null, metricRationale, evaluationDate, metricValue);
+        List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
+        dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
         String factorId = "testingperformance";
         String factorName = "Testing Performance";
-        return new DTOQualityFactor(factorId, factorName, dtoMetricList);
+        return new DTODetailedFactorEvaluation(factorId, factorName, dtoMetricEvaluationList);
     }
 
-    public DTOQualityFactor buildDTOQualityFactorForPrediction () {
+    public DTODetailedFactorEvaluation buildDTOQualityFactorForPrediction () {
         String metricId = "fasttests";
         String metricName = "Fast Tests";
         String metricDescription = "Percentage of tests under the testing duration threshold";
@@ -263,24 +263,24 @@ public class DomainObjectsBuilder {
         Double metricValue = 0.8;
         LocalDate evaluationDate = LocalDate.now();
         String metricRationale = "Forecast";
-        DTOMetric dtoMetric = new DTOMetric(metricId, metricName, metricDescription, metricDataSource, metricRationale, evaluationDate, metricValue.floatValue());
+        DTOMetricEvaluation dtoMetricEvaluation = new DTOMetricEvaluation(metricId, metricName, metricDescription, metricDataSource, metricRationale, evaluationDate, metricValue.floatValue());
         Double first80 = 0.97473043;
         Double second80 = 0.9745246;
         Pair<Float, Float> confidence80 = Pair.of(first80.floatValue(), second80.floatValue());
-        dtoMetric.setConfidence80(confidence80);
+        dtoMetricEvaluation.setConfidence80(confidence80);
         Double first95 = 0.9747849;
         Double second95 = 0.97447014;
         Pair<Float, Float> confidence95 = Pair.of(first95.floatValue(), second95.floatValue());
-        dtoMetric.setConfidence95(confidence95);
-        List<DTOMetric> dtoMetricList = new ArrayList<>();
-        dtoMetricList.add(dtoMetric);
+        dtoMetricEvaluation.setConfidence95(confidence95);
+        List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
+        dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
         String factorId = "testingperformance";
         String factorName = "Testing Performance";
-        return new DTOQualityFactor(factorId, factorName, dtoMetricList);
+        return new DTODetailedFactorEvaluation(factorId, factorName, dtoMetricEvaluationList);
     }
 
-    public DTOFactor buildDTOFactor () {
+    public DTOFactorEvaluation buildDTOFactor () {
         String factorId = "testingperformance";
         String factorName = "Testing Performance";
         String factorDescription = "Performance of the tests";
@@ -290,17 +290,17 @@ public class DomainObjectsBuilder {
         String strategicIndicator = "processperformance";
         List<String> strategicIndicatorsList = new ArrayList<>();
         strategicIndicatorsList.add(strategicIndicator);
-        return new DTOFactor(factorId, factorName, factorDescription, factorValue, evaluationDate, null, factorRationale, strategicIndicatorsList);
+        return new DTOFactorEvaluation(factorId, factorName, factorDescription, factorValue, evaluationDate, null, factorRationale, strategicIndicatorsList);
     }
 
-    public DTOMetric buildDTOMetric () {
+    public DTOMetricEvaluation buildDTOMetric () {
         String metricId = "fasttests";
         String metricName = "Fast Tests";
         String metricDescription = "Percentage of tests under the testing duration threshold";
         float metricValue = 0.8f;
         LocalDate evaluationDate = LocalDate.now();
         String metricRationale = "parameters: {...}, formula: ...";
-        return new DTOMetric(metricId, metricName, metricDescription, null, metricRationale, evaluationDate, metricValue);
+        return new DTOMetricEvaluation(metricId, metricName, metricDescription, null, metricRationale, evaluationDate, metricValue);
     }
 
     public DTOStrategicIndicatorEvaluation buildDTOStrategicIndicatorEvaluation () {

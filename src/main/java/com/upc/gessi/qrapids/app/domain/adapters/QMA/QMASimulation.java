@@ -2,7 +2,7 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 
 import DTOs.FactorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import simulation.Model;
@@ -21,7 +21,7 @@ public class QMASimulation {
     @Autowired
     private QMAConnection qmacon;
 
-    public List<DTOFactor> simulateQualityFactors (Map<String, Float> metrics, String prj, LocalDate date) throws IOException {
+    public List<DTOFactorEvaluation> simulateQualityFactors (Map<String, Float> metrics, String prj, LocalDate date) throws IOException {
         qmacon.initConnexion();
         Model model = Simulator.createModel(prj, date.toString());
         for(Map.Entry<String, Float> metric : metrics.entrySet()) {

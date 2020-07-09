@@ -5,8 +5,8 @@ import DTOs.FactorEvaluationDTO;
 import DTOs.FactorMetricEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import evaluation.Factor;
 import evaluation.StrategicIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class QMAQualityFactors {
     @Autowired
     private QFCategoryRepository QFCatRep;
 
-    public List<DTOQualityFactor> CurrentEvaluation(String id, String prj) throws IOException {
+    public List<DTODetailedFactorEvaluation> CurrentEvaluation(String id, String prj) throws IOException {
         qmacon.initConnexion();
         List<FactorMetricEvaluationDTO> evals = new ArrayList<>();
         if (id == null) {
@@ -39,15 +39,15 @@ public class QMAQualityFactors {
         return FactorMetricEvaluationDTOListToDTOQualityFactorList(evals);
     }
 
-    public DTOFactor SingleCurrentEvaluation(String factorId, String prj) throws IOException {
+    public DTOFactorEvaluation SingleCurrentEvaluation(String factorId, String prj) throws IOException {
         qmacon.initConnexion();
         FactorEvaluationDTO factorEvaluationDTO = Factor.getSingleEvaluation(prj, factorId);
         return QMADetailedStrategicIndicators.FactorEvaluationDTOToDTOFactor(factorEvaluationDTO, factorEvaluationDTO.getEvaluations().get(0));
     }
 
-    public List<DTOQualityFactor> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
+    public List<DTODetailedFactorEvaluation> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
         List<FactorMetricEvaluationDTO> evals = new ArrayList<>();
-        List<DTOQualityFactor> qf;
+        List<DTODetailedFactorEvaluation> qf;
 
         qmacon.initConnexion();
         if (id == null) {
@@ -68,33 +68,33 @@ public class QMAQualityFactors {
             return false;
     }
 
-    public List<DTOFactor> getAllFactors(String prj) throws IOException {
+    public List<DTOFactorEvaluation> getAllFactors(String prj) throws IOException {
         qmacon.initConnexion();
         return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj));
     }
 
-    public List<DTOFactor> getAllFactorsHistoricalData(String prj, LocalDate from, LocalDate to) throws IOException {
+    public List<DTOFactorEvaluation> getAllFactorsHistoricalData(String prj, LocalDate from, LocalDate to) throws IOException {
         qmacon.initConnexion();
         return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj, from, to));
     }
 
-    public void setFactorStrategicIndicatorRelation(List<DTOFactor> factors, String prj) throws IOException {
+    public void setFactorStrategicIndicatorRelation(List<DTOFactorEvaluation> factors, String prj) throws IOException {
 
         qmacon.initConnexion();
         List<FactorEvaluationDTO> qma_factors = FactorEvaluationDTOFactortoDTO(factors, prj);
         Factor.setStrategicIndicatorRelation(qma_factors);
     }
 
-    private static List<FactorEvaluationDTO> FactorEvaluationDTOFactortoDTO(List<DTOFactor> factors, String prj)
+    private static List<FactorEvaluationDTO> FactorEvaluationDTOFactortoDTO(List<DTOFactorEvaluation> factors, String prj)
     {
         List<FactorEvaluationDTO> qf = new ArrayList<>();
         List <EvaluationDTO> eval = new ArrayList<>();
 
         // - list of factors (first iterator/for)
-        for (Iterator<DTOFactor> iterFactors = factors.iterator(); iterFactors.hasNext(); )
+        for (Iterator<DTOFactorEvaluation> iterFactors = factors.iterator(); iterFactors.hasNext(); )
         {
             // For each factor, we have the factor information
-            DTOFactor factor = iterFactors.next();
+            DTOFactorEvaluation factor = iterFactors.next();
 
             eval.clear();
             eval.add(new EvaluationDTO(factor.getId(),
@@ -114,8 +114,8 @@ public class QMAQualityFactors {
         return qf;
 
     }
-    private static List<DTOQualityFactor> FactorMetricEvaluationDTOListToDTOQualityFactorList(List<FactorMetricEvaluationDTO> evals) {
-        List<DTOQualityFactor> qf = new ArrayList<>();
+    private static List<DTODetailedFactorEvaluation> FactorMetricEvaluationDTOListToDTOQualityFactorList(List<FactorMetricEvaluationDTO> evals) {
+        List<DTODetailedFactorEvaluation> qf = new ArrayList<>();
 
         // The evaluations (eval param) has the following structure:
         // - list of factors (first iterator/for)
@@ -123,7 +123,7 @@ public class QMAQualityFactors {
         {
             // For each factor, we have the factor inforamtion + the list of metrics evaluations
             FactorMetricEvaluationDTO qualityFactor = iterFactors.next();
-            qf.add(new DTOQualityFactor(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(qualityFactor.getMetrics())));
+            qf.add(new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(qualityFactor.getMetrics())));
         }
         return qf;
     }

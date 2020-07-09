@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class StrategicIndicatorQualityFactorsRepositoryTest {
+public class StrategicIndicatorFactorEvaluationRepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;

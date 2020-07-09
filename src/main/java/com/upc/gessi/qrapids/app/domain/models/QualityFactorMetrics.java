@@ -14,14 +14,14 @@ public class QualityFactorMetrics {
     private Float weight;
 
     @ManyToOne
-    private QualityFactor quality_factor;
+    private Factor quality_factor;
 
     @ManyToOne
     private Metric metric;
 
     public QualityFactorMetrics() {}
 
-    public QualityFactorMetrics(Float weight, Metric metric, QualityFactor qf) {
+    public QualityFactorMetrics(Float weight, Metric metric, Factor qf) {
         setWeight(weight);
         setMetric(metric);
         setQuality_factor(qf);
@@ -43,11 +43,11 @@ public class QualityFactorMetrics {
         this.metric = metric;
     }
 
-    public QualityFactor getQuality_factor() {
+    public Factor getQuality_factor() {
         return quality_factor;
     }
 
-    public void setQuality_factor(QualityFactor quality_factor) {
+    public void setQuality_factor(Factor quality_factor) {
         this.quality_factor = quality_factor;
     }
 

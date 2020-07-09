@@ -10,7 +10,7 @@ import java.time.LocalDate;
  *
  * @author Oriol M./Guillem B/Lidia L.
  */
-public class DTOMetric {
+public class DTOMetricEvaluation {
 
     //class attributes
     private String id;
@@ -36,7 +36,7 @@ public class DTOMetric {
      * @param datasource The parameter defines the datasource of the metric evaluation
      * @param rationale The parameter describes textually the rationale behind the value
      */
-    public DTOMetric(String id, String name, String description, String datasource, String rationale, LocalDate date, float value) {
+    public DTOMetricEvaluation(String id, String name, String description, String datasource, String rationale, LocalDate date, float value) {
         setId(id);
         setName(name);
         setDescription(description);
@@ -59,7 +59,7 @@ public class DTOMetric {
      * @param confidence80 Upper and lower values respectively for the 80% confidence interval
      * @param confidence95 Upper and lower values respectively for the 95% confidence interval
      */
-    public DTOMetric(String id, String name, String description, String datasource, String rationale, LocalDate date, Float value, Pair<Float, Float> confidence80, Pair<Float, Float> confidence95) {
+    public DTOMetricEvaluation(String id, String name, String description, String datasource, String rationale, LocalDate date, Float value, Pair<Float, Float> confidence80, Pair<Float, Float> confidence95) {
         setId(id);
         setName(name);
         setDescription(description);
@@ -71,13 +71,13 @@ public class DTOMetric {
         setConfidence95(confidence95);
     }
 
-    public DTOMetric(String id, String name, String forecastingError) {
+    public DTOMetricEvaluation(String id, String name, String forecastingError) {
         this.id = id;
         this.name = name;
         this.forecastingError = forecastingError;
     }
 
-    public DTOMetric() {
+    public DTOMetricEvaluation() {
     }
 
     /**

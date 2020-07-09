@@ -4,13 +4,14 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
 import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class MetricsController {
@@ -48,6 +50,15 @@ public class MetricsController {
         return metric;
     }
 
+    public Metric getMetricById (Long metricId) throws MetricNotFoundException {
+        Optional<Metric> metricOptional = metricRepository.findById(metricId);
+        if (metricOptional.isPresent()) {
+            return metricOptional.get();
+        } else {
+            throw new MetricNotFoundException();
+        }
+    }
+
     public List<Metric> getMetricsByProject (String prj) throws ProjectNotFoundException {
         Project project = projectController.findProjectByExternalId(prj);
         return metricRepository.findByProject_IdOrderByName(project.getId());
@@ -56,13 +67,13 @@ public class MetricsController {
     public void importMetricsAndUpdateDatabase() throws IOException, CategoriesException, ProjectNotFoundException {
         List<String> projects = projectController.getAllProjects();
         for (String prj : projects) {
-            List<DTOMetric> metrics = getAllMetricsCurrentEvaluation(prj);
+            List<DTOMetricEvaluation> metrics = getAllMetricsCurrentEvaluation(prj);
             updateDataBaseWithNewMetrics(prj,metrics);
         }
     }
 
-    public void updateDataBaseWithNewMetrics (String prjExternalID, List<DTOMetric> metrics) throws ProjectNotFoundException {
-        for (DTOMetric metric : metrics) {
+    public void updateDataBaseWithNewMetrics (String prjExternalID, List<DTOMetricEvaluation> metrics) throws ProjectNotFoundException {
+        for (DTOMetricEvaluation metric : metrics) {
             Metric metricsSaved = metricRepository.findByExternalId(metric.getId());
             if (metricsSaved == null) {
                 Project project = projectController.findProjectByExternalId(prjExternalID);
@@ -95,31 +106,31 @@ public class MetricsController {
         }
     }
 
-    public List<DTOMetric> getAllMetricsCurrentEvaluation (String projectExternalId) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getAllMetricsCurrentEvaluation (String projectExternalId) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.CurrentEvaluation(null, projectExternalId);
     }
 
-    public DTOMetric getSingleMetricCurrentEvaluation (String metricId, String projectExternalId) throws IOException, ElasticsearchStatusException {
+    public DTOMetricEvaluation getSingleMetricCurrentEvaluation (String metricId, String projectExternalId) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.SingleCurrentEvaluation(metricId, projectExternalId);
     }
 
-    public List<DTOMetric> getMetricsForQualityFactorCurrentEvaluation (String qualityFactorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getMetricsForQualityFactorCurrentEvaluation (String qualityFactorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.CurrentEvaluation(qualityFactorId, projectExternalId);
     }
 
-    public List<DTOMetric> getSingleMetricHistoricalEvaluation (String metricId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getSingleMetricHistoricalEvaluation (String metricId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.SingleHistoricalData(metricId, from, to, projectExternalId);
     }
 
-    public List<DTOMetric> getAllMetricsHistoricalEvaluation (String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getAllMetricsHistoricalEvaluation (String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.HistoricalData(null, from, to, projectExternalId);
     }
 
-    public List<DTOMetric> getMetricsForQualityFactorHistoricalEvaluation (String qualityFactorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getMetricsForQualityFactorHistoricalEvaluation (String qualityFactorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.HistoricalData(qualityFactorId, from, to, projectExternalId);
     }
 
-    public List<DTOMetric> getMetricsPrediction (List<DTOMetric> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, ElasticsearchStatusException {
+    public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, ElasticsearchStatusException {
         return qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 

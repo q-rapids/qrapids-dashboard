@@ -3,7 +3,7 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.EvaluationDTO;
 import DTOs.MetricEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import evaluation.Factor;
 import evaluation.Metric;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,8 @@ public class QMAMetrics {
     @Autowired
     private QMAConnection qmacon;
 
-    public List<DTOMetric> CurrentEvaluation(String id, String prj) throws IOException {
-        List<DTOMetric> result;
+    public List<DTOMetricEvaluation> CurrentEvaluation(String id, String prj) throws IOException {
+        List<DTOMetricEvaluation> result;
 
         List<MetricEvaluationDTO> evals;
 
@@ -38,14 +38,14 @@ public class QMAMetrics {
         return result;
     }
 
-    public DTOMetric SingleCurrentEvaluation(String metricId, String prj) throws IOException {
+    public DTOMetricEvaluation SingleCurrentEvaluation(String metricId, String prj) throws IOException {
         qmacon.initConnexion();
         MetricEvaluationDTO metricEvaluationDTO = Metric.getSingleEvaluation(prj, metricId);
         return MetricEvaluationDTOToDTOMetric(metricEvaluationDTO, metricEvaluationDTO.getEvaluations().get(0));
     }
 
-    public List<DTOMetric> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
-        List<DTOMetric> result;
+    public List<DTOMetricEvaluation> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
+        List<DTOMetricEvaluation> result;
 
         List<MetricEvaluationDTO> evals;
 
@@ -60,7 +60,7 @@ public class QMAMetrics {
         return result;
     }
 
-    public List<DTOMetric> SingleHistoricalData (String metricId, LocalDate from, LocalDate to, String prj) throws IOException {
+    public List<DTOMetricEvaluation> SingleHistoricalData (String metricId, LocalDate from, LocalDate to, String prj) throws IOException {
         qmacon.initConnexion();
         MetricEvaluationDTO metricEvaluationDTO = Metric.getSingleEvaluation(prj, metricId, from, to);
         List<MetricEvaluationDTO> metricEvaluationDTOList = new ArrayList<>();
@@ -69,8 +69,8 @@ public class QMAMetrics {
     }
 
 
-    static List<DTOMetric> MetricEvaluationDTOListToDTOMetricList(List<MetricEvaluationDTO> evals) {
-        List<DTOMetric> m = new ArrayList<>();
+    static List<DTOMetricEvaluation> MetricEvaluationDTOListToDTOMetricList(List<MetricEvaluationDTO> evals) {
+        List<DTOMetricEvaluation> m = new ArrayList<>();
         for (Iterator<MetricEvaluationDTO> iterMetrics = evals.iterator(); iterMetrics.hasNext(); ) {
             MetricEvaluationDTO metric = iterMetrics.next();
             if (metric != null) {
@@ -83,8 +83,8 @@ public class QMAMetrics {
         return m;
     }
 
-    private static DTOMetric MetricEvaluationDTOToDTOMetric(MetricEvaluationDTO metric, EvaluationDTO evaluation) {
-        return new DTOMetric(metric.getID(),
+    private static DTOMetricEvaluation MetricEvaluationDTOToDTOMetric(MetricEvaluationDTO metric, EvaluationDTO evaluation) {
+        return new DTOMetricEvaluation(metric.getID(),
                 metric.getName(),
                 metric.getDescription(),
                 evaluation.getDatasource(),

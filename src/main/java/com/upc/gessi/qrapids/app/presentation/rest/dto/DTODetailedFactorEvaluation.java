@@ -8,12 +8,12 @@ import java.util.List;
  *
  * @author Oriol M./Guillem B.
  */
-public class DTOQualityFactor {
+public class DTODetailedFactorEvaluation {
 
     //class attributes
     private String id;
     private String name;
-    private List<DTOMetric> metrics;
+    private List<DTOMetricEvaluation> metrics;
 
     /**
      * Constructor of the DTO of Quality Factors
@@ -22,7 +22,7 @@ public class DTOQualityFactor {
      * @param name The parameter defines the name of the Factor
      * @param metrics The parameter define the set of metrics that compose the Quality Factors
      */
-    public DTOQualityFactor(String id, String name, List<DTOMetric> metrics) {
+    public DTODetailedFactorEvaluation(String id, String name, List<DTOMetricEvaluation> metrics) {
         this.id = id;
         this.name = name;
         this.metrics = metrics;
@@ -43,11 +43,11 @@ public class DTOQualityFactor {
         return this.name.isEmpty() ? this.id : this.name;
     }
 
-    public List<DTOMetric> getMetrics() {
+    public List<DTOMetricEvaluation> getMetrics() {
         return metrics;
     }
 
-    public void setMetrics(List<DTOMetric> metrics) {
+    public void setMetrics(List<DTOMetricEvaluation> metrics) {
         this.metrics = metrics;
     }
 }
