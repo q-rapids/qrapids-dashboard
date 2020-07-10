@@ -73,6 +73,7 @@ public class StrategicIndicatorsController {
     private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
     public List<Strategic_Indicator> getStrategicIndicatorsByProject (Project project) {
+        // TODO filter by profile
         return strategicIndicatorRepository.findByProject_IdOrderByName(project.getId());
     }
 

@@ -2,6 +2,9 @@ var projects; // all projects
 var profileProjects; // only selected profile projects (unsaved profile modification)
 var currentProfileID;
 var currentProfile;
+var allprojectSIs; // all si of selected project
+var projectSIs = []; // pairs <prj, si> for all profile projects
+var prjExternalID;
 
 function getProjects() {
     var url = "/api/projects";
@@ -38,6 +41,26 @@ function getProjectByID(id){
     });
     return result;
 };
+
+function getSIByID(id){
+    var url = "/api/strategicIndicators/"+id;
+    var result = null;
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            result = data;
+        }
+    });
+    return result;
+};
+
 
 function buildProfileList() {
     var url = "/api/profiles";
@@ -112,7 +135,6 @@ function clickOnTree(e){
             inputName.setAttribute('placeholder', 'Write the profile name here');
             nameRow.appendChild(inputName);
             profileForm.appendChild(nameRow);
-
             var descriptionRow = document.createElement('div');
             descriptionRow.classList.add("profileInfoRow");
             descriptionRow.setAttribute('style', 'resize: vertical;');
@@ -128,8 +150,6 @@ function clickOnTree(e){
             inputDescription.setAttribute('placeholder', 'Write the profile description here');
             descriptionRow.appendChild(inputDescription);
             profileForm.appendChild(descriptionRow);
-
-
             var title2Row = document.createElement('div');
             title2Row.classList.add("profileInfoRow");
             var title2P = document.createElement('p');
@@ -137,7 +157,6 @@ function clickOnTree(e){
             title2P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
             title2Row.appendChild(title2P);
             profileForm.appendChild(title2Row);
-
             // row with allowed projects and their SIs
             var allowedRow = document.createElement('div');
             allowedRow.classList.add("profileInfoRow");
@@ -150,20 +169,26 @@ function clickOnTree(e){
             allowedProjectsCol.appendChild(allowedProjectsP);
             // TODO create edit button (modify css)
             var selProjectsBtn = document.createElement('button');
+            selProjectsBtn.classList.add("btn");
             selProjectsBtn.setAttribute('id', 'selProjectsBtn');
             selProjectsBtn.appendChild(document.createTextNode("..."));
-            selProjectsBtn.onclick = selectProjectsModal;
+            selProjectsBtn.onclick = openSelectProjectsModal;
             allowedProjectsCol.appendChild(selProjectsBtn);
 
             var allowedProjectsBox = document.createElement('select');
             allowedProjectsBox.setAttribute('id', 'allowedProjectsBox');
             allowedProjectsBox.setAttribute('multiple', 'multiple');
             allowedProjectsBox.setAttribute('style', 'height: 150px;');
-            // projects from current profile
-            for (var i = 0; i < data.projects.length; i++) {
+            // all projects shown, only from current profile are available
+            for (var i = 0; i < projects.length; i++) {
                 var opt = document.createElement("option");
-                opt.value = data.projects[i].id;
-                opt.innerHTML = data.projects[i].name;
+                opt.value = projects[i].id;
+                if(data.projects.find(x => x.id == projects[i].id)) {
+                    opt.innerHTML = projects[i].name + " (Yes)";
+                } else {
+                    opt.innerHTML = projects[i].name + " (No)";
+                    opt.disabled = true;
+                }
                 allowedProjectsBox.appendChild(opt);
             }
             // TODO onclick show SIs list
@@ -180,9 +205,11 @@ function clickOnTree(e){
 
             // TODO create edit button (modify css)
             var selSIsBtn = document.createElement('button');
+            selSIsBtn.classList.add("btn");
             selSIsBtn.setAttribute('id', 'selSIsBtn');
             selSIsBtn.appendChild(document.createTextNode("..."));
-            selSIsBtn.onclick = selectSIsModal;
+            selSIsBtn.onclick = openSelectSIsModal;
+            selSIsBtn.disabled = true;
             allowedSIsCol.appendChild(selSIsBtn);
 
             var allowedSIsBox = document.createElement('select');
@@ -270,7 +297,7 @@ function newProfile() {
     var title2Row = document.createElement('div');
     title2Row.classList.add("profileInfoRow");
     var title2P = document.createElement('p');
-    title2P.appendChild(document.createTextNode("Step 2 - Select the corresponding projects"));
+    title2P.appendChild(document.createTextNode("Step 2 - Select the profile permissions"));
     title2P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
     title2Row.appendChild(title2P);
     profileForm.appendChild(title2Row);
@@ -317,7 +344,7 @@ function newProfile() {
     arrowLeft.classList.add("top-and-bottom-margin");
     arrowLeft.setAttribute('id', 'oneLeft');
     arrowLeft.appendChild(document.createTextNode("<"));
-    arrowLeft.onclick = moveItemsLeft;
+    arrowLeft.onclick = moveProjectItemsLeft;
     arrowsCol.appendChild(arrowLeft);
     var arrowRight = document.createElement('button');
     arrowRight.classList.add("btn");
@@ -325,7 +352,7 @@ function newProfile() {
     arrowRight.classList.add("top-and-bottom-margin");
     arrowRight.setAttribute('id', 'right');
     arrowRight.appendChild(document.createTextNode(">"));
-    arrowRight.onclick = moveItemsRight;
+    arrowRight.onclick = moveProjectItemsRight;
     arrowRight.setAttribute('style', "margin-top:3px;");
     arrowsCol.appendChild(arrowRight);
     var arrowAllRight = document.createElement('button');
@@ -334,7 +361,7 @@ function newProfile() {
     arrowAllRight.classList.add("top-and-bottom-margin");
     arrowAllRight.setAttribute('id', 'allRight');
     arrowAllRight.appendChild(document.createTextNode(">>"));
-    arrowAllRight.onclick = moveAllItemsRight;
+    arrowAllRight.onclick = moveAllProjectItemsRight;
     arrowAllRight.setAttribute('style', "margin-top:3px;");
     arrowsCol.appendChild(arrowAllRight);
     var arrowAllLeft = document.createElement('button');
@@ -343,7 +370,7 @@ function newProfile() {
     arrowAllLeft.classList.add("top-and-bottom-margin");
     arrowAllLeft.setAttribute('id', 'allLeft');
     arrowAllLeft.appendChild(document.createTextNode("<<"));
-    arrowAllLeft.onclick = moveAllItemsLeft;
+    arrowAllLeft.onclick = moveAllProjectItemsLeft;
     arrowAllLeft.setAttribute('style', "margin-top:3px;");
     arrowsCol.appendChild(arrowAllLeft);
 
@@ -369,7 +396,7 @@ function newProfile() {
     document.getElementById('profileInfo').appendChild(profileForm);
 }
 
-function selectProjectsModal() {
+function openSelectProjectsModal() {
     var projectsRow = document.getElementById("projectsRow");
     // clean all projectsRow div child
     projectsRow.innerHTML = "";
@@ -425,7 +452,7 @@ function selectProjectsModal() {
     arrowLeft.classList.add("top-and-bottom-margin");
     arrowLeft.setAttribute('id', 'oneLeft');
     arrowLeft.appendChild(document.createTextNode("<"));
-    arrowLeft.onclick = moveItemsLeft;
+    arrowLeft.onclick = moveProjectItemsLeft;
     arrowsCol.appendChild(arrowLeft);
     var arrowRight = document.createElement('button');
     arrowRight.classList.add("btn");
@@ -433,7 +460,7 @@ function selectProjectsModal() {
     arrowRight.classList.add("top-and-bottom-margin");
     arrowRight.setAttribute('id', 'right');
     arrowRight.appendChild(document.createTextNode(">"));
-    arrowRight.onclick = moveItemsRight;
+    arrowRight.onclick = moveProjectItemsRight;
     arrowRight.setAttribute('style', "margin-top:3px;");
     arrowsCol.appendChild(arrowRight);
     var arrowAllRight = document.createElement('button');
@@ -442,7 +469,7 @@ function selectProjectsModal() {
     arrowAllRight.classList.add("top-and-bottom-margin");
     arrowAllRight.setAttribute('id', 'allRight');
     arrowAllRight.appendChild(document.createTextNode(">>"));
-    arrowAllRight.onclick = moveAllItemsRight;
+    arrowAllRight.onclick = moveAllProjectItemsRight;
     arrowAllRight.setAttribute('style', "margin-top:3px;");
     arrowsCol.appendChild(arrowAllRight);
     var arrowAllLeft = document.createElement('button');
@@ -451,7 +478,7 @@ function selectProjectsModal() {
     arrowAllLeft.classList.add("top-and-bottom-margin");
     arrowAllLeft.setAttribute('id', 'allLeft');
     arrowAllLeft.appendChild(document.createTextNode("<<"));
-    arrowAllLeft.onclick = moveAllItemsLeft;
+    arrowAllLeft.onclick = moveAllProjectItemsLeft;
     arrowAllLeft.setAttribute('style', "margin-top:3px;");
     arrowsCol.appendChild(arrowAllLeft);
     // append created content to projectsRow div
@@ -472,7 +499,9 @@ $("#submitProfileSelectProjectsModalBtn").click(function () {
         // obtain previously allowed projects
         var allowedProjects = [];
         $('#allowedProjectsBox').children().each (function (i, option) {
-            allowedProjects.push(option.value);
+            if (!option.disabled){
+                allowedProjects.push(option.value);
+            }
         });
         // compare selected and previously allowed projects
         if (selectedProjects.length === allowedProjects.length && selectedProjects.sort().every(function(value, index) { return value === allowedProjects.sort()[index]})) {
@@ -483,20 +512,30 @@ $("#submitProfileSelectProjectsModalBtn").click(function () {
             var allowedProjectsBox = document.getElementById('allowedProjectsBox')
             // clean old allowedProjectsBox content
             allowedProjectsBox.innerHTML = "";
-            for (var i = 0; i < selectedProjects.length; i++) {
-                var prj = getProjectByID(selectedProjects[i]);
-                // update profileProjects
-                profileProjects.push(prj);
+            for (var i = 0; i < projects.length; i++) {
                 // update allowedProjectsBox
                 var opt = document.createElement("option");
-                opt.value = prj.id;
-                opt.innerHTML = prj.name;
+                opt.value = projects[i].id;
+                var index = selectedProjects.indexOf(projects[i].id.toString());
+                if(index != -1) {
+                    opt.innerHTML = projects[i].name + " (Yes)";
+                    var prj = getProjectByID(selectedProjects[index]);
+                    // update profileProjects
+                    profileProjects.push(prj);
+                    console.log("profileProjects");
+                    console.log(profileProjects);
+                } else {
+                    opt.innerHTML = projects[i].name + " (No)";
+                    opt.disabled = true;
+                }
                 allowedProjectsBox.appendChild(opt);
             }
 
             var allowedSIsBox = document.getElementById('allowedSIsBox')
             // clean allowedSIsBox content
             allowedSIsBox.innerHTML = "";
+            // disable button to edit SIs for project of profile
+            document.getElementById('selSIsBtn').disabled = true;
 
             // close modal
             $("#profileSelectProjectsModal").modal('hide');
@@ -505,40 +544,13 @@ $("#submitProfileSelectProjectsModalBtn").click(function () {
     } else alert("Make sure that you have completed all fields marked with an *");
 });
 
-function selectSIsModal() {
-    // TODO parecido a Creació dels SI con sus factores available i selected
-    console.log("open edit SIs modal");
-};
+function openSelectSIsModal() {
 
-function showSIsList() {
-    /* TODO
-        1. Obtener el external id del project selecionat (value inside profileProjects or getProjectByID)
-        2. Mirrar el campo "all si" del profile_project BD table
-        2.1 "all si" = true - show all SIs del project
-        2.2 "all si" = false - show only specified SIs del project
-     */
-    var allowedProjectsBox = document.getElementById("allowedProjectsBox");
-    var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
-    var prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
-    console.log(prjExternalID);
-    if (currentProfile.allSIs.find(x => x.key == prjID)) { // saved project from profile
-        if (currentProfile.allSIs.find(x => x.key == prjID).value) {
-            // "all si" = true - show all SIs del project
-            var url = "/api/strategicIndicators?prj=" + prjExternalID;
-            console.log("get all SIs");
-            fillAllowedSIsBox(url);
-        } else {
-            // "all si" = false - show only specified SIs del project
-        }
-    } else { // new added project to profile
-        // by default show all si
-        var url = "/api/strategicIndicators?prj=" + prjExternalID;
-        console.log("get all SIs");
-        fillAllowedSIsBox(url);
-    }
-};
+    var projectText = document.getElementById("projectText");
+    projectText.setAttribute('style', 'font-size: 18px; margin-bottom: 1%')
+    projectText. innerText = "Project: " + prjExternalID; //profileProjects.find(x => x.id == prjID).name;
 
-function fillAllowedSIsBox(url){
+    var url = "/api/strategicIndicators?prj=" + prjExternalID;
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -549,36 +561,273 @@ function fillAllowedSIsBox(url){
         type: "GET",
         async: true,
         success: function (data) {
-            console.log(data);
+            var SIsRow = document.getElementById("SIsRow");
+            // clean all SIsRow div child
+            SIsRow.innerHTML = "";
+            //create SIsRow div content
+            SIsRow.classList.add("siInfoRow");
+            var selSIsCol = document.createElement('div');
+            selSIsCol.classList.add("selectionColumn");
+            selSIsCol.setAttribute('style', 'width: 100%');
+            var selSIsP = document.createElement('p');
+            selSIsP.appendChild(document.createTextNode("Allowed Indicators*: "));
+            selSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+            selSIsCol.appendChild(selSIsP);
+            var selSIsBox = document.createElement('select');
+            selSIsBox.setAttribute('id', 'selSIsBox');
+            selSIsBox.setAttribute('multiple', 'multiple');
+            selSIsBox.setAttribute('style', 'height: 150px;');
+            var siNames = [];
+            // use concrete SIs list of selected project
+            var selSIs = projectSIs.find(x => x.prj == prjExternalID).si;
+            for (var i = 0; i < selSIs.length; i++) {
+                var opt = document.createElement("option");
+                opt.value = selSIs[i].id;
+                opt.innerHTML = selSIs[i].name;
+                selSIsBox.appendChild(opt);
+                siNames.push(selSIs[i].name);
+            }
+            selSIsCol.appendChild(selSIsBox);
+            var avSIsCol = document.createElement('div');
+            avSIsCol.classList.add("selectionColumn");
+            avSIsCol.setAttribute('style', 'width: 100%');
+            var avSIsP = document.createElement('p');
+            avSIsP.appendChild(document.createTextNode("Available Indicators: "));
+            avSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+            avSIsCol.appendChild(avSIsP);
+            var avSIsBox = document.createElement('select');
+            avSIsBox.setAttribute('id', 'avSIsBox');
+            avSIsBox.setAttribute('multiple', 'multiple');
+            avSIsBox.setAttribute('style', 'height: 150px;');
+            // use all SIs list of selected project
+            for (var i = 0; i < data.length; i++) {
+                if (!siNames.includes(data[i].name)) {
+                    var opt = document.createElement("option");
+                    opt.setAttribute('id', ('opt' + data[i].name));
+                    opt.value = data[i].id;
+                    opt.innerHTML = data[i].name;
+                    avSIsBox.appendChild(opt);
+                }
+            }
+            avSIsCol.appendChild(avSIsBox);
+            var arrowsCol = document.createElement('div');
+            arrowsCol.classList.add("selectionColumn");
+            arrowsCol.setAttribute('style', 'padding-top:30px;');
+            var arrowLeft = document.createElement('button');
+            arrowLeft.classList.add("btn");
+            arrowLeft.classList.add("btn-default");
+            arrowLeft.classList.add("top-and-bottom-margin");
+            arrowLeft.setAttribute('id', 'oneLeft');
+            arrowLeft.appendChild(document.createTextNode("<"));
+            arrowLeft.onclick = moveSIsItemsLeft;
+            arrowsCol.appendChild(arrowLeft);
+            var arrowRight = document.createElement('button');
+            arrowRight.classList.add("btn");
+            arrowRight.classList.add("btn-default");
+            arrowRight.classList.add("top-and-bottom-margin");
+            arrowRight.setAttribute('id', 'right');
+            arrowRight.appendChild(document.createTextNode(">"));
+            arrowRight.onclick = moveSIsItemsRight;
+            arrowRight.setAttribute('style', "margin-top:3px;");
+            arrowsCol.appendChild(arrowRight);
+            var arrowAllRight = document.createElement('button');
+            arrowAllRight.classList.add("btn");
+            arrowAllRight.classList.add("btn-default");
+            arrowAllRight.classList.add("top-and-bottom-margin");
+            arrowAllRight.setAttribute('id', 'allRight');
+            arrowAllRight.appendChild(document.createTextNode(">>"));
+            arrowAllRight.onclick = moveAllSIsItemsRight;
+            arrowAllRight.setAttribute('style', "margin-top:3px;");
+            arrowsCol.appendChild(arrowAllRight);
+            var arrowAllLeft = document.createElement('button');
+            arrowAllLeft.classList.add("btn");
+            arrowAllLeft.classList.add("btn-default");
+            arrowAllLeft.classList.add("top-and-bottom-margin");
+            arrowAllLeft.setAttribute('id', 'allLeft');
+            arrowAllLeft.appendChild(document.createTextNode("<<"));
+            arrowAllLeft.onclick = moveAllSIsItemsLeft;
+            arrowAllLeft.setAttribute('style', "margin-top:3px;");
+            arrowsCol.appendChild(arrowAllLeft);
+            // append created content to SIsRow div
+            SIsRow.appendChild(avSIsCol);
+            SIsRow.appendChild(arrowsCol);
+            SIsRow.appendChild(selSIsCol);
+            // show modal
+            $("#profileProjectSelectSIsModal").modal();
+        }
+    });
+};
+
+$("#submitProfileProjectSelectSIsModalBtn").click(function () {
+    // obtain selected SIs
+    var selectedSIs = [];
+    $('#selSIsBox').children().each (function (i, option) {
+        selectedSIs.push(option.value);
+    });
+    if (selectedSIs.length > 0) {
+        // obtain previously allowed SIs
+        var allowedSIs = [];
+        $('#allowedSIsBox').children().each (function (i, option) {
+            if (!option.disabled) allowedSIs.push(option.value);
+        });
+        // compare selected and previously allowed SIs
+        if (selectedSIs.length === allowedSIs.length && selectedSIs.sort().every(function(value, index) { return value === allowedSIs.sort()[index]})) {
+            // no changes —> close modal
+            $("#profileProjectSelectSIsModal").modal('hide');
+        } else {
+            var newSIsList = [];
             var allowedSIsBox = document.getElementById('allowedSIsBox')
+            // clean old allowedSIsBox content
+            allowedSIsBox.innerHTML = "";
+            for (var i = 0; i < allprojectSIs.length; i++) {
+                // update allowedSIsBox
+                var opt = document.createElement("option");
+                opt.value = allprojectSIs[i].id;
+                var index = selectedSIs.indexOf(allprojectSIs[i].id.toString());
+                if(index != -1) {
+                    opt.innerHTML = allprojectSIs[i].name + " (Yes)";
+                    var si = getSIByID(selectedSIs[index]);
+                    // get new SIs for projectSIs
+                    newSIsList.push(si);
+                } else {
+                    opt.innerHTML = allprojectSIs[i].name + " (No)";
+                    opt.disabled = true;
+                }
+                allowedSIsBox.appendChild(opt);
+            }
+            // update projectSIs
+            projectSIs.find(x => x.prj == prjExternalID).si = newSIsList;
+            console.log("Accept SI Modal btn: ")
+            console.log(projectSIs);
+            // close modal
+            $("#profileProjectSelectSIsModal").modal('hide');
+        }
+
+    } else alert("Make sure that you have completed all fields marked with an *");
+});
+
+function showSIsList() {
+    /* TODO
+            1. Ver si ya se habia abierto antes i si tiene algo guardado en projectSIs
+            1.1 Si el project ja esta registrado en projectsSI usar la info guardada
+            1.2 Si el projects no aparece en projectsSI
+            1.2.0 Mirrar el campo "all si" del profile_project BD table
+                (asegurar de donde viene el project - añadido nuevo o no)
+            1.2.1 "all si" = true o es uno nuevo añadido - show all SIs del project
+        !!! 1.2.2 "all si" = false - show only specified SIs del project
+            2. Habilitar el button del edit SIs del project
+     */
+    var allowedProjectsBox = document.getElementById("allowedProjectsBox");
+    var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
+    prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
+    if (projectSIs.find(x => x.prj == prjExternalID)) {
+        fillAllowedSIsBox();
+    } else {
+        if (currentProfile.allSIs.find(x => x.key == prjID)) { // saved project from profile
+            if (currentProfile.allSIs.find(x => x.key == prjID).value) {
+                // "all si" = true - show all SIs del project
+                var url = "/api/strategicIndicators?prj=" + prjExternalID;
+                fillAllowedSIsBox(url);
+            } else {
+                // "all si" = false - show only specified SIs del project
+            }
+        } else { // new added project to profile
+            // by default show all si
+            var url = "/api/strategicIndicators?prj=" + prjExternalID;
+            fillAllowedSIsBox(url);
+        }
+    }
+    // able button to edit SIs for project of profile
+    document.getElementById('selSIsBtn').disabled = false;
+};
+
+function fillAllowedSIsBox(url){
+    var siList = [];
+    // get data to show as (Yes) in allowedSIsBox
+    if (url) {
+        if (serverUrl) {
+            url = serverUrl + url;
+        }
+        jQuery.ajax({
+            dataType: "json",
+            url: url,
+            cache: false,
+            type: "GET",
+            async: false,
+            success: function (data) {
+                siList = data;
+            }
+        });
+    } else {
+        siList = projectSIs.find(x => x.prj == prjExternalID).si;
+    }
+    var getSIsurl = "/api/strategicIndicators?prj=" + prjExternalID;
+    if (serverUrl) {
+        getSIsurl = serverUrl + getSIsurl;
+    }
+    jQuery.ajax({
+        dataType: "json",
+        url: getSIsurl,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            allprojectSIs = data;
+            var allowedSIsBox = document.getElementById('allowedSIsBox');
             // clean old allowedSIsBox content
             allowedSIsBox.innerHTML = "";
             for (var i = 0; i < data.length; i++) {
                 // update allowedSIsBox
                 var opt = document.createElement("option");
                 opt.value = data[i].id;
-                opt.innerHTML = data[i].name;
+                if (siList.find(x => x.id == data[i].id)) {
+                    opt.innerHTML = data[i].name + " (Yes)";
+                } else {
+                    opt.innerHTML = data[i].name + " (No)";
+                    opt.disabled = true;
+                }
                 allowedSIsBox.appendChild(opt);
             }
-
+            // save or update projectSIs
+            if (url) {
+                projectSIs.push({'prj': prjExternalID, 'si': siList});
+            } else {
+                projectSIs.find(x => x.prj == prjExternalID).si = siList;
+            }
         }
     });
 }
 
-function moveItemsLeft() {
+function moveProjectItemsLeft() {
     $('#selProjectsBox').find(':selected').appendTo('#avProjectsBox');
 };
 
-function moveAllItemsLeft() {
+function moveAllProjectItemsLeft() {
     $('#selProjectsBox').children().appendTo('#avProjectsBox');
 };
 
-function moveItemsRight() {
+function moveProjectItemsRight() {
     $('#avProjectsBox').find(':selected').appendTo('#selProjectsBox');
 };
 
-function moveAllItemsRight() {
+function moveAllProjectItemsRight() {
     $('#avProjectsBox').children().appendTo('#selProjectsBox');
+};
+
+function moveSIsItemsLeft() {
+    $('#selSIsBox').find(':selected').appendTo('#avSIsBox');
+};
+
+function moveAllSIsItemsLeft() {
+    $('#selSIsBox').children().appendTo('#avSIsBox');
+};
+
+function moveSIsItemsRight() {
+    $('#avSIsBox').find(':selected').appendTo('#selSIsBox');
+};
+
+function moveAllSIsItemsRight() {
+    $('#avSIsBox').children().appendTo('#selSIsBox');
 };
 
 function saveNewProfile() {
@@ -646,7 +895,8 @@ function saveProfile() {
     var allowedProjects = [];
 
     $('#allowedProjectsBox').children().each (function (i, option) {
-        allowedProjects.push(option.value);
+        if (!option.disabled)
+            allowedProjects.push(option.value);
     });
 
     if ($('#profileName').val() != "" && allowedProjects.length > 0) {
