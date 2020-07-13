@@ -31,15 +31,17 @@ public class ProfilesController {
         return (pr == null);
     }
 
-    public void newProfile(String name, String description, List<String> projectIds) {
+    public void newProfile(String name, String description, Map<String, org.springframework.data.util.Pair<Boolean,List<String>>> projectInfo) {
+        // TODO use project info map
         List<Project> projects = new ArrayList<>();
-        for (int i=0; i<projectIds.size(); i++) {
-            Optional<Project> projectOptional = projectRep.findById(Long.parseLong(projectIds.get(i)));
+        for ( Map.Entry<String, org.springframework.data.util.Pair<Boolean, List<String>>> project : projectInfo.entrySet()) {
+            Optional<Project> projectOptional = projectRep.findById(Long.parseLong(project.getKey()));
             projectOptional.ifPresent(projects::add);
         }
         // TODO not hardcoded allSI
         Profile profile = new Profile(name, description, projects, true);
         profileRep.save(profile);
+
     }
 
     public DTOProfile getProfileById(String id) throws ProfileNotFoundException {

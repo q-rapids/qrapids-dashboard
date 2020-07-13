@@ -1,9 +1,12 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProfile;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
+import org.springframework.data.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class Profiles {
@@ -33,9 +35,24 @@ public class Profiles {
         try {
             String name = request.getParameter(NAME);
             String description = request.getParameter(DESCRIPTION);
-            List<String> projectIds = Arrays.asList(request.getParameter("projects").split(","));
+            // TODO get json
+            JsonParser parser = new JsonParser();
+            JsonArray projectsInfoJsonArray = parser.parse(request.getParameter("projects_info")).getAsJsonArray();
+            Map<String, Pair<Boolean,List<String>>> projectsInfoMap = new HashMap<>();
+            for (int i = 0; i < projectsInfoJsonArray.size(); i++) {
+                String projectID = projectsInfoJsonArray.get(i).getAsJsonObject().get("prj").getAsString();
+                Boolean allSI = projectsInfoJsonArray.get(i).getAsJsonObject().get("all_si").getAsBoolean();
+                List<String> si = new ArrayList<>();
+                if (allSI == false) {
+                    JsonArray siList = projectsInfoJsonArray.get(i).getAsJsonObject().get("si").getAsJsonArray();
+                    for (int j = 0; j < siList.size(); j++) {
+                        si.add(siList.get(j).getAsJsonObject().get("id").getAsString());
+                    }
+                }
+                projectsInfoMap.put(projectID, Pair.of(allSI,si));
+            }
             if (profileCont.checkNewProfileByName(name)) {
-                profileCont.newProfile(name, description, projectIds);
+                profileCont.newProfile(name, description, projectsInfoMap);
             } else {
                 throw new ElementAlreadyPresentException();
             }
