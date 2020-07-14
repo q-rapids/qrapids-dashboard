@@ -1,8 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "metric")
@@ -21,10 +19,6 @@ public class Metric {
     @ManyToOne
     @JoinColumn(name="projectId", referencedColumnName = "id")
     private Project project;
-
-    @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @JoinColumn(name="metric_id")
-    private List<QualityFactorMetrics> factors = new ArrayList<>();
 
     public Metric(){}
 

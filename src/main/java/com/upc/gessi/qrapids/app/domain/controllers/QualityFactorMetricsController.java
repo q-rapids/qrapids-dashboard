@@ -12,17 +12,16 @@ public class QualityFactorMetricsController {
     @Autowired
     private QualityFactorMetricsRepository qualityFactorMetricsRepository;
 
-    // TODO no se porque quiere que sea static !!!
-    public static QualityFactorMetrics saveQualityFactorMetric(Float weight, Metric metric, Factor qf) {
+    public QualityFactorMetrics saveQualityFactorMetric(Float weight, Metric metric, Factor qf) {
         QualityFactorMetrics qualityFactorMetric;
         qualityFactorMetric = new QualityFactorMetrics(weight, metric, qf);
-        //qualityFactorMetricsRepository.save(qualityFactorMetric);
+        qualityFactorMetricsRepository.save(qualityFactorMetric);
         return qualityFactorMetric;
     }
 
-    public void deleteQualityFactorMetric(Long qfMetricsId) throws QualityFactorMetricsNotFoundException {
-        if (qualityFactorMetricsRepository.existsById(qfMetricsId)) {
-            qualityFactorMetricsRepository.deleteById(qfMetricsId);
+    public void deleteQualityFactorMetric(Long id) throws QualityFactorMetricsNotFoundException {
+        if (qualityFactorMetricsRepository.existsById(id)) {
+            qualityFactorMetricsRepository.deleteById(id);
         } else {
             throw new QualityFactorMetricsNotFoundException();
         }

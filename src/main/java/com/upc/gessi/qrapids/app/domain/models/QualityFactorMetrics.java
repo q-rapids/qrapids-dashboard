@@ -1,10 +1,17 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import org.hibernate.validator.constraints.UniqueElements;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-@Table(name="quality_factor_metrics")
-public class QualityFactorMetrics {
+@Table(name="quality_factor_metrics",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"metric_id", "quality_factor_id"}))
+public class QualityFactorMetrics implements Serializable {
+
+    // SerialVersion UID
+    private static final long serialVersionUID = 14L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

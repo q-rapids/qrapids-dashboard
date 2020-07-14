@@ -3,14 +3,13 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
-import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
-import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorMetricsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
-import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +39,13 @@ public class FactorsController {
     private QualityFactorRepository qualityFactorRepository;
 
     @Autowired
+    private QualityFactorMetricsRepository qualityFactorMetricsRepository;
+
+    @Autowired
     private MetricsController metricsController;
+
+    @Autowired
+    private QualityFactorMetricsController qualityFactorMetricsController;
 
     public List<QFCategory> getFactorCategories () {
         List<QFCategory> factorCategoriesList = new ArrayList<>();
@@ -102,10 +107,10 @@ public class FactorsController {
             Metric metric = metricsController.getMetricById(Long.parseLong(metricId));
             weight = Float.parseFloat(qualityMetrics.get(1));
             if (weight == -1) {
-                qfm = QualityFactorMetricsController.saveQualityFactorMetric(weight, metric, qualityFactor);
+                qfm = qualityFactorMetricsController.saveQualityFactorMetric(weight, metric, qualityFactor);
                 weighted = false;
             } else {
-                qfm = QualityFactorMetricsController.saveQualityFactorMetric(weight, metric, qualityFactor);
+                qfm = qualityFactorMetricsController.saveQualityFactorMetric(weight, metric, qualityFactor);
                 weighted = true;
             }
             qualityMetricsWeights.add(qfm);
@@ -116,6 +121,51 @@ public class FactorsController {
         qualityFactor.setQualityFactorMetricsList(qualityMetricsWeights);
         return weighted;
     }
+
+    public Factor editQualityFactor (Long factorId, String name, String description, List<String> qualityMetrics) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
+        Factor factor = getQualityFactorById(factorId);
+        factor.setName(name);
+        factor.setDescription(description);
+        // Actualize Quality Metrics
+        boolean weighted = reassignQualityMetricsToQualityFactor (qualityMetrics, factor);
+        factor.setWeighted(weighted);
+        qualityFactorRepository.save(factor);
+        return  factor;
+    }
+
+    private  boolean reassignQualityMetricsToQualityFactor (List<String> qualityMetrics, Factor factor) throws QualityFactorMetricsNotFoundException, MetricNotFoundException {
+        List<QualityFactorMetrics> newQualityFactorsWeights = new ArrayList();
+        // Delete oldQualityMetricsWeights
+        List<QualityFactorMetrics> oldQualityMetricsWeights = qualityFactorMetricsRepository.findByFactor(factor);
+        factor.setQualityFactorMetricsList(null);
+        for (QualityFactorMetrics old : oldQualityMetricsWeights) {
+            qualityFactorMetricsController.deleteQualityFactorMetric(old.getId());
+        }
+        boolean weighted = false;
+        String metricId;
+        Float weight;
+        // generate QualityFactorMetrics class objects from List<String> qualityMetrics
+        while (!qualityMetrics.isEmpty()) {
+            QualityFactorMetrics qfm;
+            metricId = qualityMetrics.get(0);
+            Metric metric = metricsController.getMetricById(Long.parseLong(metricId));
+            weight = Float.parseFloat(qualityMetrics.get(1));
+            if (weight == -1) {
+                qfm = qualityFactorMetricsController.saveQualityFactorMetric(weight, metric, factor);
+                weighted = false;
+            } else {
+                qfm = qualityFactorMetricsController.saveQualityFactorMetric(weight, metric, factor);
+                weighted = true;
+            }
+            newQualityFactorsWeights.add(qfm);
+            qualityMetrics.remove(1);
+            qualityMetrics.remove(0);
+        }
+        // create the association between Strategic Indicator and its Quality Factors
+        factor.setQualityFactorMetricsList(newQualityFactorsWeights);
+        return weighted;
+    }
+
 
     public DTOFactorEvaluation getSingleFactorEvaluation(String factorId, String projectExternalId) throws IOException {
         return qmaQualityFactors.SingleCurrentEvaluation(factorId, projectExternalId);

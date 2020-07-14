@@ -27,7 +27,6 @@ function buildQFList() {
                 QF.setAttribute("id", (data[i].id));
                 QF.appendChild(document.createTextNode(data[i].name));
                 QF.addEventListener("click", clickOnTree);
-
                 QFList.appendChild(QF);
             }
             document.getElementById('QFTree').appendChild(QFList);
@@ -74,15 +73,24 @@ function clickOnTree(e){
             }
             document.getElementById('QFweightCheckbox').checked = qf.weighted;
             document.getElementById('QFweightEditButton').disabled = !qf.weighted;
+            console.log("clickOnTree: qf.metricsWeights")
             console.log(qf.metricsWeights);
             if (qf.weighted) weightsForMetrics = qf.metricsWeights;
             else weightsForMetrics = [];
+            console.log("clickOnTree: weightsForMetrics");
+            console.log(weightsForMetrics);
         }
     });
 }
 
 function newQF() {
-    console.log("newQF function");
+    // clean temporal var and remove active list item
+    weightsForMetrics = [];
+    httpMethod = "POST";
+    $(".QF").each(function () {
+        $(this).removeClass("active");
+    });
+    // make new Quality Factor form
     $("#QFInfo").show();
     $("#QFInfoTitle").text("Step 1 - Fill the quality factor information");
     $("div.QFInfoRowID").hide();
@@ -106,10 +114,6 @@ function newQF() {
 function showMetrics () {
     $('#avMetricsBox').empty();
     $('#selMetricsBox').empty();
-
-    console.log("metrics in showMetrics");
-    console.log(metrics);
-
     metrics.forEach(function (metric) {
         $('#avMetricsBox').append($('<option>', {
             value: metric.id,
@@ -161,9 +165,8 @@ function validaCheckbox(){
             var i = 0;
             qualityMetrics.forEach(function (qm) {
                 var selectedMetric;
-                var found = false;
                 var j = 0;
-                while (j < metrics.length && !found) {
+                while (j < metrics.length) {
                     if (metrics[j].id == qm) {
                         selectedMetric = metrics[j].name;
                     }
@@ -209,18 +212,17 @@ function openEdit() {  // This function is called by the checkbox click
 }
 
 
-$("#QFweightEditButton").click(function () {
+$("#QFweightEditButton").click(function () { // (...) btn
     var wff = String(weightsForMetrics).split(",");
     var selector = getSelectedMetrics(false);
     if (selector.length > 0) {
         $("#QFweightsItems").empty();
-        var i = 0;
+        var i = 0; // used for id counter
         selector.forEach(function (m) {
             var id = "editor"+i;
             var selectedMetric;
-            var found = false;
             var j = 0;
-            while (j < metrics.length && !found) {
+            while (j < metrics.length) {
                 if (metrics[j].id == m) {
                     selectedMetric = metrics[j].name;
                 }
@@ -260,7 +262,7 @@ $("#QFsubmitWeightsButton").click(function () {
             ok = false;
         } else {
             totalSum += weightValue;
-            aux.push([qualityMetrics[i], weightValue]);
+            aux.push(qualityMetrics[i], weightValue); // TODO habian []
         }
         i++;
     }
@@ -272,6 +274,8 @@ $("#QFsubmitWeightsButton").click(function () {
         else {
             weightsForMetrics = aux;
             $("#QFweightsModal").modal('hide');
+            console.log("submitWeightsButton: weightsForMetrics");
+            console.log(weightsForMetrics);
         }
     }
 });
@@ -289,7 +293,7 @@ function getSelectedMetrics(final) {
 
     if (final) {
         $('#selMetricsBox').children().each (function (i, option) {
-            metrics.push([option.value, -1]);
+            metrics.push(option.value, -1);
         });
     } else {
         $('#selMetricsBox').children().each (function (i, option) {
@@ -313,12 +317,10 @@ $('#QFweightCheckbox').change(function(){
 function checkTotalSum () {
     var qualityMetrics = getSelectedMetrics(false);
     var wff = String(weightsForMetrics).split(",");
-    console.log(wff);
     var totalSum = 0;
     for (var i = 0; i < qualityMetrics.length; i++){
         if (wff.includes(qualityMetrics[i])) totalSum += parseFloat(wff[wff.indexOf(qualityMetrics[i])+1]);
     }
-    console.log(totalSum);
     return totalSum == 100 && (qualityMetrics.length == wff.length/2);
 }
 
@@ -340,6 +342,8 @@ $("#saveQF").click(function () {
 
         console.log("QM que envio:");
         console.log(qualityMetrics);
+        console.log(httpMethod);
+        console.log(postUrl);
 
         var formData = new FormData();
         formData.append("name", $('#QFName').val());
@@ -354,7 +358,7 @@ $("#saveQF").click(function () {
             //ToDo: the service produces more than one error, the current message does not fit all of them
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status === 409)
-                    alert("This Strategic Indicator name is already in use");
+                    alert("This Quality Factor name is already in use");
                 else {
                     alert("Error in the ElasticSearch: contact to the system administrator");
                     location.href = "../QualityFactors/Configuration";
