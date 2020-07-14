@@ -1,7 +1,7 @@
 var projects; // all projects
 var profileProjects = []; // only selected profile projects (unsaved profile modification)
 var currentProfileID;
-var currentProfile;
+var currentProfile = null;
 var allprojectSIs; // all si of selected project
 var projectSIs = []; // pairs <prj, si> for all profile projects
 var prjExternalID;
@@ -91,6 +91,9 @@ function buildProfileList() {
 }
 
 function clickOnTree(e){
+    // clean projectSIs
+    projectSIs = [];
+    // get selected profile info
     currentProfileID = e.target.id.replace("profile", "");
     var url = "/api/profiles/" + currentProfileID;
     if (serverUrl) {
@@ -190,7 +193,6 @@ function clickOnTree(e){
                 }
                 allowedProjectsBox.appendChild(opt);
             }
-            // TODO onclick show SIs list
             allowedProjectsBox.onclick = showSIsList;
             allowedProjectsCol.appendChild(allowedProjectsBox);
 
@@ -251,6 +253,7 @@ function newProfile() {
     // clean temporal var
     profileProjects = [];
     projectSIs = [];
+    currentProfile = null;
 
     // make new profile form
     var profileForm = document.createElement('div');
@@ -336,7 +339,6 @@ function newProfile() {
         }
         allowedProjectsBox.appendChild(opt);
     }
-    // TODO onclick show SIs list
     allowedProjectsBox.onclick = showSIsList;
     allowedProjectsCol.appendChild(allowedProjectsBox);
 
@@ -696,29 +698,21 @@ $("#submitProfileProjectSelectSIsModalBtn").click(function () {
 });
 
 function showSIsList() {
-    /* TODO
-            1. Ver si ya se habia abierto antes i si tiene algo guardado en projectSIs
-            1.1 Si el project ja esta registrado en projectsSI usar la info guardada
-            1.2 Si el projects no aparece en projectsSI
-            1.2.0 Mirrar el campo "all si" del profile_project BD table
-                (asegurar de donde viene el project - añadido nuevo o no)
-            1.2.1 "all si" = true o es uno nuevo añadido - show all SIs del project
-        !!! 1.2.2 "all si" = false - show only specified SIs del project
-            2. Habilitar el button del edit SIs del project
-     */
     var allowedProjectsBox = document.getElementById("allowedProjectsBox");
     var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
     prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
     if (projectSIs.find(x => x.prj == prjExternalID)) {
         fillAllowedSIsBox();
     } else {
-        if (currentProfile && currentProfile.allSIs.find(x => x.key == prjID)) { // saved project from profile
-            if (currentProfile.allSIs.find(x => x.key == prjID).value) {
+        if (currentProfile) { // saved project from profile
+            if (currentProfile.allSIs.find(x => x.key == prjID) && (currentProfile.allSIs.find(x => x.key == prjID).value)) {
                 // "all si" = true - show all SIs del project
                 var url = "/api/strategicIndicators?prj=" + prjExternalID;
                 fillAllowedSIsBox(url);
             } else {
                 // "all si" = false - show only specified SIs del project
+                var url = "/api/strategicIndicators?prj=" + prjExternalID + "&profile=" + currentProfileID;
+                fillAllowedSIsBox(url);
             }
         } else { // new added project to profile
             // by default show all si
@@ -861,14 +855,11 @@ function saveNewProfile() {
     console.log("SAVE: allowedProjects");
     console.log(allowedProjects);
 
-
-    // TODO save profile with SIs List by project
     if ($('#profileName').val() != "" && allowedProjects.length > 0) {
         var formData = new FormData();
         formData.append("name", $('#profileName').val());
         formData.append("description", $('#profileDescription').val());
         formData.append("projects_info", JSON.stringify(allowedProjects));
-
 
         var url = "/api/profiles";
         if (serverUrl) {
@@ -900,26 +891,74 @@ function saveProfile() {
     var allowedProjects = [];
 
     $('#allowedProjectsBox').children().each (function (i, option) {
-        if (!option.disabled)
-            allowedProjects.push(option.value);
+        var prjID;
+        var allSI = true;
+        var si = [];
+        if (!option.disabled) {
+            prjID = option.value;
+            console.log("currentProfile");
+            console.log(currentProfile);
+            var prj = projects.find(x => x.id == prjID).externalId;
+            if (projectSIs.length > 0) {
+                // if projectSIs isn't empty (maybe we select not all si)
+                if (projectSIs.find(x => x.prj == prj)) {
+                    var getSIsurl = "/api/strategicIndicators?prj=" + prj;
+                    if (serverUrl) {
+                        getSIsurl = serverUrl + getSIsurl;
+                    }
+                    jQuery.ajax({
+                        dataType: "json",
+                        url: getSIsurl,
+                        cache: false,
+                        type: "GET",
+                        async: false,
+                        success: function (data) {
+                            if (projectSIs.find(x => x.prj == prj).si.length != data.length) {
+                                allSI = false;
+                                si = projectSIs.find(x => x.prj == prj).si;
+                            }
+                        }
+                    });
+                }
+            } else { // if projectSIs is empty
+                // may be we have old info about it
+                if(currentProfile.allSIs.find(x => x.key == prjID)){
+                    allSI = currentProfile.allSIs.find(x => x.key == prjID).value;
+                    if (allSI == false){
+                        var getSIsurl = "/api/strategicIndicators?prj=" + prj + "&profile=" + currentProfileID;
+                        if (serverUrl) {
+                            getSIsurl = serverUrl + getSIsurl;
+                        }
+                        jQuery.ajax({
+                            dataType: "json",
+                            url: getSIsurl,
+                            cache: false,
+                            type: "GET",
+                            async: false,
+                            success: function (data) {
+                                si = data;
+                            }
+                        });
+                    }
+                }
+            }
+            // save project info
+            allowedProjects.push({
+                "prj" : prjID,
+                "all_si" : allSI,
+                "si" : si
+            });
+        }
     });
 
     console.log("SAVE: allowedProjects");
     console.log(allowedProjects);
 
-    console.log("SAVE: profileProjects");
-    console.log(profileProjects);
-
-    console.log("SAVE: projectSIs");
-    console.log(projectSIs);
-
-
-    // TODO save profile with SIs List by project
     if ($('#profileName').val() != "" && allowedProjects.length > 0) {
         var formData = new FormData();
         formData.append("name", $('#profileName').val());
         formData.append("description", $('#profileDescription').val());
-        formData.append("projects", allowedProjects);
+        formData.append("projects_info", JSON.stringify(allowedProjects));
 
         var url = "/api/profiles/" + currentProfileID;
         if (serverUrl) {
@@ -941,7 +980,7 @@ function saveProfile() {
                 }
             },
             success: function() {
-               // location.href = "../Profiles/Configuration";
+                location.href = "../Profiles/Configuration";
             }
         });
     } else alert("Make sure that you have completed all fields marked with an *");

@@ -35,7 +35,6 @@ public class Profiles {
         try {
             String name = request.getParameter(NAME);
             String description = request.getParameter(DESCRIPTION);
-            // TODO get json
             JsonParser parser = new JsonParser();
             JsonArray projectsInfoJsonArray = parser.parse(request.getParameter("projects_info")).getAsJsonArray();
             Map<String, Pair<Boolean,List<String>>> projectsInfoMap = new HashMap<>();
@@ -99,9 +98,23 @@ public class Profiles {
         try {
             String name = request.getParameter(NAME);
             String description = request.getParameter(DESCRIPTION);
-            List<String> projectIds = Arrays.asList(request.getParameter("projects").split(","));
+            JsonParser parser = new JsonParser();
+            JsonArray projectsInfoJsonArray = parser.parse(request.getParameter("projects_info")).getAsJsonArray();
+            Map<String, Pair<Boolean, List<String>>> projectsInfoMap = new HashMap<>();
+            for (int i = 0; i < projectsInfoJsonArray.size(); i++) {
+                String projectID = projectsInfoJsonArray.get(i).getAsJsonObject().get("prj").getAsString();
+                Boolean allSI = projectsInfoJsonArray.get(i).getAsJsonObject().get("all_si").getAsBoolean();
+                List<String> si = new ArrayList<>();
+                if (allSI == false) {
+                    JsonArray siList = projectsInfoJsonArray.get(i).getAsJsonObject().get("si").getAsJsonArray();
+                    for (int j = 0; j < siList.size(); j++) {
+                        si.add(siList.get(j).getAsJsonObject().get("id").getAsString());
+                    }
+                }
+                projectsInfoMap.put(projectID, Pair.of(allSI, si));
+            }
             if (profileCont.checkProfileByName(id, name)) {
-                profileCont.updateProfile(id, name, description, projectIds);
+                profileCont.updateProfile(id, name, description, projectsInfoMap);
             } else {
                 throw new ElementAlreadyPresentException();
             }
@@ -113,6 +126,5 @@ public class Profiles {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
-
 
 }

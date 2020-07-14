@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMARelations;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
+import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrategicIndicatorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
@@ -50,7 +51,13 @@ public class StrategicIndicatorsController {
     private SICategoryRepository strategicIndicatorCategoryRepository;
 
     @Autowired
+    private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
+
+    @Autowired
     private ProjectsController projectsController;
+
+    @Autowired
+    private ProfilesController profilesController;
 
     @Autowired
     private QualityFactorsController qualityFactorsController;
@@ -72,9 +79,20 @@ public class StrategicIndicatorsController {
 
     private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
-    public List<Strategic_Indicator> getStrategicIndicatorsByProject (Project project) {
-        // TODO filter by profile
-        return strategicIndicatorRepository.findByProject_IdOrderByName(project.getId());
+    public List<Strategic_Indicator> getStrategicIndicatorsByProjectAndProfile (String prjExternalId, String profileId) throws ProjectNotFoundException {
+        Project project = projectsController.findProjectByExternalId(prjExternalId);
+        if (profileId != null) {
+            Profile profile = profilesController.findProfileById(profileId);
+            List<ProfileProjectStrategicIndicators> ppsiList =
+                    profileProjectStrategicIndicatorsRepository.findByProfileAndProject(profile,project);
+            List<Strategic_Indicator> result = new ArrayList<>();
+            for (ProfileProjectStrategicIndicators ppsi : ppsiList) {
+                result.add(ppsi.getStrategicIndicator());
+            }
+            return result;
+        } else {
+            return strategicIndicatorRepository.findByProject_IdOrderByName(project.getId());
+        }
     }
 
     public Strategic_Indicator getStrategicIndicatorById (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {

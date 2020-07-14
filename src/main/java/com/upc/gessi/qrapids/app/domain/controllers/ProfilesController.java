@@ -3,10 +3,13 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProfileNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProfileProjectsNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
+import com.upc.gessi.qrapids.app.domain.models.ProfileProjectStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.models.ProfileProjects;
 import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrategicIndicatorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProfile;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
 import javafx.util.Pair;
@@ -21,7 +24,12 @@ public class ProfilesController {
     @Autowired
     private ProjectRepository projectRep;
     @Autowired
+    private StrategicIndicatorRepository siRep;
+    @Autowired
     private ProfileRepository profileRep;
+    @Autowired
+    private ProfileProjectStrategicIndicatorsRepository ppsiRep;
+
     @Autowired
     private ProfileProjectsController profileProjectsCont;
 
@@ -32,16 +40,27 @@ public class ProfilesController {
     }
 
     public void newProfile(String name, String description, Map<String, org.springframework.data.util.Pair<Boolean,List<String>>> projectInfo) {
-        // TODO use project info map
-        List<Project> projects = new ArrayList<>();
+        Profile profile = new Profile(name, description);
+        List<ProfileProjects> ppList = new ArrayList<>(); // prepare list of profile projects
+        List<ProfileProjectStrategicIndicators> ppsiList = new ArrayList<>();
         for ( Map.Entry<String, org.springframework.data.util.Pair<Boolean, List<String>>> project : projectInfo.entrySet()) {
             Optional<Project> projectOptional = projectRep.findById(Long.parseLong(project.getKey()));
-            projectOptional.ifPresent(projects::add);
+            if (project.getValue().getFirst()) { // if all_si is true
+                ProfileProjects pp = new ProfileProjects(profile,projectOptional.get(), true);
+                ppList.add(pp);
+            } else { // if all_si is false
+                ProfileProjects pp = new ProfileProjects(profile,projectOptional.get(), false);
+                ppList.add(pp);
+                for (String siID: project.getValue().getSecond()) {
+                    ProfileProjectStrategicIndicators ppsi =
+                            new ProfileProjectStrategicIndicators(profile,projectOptional.get(),siRep.findById(Long.parseLong(siID)).get());
+                    ppsiList.add(ppsi);
+                }
+            }
         }
-        // TODO not hardcoded allSI
-        Profile profile = new Profile(name, description, projects, true);
+        if (!ppList.isEmpty()) profile.setProfileProjectsList(ppList);
+        if (!ppsiList.isEmpty())profile.setProfileProjectStrategicIndicatorsList(ppsiList);
         profileRep.save(profile);
-
     }
 
     public DTOProfile getProfileById(String id) throws ProfileNotFoundException {
@@ -107,7 +126,8 @@ public class ProfilesController {
         return (pr == null || pr.getId() == id);
     }
 
-    public void updateProfile(Long id, String name, String description, List<String> projectIds) throws ProfileProjectsNotFoundException {
+    // TODO modify this funcionality
+    public void updateProfile(Long id, String name, String description, Map<String, org.springframework.data.util.Pair<Boolean,List<String>>> projectInfo) throws ProfileProjectsNotFoundException {
         Optional<Profile> profileOptional = profileRep.findById(id);
         Profile profile = profileOptional.get();
         // update profile information
@@ -119,16 +139,41 @@ public class ProfilesController {
         for (ProfileProjects pp: oldProfileProjectsList) {
             profileProjectsCont.deleteProfileProject(pp.getId());
         }
-        // create new ProfileProjects List
-        List<ProfileProjects> newProfileProjectsList = new ArrayList<>();
-        for (int i=0; i<projectIds.size(); i++) {
-            Optional<Project> projectOptional = projectRep.findById(Long.parseLong(projectIds.get(i)));
-            // TODO not hardcoded allSI
-            ProfileProjects pp = profileProjectsCont.saveProfileProject(profile,projectOptional.get(),true);
-            newProfileProjectsList.add(pp);
+        // delete old ProfileProject List
+        List<ProfileProjectStrategicIndicators> oldProfileProjectSIList = profile.getProfileProjectStrategicIndicatorsList();
+        if (!oldProfileProjectSIList.isEmpty()) { // if it's not empty
+            profile.setProfileProjectStrategicIndicatorsList(null);
+            for(ProfileProjectStrategicIndicators ppsi : oldProfileProjectSIList) {
+                if (ppsiRep.existsById(ppsi.getId())) {
+                    ppsiRep.deleteById(ppsi.getId());
+                }
+            }
         }
-        // set new ProfileProjects List to this profile
-        profile.setProfileProjectsList(newProfileProjectsList);
+        // create new ProfileProjects and ProfileProjectStrategicIndicators Lists
+        List<ProfileProjects> ppList = new ArrayList<>(); // prepare list of profile projects
+        List<ProfileProjectStrategicIndicators> ppsiList = new ArrayList<>();
+        for ( Map.Entry<String, org.springframework.data.util.Pair<Boolean, List<String>>> project : projectInfo.entrySet()) {
+            Optional<Project> projectOptional = projectRep.findById(Long.parseLong(project.getKey()));
+            if (project.getValue().getFirst()) { // if all_si is true
+                ProfileProjects pp = new ProfileProjects(profile,projectOptional.get(), true);
+                ppList.add(pp);
+            } else { // if all_si is false
+                ProfileProjects pp = new ProfileProjects(profile,projectOptional.get(), false);
+                ppList.add(pp);
+                for (String siID: project.getValue().getSecond()) {
+                    ProfileProjectStrategicIndicators ppsi =
+                            new ProfileProjectStrategicIndicators(profile,projectOptional.get(),siRep.findById(Long.parseLong(siID)).get());
+                    ppsiList.add(ppsi);
+                }
+            }
+        }
+        if (!ppList.isEmpty()) profile.setProfileProjectsList(ppList);
+        if (!ppsiList.isEmpty())profile.setProfileProjectStrategicIndicatorsList(ppsiList);
         profileRep.save(profile);
+    }
+
+    public Profile findProfileById(String profileId) {
+        Optional<Profile> pr = profileRep.findById(Long.valueOf(profileId));
+        return pr.get();
     }
 }

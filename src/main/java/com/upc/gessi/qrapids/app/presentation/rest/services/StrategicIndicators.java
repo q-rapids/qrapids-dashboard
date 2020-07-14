@@ -244,10 +244,9 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOSI> getAllStrategicIndicators (@RequestParam(value = "prj") String prj) {
+    public List<DTOSI> getAllStrategicIndicators (@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile ) {
         try {
-            Project project = projectsController.findProjectByExternalId(prj);
-            List<Strategic_Indicator> strategicIndicatorList = strategicIndicatorsController.getStrategicIndicatorsByProject(project);
+            List<Strategic_Indicator> strategicIndicatorList = strategicIndicatorsController.getStrategicIndicatorsByProjectAndProfile(prj, profile);
             List<DTOSI> dtoSIList = new ArrayList<>();
             for (Strategic_Indicator strategic_indicator : strategicIndicatorList) {
                 DTOSI dtosi = new DTOSI(strategic_indicator.getId(),

@@ -16,16 +16,19 @@ public class Profile {
     @Column(name = "description")
     private String description;
 
-    @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name="profile_id")
     private List<ProfileProjects> profileProjectsList;
 
+    @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @JoinColumn(name="profile_id")
+    private List<ProfileProjectStrategicIndicators> profileProjectStrategicIndicatorsList;
+
     public Profile() {}
 
-    public Profile(String name, String description, List<Project> projects, boolean allSI) {
+    public Profile(String name, String description) {
         this.name = name;
         this.description = description;
-        setProjects(projects, allSI);
     }
 
     public Long getId() {
@@ -68,12 +71,11 @@ public class Profile {
         this.profileProjectsList = profileProjectsList;
     }
 
-    public void setProjects(List<Project> projects, boolean allSI) {
-        List<ProfileProjects> pp = new ArrayList<>();
-        for (Project p : projects) {
-            pp.add(new ProfileProjects(this, p, allSI));
-        }
-        this.profileProjectsList = pp;
+    public List<ProfileProjectStrategicIndicators> getProfileProjectStrategicIndicatorsList() {
+        return profileProjectStrategicIndicatorsList;
     }
 
+    public void setProfileProjectStrategicIndicatorsList(List<ProfileProjectStrategicIndicators> profileProjectStrategicIndicatorsList) {
+        this.profileProjectStrategicIndicatorsList = profileProjectStrategicIndicatorsList;
+    }
 }
