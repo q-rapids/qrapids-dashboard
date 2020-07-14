@@ -19,6 +19,8 @@ function buildSIList() {
         type: "GET",
         async: true,
         success: function (data) {
+            console.log("buildSIList");
+            console.log(data);
             var SIList = document.getElementById('SIList');
             for (var i = 0; i < data.length; i++) {
                 var SI = document.createElement('li');
@@ -84,6 +86,13 @@ function clickOnTree(e){
 }
 
 function newSI() {
+    // clean temporal var and remove active list item
+    weightsForFactors = [];
+    httpMethod = "POST";
+    $(".SI").each(function () {
+        $(this).removeClass("active");
+    });
+    // make new Strategic Indicator form
     $("#SIInfo").show();
     $("#SIInfoTitle").text("Step 1 - Fill the strategic indicator information");
     $("div.SIInfoRowID").hide();
@@ -118,11 +127,14 @@ function showFactors () {
 }
 
 function loadFactors (show) {
+    // get factors from DB
     $.ajax({
-        url: "../api/qualityFactors/current",
+        url: "../api/qualityFactors",
         type: "GET",
         async: true,
         success: function(data) {
+            console.log("loadFactors");
+            console.log(data);
             data.forEach(function (factor) {
                 factors.push(factor);
             });
@@ -163,6 +175,7 @@ function validaCheckbox(){
                 var j = 0;
                 while (j < factors.length && !found) {
                     if (factors[j].id == qf) {
+                        found = true;
                         selectedFactor = factors[j].name;
                     }
                     j++;
@@ -219,6 +232,7 @@ $("#weightEditButton").click(function () {
             var j = 0;
             while (j < factors.length && !found) {
                 if (factors[j].id == qf) {
+                    found = true;
                     selectedFactor = factors[j].name;
                 }
                 j++;
@@ -257,7 +271,7 @@ $("#SIsubmitWeightsButton").click(function () {
             ok = false;
         } else {
             totalSum += weightValue;
-            aux.push([qualityFactors[i], weightValue]);
+            aux.push(qualityFactors[i], weightValue);
         }
         i++;
     }
@@ -286,7 +300,7 @@ function getSelectedFactors(final) {
 
     if (final) {
         $('#selFactorsBox').children().each (function (i, option) {
-            qualityFactors.push([option.value, -1]);
+            qualityFactors.push(option.value, -1);
         });
     } else {
         $('#selFactorsBox').children().each (function (i, option) {

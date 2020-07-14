@@ -86,7 +86,7 @@ public class StrategicIndicatorsController {
     }
 
 
-    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException {
+    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, QualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator = getStrategicIndicatorById(strategicIndicatorId);
         if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
         strategicIndicator.setName(name);
@@ -98,7 +98,7 @@ public class StrategicIndicatorsController {
         return  strategicIndicator;
     }
 
-    private  boolean reassignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator) throws StrategicIndicatorQualityFactorNotFoundException {
+    private  boolean reassignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator) throws StrategicIndicatorQualityFactorNotFoundException, QualityFactorNotFoundException {
         List<StrategicIndicatorQualityFactors> newQualityFactorsWeights = new ArrayList();
         // Delete oldQualityFactorsWeights
         List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findByStrategic_indicator(strategicIndicator);
@@ -107,13 +107,14 @@ public class StrategicIndicatorsController {
             strategicIndicatorQualityFactorsController.deleteStrategicIndicatorQualityFactor(old.getId());
         }
         boolean weighted = false;
-        String f;
+        String factorID;
         Float w;
 
         // generate StrategicIndicatorQualityFactors class objects from List<String> qualityFactors
         while (!qualityFactors.isEmpty()) {
             StrategicIndicatorQualityFactors siqf;
-            f = qualityFactors.get(0);
+            factorID = qualityFactors.get(0);
+            Factor f = factorsController.getQualityFactorById(Long.valueOf(factorID));
             w = Float.parseFloat(qualityFactors.get(1));
             if (w == -1) {
                 siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
@@ -132,7 +133,7 @@ public class StrategicIndicatorsController {
     }
 
 
-    public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) {
+    public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) throws QualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator;
         // create Strategic Indicator minim (without quality factors and weighted)
         strategicIndicator = new Strategic_Indicator(name, description, file, project);
@@ -144,15 +145,16 @@ public class StrategicIndicatorsController {
         return strategicIndicator;
     }
 
-    private boolean assignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator ) {
+    private boolean assignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator ) throws QualityFactorNotFoundException {
         List<StrategicIndicatorQualityFactors> qualityFactorsWeights = new ArrayList();
         boolean weighted = false;
-        String f;
+        String factorID;
         Float w;
         // generate StrategicIndicatorQualityFactors class objects from List<String> qualityFactors
         while (!qualityFactors.isEmpty()) {
             StrategicIndicatorQualityFactors siqf;
-            f = qualityFactors.get(0);
+            factorID = qualityFactors.get(0);
+            Factor f = factorsController.getQualityFactorById(Long.valueOf(factorID));
             w = Float.parseFloat(qualityFactors.get(1));
             if (w == -1) {
                 siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
@@ -603,7 +605,7 @@ public class StrategicIndicatorsController {
         return (index/siCategoryList.size() + (index+1)/siCategoryList.size())/2.0f;
     }
 
-    public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException {
+    public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException, QualityFactorNotFoundException {
         List<String> projects = projectsController.importProjectsAndUpdateDatabase();
         for(String projectExternalId : projects) {
             List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicators = new ArrayList<>();
@@ -612,13 +614,14 @@ public class StrategicIndicatorsController {
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
+            Project project = projectsController.findProjectByExternalId(projectExternalId);
             for (DTODetailedStrategicIndicatorEvaluation dtoDetailedStrategicIndicator : dtoDetailedStrategicIndicators) {
                 List<String> factors = new ArrayList<>();
                 for (DTOFactorEvaluation f : dtoDetailedStrategicIndicator.getFactors()) {
-                    factors.add(f.getId());
+                    Factor factor = factorsController.findFactorByExternalIdAndProjectId(f.getId(), project.getId());
+                    factors.add(String.valueOf(factor.getId()));
                     factors.add("-1");
                 }
-                Project project = projectsController.findProjectByExternalId(projectExternalId);
                 saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
             }
         }

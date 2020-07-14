@@ -9,7 +9,7 @@ public class Metric {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "externalId", unique = true)
+    @Column(name = "externalId")
     private String externalId;
     @Column(name = "name")
     private String name;

@@ -254,7 +254,7 @@ public class StrategicIndicators {
                         strategic_indicator.getName(),
                         strategic_indicator.getDescription(),
                         strategic_indicator.getNetwork(),
-                        strategic_indicator.getQuality_factors(),
+                        strategic_indicator.getQuality_factorsIds(),
                         strategic_indicator.isWeighted(),
                         strategic_indicator.getWeights());
                 dtoSIList.add(dtosi);
@@ -276,7 +276,7 @@ public class StrategicIndicators {
                     strategicIndicator.getName(),
                     strategicIndicator.getDescription(),
                     strategicIndicator.getNetwork(),
-                    strategicIndicator.getQuality_factors(),
+                    strategicIndicator.getQuality_factorsIds(),
                     strategicIndicator.isWeighted(),
                     strategicIndicator.getWeights());
         } catch (StrategicIndicatorNotFoundException e) {

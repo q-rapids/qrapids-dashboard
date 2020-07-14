@@ -12,7 +12,7 @@ public class Factor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "external_id", unique = true)
+    @Column(name = "external_id")
     private String externalId;
     @Column(name = "name")
     private String name;
@@ -42,6 +42,14 @@ public class Factor {
 
     // Quality Factor without Quality Metrics
     public Factor(String name, String description, Project project) {
+        setName(name);
+        setDescription(description);
+        setProject(project);
+    }
+
+    // Imported Quality Factor without Quality Metrics
+    public Factor(String externalID,String name, String description, Project project) {
+        setExternalId(externalID);
         setName(name);
         setDescription(description);
         setProject(project);

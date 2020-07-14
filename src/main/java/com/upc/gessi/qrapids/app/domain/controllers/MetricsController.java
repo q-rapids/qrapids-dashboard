@@ -50,6 +50,14 @@ public class MetricsController {
         return metric;
     }
 
+    public Metric findMetricByExternalIdAndProjectId(String externalId, Long prjId) throws MetricNotFoundException {
+        Metric metric = metricRepository.findByExternalIdAndProjectId(externalId,prjId);
+        if (metric == null) {
+            throw new MetricNotFoundException();
+        }
+        return metric;
+    }
+
     public Metric getMetricById (Long metricId) throws MetricNotFoundException {
         Optional<Metric> metricOptional = metricRepository.findById(metricId);
         if (metricOptional.isPresent()) {
@@ -74,9 +82,9 @@ public class MetricsController {
 
     public void updateDataBaseWithNewMetrics (String prjExternalID, List<DTOMetricEvaluation> metrics) throws ProjectNotFoundException {
         for (DTOMetricEvaluation metric : metrics) {
-            Metric metricsSaved = metricRepository.findByExternalId(metric.getId());
+            Project project = projectController.findProjectByExternalId(prjExternalID);
+            Metric metricsSaved = metricRepository.findByExternalIdAndProjectId(metric.getId(),project.getId());
             if (metricsSaved == null) {
-                Project project = projectController.findProjectByExternalId(prjExternalID);
                 Metric newMetric = new Metric(metric.getId(), metric.getName(),metric.getDescription(), project);
                 metricRepository.save(newMetric);
             }
@@ -133,5 +141,4 @@ public class MetricsController {
     public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, ElasticsearchStatusException {
         return qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
-
 }

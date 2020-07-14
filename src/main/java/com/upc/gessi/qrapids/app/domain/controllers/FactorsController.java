@@ -10,6 +10,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactor
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,9 @@ public class FactorsController {
     private MetricsController metricsController;
 
     @Autowired
+    private ProjectsController projectsController;
+
+    @Autowired
     private QualityFactorMetricsController qualityFactorMetricsController;
 
     public List<QFCategory> getFactorCategories () {
@@ -71,6 +75,61 @@ public class FactorsController {
     }
 
     // TODO new functions
+    public Factor findFactorByExternalIdAndProjectId(String externalId, Long prjId) throws QualityFactorNotFoundException {
+        Factor factor = qualityFactorRepository.findByExternalIdAndProjectId(externalId,prjId);
+        if (factor == null) {
+            throw new QualityFactorNotFoundException();
+        }
+        return factor;
+    }
+
+    public void importFactorsAndUpdateDatabase() throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException {
+        List<String> projects = projectsController.getAllProjects();
+        for (String prj : projects) {
+            List<DTOFactorEvaluation> factors = getAllFactorsEvaluation(prj);
+            List<DTODetailedFactorEvaluation> factorsWithMetrics = getAllFactorsWithMetricsCurrentEvaluation(prj);
+            updateDataBaseWithNewFactors(prj, factors, factorsWithMetrics);
+        }
+    }
+
+    public void updateDataBaseWithNewFactors (String prjExternalID,List<DTOFactorEvaluation> factors, List<DTODetailedFactorEvaluation> factorsWithMetrics) throws ProjectNotFoundException, MetricNotFoundException {
+        Project project = projectsController.findProjectByExternalId(prjExternalID);
+        for (DTOFactorEvaluation factor : factors) {
+            Factor factorsSaved = qualityFactorRepository.findByExternalIdAndProjectId(factor.getId(),project.getId());
+            if (factorsSaved == null) {
+                // ToDo factor composition with corresponding metrics weights (default all metrics are not weighted)
+                List<String> qualityMetrics = new ArrayList<>();
+                int cont = 0;
+                boolean found = false;
+                while (cont < factorsWithMetrics.size() && !found){
+                    DTODetailedFactorEvaluation df = factorsWithMetrics.get(cont);
+                    if (df.getId().equals(factor.getId())) {
+                        found = true;
+                        for (DTOMetricEvaluation m : df.getMetrics()) {
+                            Metric metric = metricsController.findMetricByExternalIdAndProjectId(m.getId(), project.getId());
+                            qualityMetrics.add(String.valueOf(metric.getId()));
+                            qualityMetrics.add(String.valueOf(-1l));
+                        }
+                    }
+                    cont += 1;
+                }
+                Factor newFactor = saveImportedQualityFactor(factor.getId(),factor.getName(),factor.getDescription(),qualityMetrics,project);
+                qualityFactorRepository.save(newFactor);
+            }
+        }
+    }
+
+    private Factor saveImportedQualityFactor(String id, String name, String description, List<String> qualityMetrics, Project project) throws MetricNotFoundException {
+        Factor qualityFactor;
+        // create Quality Factor minim (without quality factors and weighted)
+        qualityFactor = new Factor (id, name, description, project);
+        qualityFactorRepository.save(qualityFactor);
+        boolean weighted = assignQualityMetricsToQualityFactor (qualityMetrics, qualityFactor);
+        qualityFactor.setWeighted(weighted);
+        qualityFactorRepository.save(qualityFactor);
+        return qualityFactor;
+    }
+
     public List<Factor> getQualityFactorsByProject (Project project) {
         return qualityFactorRepository.findByProject_IdOrderByName(project.getId());
     }

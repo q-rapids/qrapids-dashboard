@@ -62,6 +62,20 @@ public class Factors {
         }
     }
 
+    @GetMapping("/api/qualityFactors/import")
+    @ResponseStatus(HttpStatus.OK)
+    public void importFactors() {
+        try {
+            factorsController.importFactorsAndUpdateDatabase();
+        } catch (CategoriesException | ProjectNotFoundException | MetricNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
+        }
+    }
+
     @GetMapping("/api/qualityFactors")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOFactor> getAllQualityFactors (@RequestParam(value = "prj") String prj) {

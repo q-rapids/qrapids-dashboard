@@ -125,7 +125,15 @@ public class Strategic_Indicator implements Serializable {
     public List<String> getQuality_factors() {
         List<String> quality_factors_ids = new ArrayList<>();
         for (int i = 0; i < this.quality_factors.size(); i ++) {
-            quality_factors_ids.add(this.quality_factors.get(i).getQuality_factor());
+            quality_factors_ids.add(String.valueOf(this.quality_factors.get(i).getQuality_factor().getExternalId()));
+        }
+        return quality_factors_ids;
+    }
+
+    public List<String> getQuality_factorsIds() {
+        List<String> quality_factors_ids = new ArrayList<>();
+        for (int i = 0; i < this.quality_factors.size(); i ++) {
+            quality_factors_ids.add(String.valueOf(this.quality_factors.get(i).getQuality_factor().getId()));
         }
         return quality_factors_ids;
     }
@@ -133,7 +141,7 @@ public class Strategic_Indicator implements Serializable {
     public List<String> getWeights() {
         List<String> qualityFactorsWeights = new ArrayList<>();
         for (int i = 0; i < this.quality_factors.size(); i ++) {
-            qualityFactorsWeights.add(this.quality_factors.get(i).getQuality_factor());
+            qualityFactorsWeights.add(String.valueOf(this.quality_factors.get(i).getQuality_factor().getId()));
             qualityFactorsWeights.add(String.valueOf(this.quality_factors.get(i).getWeight()));
         }
         return qualityFactorsWeights;

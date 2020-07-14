@@ -166,8 +166,10 @@ function validaCheckbox(){
             qualityMetrics.forEach(function (qm) {
                 var selectedMetric;
                 var j = 0;
-                while (j < metrics.length) {
+                var found = false;
+                while (j < metrics.length && !found) {
                     if (metrics[j].id == qm) {
+                        found = true;
                         selectedMetric = metrics[j].name;
                     }
                     j++;
@@ -222,8 +224,10 @@ $("#QFweightEditButton").click(function () { // (...) btn
             var id = "editor"+i;
             var selectedMetric;
             var j = 0;
-            while (j < metrics.length) {
+            var found = false;
+            while (j < metrics.length && !found) {
                 if (metrics[j].id == m) {
+                    found = true;
                     selectedMetric = metrics[j].name;
                 }
                 j++;
