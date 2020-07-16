@@ -28,10 +28,15 @@ function getData() {
     if (diffDays < 1) {
         alert('To date has to be bigger than from date');
     } else {
+
+        console.log("sessionStorage: profile_id");
+        console.log(sessionStorage.getItem("profile_id"));
+        var profileId = sessionStorage.getItem("profile_id");
+
         //get data from API
         jQuery.ajax({
             dataType: "json",
-            url: "../api/strategicIndicators/prediction",
+            url: "../api/strategicIndicators/prediction?profile="+profileId,
             data: {
                 "technique": technique,
                 "horizon": diffDays
@@ -40,10 +45,15 @@ function getData() {
             type: "GET",
             async: true,
             success: function (data) {
+
+                console.log("sessionStorage: profile_id");
+                console.log(sessionStorage.getItem("profile_id"));
+                var profileId = sessionStorage.getItem("profile_id");
+
                 //get historical data from API
                 jQuery.ajax({
                     dataType: "json",
-                    url: "../api/strategicIndicators/historical",
+                    url: "../api/strategicIndicators/historical?profile="+profileId,
                     data: {
                         "from": parseDate(dateFrom),
                         "to": parseDate(dateC)

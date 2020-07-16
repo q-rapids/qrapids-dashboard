@@ -82,10 +82,15 @@ function getData() {
 }
 
 function getQualityModel () {
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     jQuery.ajax({
         dataType: "json",
         type: "GET",
-        url : "../api/strategicIndicators/qualityModel",
+        url : "../api/strategicIndicators/qualityModel?profile="+profileId,
         async: false,
         success: function (data) {
             data.forEach(function (strategicIndicator) {

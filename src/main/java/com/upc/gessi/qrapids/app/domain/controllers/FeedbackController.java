@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
@@ -55,7 +56,7 @@ public class FeedbackController {
         return feedbackRepository.findAllBySiId(strategicIndicatorId);
     }
 
-    public List<FeedbackFactors> getFeedbackReport(Long strategicIndicatorId) throws IOException, CategoriesException {
+    public List<FeedbackFactors> getFeedbackReport(Long strategicIndicatorId) throws IOException, CategoriesException, ProjectNotFoundException {
         List<Feedback> feedbackList = feedbackRepository.findAllBySiId(strategicIndicatorId);
         Optional<Strategic_Indicator> strategicIndicatorOptional = strategicIndicatorRepository.findById(strategicIndicatorId);
         if (strategicIndicatorOptional.isPresent()) {
@@ -64,7 +65,7 @@ public class FeedbackController {
         return new ArrayList<>();
     }
 
-    private List<FeedbackFactors> getFeedbackReportFromFeedbackList (List<Feedback> feedbackList, Strategic_Indicator strategicIndicator) throws IOException, CategoriesException {
+    private List<FeedbackFactors> getFeedbackReportFromFeedbackList (List<Feedback> feedbackList, Strategic_Indicator strategicIndicator) throws IOException, CategoriesException, ProjectNotFoundException {
         List<FeedbackFactors> feedbackFactorsList = new ArrayList<>();
         for (int i = 0; i < feedbackList.size(); ++i) {
             Long siId = strategicIndicator.getId();
@@ -78,7 +79,7 @@ public class FeedbackController {
             String oldCategoryColor = null;
             String newCategory = strategicIndicatorsController.getLabel(newValue);
             String newCategoryColor = null;
-            List<DTOStrategicIndicatorEvaluation> csi = qmaStrategicIndicators.CurrentEvaluation(strategicIndicator.getProject().getExternalId());
+            List<DTOStrategicIndicatorEvaluation> csi = qmaStrategicIndicators.CurrentEvaluation(strategicIndicator.getProject().getExternalId(), null);
             OldAndNewCategories oldAndNewCategories = new OldAndNewCategories(strategicIndicator, csi, newCategory).invoke();
             oldCategory = oldAndNewCategories.getOldCategory();
             oldCategoryColor = oldAndNewCategories.getOldCategoryColor();

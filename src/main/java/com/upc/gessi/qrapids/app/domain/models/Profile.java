@@ -78,4 +78,14 @@ public class Profile {
     public void setProfileProjectStrategicIndicatorsList(List<ProfileProjectStrategicIndicators> profileProjectStrategicIndicatorsList) {
         this.profileProjectStrategicIndicatorsList = profileProjectStrategicIndicatorsList;
     }
+
+    public boolean getAllSIByProject (Project prj){
+        boolean allSI = true;
+        for (ProfileProjects pp : this.profileProjectsList) {
+            if (pp.getProject().getId() == prj.getId()){
+                allSI =  pp.isAllSI();
+            }
+        }
+        return allSI;
+    }
 }

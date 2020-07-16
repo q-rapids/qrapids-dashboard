@@ -8,7 +8,10 @@ var deleteUrl;
 var httpMethod = "POST";
 
 function buildSIList() {
-    var url = "/api/strategicIndicators";
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+    var url = "/api/strategicIndicators?profile=" + profileId;
     if (serverUrl) {
         url = serverUrl + url;
     }

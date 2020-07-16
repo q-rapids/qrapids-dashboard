@@ -119,11 +119,16 @@ function getData(phases) {
     var today = new Date();
     var todayTextDate = parseDate(today);
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/strategicIndicators/historical?";
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
+    var url = "/api/strategicIndicators/historical?profile="+profileId;
     if (serverUrl) {
         url = serverUrl + url;
     }
-    $.getJSON(url + "from=" + phases[0].from + "&to=" + todayTextDate)
+    $.getJSON(url + "&from=" + phases[0].from + "&to=" + todayTextDate)
         .then (function(data) {
             if (data.length === 0) {
                 var siData = [];

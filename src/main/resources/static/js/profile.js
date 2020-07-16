@@ -74,6 +74,9 @@ function buildProfileList() {
         type: "GET",
         async: true,
         success: function (data) {
+            var profiles = [];
+            profiles.push(null);
+            profiles.push("Without Profile");
             var profileList = document.getElementById('profileList');
             for (var i = 0; i < data.length; i++) {
                 var profile = document.createElement('li');
@@ -82,10 +85,14 @@ function buildProfileList() {
                 profile.setAttribute("id", (data[i].id));
                 profile.appendChild(document.createTextNode(data[i].name));
                 profile.addEventListener("click", clickOnTree);
-
                 profileList.appendChild(profile);
+                // create profiles list for sessionStorage
+                profiles.push(data[i].id);
+                profiles.push(data[i].name);
             }
             document.getElementById('profileTree').appendChild(profileList);
+            // refresh sessionStorage profiles information
+            sessionStorage.setItem("profiles", JSON.stringify(profiles));
         }
     });
 }

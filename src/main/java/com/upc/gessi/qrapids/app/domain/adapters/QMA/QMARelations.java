@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
@@ -68,7 +69,7 @@ public class QMARelations {
         return doubleArray;
     }
 
-    public List<DTORelationsSI> getRelations (String prj, LocalDate date) throws IOException, CategoriesException, ArithmeticException {
+    public List<DTORelationsSI> getRelations (String prj, String profile, LocalDate date) throws IOException, CategoriesException, ArithmeticException, ProjectNotFoundException {
         qmacon.initConnexion();
         List<RelationDTO> relationDTOS;
         // get relations from elasticsearch
@@ -77,7 +78,7 @@ public class QMARelations {
         else
             relationDTOS = Relations.getRelations(prj, date);
         // get current evaluations for SI and Quality Factors
-        List<DTOStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
+        List<DTOStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj,profile);
         List<DTOQualityFactor> qfEval = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
         return RelationDTOToDTORelationSI(relationDTOS, siEval, qfEval);
     }

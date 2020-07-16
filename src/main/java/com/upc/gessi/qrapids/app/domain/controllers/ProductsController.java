@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Product;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.repositories.Product.ProductRepository;
@@ -111,14 +112,15 @@ public class ProductsController {
 		productRep.deleteById(id);
 	}
 	
-	public List<DTOStrategicIndicatorEvaluation> getProductEvaluation(Long id) throws IOException, CategoriesException {
+	public List<DTOStrategicIndicatorEvaluation> getProductEvaluation(Long id) throws IOException, CategoriesException, ProjectNotFoundException {
 		List<DTOStrategicIndicatorEvaluation> average = new ArrayList<>();
 		Optional<Product> productOptional = productRep.findById(id);
 		if (productOptional.isPresent()) {
 			Product product = productOptional.get();
 			List<List<DTOStrategicIndicatorEvaluation>> evaluations = new Vector<List<DTOStrategicIndicatorEvaluation>>();
 			for (int i = 0; i < product.getProjects().size(); i++) {
-				evaluations.add(qmasi.CurrentEvaluation(product.getProjects().get(i).getExternalId()));
+				// in case of product we need to see all strategic indicators independent of profile
+				evaluations.add(qmasi.CurrentEvaluation(product.getProjects().get(i).getExternalId(),null));
 			}
 			average = evaluations.get(0);
 			buildAverageEvaluations(average, evaluations);
@@ -153,14 +155,15 @@ public class ProductsController {
 		return false;
 	}
 
-	public List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> getDetailedProductEvaluation(Long id) throws IOException, CategoriesException {
+	public List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> getDetailedProductEvaluation(Long id) throws IOException, CategoriesException, ProjectNotFoundException {
 		Optional<Product> productOptional = productRep.findById(id);
 		List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> evaluations = new Vector<Pair<String, List<DTOStrategicIndicatorEvaluation>>>();
 
 		if (productOptional.isPresent()) {
 			Product product = productOptional.get();
 			for (int i = 0; i < product.getProjects().size(); i++) {
-				evaluations.add(Pair.of(product.getProjects().get(i).getName(), qmasi.CurrentEvaluation(product.getProjects().get(i).getExternalId())));
+				// in case of product we need to see all strategic indicators independent of profile
+				evaluations.add(Pair.of(product.getProjects().get(i).getName(), qmasi.CurrentEvaluation(product.getProjects().get(i).getExternalId(), null)));
 			}
 		}
 		return evaluations;

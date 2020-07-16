@@ -126,7 +126,6 @@ public class ProfilesController {
         return (pr == null || pr.getId() == id);
     }
 
-    // TODO modify this funcionality
     public void updateProfile(Long id, String name, String description, Map<String, org.springframework.data.util.Pair<Boolean,List<String>>> projectInfo) throws ProfileProjectsNotFoundException {
         Optional<Profile> profileOptional = profileRep.findById(id);
         Profile profile = profileOptional.get();

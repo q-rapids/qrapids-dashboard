@@ -6,6 +6,7 @@ import DTOs.QuadrupletDTO;
 import DTOs.StrategicIndicatorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Feedback;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
@@ -54,28 +55,28 @@ public class QMAStrategicIndicators {
         return Queries.prepareSIIndex(projectID);
     }
 
-    public List<DTOStrategicIndicatorEvaluation> CurrentEvaluation(String prj) throws IOException, CategoriesException {
+    public List<DTOStrategicIndicatorEvaluation> CurrentEvaluation(String prj, String profile) throws IOException, CategoriesException, ProjectNotFoundException {
         List<DTOStrategicIndicatorEvaluation> result;
 
         // Data coming from QMA API
         qmacon.initConnexion();
         List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj);
         //Connection.closeConnection();
-        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(prjRep.findByExternalId(prj).getId(), evals);
+        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(prj, profile, evals);
 
         return result;
     }
 
-    public DTOStrategicIndicatorEvaluation SingleCurrentEvaluation(String prj, String strategicIndicatorId) throws IOException, CategoriesException {
+    public DTOStrategicIndicatorEvaluation SingleCurrentEvaluation(String prj, String profile, String strategicIndicatorId) throws IOException, CategoriesException, ProjectNotFoundException {
         qmacon.initConnexion();
         StrategicIndicatorEvaluationDTO strategicIndicatorEvaluationDTO = StrategicIndicator.getSingleEvaluation(prj, strategicIndicatorId);
         List<StrategicIndicatorEvaluationDTO> strategicIndicatorEvaluationDTOList = new ArrayList<>();
         strategicIndicatorEvaluationDTOList.add(strategicIndicatorEvaluationDTO);
-        return StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(prjRep.findByExternalId(prj).getId(),
+        return StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(prj, profile,
                 strategicIndicatorEvaluationDTOList).get(0);
     }
 
-    public List<DTOStrategicIndicatorEvaluation> HistoricalData(LocalDate from, LocalDate to, String prj) throws IOException, CategoriesException  {
+    public List<DTOStrategicIndicatorEvaluation> HistoricalData(LocalDate from, LocalDate to, String prj, String profile) throws IOException, CategoriesException, ProjectNotFoundException {
         List<DTOStrategicIndicatorEvaluation> result;
 
         // Data coming from QMA API
@@ -83,7 +84,7 @@ public class QMAStrategicIndicators {
         //using dates from 1/1/2015 to now at the moment
         List<StrategicIndicatorEvaluationDTO> evals = StrategicIndicator.getEvaluations(prj, from, to);
         //Connection.closeConnection();
-        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(prjRep.findByExternalId(prj).getId(), evals);
+        result = StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(prj, profile, evals);
 
         return result;
     }
@@ -136,13 +137,15 @@ public class QMAStrategicIndicators {
         return status.equals(RestStatus.OK) || status.equals(RestStatus.CREATED);
     }
 
-    private List<DTOStrategicIndicatorEvaluation> StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(Long prjID, List<StrategicIndicatorEvaluationDTO> evals) throws CategoriesException {
+    private List<DTOStrategicIndicatorEvaluation> StrategicIndicatorEvaluationDTOListToDTOStrategicIndicatorEvaluationList(String prjExternalId, String profileId, List<StrategicIndicatorEvaluationDTO> evals) throws CategoriesException, ProjectNotFoundException {
         List<DTOStrategicIndicatorEvaluation> si = new ArrayList<>();
         Long id = null;
         boolean hasBN = false;
         boolean hasFeedback = false;
         boolean found=false; // to check if the SI is in the database
-        Iterable<Strategic_Indicator> sis_DB=siRep.findByProject_Id(prjID);
+        //TODO change filter function and test if it works well
+        Iterable<Strategic_Indicator> sis_DB = strategicIndicatorsController.
+                getStrategicIndicatorsByProjectAndProfile(prjExternalId,profileId);
 
         // si contains the list of evaluations for strategic indicators
         for (Iterator<StrategicIndicatorEvaluationDTO> iterSI = evals.iterator(); iterSI.hasNext(); ) {

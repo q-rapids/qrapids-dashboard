@@ -201,9 +201,14 @@ function getPredictionCurrentDate() {
             }
         });
     } else if (currentURL.match("/StrategicIndicators/PredictionChart") || currentURL.match("/DetailedStrategicIndicators/PredictionChart")) {
+
+        console.log("sessionStorage: profile_id");
+        console.log(sessionStorage.getItem("profile_id"));
+        var profileId = sessionStorage.getItem("profile_id");
+
         jQuery.ajax({
             dataType: "json",
-            url: "../api/strategicIndicators/currentDate",
+            url: "../api/strategicIndicators/currentDate?profile="+profileId,
             cache: false,
             type: "GET",
             async: false,

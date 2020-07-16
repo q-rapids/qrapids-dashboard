@@ -4,10 +4,15 @@ app.controller('TablesCtrl', function($scope, $http) {
     $scope.data = [];
     $scope.data_aux = [];
 
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+
+    var profileId = sessionStorage.getItem("profile_id");
+
     $scope.getStratInd = function (){
         $http({
             method : "GET",
-            url : "../api/strategicIndicators/current"
+            url : "../api/strategicIndicators/current?profile="+profileId
         }).then(function mySuccess(response) {
             response.data.forEach(function (strategicIndicator) {
                 var siDate = new Date(strategicIndicator.date);
@@ -40,10 +45,14 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     $scope.getKPIEval = function(){
         $http({
             method : "GET",
-            url : "../api/strategicIndicators/historical",
+            url : "../api/strategicIndicators/historical?profile="+profileId,
             params: {from: $('#datepickerFrom').val(),
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {

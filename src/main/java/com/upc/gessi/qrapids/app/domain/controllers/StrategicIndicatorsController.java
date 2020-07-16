@@ -81,16 +81,20 @@ public class StrategicIndicatorsController {
 
     public List<Strategic_Indicator> getStrategicIndicatorsByProjectAndProfile (String prjExternalId, String profileId) throws ProjectNotFoundException {
         Project project = projectsController.findProjectByExternalId(prjExternalId);
-        if (profileId != null) {
+        if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);
-            List<ProfileProjectStrategicIndicators> ppsiList =
-                    profileProjectStrategicIndicatorsRepository.findByProfileAndProject(profile,project);
-            List<Strategic_Indicator> result = new ArrayList<>();
-            for (ProfileProjectStrategicIndicators ppsi : ppsiList) {
-                result.add(ppsi.getStrategicIndicator());
+            if (profile.getAllSIByProject(project)){ // if allSI true
+                return strategicIndicatorRepository.findByProject_IdOrderByName(project.getId());
+            } else { // if allSI false
+                List<ProfileProjectStrategicIndicators> ppsiList =
+                        profileProjectStrategicIndicatorsRepository.findByProfileAndProject(profile,project);
+                List<Strategic_Indicator> result = new ArrayList<>();
+                for (ProfileProjectStrategicIndicators ppsi : ppsiList) {
+                    result.add(ppsi.getStrategicIndicator());
+                }
+                return result;
             }
-            return result;
-        } else {
+        } else { // if profile is null
             return strategicIndicatorRepository.findByProject_IdOrderByName(project.getId());
         }
     }
@@ -191,6 +195,10 @@ public class StrategicIndicatorsController {
 
     public void deleteStrategicIndicator (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {
         if (strategicIndicatorRepository.existsById(strategicIndicatorId)) {
+            // if we delete si, it has to disappear in profile_project_indicator table
+            ProfileProjectStrategicIndicators ppsi = profileProjectStrategicIndicatorsRepository.findByStrategic_indicator(
+                    strategicIndicatorRepository.findById(strategicIndicatorId).get());
+            if (ppsi != null) profileProjectStrategicIndicatorsRepository.delete(ppsi);
             strategicIndicatorRepository.deleteById(strategicIndicatorId);
         } else {
             throw new StrategicIndicatorNotFoundException();
@@ -218,12 +226,12 @@ public class StrategicIndicatorsController {
         }
     }
 
-    public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsCurrentEvaluation (String projectExternalId) throws IOException, CategoriesException, ElasticsearchStatusException {
-        return qmaStrategicIndicators.CurrentEvaluation(projectExternalId);
+    public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsCurrentEvaluation (String projectExternalId, String profileId) throws IOException, CategoriesException, ElasticsearchStatusException, ProjectNotFoundException {
+        return qmaStrategicIndicators.CurrentEvaluation(projectExternalId, profileId);
     }
 
-    public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorsCurrentEvaluation (String strategicIndicatorId, String projectExternalId) throws IOException, CategoriesException, ElasticsearchStatusException {
-        return qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, strategicIndicatorId);
+    public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorsCurrentEvaluation (String strategicIndicatorId, String projectExternalId, String profileId) throws IOException, CategoriesException, ElasticsearchStatusException, ProjectNotFoundException {
+        return qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, profileId, strategicIndicatorId);
     }
 
     public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, boolean filterDB) throws IOException, ElasticsearchStatusException {
@@ -234,8 +242,8 @@ public class StrategicIndicatorsController {
         return qmaDetailedStrategicIndicators.CurrentEvaluation(strategicIndicatorId, projectExternalId, true);
     }
 
-    public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsHistoricalEvaluation (String projectExternalId, LocalDate from, LocalDate to) throws IOException, CategoriesException, ElasticsearchStatusException {
-        return qmaStrategicIndicators.HistoricalData(from, to, projectExternalId);
+    public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, CategoriesException, ElasticsearchStatusException, ProjectNotFoundException {
+        return qmaStrategicIndicators.HistoricalData(from, to, projectExternalId, profileId);
     }
 
     public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsHistoricalEvaluation (String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
@@ -254,21 +262,21 @@ public class StrategicIndicatorsController {
         return qmaForecast.ForecastDSI(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 
-    public void trainForecastModelsAllProjects(String technique) throws IOException, CategoriesException{
+    public void trainForecastModelsAllProjects(String technique) throws IOException, CategoriesException, ProjectNotFoundException {
         List<String> projects = projectsController.getAllProjectsExternalID();
-        for (String prj: projects) {
-            trainForecastModelsSingleProject(prj, technique);
+        for (String prj: projects) { // if we train all projects profile isn't important
+            trainForecastModelsSingleProject(prj, "null", technique);
         }
     }
 
-    public void trainForecastModelsSingleProject(String project, String technique) throws IOException, CategoriesException {
+    public void trainForecastModelsSingleProject(String project, String profile, String technique) throws IOException, CategoriesException, ProjectNotFoundException {
         List<DTOMetric> metrics = metricsController.getAllMetricsCurrentEvaluation(project);
         qmaForecast.trainMetricForecast(metrics, "7", project, technique);
 
         List<DTOQualityFactor> factors = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(project);
         qmaForecast.trainFactorForecast(factors, "7", project, technique);
 
-        List<DTOStrategicIndicatorEvaluation> strategicIndicators = getAllStrategicIndicatorsCurrentEvaluation(project);
+        List<DTOStrategicIndicatorEvaluation> strategicIndicators = getAllStrategicIndicatorsCurrentEvaluation(project, profile);
         qmaForecast.trainStrategicIndicatorForecast(strategicIndicators, "7", project, technique);
     }
 
@@ -769,8 +777,8 @@ public class StrategicIndicatorsController {
         return category.getColor();
     }
 
-    public List<DTORelationsSI> getQualityModel(String projectExternalId, LocalDate date) throws IOException, CategoriesException, ArithmeticException {
-        return qmaRelations.getRelations(projectExternalId, date);
+    public List<DTORelationsSI> getQualityModel(String projectExternalId, String profileId, LocalDate date) throws IOException, CategoriesException, ArithmeticException, ProjectNotFoundException {
+        return qmaRelations.getRelations(projectExternalId, profileId, date);
     }
 
     public List<String> getForecastTechniques() {

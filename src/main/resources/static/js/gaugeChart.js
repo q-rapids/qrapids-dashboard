@@ -25,7 +25,12 @@ checkCategories();
 
 function getData(width, height, showButtons, chartHyperlinked, color) {
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/strategicIndicators/current";
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+
+    var profileId = sessionStorage.getItem("profile_id");
+    var url = "/api/strategicIndicators/current?profile="+profileId;
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -50,9 +55,14 @@ function getData(width, height, showButtons, chartHyperlinked, color) {
 }
 
 function seeFeedback(i){
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     jQuery.ajax({
         dataType: "json",
-        url: '../api/strategicIndicators/current',
+        url: '../api/strategicIndicators/current?profile='+profileId,
         cache: false,
         type: "GET",
         async: true,

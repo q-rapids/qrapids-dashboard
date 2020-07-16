@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.ProductsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProduct;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
@@ -130,7 +131,7 @@ public class Products {
     public List<DTOStrategicIndicatorEvaluation> getProductEvaluation(@PathVariable String id) {
 		try {
 			return productCont.getProductEvaluation(Long.parseLong(id));
-        } catch (CategoriesException e) {
+        } catch (CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {
@@ -144,7 +145,7 @@ public class Products {
     public List<Pair<String, List<DTOStrategicIndicatorEvaluation>>> getDetailedCurrentEvaluation(@PathVariable String id) {
 		try {
 			return productCont.getDetailedProductEvaluation(Long.parseLong(id));
-        } catch (CategoriesException e) {
+        } catch (CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {
