@@ -413,6 +413,7 @@ public class StrategicIndicators {
 
             if (from != null && !from.isEmpty()) {
                 LocalDate dateFrom = LocalDate.parse(from, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                // TODO first assess Factors
                 correct = strategicIndicatorsController.assessStrategicIndicators(prj, dateFrom);
             }
             else

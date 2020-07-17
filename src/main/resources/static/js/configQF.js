@@ -342,7 +342,8 @@ $("#saveQF").click(function () {
         qualityMetrics = weightsForMetrics;
     }
 
-    if ($('#SIName').val() !== "" && qualityMetrics.length > 0 && totalSum) {
+
+    if ($('#QFName').val() !== "" && qualityMetrics.length > 0 && totalSum) {
 
         console.log("QM que envio:");
         console.log(qualityMetrics);
@@ -369,33 +370,30 @@ $("#saveQF").click(function () {
                 }
             },
             success: function() {
-                location.href = "../QualityFactors/Configuration";
+                //location.href = "../QualityFactors/Configuration";
             }
         });
     } else alert("Make sure that you have completed correctly all fields marked with an *");
 });
 
 $("#deleteQF").click(function () {
-    /* TODO delete function for factors
-        1. Mirrar si el factor no esta incolucrado en ningun SI (strategic_indicator_quality_factors)
-        1.1 Si esta incolucrado no se puede borrar (mensaje correspondiente)
-        1.2 Si NO est involucrado se puede borrar (seguente codi commentado)
-    */
     console.log("click on Delete Button");
-    /*
-    if (confirm("Are you sure you want to delete this Quality Factor?")) {
+    if (confirm("\t This operation cannot be undone. \t\n Are you sure you want to delete this factor?")) {
         jQuery.ajax({
-
             url: deleteUrl,
             cache: false,
             type: "DELETE",
             async: true,
             success: function () {
                 location.href = "../QualityFactors/Configuration";
+            },
+            error: function (error) {
+                if (error.status === 403) {
+                    alert("This factor can't be deleted, it's involved in Strategic Indicators computation.");
+                }
             }
         });
     }
-    */
 });
 
 window.onload = function() {

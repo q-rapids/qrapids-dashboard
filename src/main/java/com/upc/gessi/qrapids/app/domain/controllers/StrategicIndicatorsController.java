@@ -448,7 +448,7 @@ public class StrategicIndicatorsController {
             }
             assessmentValueOrLabel = String.valueOf(value);
             String info = "factors: {";
-            for (int j = 0; j < siFactors.size(); j++) {
+            for (int j = 0; j < listFactorsAssessmentValues.size(); j++) {
                 String factorInfo = " " + siFactors.get(j) + " (value: " +  listFactorsAssessmentValues.get(j) + ", ";
                 if (weighted) factorInfo += "weight: " + weights.get(j).intValue() + "%);";
                 else factorInfo += "no weighted);";
@@ -519,6 +519,7 @@ public class StrategicIndicatorsController {
             // this factor will be added to the missing factors list
             index =0;
             factorFound = false;
+            // TODO review missing factors
             while (!factorFound && index < factorEvaluationQMA.getFactors().size()){
                 factor = factorEvaluationQMA.getFactors().get(index++);
                 if (factor.getId().equals(qfId)) {

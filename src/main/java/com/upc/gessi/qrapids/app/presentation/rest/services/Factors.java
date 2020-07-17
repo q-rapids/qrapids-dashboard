@@ -183,6 +183,21 @@ public class Factors {
         }
     }
 
+    @DeleteMapping("/api/qualityFactors/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteQualityFactor (@PathVariable Long id) {
+        try {
+            factorsController.deleteFactor(id);
+        } catch (QualityFactorNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (DeleteFactorException e) {
+            logger.error(e.getMessage(), e);
+            // 403 - Forbidden
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, Messages.FACTOR_DELETE_FORBIDDEN);
+        }
+    }
+
     @GetMapping("/api/qualityFactors/metrics/current")
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedFactorEvaluation> getQualityFactorsEvaluations(@RequestParam(value = "prj") String prj) {

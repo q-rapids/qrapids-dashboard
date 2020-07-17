@@ -8,6 +8,7 @@ import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorMetricsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
@@ -41,6 +42,9 @@ public class FactorsController {
 
     @Autowired
     private QualityFactorMetricsRepository qualityFactorMetricsRepository;
+
+    @Autowired
+    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
 
     @Autowired
     private MetricsController metricsController;
@@ -225,6 +229,18 @@ public class FactorsController {
         return weighted;
     }
 
+    public void deleteFactor(Long id) throws QualityFactorNotFoundException, DeleteFactorException {
+        if(qualityFactorRepository.existsById(id)){
+            Optional<Factor> factor = qualityFactorRepository.findById(id);
+            if (strategicIndicatorQualityFactorsRepository.findByQuality_factor(factor.get()).size() == 0) {
+                qualityFactorRepository.deleteById(id);
+            } else {
+                throw new DeleteFactorException();
+            }
+        } else {
+            throw new QualityFactorNotFoundException();
+        }
+    }
 
     public DTOFactorEvaluation getSingleFactorEvaluation(String factorId, String projectExternalId) throws IOException {
         return qmaQualityFactors.SingleCurrentEvaluation(factorId, projectExternalId);
