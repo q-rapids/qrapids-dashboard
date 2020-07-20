@@ -179,7 +179,10 @@ function clickOnTree(e){
             var selProjectsBtn = document.createElement('button');
             selProjectsBtn.classList.add("btn");
             selProjectsBtn.setAttribute('id', 'selProjectsBtn');
-            selProjectsBtn.appendChild(document.createTextNode("..."));
+            var editIcon = document.createElement('img');
+            editIcon.classList.add("icons");
+            editIcon.src = '/icons/edit.png';
+            selProjectsBtn.appendChild(editIcon);
             selProjectsBtn.onclick = openSelectProjectsModal;
             allowedProjectsP.appendChild(selProjectsBtn);
             allowedProjectsCol.appendChild(allowedProjectsP);
@@ -212,7 +215,10 @@ function clickOnTree(e){
             var selSIsBtn = document.createElement('button');
             selSIsBtn.classList.add("btn");
             selSIsBtn.setAttribute('id', 'selSIsBtn');
-            selSIsBtn.appendChild(document.createTextNode("..."));
+            var editIcon = document.createElement('img');
+            editIcon.classList.add("icons");
+            editIcon.src = '/icons/edit.png';
+            selSIsBtn.appendChild(editIcon);
             selSIsBtn.onclick = openSelectSIsModal;
             selSIsBtn.disabled = true;
             allowedSIsP.appendChild(selSIsBtn);
@@ -325,7 +331,10 @@ function newProfile() {
     var selProjectsBtn = document.createElement('button');
     selProjectsBtn.classList.add("btn");
     selProjectsBtn.setAttribute('id', 'selProjectsBtn');
-    selProjectsBtn.appendChild(document.createTextNode("..."));
+    var editIcon = document.createElement('img');
+    editIcon.classList.add("icons");
+    editIcon.src = '/icons/edit.png';
+    selProjectsBtn.appendChild(editIcon);
     selProjectsBtn.onclick = openSelectProjectsModal;
     allowedProjectsP.appendChild(selProjectsBtn);
     allowedProjectsCol.appendChild(allowedProjectsP);
@@ -358,7 +367,10 @@ function newProfile() {
     var selSIsBtn = document.createElement('button');
     selSIsBtn.classList.add("btn");
     selSIsBtn.setAttribute('id', 'selSIsBtn');
-    selSIsBtn.appendChild(document.createTextNode("..."));
+    var editIcon = document.createElement('img');
+    editIcon.classList.add("icons");
+    editIcon.src = '/icons/edit.png';
+    selSIsBtn.appendChild(editIcon);
     selSIsBtn.onclick = openSelectSIsModal;
     selSIsBtn.disabled = true;
     allowedSIsP.appendChild(selSIsBtn);

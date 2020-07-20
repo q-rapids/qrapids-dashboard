@@ -137,9 +137,14 @@ function showMetricsSliders () {
 }
 
 function getDetailedStrategicIndicators () {
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     jQuery.ajax({
         dataType: "json",
-        url: "../api/strategicIndicators/qualityFactors/current",
+        url: "../api/strategicIndicators/qualityFactors/current?profile="+profileId,
         cache: false,
         type: "GET",
         async: true,
@@ -528,8 +533,12 @@ function simulateSI (qualityFactors) {
     var formData = new FormData();
     formData.append("factors", JSON.stringify(qfs));
 
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     $.ajax({
-        url: "../api/strategicIndicators/simulate",
+        url: "../api/strategicIndicators/simulate?profile="+profileId,
         data: formData,
         type: "POST",
         contentType: false,

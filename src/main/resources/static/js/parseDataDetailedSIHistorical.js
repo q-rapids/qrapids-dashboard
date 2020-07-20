@@ -1,6 +1,8 @@
 var isdsi = true;
-
-var url = parseURLSimple("../api/strategicIndicators/qualityFactors/historical");
+console.log("sessionStorage: profile_id");
+console.log(sessionStorage.getItem("profile_id"));
+var profileId = sessionStorage.getItem("profile_id");
+var url = parseURLSimple("../api/strategicIndicators/qualityFactors/historical?profile="+profileId);
 
 var qualityModelSIMetrics = new Map();
 

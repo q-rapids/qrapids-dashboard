@@ -1,7 +1,6 @@
 console.log("sessionStorage: profile_id");
 console.log(sessionStorage.getItem("profile_id"));
 var profileId = sessionStorage.getItem("profile_id");
-
 var url = "/api/strategicIndicators/qualityModel?profile=" +profileId;
 var serverUrl = sessionStorage.getItem("serverUrl");
 if (serverUrl) {
@@ -22,6 +21,10 @@ function loadData() {
         url : url,
         async: true,
         success: function (data) {
+
+            console.log("loadData()");
+            console.log(data);
+
             buildTree(data);
         }});
 }
@@ -150,8 +153,9 @@ function displayData(qmnodes, qmedges) {
 
 function showNodeDetails(node) {
     var serverUrl = sessionStorage.getItem("serverUrl");
+    var profileId = sessionStorage.getItem("profile_id");
     if (node.color === siColor) {
-        var urlSI = "/api/strategicIndicators/"+ node.id + "/current";
+        var urlSI = "/api/strategicIndicators/"+ node.id + "/current?profile=" + profileId;
         if (serverUrl) {
             urlSI = serverUrl + urlSI;
         }

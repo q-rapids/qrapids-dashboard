@@ -1,8 +1,10 @@
 var isdsi = true;
 var isqf = false;
-
-var url_hist = parseURLSimple("../api/strategicIndicators/qualityFactors/historical");
-var url_pred = parseURLSimple("../api/strategicIndicators/qualityFactors/prediction");
+console.log("sessionStorage: profile_id");
+console.log(sessionStorage.getItem("profile_id"));
+var profileId = sessionStorage.getItem("profile_id");
+var url_hist = parseURLSimple("../api/strategicIndicators/qualityFactors/historical?profile="+profileId);
+var url_pred = parseURLSimple("../api/strategicIndicators/qualityFactors/prediction?profile="+profileId);
 
 //initialize data vectors
 var texts = [];

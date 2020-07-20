@@ -99,6 +99,28 @@ public class StrategicIndicatorsController {
         }
     }
 
+    public boolean existsByExternalIdAndProjectAndProfile (String siExternalId, String prjExternalId, String profileId) throws ProjectNotFoundException {
+        Project project = projectsController.findProjectByExternalId(prjExternalId);
+        if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
+            Profile profile = profilesController.findProfileById(profileId);
+            if (profile.getAllSIByProject(project)){ // if allSI true
+                return strategicIndicatorRepository.existsByExternalIdAndProject_Id(siExternalId,project.getId());
+            } else { // if allSI false
+                boolean result = false;
+                int i = 0;
+                List<ProfileProjectStrategicIndicators> ppsiList =
+                        profileProjectStrategicIndicatorsRepository.findByProfileAndProject(profile,project);
+                while (i < ppsiList.size() && !result) {
+                    if (ppsiList.get(i).getStrategicIndicator().getExternalId().equals(siExternalId)) result = true;
+                    i++;
+                }
+                return result;
+            }
+        } else { // if profile is null —> see if exist in data base
+            return strategicIndicatorRepository.existsByExternalIdAndProject_Id(siExternalId,project.getId());
+        }
+    }
+
     public Strategic_Indicator getStrategicIndicatorById (Long strategicIndicatorId) throws StrategicIndicatorNotFoundException {
         Optional<Strategic_Indicator> strategicIndicatorOptional = strategicIndicatorRepository.findById(strategicIndicatorId);
         if (strategicIndicatorOptional.isPresent()) {
@@ -234,24 +256,24 @@ public class StrategicIndicatorsController {
         return qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, profileId, strategicIndicatorId);
     }
 
-    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, boolean filterDB) throws IOException, ElasticsearchStatusException {
-        return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, filterDB);
+    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, String profileId, boolean filterDB) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+        return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, profileId, filterDB);
     }
 
-    public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorCurrentEvaluation (String strategicIndicatorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
-        return qmaDetailedStrategicIndicators.CurrentEvaluation(strategicIndicatorId, projectExternalId, true);
+    public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorCurrentEvaluation (String strategicIndicatorId, String projectExternalId, String profileId) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+        return qmaDetailedStrategicIndicators.CurrentEvaluation(strategicIndicatorId, projectExternalId, profileId, true);
     }
 
     public List<DTOStrategicIndicatorEvaluation> getAllStrategicIndicatorsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, CategoriesException, ElasticsearchStatusException, ProjectNotFoundException {
         return qmaStrategicIndicators.HistoricalData(from, to, projectExternalId, profileId);
     }
 
-    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsHistoricalEvaluation (String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
-        return qmaDetailedStrategicIndicators.HistoricalData(null, from, to, projectExternalId);
+    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+        return qmaDetailedStrategicIndicators.HistoricalData(null, from, to, projectExternalId, profileId);
     }
 
-    public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorsHistoricalEvaluation (String strategicIndicatorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
-        return qmaDetailedStrategicIndicators.HistoricalData(strategicIndicatorId, from, to, projectExternalId);
+    public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorsHistoricalEvaluation (String strategicIndicatorId, String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+        return qmaDetailedStrategicIndicators.HistoricalData(strategicIndicatorId, from, to, projectExternalId, profileId);
     }
 
     public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction (List<DTOStrategicIndicatorEvaluation> si, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException {
@@ -639,7 +661,7 @@ public class StrategicIndicatorsController {
         for(String projectExternalId : projects) {
             List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
             try {
-                dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, false);
+                dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, null, false);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -655,7 +677,7 @@ public class StrategicIndicatorsController {
         }
     }
 
-    public List<DTOStrategicIndicatorEvaluation> simulateStrategicIndicatorsAssessment (Map<String, Float> factorsNameValueMap, String projectExternalId) throws IOException, ProjectNotFoundException {
+    public List<DTOStrategicIndicatorEvaluation> simulateStrategicIndicatorsAssessment (Map<String, Float> factorsNameValueMap, String projectExternalId, String profileId) throws IOException, ProjectNotFoundException {
         List<DTOFactor> factors = qualityFactorsController.getAllFactorsEvaluation(projectExternalId);
         for (DTOFactor factor : factors) {
             if (factorsNameValueMap.containsKey(factor.getId())) {
@@ -663,7 +685,8 @@ public class StrategicIndicatorsController {
             }
         }
         Project project = projectsController.findProjectByExternalId(projectExternalId);
-        Iterable<Strategic_Indicator> listSI = strategicIndicatorRepository.findByProject_Id(project.getId());
+        Iterable<Strategic_Indicator> listSI = getStrategicIndicatorsByProjectAndProfile(projectExternalId,profileId);
+                //strategicIndicatorRepository.findByProject_Id(project.getId());
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
         for (Strategic_Indicator si : listSI) {
             Map<String,String> mapSIFactors = new HashMap<>();

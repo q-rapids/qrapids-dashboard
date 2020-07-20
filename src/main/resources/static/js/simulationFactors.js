@@ -121,7 +121,10 @@ function showQualityFactorSliders () {
 
 function getDetailedStrategicIndicators () {
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/strategicIndicators/qualityFactors/current";
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+    var url = "/api/strategicIndicators/qualityFactors/current?profile="+profileId;
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -326,8 +329,12 @@ $('#apply').click(function () {
     var formData = new FormData();
     formData.append("factors", JSON.stringify(qualityFactors));
 
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     $.ajax({
-        url: "../api/strategicIndicators/simulate",
+        url: "../api/strategicIndicators/simulate?profile="+profileId,
         data: formData,
         type: "POST",
         contentType: false,

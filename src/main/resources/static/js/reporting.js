@@ -164,8 +164,9 @@ function linkWithJasper(dirName){
 function onClickBt(uriReport, repType){
      // get project id from project selector
     var p = sessionStorage.getItem("prj");
+    var profileId = sessionStorage.getItem("profile_id");
     var urlV = jasperserverURL + "/rest_v2/reports" + uriReport + "." + repType + "?projID=" + p
-        + "&from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val()
+        + "&from=" + $('#datepickerFrom').val() + "&to=" + $('#datepickerTo').val() + "&profile=" + profileId
         +"&j_username=" + jasperserverUser + "&j_password="+jasperserverPassword; // remove credentials from url
     console.log(urlV);
     window.open(urlV);
