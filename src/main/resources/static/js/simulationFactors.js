@@ -185,7 +185,8 @@ function checkFactorsSliders() {
                     present = true;
             });
         });
-        if (!present) {
+        var profileId = sessionStorage.getItem("profile_id");
+        if (!present && (profileId == null || profileId == "null")) {
             var warning = document.createElement("span");
             warning.setAttribute("class", "glyphicon glyphicon-alert");
             warning.title = "This quality factor is not related to any strategic indicator"
@@ -195,6 +196,9 @@ function checkFactorsSliders() {
             warning.style.textShadow = "-2px 0 2px black, 0 2px 2px black, 2px 0 2px black, 0 -2px 2px black";
             var divFactor = $("#div"+qualityFactor.id);
             divFactor.append(warning);
+        } else if (!present) { // remove unused factor if we have profile
+            var divFactor = $("#div"+qualityFactor.id);
+            divFactor.remove();
         }
     });
 }

@@ -1,7 +1,4 @@
-console.log("sessionStorage: profile_id");
-console.log(sessionStorage.getItem("profile_id"));
 var profileId = sessionStorage.getItem("profile_id");
-
 var url = "/api/strategicIndicators/qualityModel?profile="+profileId;
 var serverUrl = sessionStorage.getItem("serverUrl");
 if (serverUrl) {

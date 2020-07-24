@@ -271,9 +271,10 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
 }
 
 function getFactors () {
+    var profileId = sessionStorage.getItem("profile_id");
     jQuery.ajax({
         dataType: "json",
-        url: "../api/qualityFactors/metrics/current",
+        url: "../api/qualityFactors/metrics/current?profile="+profileId,
         cache: false,
         type: "GET",
         async: true,

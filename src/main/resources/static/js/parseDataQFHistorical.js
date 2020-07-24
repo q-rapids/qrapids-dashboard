@@ -5,7 +5,8 @@ var url;
 if (getParameterByName('id').length !== 0) {
     url = parseURLSimple("../api/strategicIndicators/qualityFactors/metrics/historical");
 } else {
-    url = parseURLSimple("../api/qualityFactors/metrics/historical");
+    var profileId = sessionStorage.getItem("profile_id");
+    url = parseURLSimple("../api/qualityFactors/metrics/historical?profile="+profileId);
 }
 
 //initialize data vectors

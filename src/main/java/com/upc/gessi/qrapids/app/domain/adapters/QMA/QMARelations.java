@@ -79,7 +79,7 @@ public class QMARelations {
             relationDTOS = Relations.getRelations(prj, date);
         // get current evaluations for SI and Quality Factors
         List<DTOStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj,profile);
-        List<DTOQualityFactor> qfEval = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
+        List<DTOQualityFactor> qfEval = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile);
         return RelationDTOToDTORelationSI(relationDTOS, siEval, qfEval);
     }
 
@@ -198,31 +198,33 @@ public class QMARelations {
                 .filter(qf -> target.getID().equals(qf.getId()))
                 .findAny()
                 .orElse(null);
-        if (factorsMap.containsKey(target.getID())) {
-            factor = factorsMap.get(target.getID());
-        } else {
-            factor = new DTORelationsFactor(target.getID());
-            factor.setName(thisFactor.getName());
-            factorsMap.put(target.getID(), factor);
-        }
+        if (thisFactor != null) {
+            if (factorsMap.containsKey(target.getID())) {
+                factor = factorsMap.get(target.getID());
+            } else {
+                factor = new DTORelationsFactor(target.getID());
+                factor.setName(thisFactor.getName());
+                factorsMap.put(target.getID(), factor);
+            }
 
-        DTORelationsMetric metric;
-        List<DTOMetric> metrics = thisFactor.getMetrics();
-        DTOMetric thisMetric = metrics.stream()
-                .filter(m -> source.getID().equals(m.getId()))
-                .findAny()
-                .orElse(null);
-        if (metricsMap.containsKey(source.getID())) {
-            metric = metricsMap.get(source.getID());
-        } else {
-            metric = new DTORelationsMetric(source.getID());
-            metric.setName(thisMetric.getName());
-            metricsMap.put(source.getID(), metric);
-        }
-        metric.setWeight(weight);
-        metric.setWeightedValue(source.getValue());
-        metric.setAssessmentValue(thisMetric.getValue().toString());
+            DTORelationsMetric metric;
+            List<DTOMetric> metrics = thisFactor.getMetrics();
+            DTOMetric thisMetric = metrics.stream()
+                    .filter(m -> source.getID().equals(m.getId()))
+                    .findAny()
+                    .orElse(null);
+            if (metricsMap.containsKey(source.getID())) {
+                metric = metricsMap.get(source.getID());
+            } else {
+                metric = new DTORelationsMetric(source.getID());
+                metric.setName(thisMetric.getName());
+                metricsMap.put(source.getID(), metric);
+            }
+            metric.setWeight(weight);
+            metric.setWeightedValue(source.getValue());
+            metric.setAssessmentValue(thisMetric.getValue().toString());
 
-        factor.setMetric(new DTORelationsMetric(metric));
+            factor.setMetric(new DTORelationsMetric(metric));
+        }
     }
 }

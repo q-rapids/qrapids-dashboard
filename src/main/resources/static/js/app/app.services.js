@@ -580,7 +580,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             navTextSimple();
             var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/current";
         } else {
-            var url = "../api/qualityFactors/metrics/current";
+            var profileId = sessionStorage.getItem("profile_id");
+            var url = "../api/qualityFactors/metrics/current?profile="+profileId;
         }
         $http({
             method : "GET",
@@ -611,7 +612,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             navTextSimple();
             var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/historical";
         } else {
-            var url = "../api/qualityFactors/metrics/historical";
+            var profileId = sessionStorage.getItem("profile_id");
+            var url = "../api/qualityFactors/metrics/historical?profile="+profileId;
         }
         $http({
             method : "GET",

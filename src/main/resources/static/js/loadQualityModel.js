@@ -21,10 +21,6 @@ function loadData() {
         url : url,
         async: true,
         success: function (data) {
-
-            console.log("loadData()");
-            console.log(data);
-
             buildTree(data);
         }});
 }

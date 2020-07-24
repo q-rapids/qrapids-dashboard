@@ -11,8 +11,9 @@ function moveFactors() {
     }
 }
 
+var profileId = sessionStorage.getItem("profile_id");
 $.ajax({
-    url: "../api/qualityFactors/metrics/current",
+    url: "../api/qualityFactors/metrics/current?profile="+profileId,
     type: "GET",
     success: function(data) {
         for(i = 0; i < data.length; ++i) {

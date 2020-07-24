@@ -295,7 +295,7 @@ public class StrategicIndicatorsController {
         List<DTOMetric> metrics = metricsController.getAllMetricsCurrentEvaluation(project);
         qmaForecast.trainMetricForecast(metrics, "7", project, technique);
 
-        List<DTOQualityFactor> factors = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(project);
+        List<DTOQualityFactor> factors = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(project, profile);
         qmaForecast.trainFactorForecast(factors, "7", project, technique);
 
         List<DTOStrategicIndicatorEvaluation> strategicIndicators = getAllStrategicIndicatorsCurrentEvaluation(project, profile);

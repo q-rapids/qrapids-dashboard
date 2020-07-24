@@ -85,9 +85,7 @@ public class QMADetailedStrategicIndicators {
         boolean found; // to check if the SI is in the database
         //for each Detailed Strategic Indicador
         for (Iterator<StrategicIndicatorFactorEvaluationDTO> iterDSI = evals.iterator(); iterDSI.hasNext(); ) {
-            // TODO filtering by profile
             StrategicIndicatorFactorEvaluationDTO element = iterDSI.next();
-            // TODO siRep.existsByExternalIdAndProject_Id(element.getID(), prjID);
             if (filterDB) found = strategicIndicatorsController.existsByExternalIdAndProjectAndProfile(element.getID(), prj, profile);
             else found = true; // because we want make fetch
             // only return Detailed Strategic Indicator if it is in local database
