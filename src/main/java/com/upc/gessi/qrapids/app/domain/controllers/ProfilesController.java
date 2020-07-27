@@ -12,7 +12,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProfile;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
-import javafx.util.Pair;
+import org.springframework.data.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,7 +72,7 @@ public class ProfilesController {
             for (ProfileProjects pp : profile.getProfileProjectsList()) {
                 DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId());
                 relatedProjects.add(project);
-                Pair<Long,Boolean> allSI = new Pair<Long, Boolean>(pp.getProject().getId(), pp.isAllSI());
+                Pair<Long, Boolean> allSI = Pair.of(pp.getProject().getId(), pp.isAllSI());
                 relatedAllSIs.add(allSI);
             }
             Collections.sort(relatedProjects, new Comparator<DTOProject>() {
@@ -98,7 +98,7 @@ public class ProfilesController {
             for (ProfileProjects pp : pr.getProfileProjectsList()) {
                 DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId());
                 relatedProjects.add(project);
-                Pair<Long,Boolean> allSI = new Pair<Long, Boolean>(pp.getProject().getId(), pp.isAllSI());
+                Pair<Long,Boolean> allSI = Pair.of(pp.getProject().getId(), pp.isAllSI());
                 relatedAllSIs.add(allSI);
             }
             Collections.sort(relatedProjects, new Comparator<DTOProject>() {

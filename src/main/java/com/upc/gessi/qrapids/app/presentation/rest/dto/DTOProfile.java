@@ -1,6 +1,6 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
-import javafx.util.Pair;
+import org.springframework.data.util.Pair;
 
 import java.util.List;
 
@@ -11,7 +11,6 @@ public class DTOProfile {
     private List<DTOProject> projects;
     private List<Pair<Long, Boolean>> allSIs;
 
-    public DTOProfile(){}
 
     public DTOProfile(Long id, String name, String description, List<DTOProject> projects, List<Pair<Long, Boolean>> allSIs) {
         this.id = id;
