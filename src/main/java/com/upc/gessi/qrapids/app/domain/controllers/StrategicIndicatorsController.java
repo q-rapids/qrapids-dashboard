@@ -684,9 +684,7 @@ public class StrategicIndicatorsController {
                 factor.setValue(factorsNameValueMap.get(factor.getId()));
             }
         }
-        Project project = projectsController.findProjectByExternalId(projectExternalId);
         Iterable<Strategic_Indicator> listSI = getStrategicIndicatorsByProjectAndProfile(projectExternalId,profileId);
-                //strategicIndicatorRepository.findByProject_Id(project.getId());
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
         for (Strategic_Indicator si : listSI) {
             Map<String,String> mapSIFactors = new HashMap<>();

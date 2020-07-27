@@ -101,6 +101,7 @@ public class StrategicIndicatorsTest {
     private StrategicIndicators strategicIndicatorsController;
 
     private String projectExternalId;
+    private String profileId;
 
     private DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation;
     private List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();
@@ -155,7 +156,7 @@ public class StrategicIndicatorsTest {
     @Test
     public void getStrategicIndicatorsCurrentEvaluation() throws Exception {
         // Given
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId)).thenReturn(dtoStrategicIndicatorEvaluationList); // profileId = null --> without profile
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -206,7 +207,10 @@ public class StrategicIndicatorsTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -260,14 +264,14 @@ public class StrategicIndicatorsTest {
 
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId); // profileId = null --> without profile
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
     public void getStrategicIndicatorsCurrentEvaluationCategoriesConflict() throws Exception {
         // Given
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenThrow(new CategoriesException());
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId)).thenThrow(new CategoriesException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -285,7 +289,7 @@ public class StrategicIndicatorsTest {
     @Test
     public void getStrategicIndicatorsCurrentEvaluationReadError() throws Exception {
         // Given
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -303,7 +307,8 @@ public class StrategicIndicatorsTest {
     @Test
     public void getSingleStrategicIndicatorCurrentEvaluation() throws Exception {
         // Given
-        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluation);
+        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(),
+                projectExternalId, profileId)).thenReturn(dtoStrategicIndicatorEvaluation); // profileId = null --> without profile
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -356,7 +361,10 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic Indicator identifier")),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("id")
                                         .description("Strategic indicator identifier"),
@@ -410,14 +418,14 @@ public class StrategicIndicatorsTest {
 
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId, profileId);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
     public void getSingleStrategicIndicatorCurrentEvaluationCategoriesConflict() throws Exception {
         // Given
-        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId)).thenThrow(new CategoriesException());
+        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId, profileId)).thenThrow(new CategoriesException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -435,7 +443,7 @@ public class StrategicIndicatorsTest {
     @Test
     public void getSingleStrategicIndicatorCurrentEvaluationReadError() throws Exception {
         // Given
-        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getSingleStrategicIndicatorsCurrentEvaluation(dtoStrategicIndicatorEvaluation.getId(), projectExternalId, profileId)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -456,7 +464,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenReturn(dtoStrategicIndicatorEvaluationList);
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -513,7 +521,10 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
-                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -567,7 +578,7 @@ public class StrategicIndicatorsTest {
 
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate);
+        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
@@ -577,7 +588,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenThrow(new CategoriesException());
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate)).thenThrow(new CategoriesException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -600,7 +611,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -620,7 +631,7 @@ public class StrategicIndicatorsTest {
     @Test
     public void getDetailedStrategicIndicatorsCurrentEvaluation() throws Exception {
         // Given
-        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId,true)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -659,7 +670,10 @@ public class StrategicIndicatorsTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -704,13 +718,13 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true);
+        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId,true);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
     public void getDetailedStrategicIndicatorsCurrentEvaluationReadError() throws Exception {
-        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId, true)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -727,7 +741,7 @@ public class StrategicIndicatorsTest {
 
     @Test
     public void getSingleDetailedStrategicIndicator() throws Exception {
-        when(strategicIndicatorsDomainController.getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(strategicIndicatorsDomainController.getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, profileId)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -769,7 +783,10 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator identifier")),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -814,13 +831,13 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, profileId);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
     @Test
     public void getDetailedSingleStrategicIndicatorReadError() throws Exception {
-        when(strategicIndicatorsDomainController.getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, profileId)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -841,7 +858,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -886,7 +903,10 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
-                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -931,7 +951,7 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate);
+        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
@@ -941,7 +961,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getAllDetailedStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -964,7 +984,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(strategicIndicatorsDomainController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, fromDate, toDate)).thenReturn(dtoDetailedStrategicIndicatorList);
+        when(strategicIndicatorsDomainController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, profileId, fromDate, toDate)).thenReturn(dtoDetailedStrategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -1012,7 +1032,10 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
-                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -1057,7 +1080,7 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getSingleDetailedStrategicIndicatorsHistoricalEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, fromDate, toDate);
+        verify(strategicIndicatorsDomainController, times(1)).getSingleDetailedStrategicIndicatorsHistoricalEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, profileId, fromDate, toDate);
         verifyNoMoreInteractions(qmaDetailedStrategicIndicators);
     }
 
@@ -1067,7 +1090,7 @@ public class StrategicIndicatorsTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(strategicIndicatorsDomainController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, fromDate, toDate)).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, profileId, fromDate, toDate)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1137,7 +1160,10 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("technique")
                                         .description("Forecasting technique"),
                                 parameterWithName("horizon")
-                                        .description("Amount of days that the prediction will cover")),
+                                        .description("Amount of days that the prediction will cover"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -1182,7 +1208,7 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, true);
+        verify(strategicIndicatorsDomainController, times(1)).getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId, true);
         verify(strategicIndicatorsDomainController, times(1)).getDetailedStrategicIndicatorsPrediction(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
@@ -1243,7 +1269,10 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("technique")
                                         .description("Forecasting technique"),
                                 parameterWithName("horizon")
-                                        .description("Amount of days that the prediction will cover")),
+                                        .description("Amount of days that the prediction will cover"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -1288,7 +1317,7 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getSingleDetailedStrategicIndicatorCurrentEvaluation(dtoDetailedStrategicIndicator.getId(), projectExternalId, profileId);
         verify(strategicIndicatorsDomainController, times(1)).getDetailedStrategicIndicatorsPrediction(anyList(), eq(technique), eq(freq), eq(horizon), eq(projectExternalId));
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
@@ -1314,7 +1343,7 @@ public class StrategicIndicatorsTest {
         String horizon = "7";
         String freq = "7";
 
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId)).thenReturn(dtoStrategicIndicatorEvaluationList);
         when(strategicIndicatorsDomainController.getStrategicIndicatorsPrediction(dtoStrategicIndicatorEvaluationList, technique, freq, horizon, projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         // Perform request
@@ -1375,7 +1404,10 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("technique")
                                         .description("Forecasting technique"),
                                 parameterWithName("horizon")
-                                        .description("Amount of days that the prediction will cover")),
+                                        .description("Amount of days that the prediction will cover"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -1436,7 +1468,7 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsCurrentEvaluation(projectExternalId);
+        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId);
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorsPrediction(dtoStrategicIndicatorEvaluationList, technique, freq, horizon, projectExternalId);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
@@ -1712,6 +1744,7 @@ public class StrategicIndicatorsTest {
     public void getAllStrategicIndicators () throws Exception {
         Long projectId = 1L;
         String projectExternalId = "test";
+        String profileId = "null"; // without profile
         String projectName = "Test";
         String projectDescription = "Test project";
         String projectBacklogId = "prj-1";
@@ -1742,12 +1775,13 @@ public class StrategicIndicatorsTest {
         List<Strategic_Indicator> strategicIndicatorList = new ArrayList<>();
         strategicIndicatorList.add(strategicIndicator);
 
-        when(strategicIndicatorsDomainController.getStrategicIndicatorsByProject(project)).thenReturn(strategicIndicatorList);
+        when(strategicIndicatorsDomainController.getStrategicIndicatorsByProjectAndProfile(project.getExternalId(),profileId)).thenReturn(strategicIndicatorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/strategicIndicators")
-                .param("prj", projectExternalId);
+                .param("prj", projectExternalId)
+                .param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -1768,7 +1802,10 @@ public class StrategicIndicatorsTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -1791,10 +1828,7 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(projectsController, times(1)).findProjectByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectsController);
-
-        verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorsByProject(project);
+        verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorsByProjectAndProfile(project.getExternalId(), profileId);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
@@ -2452,7 +2486,7 @@ public class StrategicIndicatorsTest {
         List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();
         dtoStrategicIndicatorEvaluationList.add(dtoStrategicIndicatorEvaluation);
 
-        when(strategicIndicatorsDomainController.simulateStrategicIndicatorsAssessment(eq(factorSimulatedMap), eq(projectExternalId))).thenReturn(dtoStrategicIndicatorEvaluationList);
+        when(strategicIndicatorsDomainController.simulateStrategicIndicatorsAssessment(eq(factorSimulatedMap), eq(projectExternalId), eq(profileId))).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         // Perform request
         Gson gson = new Gson();
@@ -2505,7 +2539,10 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("factors")
-                                        .description("List of the names and new values of the quality factors")),
+                                        .description("List of the names and new values of the quality factors"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -2558,7 +2595,7 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).simulateStrategicIndicatorsAssessment(eq(factorSimulatedMap), eq(projectExternalId));
+        verify(strategicIndicatorsDomainController, times(1)).simulateStrategicIndicatorsAssessment(eq(factorSimulatedMap), eq(projectExternalId), eq(profileId));
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
@@ -2576,7 +2613,7 @@ public class StrategicIndicatorsTest {
         Map<String, Float> factorSimulatedMap = new HashMap<>();
         factorSimulatedMap.put(factorId, factorSimulatedValue);
 
-        when(strategicIndicatorsDomainController.simulateStrategicIndicatorsAssessment(eq(factorSimulatedMap), eq(projectExternalId))).thenThrow(new IOException());
+        when(strategicIndicatorsDomainController.simulateStrategicIndicatorsAssessment(eq(factorSimulatedMap), eq(projectExternalId), eq(profileId))).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -2599,12 +2636,13 @@ public class StrategicIndicatorsTest {
         DTORelationsFactor dtoRelationsFactor = dtoRelationsSI.getFactors().get(0);
         DTORelationsMetric dtoRelationsMetric = dtoRelationsFactor.getMetrics().get(0);
         String projectExternalId = "test";
-
-        when(strategicIndicatorsDomainController.getQualityModel(projectExternalId, null)).thenReturn(dtoRelationsSIList);
+        String profileId = "null"; // without profile
+        when(strategicIndicatorsDomainController.getQualityModel(projectExternalId, profileId, null)).thenReturn(dtoRelationsSIList);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/strategicIndicators/qualityModel")
-                .param("prj", projectExternalId);
+                .param("prj", projectExternalId)
+                .param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -2625,7 +2663,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].metrics[0].assessmentValue", is(dtoRelationsMetric.getAssessmentValue())));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getQualityModel(projectExternalId, null);
+        verify(strategicIndicatorsDomainController, times(1)).getQualityModel(projectExternalId, profileId, null);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
@@ -2638,14 +2676,16 @@ public class StrategicIndicatorsTest {
         DTORelationsMetric dtoRelationsMetric = dtoRelationsFactor.getMetrics().get(0);
 
         String projectExternalId = "test";
+        String profileId = "null"; // without profile
         String date = "2019-07-07";
 
-        when(strategicIndicatorsDomainController.getQualityModel(projectExternalId, LocalDate.parse(date))).thenReturn(dtoRelationsSIList);
+        when(strategicIndicatorsDomainController.getQualityModel(projectExternalId, profileId, LocalDate.parse(date))).thenReturn(dtoRelationsSIList);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/strategicIndicators/qualityModel")
                 .param("prj", projectExternalId)
-                .param("date", date);
+                .param("date", date)
+                .param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -2675,7 +2715,10 @@ public class StrategicIndicatorsTest {
                                         .description("Project external identifier"),
                                 parameterWithName("date")
                                         .optional()
-                                        .description("Date (yyyy-mm-dd) of the quality model evaluation")
+                                        .description("Date (yyyy-mm-dd) of the quality model evaluation"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()
                         ),
                         responseFields(
                                 fieldWithPath("[].id")
@@ -2715,7 +2758,7 @@ public class StrategicIndicatorsTest {
                 ));
 
         // Verify mock interactions
-        verify(strategicIndicatorsDomainController, times(1)).getQualityModel(projectExternalId, LocalDate.parse(date));
+        verify(strategicIndicatorsDomainController, times(1)).getQualityModel(projectExternalId, profileId, LocalDate.parse(date));
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 
@@ -2759,13 +2802,13 @@ public class StrategicIndicatorsTest {
         Project project = domainObjectsBuilder.buildProject();
         when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId)).thenReturn(dtoStrategicIndicatorEvaluationList);
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         String from = "2019-07-07";
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenReturn(dtoStrategicIndicatorEvaluationList);
+        when(strategicIndicatorsDomainController.getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
 
         // Perform request
@@ -2823,7 +2866,10 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
-                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Strategic indicator identifier"),
@@ -2876,8 +2922,8 @@ public class StrategicIndicatorsTest {
         verify(projectsController, times(1)).findProjectByExternalId(projectExternalId);
         verifyNoMoreInteractions(projectsController);
 
-        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsCurrentEvaluation(projectExternalId);
-        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, fromDate, toDate);
+        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsCurrentEvaluation(projectExternalId, profileId);
+        verify(strategicIndicatorsDomainController, times(1)).getAllStrategicIndicatorsHistoricalEvaluation(projectExternalId, profileId, fromDate, toDate);
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 

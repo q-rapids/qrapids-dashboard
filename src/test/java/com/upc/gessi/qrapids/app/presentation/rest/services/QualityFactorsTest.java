@@ -181,12 +181,14 @@ public class QualityFactorsTest {
         dtoQualityFactorList.add(dtoQualityFactor);
 
         String projectExternalId = "test";
-        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoQualityFactorList);
+        String profileId = "null"; // without profile
+        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, profileId)).thenReturn(dtoQualityFactorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/qualityFactors/metrics/current")
-                .param("prj", projectExternalId);
+                .param("prj", projectExternalId)
+                .param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -211,7 +213,10 @@ public class QualityFactorsTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Quality factor identifier"),
@@ -245,7 +250,7 @@ public class QualityFactorsTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId,profileId);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -325,16 +330,18 @@ public class QualityFactorsTest {
         dtoQualityFactorList.add(dtoQualityFactor);
 
         String projectExternalId = "test";
+        String profileId = "null"; // without profile
         LocalDate from = dtoQualityFactor.getMetrics().get(0).getDate().minusDays(7);
         LocalDate to = dtoQualityFactor.getMetrics().get(0).getDate();
-        when(qualityFactorsDomainController.getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, from, to)).thenReturn(dtoQualityFactorList);
+        when(qualityFactorsDomainController.getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, profileId, from, to)).thenReturn(dtoQualityFactorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/qualityFactors/metrics/historical")
                 .param("prj", projectExternalId)
                 .param("from", from.toString())
-                .param("to", to.toString());
+                .param("to", to.toString())
+                .param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -363,7 +370,10 @@ public class QualityFactorsTest {
                                 parameterWithName("from")
                                         .description("Starting date (yyyy-mm-dd) for the requested the period"),
                                 parameterWithName("to")
-                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Quality factor identifier"),
@@ -397,7 +407,7 @@ public class QualityFactorsTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, from, to);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, profileId, from, to);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -474,10 +484,11 @@ public class QualityFactorsTest {
         List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
         dtoQualityFactorList.add(dtoQualityFactor);
         String projectExternalId = "test";
+        String profileId = "null"; // without profile
         String freq = "7";
         String horizon = "7";
         String technique = "PROPHET";
-        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoQualityFactorList);
+        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, profileId)).thenReturn(dtoQualityFactorList);
         when(qualityFactorsDomainController.getFactorsWithMetricsPrediction(dtoQualityFactorList, technique, freq, horizon, projectExternalId)).thenReturn(dtoQualityFactorList);
 
         // Perform request
@@ -485,7 +496,8 @@ public class QualityFactorsTest {
                 .get("/api/qualityFactors/metrics/prediction")
                 .param("prj", projectExternalId)
                 .param("technique", technique)
-                .param("horizon", horizon);
+                .param("horizon", horizon)
+                .param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -516,7 +528,10 @@ public class QualityFactorsTest {
                                 parameterWithName("technique")
                                         .description("Forecasting technique"),
                                 parameterWithName("horizon")
-                                        .description("Amount of days that the prediction will cover")),
+                                        .description("Amount of days that the prediction will cover"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Quality factor identifier"),
@@ -558,7 +573,7 @@ public class QualityFactorsTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, profileId);
         verify(qualityFactorsDomainController, times(1)).getFactorsWithMetricsPrediction(dtoQualityFactorList, technique, freq, horizon, projectExternalId);
     }
 
