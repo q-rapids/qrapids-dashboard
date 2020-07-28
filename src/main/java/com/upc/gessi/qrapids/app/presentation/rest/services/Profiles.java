@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
+import com.upc.gessi.qrapids.app.domain.models.Profile;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProfile;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.springframework.data.util.Pair;
@@ -35,6 +36,7 @@ public class Profiles {
         try {
             String name = request.getParameter(NAME);
             String description = request.getParameter(DESCRIPTION);
+            Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf(request.getParameter("quality_level"));
             JsonParser parser = new JsonParser();
             JsonArray projectsInfoJsonArray = parser.parse(request.getParameter("projects_info")).getAsJsonArray();
             Map<String, Pair<Boolean,List<String>>> projectsInfoMap = new HashMap<>();
@@ -51,7 +53,7 @@ public class Profiles {
                 projectsInfoMap.put(projectID, Pair.of(allSI,si));
             }
             if (profileCont.checkNewProfileByName(name)) {
-                profileCont.newProfile(name, description, projectsInfoMap);
+                profileCont.newProfile(name, description, qualityLevel, projectsInfoMap);
             } else {
                 throw new ElementAlreadyPresentException();
             }
@@ -98,6 +100,7 @@ public class Profiles {
         try {
             String name = request.getParameter(NAME);
             String description = request.getParameter(DESCRIPTION);
+            Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf(request.getParameter("quality_level"));
             JsonParser parser = new JsonParser();
             JsonArray projectsInfoJsonArray = parser.parse(request.getParameter("projects_info")).getAsJsonArray();
             Map<String, Pair<Boolean, List<String>>> projectsInfoMap = new HashMap<>();
@@ -114,7 +117,7 @@ public class Profiles {
                 projectsInfoMap.put(projectID, Pair.of(allSI, si));
             }
             if (profileCont.checkProfileByName(id, name)) {
-                profileCont.updateProfile(id, name, description, projectsInfoMap);
+                profileCont.updateProfile(id, name, description, qualityLevel, projectsInfoMap);
             } else {
                 throw new ElementAlreadyPresentException();
             }

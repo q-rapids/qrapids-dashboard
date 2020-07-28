@@ -5,6 +5,7 @@ var currentProfile = null;
 var allprojectSIs; // all si of selected project
 var projectSIs = []; // pairs <prj, si> for all profile projects
 var prjExternalID;
+var qualityLevel = ""; // specify (ALL, METRICS_FACTORS, METRICS)
 
 function getProjects() {
     var url = "/api/projects";
@@ -167,6 +168,63 @@ function clickOnTree(e){
             title2P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
             title2Row.appendChild(title2P);
             profileForm.appendChild(title2Row);
+            // row with radio button for quality level selection
+            var qualityLevelRow = document.createElement('div');
+            qualityLevelRow.classList.add("profileInfoRow");
+            qualityLevelRow.setAttribute('style', 'margin-bottom: 1%');
+            var qualityLevelCol = document.createElement('div');
+            qualityLevelCol.classList.add("selectionColumn");
+            qualityLevelCol.setAttribute('style', 'width: 100%');
+            var qualityLevelP = document.createElement('p');
+            qualityLevelP.appendChild(document.createTextNode(" Quality Level:   "));
+            qualityLevelP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+            var qualityLevelBtn = document.createElement('button');
+            qualityLevelBtn.classList.add("btn");
+            // ALL case
+            var inputAll = document.createElement('input');
+            inputAll.setAttribute('id', 'qualityLevel_All');
+            inputAll.setAttribute('type', 'radio');
+            inputAll.setAttribute('name', 'qualityLevelForm');
+            inputAll.setAttribute('value', 'ALL');
+            inputAll.addEventListener("change", updateQualityLevel, false);
+            qualityLevelBtn.appendChild(inputAll);
+            var textAll = document.createElement('span');
+            textAll.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+            textAll.innerText = "  All  ";
+            qualityLevelBtn.appendChild(textAll);
+            // METRICS_FACTORS case
+            var inputMetricsFactors = document.createElement('input');
+            inputMetricsFactors.setAttribute('id', 'qualityLevel_METRICS_FACTORS');
+            inputMetricsFactors.setAttribute('type', 'radio');
+            inputMetricsFactors.setAttribute('name', 'qualityLevelForm');
+            inputMetricsFactors.setAttribute('value', 'METRICS_FACTORS');
+            inputMetricsFactors.addEventListener("change", updateQualityLevel, false);
+            qualityLevelBtn.appendChild(inputMetricsFactors);
+            var textMetricsFactors = document.createElement('span');
+            textMetricsFactors.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+            textMetricsFactors.innerText = "  Factors & Metrics  ";
+            qualityLevelBtn.appendChild(textMetricsFactors);
+            // METRICS case
+            var inputMetrics = document.createElement('input');
+            inputMetrics.setAttribute('id', 'qualityLevel_METRICS');
+            inputMetrics.setAttribute('type', 'radio');
+            inputMetrics.setAttribute('name', 'qualityLevelForm');
+            inputMetrics.setAttribute('value', 'METRICS');
+            inputMetrics.addEventListener("change", updateQualityLevel, false);
+            qualityLevelBtn.appendChild(inputMetrics);
+            var textMetrics = document.createElement('span');
+            textMetrics.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+            textMetrics.innerText = "  Only Metrics  ";
+            qualityLevelBtn.appendChild(textMetrics);
+            qualityLevelP.appendChild(qualityLevelBtn);
+            qualityLevelCol.appendChild(qualityLevelP);
+            qualityLevelRow.appendChild(qualityLevelCol);
+            profileForm.appendChild(qualityLevelRow);
+            // update qualityLevel and check the correct radio button
+            qualityLevel = data.qualityLevel;
+            if (qualityLevel == 'ALL') inputAll.checked = true;
+            else if (qualityLevel == 'METRICS_FACTORS') inputMetricsFactors.checked = true;
+            else inputMetrics.checked = true;
             // row with allowed projects and their SIs
             var allowedRow = document.createElement('div');
             allowedRow.classList.add("profileInfoRow");
@@ -267,6 +325,7 @@ function newProfile() {
     profileProjects = [];
     projectSIs = [];
     currentProfile = null;
+    qualityLevel = "";
 
     // make new profile form
     var profileForm = document.createElement('div');
@@ -319,6 +378,61 @@ function newProfile() {
     title2Row.appendChild(title2P);
     profileForm.appendChild(title2Row);
 
+    // row with radio button for quality level selection
+    var qualityLevelRow = document.createElement('div');
+    qualityLevelRow.classList.add("profileInfoRow");
+    qualityLevelRow.setAttribute('style', 'margin-bottom: 1%');
+    var qualityLevelCol = document.createElement('div');
+    qualityLevelCol.classList.add("selectionColumn");
+    qualityLevelCol.setAttribute('style', 'width: 100%');
+    var qualityLevelP = document.createElement('p');
+    qualityLevelP.appendChild(document.createTextNode("Step 2.1 - Quality Level:   "));
+    qualityLevelP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+    var qualityLevelBtn = document.createElement('button');
+    qualityLevelBtn.classList.add("btn");
+    // ALL case
+    var inputAll = document.createElement('input');
+    inputAll.setAttribute('id', 'qualityLevel_All');
+    inputAll.setAttribute('type', 'radio');
+    inputAll.setAttribute('name', 'qualityLevelForm');
+    inputAll.setAttribute('value', 'ALL');
+    inputAll.addEventListener("change", updateQualityLevel, false);
+    inputAll.checked = true;
+    qualityLevel = 'ALL'; // default value
+    qualityLevelBtn.appendChild(inputAll);
+    var textAll = document.createElement('span');
+    textAll.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+    textAll.innerText = "  All  ";
+    qualityLevelBtn.appendChild(textAll);
+    // METRICS_FACTORS case
+    var inputMetricsFactors = document.createElement('input');
+    inputMetricsFactors.setAttribute('id', 'qualityLevel_METRICS_FACTORS');
+    inputMetricsFactors.setAttribute('type', 'radio');
+    inputMetricsFactors.setAttribute('name', 'qualityLevelForm');
+    inputMetricsFactors.setAttribute('value', 'METRICS_FACTORS');
+    inputMetricsFactors.addEventListener("change", updateQualityLevel, false);
+    qualityLevelBtn.appendChild(inputMetricsFactors);
+    var textMetricsFactors = document.createElement('span');
+    textMetricsFactors.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+    textMetricsFactors.innerText = "  Factors & Metrics  ";
+    qualityLevelBtn.appendChild(textMetricsFactors);
+    // METRICS case
+    var inputMetrics = document.createElement('input');
+    inputMetrics.setAttribute('id', 'qualityLevel_METRICS');
+    inputMetrics.setAttribute('type', 'radio');
+    inputMetrics.setAttribute('name', 'qualityLevelForm');
+    inputMetrics.setAttribute('value', 'METRICS');
+    inputMetrics.addEventListener("change", updateQualityLevel, false);
+    qualityLevelBtn.appendChild(inputMetrics);
+    var textMetrics = document.createElement('span');
+    textMetrics.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+    textMetrics.innerText = "  Only Metrics  ";
+    qualityLevelBtn.appendChild(textMetrics);
+    qualityLevelP.appendChild(qualityLevelBtn);
+    qualityLevelCol.appendChild(qualityLevelP);
+    qualityLevelRow.appendChild(qualityLevelCol);
+    profileForm.appendChild(qualityLevelRow);
+
     // row with allowed projects and their SIs
     var allowedRow = document.createElement('div');
     allowedRow.classList.add("profileInfoRow");
@@ -326,11 +440,11 @@ function newProfile() {
     allowedProjectsCol.classList.add("selectionColumn");
     allowedProjectsCol.setAttribute('style', 'width: 100%');
     var allowedProjectsP = document.createElement('p');
-    allowedProjectsP.appendChild(document.createTextNode("Step 2.1 - Allowed Projects*: "));
+    allowedProjectsP.appendChild(document.createTextNode("Step 2.2 - Allowed Projects*: "));
     allowedProjectsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
     var selProjectsBtn = document.createElement('button');
     selProjectsBtn.classList.add("btn");
-    selProjectsBtn.setAttribute('id', 'selProjectsBtn');
+    selProjectsBtn.setAttribute('id', 'qualityLevelBtn');
     var editIcon = document.createElement('img');
     editIcon.classList.add("icons");
     editIcon.src = '/icons/edit.png';
@@ -362,7 +476,7 @@ function newProfile() {
     allowedSIsCol.classList.add("selectionColumn");
     allowedSIsCol.setAttribute('style', 'width: 100%');
     var allowedSIsP = document.createElement('span');
-    allowedSIsP.appendChild(document.createTextNode("Step 2.2 - Allowed Strategic Indicators: "));
+    allowedSIsP.appendChild(document.createTextNode("Step 2.3 - Allowed Strategic Indicators: "));
     allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
     var selSIsBtn = document.createElement('button');
     selSIsBtn.classList.add("btn");
@@ -717,30 +831,32 @@ $("#submitProfileProjectSelectSIsModalBtn").click(function () {
 });
 
 function showSIsList() {
-    var allowedProjectsBox = document.getElementById("allowedProjectsBox");
-    var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
-    prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
-    if (projectSIs.find(x => x.prj == prjExternalID)) {
-        fillAllowedSIsBox();
-    } else {
-        if (currentProfile) { // saved project from profile
-            if (currentProfile.allSIs.find(x => x.key == prjID) && (currentProfile.allSIs.find(x => x.key == prjID).value)) {
-                // "all si" = true - show all SIs del project
+    if (qualityLevel == 'ALL') {
+        var allowedProjectsBox = document.getElementById("allowedProjectsBox");
+        var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
+        prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
+        if (projectSIs.find(x => x.prj == prjExternalID)) {
+            fillAllowedSIsBox();
+        } else {
+            if (currentProfile) { // saved project from profile
+                if (currentProfile.allSIs.find(x => x.key == prjID) && (currentProfile.allSIs.find(x => x.key == prjID).value)) {
+                    // "all si" = true - show all SIs del project
+                    var url = "/api/strategicIndicators?prj=" + prjExternalID;
+                    fillAllowedSIsBox(url);
+                } else {
+                    // "all si" = false - show only specified SIs del project
+                    var url = "/api/strategicIndicators?prj=" + prjExternalID + "&profile=" + currentProfileID;
+                    fillAllowedSIsBox(url);
+                }
+            } else { // new added project to profile
+                // by default show all si
                 var url = "/api/strategicIndicators?prj=" + prjExternalID;
                 fillAllowedSIsBox(url);
-            } else {
-                // "all si" = false - show only specified SIs del project
-                var url = "/api/strategicIndicators?prj=" + prjExternalID + "&profile=" + currentProfileID;
-                fillAllowedSIsBox(url);
             }
-        } else { // new added project to profile
-            // by default show all si
-            var url = "/api/strategicIndicators?prj=" + prjExternalID;
-            fillAllowedSIsBox(url);
         }
+        // able button to edit SIs for project of profile
+        document.getElementById('selSIsBtn').disabled = false;
     }
-    // able button to edit SIs for project of profile
-    document.getElementById('selSIsBtn').disabled = false;
 };
 
 function fillAllowedSIsBox(url){
@@ -798,6 +914,19 @@ function fillAllowedSIsBox(url){
             }
         }
     });
+}
+
+
+function updateQualityLevel() {
+    // save selected quality level
+    qualityLevel = $("input[name=qualityLevelForm]:checked").val();
+    // clean allowedSIsBox content
+    var allowedSIsBox = document.getElementById('allowedSIsBox');
+    allowedSIsBox.innerHTML = "";
+    // clean projects SIs list
+    projectSIs = [];
+    // disable button to edit SIs for project of profile
+    document.getElementById('selSIsBtn').disabled = true;
 }
 
 function moveProjectItemsLeft() {
@@ -878,6 +1007,7 @@ function saveNewProfile() {
         var formData = new FormData();
         formData.append("name", $('#profileName').val());
         formData.append("description", $('#profileDescription').val());
+        formData.append("quality_level", qualityLevel);
         formData.append("projects_info", JSON.stringify(allowedProjects));
 
         var url = "/api/profiles";
@@ -977,6 +1107,7 @@ function saveProfile() {
         var formData = new FormData();
         formData.append("name", $('#profileName').val());
         formData.append("description", $('#profileDescription').val());
+        formData.append("quality_level", qualityLevel);
         formData.append("projects_info", JSON.stringify(allowedProjects));
 
         var url = "/api/profiles/" + currentProfileID;

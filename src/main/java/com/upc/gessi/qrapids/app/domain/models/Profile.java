@@ -16,6 +16,13 @@ public class Profile {
     @Column(name = "description")
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    private QualityLevel qualityLevel;
+
+    public enum QualityLevel {
+        ALL, METRICS_FACTORS, METRICS
+    }
+
     @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinColumn(name="profile_id")
     private List<ProfileProjects> profileProjectsList;
@@ -26,9 +33,10 @@ public class Profile {
 
     public Profile() {}
 
-    public Profile(String name, String description) {
+    public Profile(String name, String description, QualityLevel qualityLevel) {
         this.name = name;
         this.description = description;
+        this.qualityLevel = qualityLevel;
     }
 
     public Long getId() {
@@ -53,6 +61,14 @@ public class Profile {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public QualityLevel getQualityLevel() {
+        return qualityLevel;
+    }
+
+    public void setQualityLevel(QualityLevel qualityLevel) {
+        this.qualityLevel = qualityLevel;
     }
 
     public List<Project> getProjects() {

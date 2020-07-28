@@ -39,8 +39,8 @@ public class ProfilesController {
         return (pr == null);
     }
 
-    public void newProfile(String name, String description, Map<String, org.springframework.data.util.Pair<Boolean,List<String>>> projectInfo) {
-        Profile profile = new Profile(name, description);
+    public void newProfile(String name, String description, Profile.QualityLevel qualityLevel, Map<String, org.springframework.data.util.Pair<Boolean,List<String>>> projectInfo) {
+        Profile profile = new Profile(name, description, qualityLevel);
         List<ProfileProjects> ppList = new ArrayList<>(); // prepare list of profile projects
         List<ProfileProjectStrategicIndicators> ppsiList = new ArrayList<>();
         for ( Map.Entry<String, org.springframework.data.util.Pair<Boolean, List<String>>> project : projectInfo.entrySet()) {
@@ -81,7 +81,7 @@ public class ProfilesController {
                     return o1.getName().compareTo(o2.getName());
                 }
             });
-            return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), relatedProjects, relatedAllSIs);
+            return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), String.valueOf(profile.getQualityLevel()), relatedProjects, relatedAllSIs);
         }
         return null;
     }
@@ -107,7 +107,7 @@ public class ProfilesController {
                     return o1.getName().compareTo(o2.getName());
                 }
             });
-            DTOProfile profile = new DTOProfile(pr.getId(), pr.getName(), pr.getDescription(), relatedProjects, relatedAllSIs);
+            DTOProfile profile = new DTOProfile(pr.getId(), pr.getName(), pr.getDescription(), String.valueOf(pr.getQualityLevel()), relatedProjects, relatedAllSIs);
             profiles.add(profile);
         }
         Collections.sort(profiles, new Comparator<DTOProfile>() {
@@ -126,12 +126,13 @@ public class ProfilesController {
         return (pr == null || pr.getId() == id);
     }
 
-    public void updateProfile(Long id, String name, String description, Map<String, org.springframework.data.util.Pair<Boolean,List<String>>> projectInfo) throws ProfileProjectsNotFoundException {
+    public void updateProfile(Long id, String name, String description, Profile.QualityLevel qualityLevel, Map<String, org.springframework.data.util.Pair<Boolean,List<String>>> projectInfo) throws ProfileProjectsNotFoundException {
         Optional<Profile> profileOptional = profileRep.findById(id);
         Profile profile = profileOptional.get();
         // update profile information
         profile.setName(name);
         profile.setDescription(description);
+        profile.setQualityLevel(qualityLevel);
         // delete old ProfileProjects List
         List<ProfileProjects> oldProfileProjectsList = profile.getProfileProjectsList();
         profile.setProfileProjectsList(null);

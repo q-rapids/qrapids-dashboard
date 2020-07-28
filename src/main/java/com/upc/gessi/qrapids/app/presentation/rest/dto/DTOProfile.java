@@ -8,14 +8,16 @@ public class DTOProfile {
     private Long id;
     private String name;
     private String description;
+    private String qualityLevel;
     private List<DTOProject> projects;
     private List<Pair<Long, Boolean>> allSIs;
 
 
-    public DTOProfile(Long id, String name, String description, List<DTOProject> projects, List<Pair<Long, Boolean>> allSIs) {
+    public DTOProfile(Long id, String name, String description, String qualityLevel, List<DTOProject> projects, List<Pair<Long, Boolean>> allSIs) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.qualityLevel = qualityLevel;
         this.projects = projects;
         this.allSIs = allSIs;
     }
@@ -42,6 +44,14 @@ public class DTOProfile {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getQualityLevel() {
+        return qualityLevel;
+    }
+
+    public void setQualityLevel(String qualityLevel) {
+        this.qualityLevel = qualityLevel;
     }
 
     public List<DTOProject> getProjects() {
