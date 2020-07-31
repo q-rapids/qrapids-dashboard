@@ -50,7 +50,9 @@ function checkProducts () {
         type: "GET",
         async: true,
         success: function (data) {
-            if (data.length > 0)
+            console.log("checkProducts");
+            console.log(sessionStorage.getItem("profile_qualitylvl"));
+            if ((data.length > 0) && (sessionStorage.getItem("profile_qualitylvl") == "ALL"))
                 $("#Products").show();
             else
                 $("#Products").hide();
@@ -66,7 +68,7 @@ function checkPhases () {
         type: "GET",
         async: true,
         success: function (data) {
-            if (data.length > 0)
+            if ((data.length > 0) && (sessionStorage.getItem("profile_qualitylvl") == "ALL"))
                 $("#PhasesAssessment").show();
             else
                 $("#PhasesAssessment").hide();
@@ -500,4 +502,58 @@ function navBack(toDetailed) {
         urlNav = urlNav + "?id=" + siid + "&name=" + si;
     }
     location.href = urlNav;
+}
+
+// TODO profile quality level filtering
+function profileQualityLevelFilter() {
+    var profileId = sessionStorage.getItem("profile_id");
+    jQuery.ajax({
+        dataType: "json",
+        url: "../api/profiles/"+profileId,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            sessionStorage.setItem("profile_qualitylvl", data.qualityLevel);
+            if (data.qualityLevel == "METRICS") { // hide some menu options from navBar
+                $("#Products").hide();
+                $("#Simulation").hide();
+
+                $("#StrategicIndicatorsAssessment").hide();
+                $("#DetailedStrategicIndicatorsAssessment").hide();
+                $("#QualityFactorsAssessment").hide();
+
+                $("#QualityModelAssessment").hide();
+
+                $("#StrategicIndicatorsPrediction").hide();
+                $("#DetailedStrategicIndicatorsPrediction").hide();
+                $("#QualityFactorsPrediction").hide();
+
+                $("#ProductsConfig").hide();
+                $("#StrategicIndicatorsConfig").hide();
+            } else if (data.qualityLevel == "METRICS_FACTORS") {
+                $("#Products").hide();
+                $("#FactorsSimulation").hide();
+
+                $("#StrategicIndicatorsAssessment").hide();
+                $("#DetailedStrategicIndicatorsAssessment").hide();
+                $("#PhasesAssessment").hide();
+
+                $("#StrategicIndicatorsPrediction").hide();
+                $("#DetailedStrategicIndicatorsPrediction").hide();
+
+                $("#ProductsConfig").hide();
+                $("#StrategicIndicatorsConfig").hide();
+            }
+        }
+    });
+}
+
+profileQualityLevelFilter();
+
+window.onload = function() {
+    if(!window.location.hash) {
+        window.location = window.location + '#loaded';
+        window.location.reload();
+    }
 }

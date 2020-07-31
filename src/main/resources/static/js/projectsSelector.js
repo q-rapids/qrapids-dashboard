@@ -18,9 +18,12 @@ if (prj) {
 }
 
 
-function setProject(project) {
+function setProject(project, url) {
     sessionStorage.setItem("prj", project);
-    window.location.reload();
+    if (url && (url != window.location.href))
+        window.open(url,"_self");
+    else
+        window.location.reload();
 }
 
 // HTTP interceptor
@@ -131,7 +134,42 @@ function showProjectSelector (projects) {
 
         $("#projectsModal").modal('hide');
 
-        setProject($this.text());
+        var url = window.location.href;
+        var profileId = sessionStorage.getItem("profile_id");
+        if (!profileId || profileId == "null"){
+            sessionStorage.setItem("profile_qualitylvl", "ALL");
+        }
+        jQuery.ajax({
+            dataType: "json",
+            url: "../api/profiles/" + profileId,
+            cache: false,
+            type: "GET",
+            async: false,
+            success: function (data) {
+                sessionStorage.setItem("profile_qualitylvl", data.qualityLevel);
+                if (data.qualityLevel == "METRICS"){
+                    sessionStorage.setItem("prediction", "Metrics");
+                    sessionStorage.setItem("configuration", "Categories");
+                    sessionStorage.setItem("assessment", "Metrics");
+                    if (currentURL.search("/Prediction") !== -1)
+                        url = serverUrl+ "/Metrics/PredictionChart";
+                    else
+                        url = serverUrl+ "/Metrics/" + time + viewMode;
+                } else if (data.qualityLevel == "METRICS_FACTORS") {
+                    sessionStorage.setItem("prediction", "QualityFactors");
+                    sessionStorage.setItem("configuration", "Categories");
+                    sessionStorage.setItem("assessment", "QualityFactors");
+                    sessionStorage.setItem("simulation", "Metrics");
+                    if (currentURL.search("/Prediction") !== -1)
+                        url = serverUrl+ "/QualityFactors/PredictionChart";
+                    else if (currentURL.search("/Simulation") !== -1)
+                        url = serverUrl+ "/Simulation/QualityFactors";
+                    else
+                        url = serverUrl+ "/QualityFactors/" + time + viewMode;
+                }
+            }
+        });
+        setProject($this.text(), url);
     });
 
     $("#projectsModal").modal();
