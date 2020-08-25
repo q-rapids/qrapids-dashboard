@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.dto;
 import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * This class define objects with all the information about a Metric, which includes the Metric id, name, source,
@@ -23,7 +24,9 @@ public class DTOMetricEvaluation {
     private String rationale;
     private Pair<Float, Float> confidence80;
     private Pair<Float, Float> confidence95;
+    private List<String> quality_factors;
     private String forecastingError;
+
 
     /**
      * Constructor of the DTO of Metrics
@@ -35,8 +38,9 @@ public class DTOMetricEvaluation {
      * @param date The parameter defines the date of the metric evaluation
      * @param datasource The parameter defines the datasource of the metric evaluation
      * @param rationale The parameter describes textually the rationale behind the value
+     * @param qualityFactors The list of factors IDs using this metric evaluation
      */
-    public DTOMetricEvaluation(String id, String name, String description, String datasource, String rationale, LocalDate date, float value) {
+    public DTOMetricEvaluation(String id, String name, String description, String datasource, String rationale, List<String> qualityFactors, LocalDate date, float value) {
         setId(id);
         setName(name);
         setDescription(description);
@@ -44,6 +48,7 @@ public class DTOMetricEvaluation {
         setDate(date);
         setDatasource(datasource);
         setRationale(rationale);
+        setQualityFactors(qualityFactors);
     }
 
     /**
@@ -170,6 +175,18 @@ public class DTOMetricEvaluation {
     public void setRationale(String rationale) {
         if (rationale!=null)
             this.rationale = rationale;
+    }
+
+    public List<String> getQualityFactors() {
+        return quality_factors;
+    }
+
+    public void setQualityFactors(List<String> quality_factors) {
+        this.quality_factors = quality_factors;
+    }
+
+    public void addQualityFactors(String qualityFactorID) {
+        this.quality_factors.add(qualityFactorID);
     }
 
     public String getForecastingError() {

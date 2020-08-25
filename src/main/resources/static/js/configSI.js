@@ -81,6 +81,8 @@ function clickOnTree(e){
             console.log(si.qualityFactorsWeights);
             if (si.weighted) weightsForFactors = si.qualityFactorsWeights;
             else weightsForFactors = [];
+            console.log("clickOnTree: weightsForFactors");
+            console.log(weightsForFactors);
         }
     });
 }
@@ -382,7 +384,7 @@ $("#saveSI").click(function () {
 });
 
 $("#deleteSI").click(function () {
-    if (confirm("Are you sure you want to delete this Strategic Indicator?")) {
+    if (confirm("\t\t This operation cannot be undone. \t\n Are you sure you want to delete this strategic indicator?")) {
         jQuery.ajax({
             url: deleteUrl,
             cache: false,

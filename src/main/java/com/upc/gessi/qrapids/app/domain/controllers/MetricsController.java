@@ -11,6 +11,7 @@ import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -114,6 +115,11 @@ public class MetricsController {
         }
     }
 
+    public void setMetricQualityFactorRelation (List<DTOMetricEvaluation> metricList, String projectExternalId) throws IOException {
+        // TODO el set en el QMA
+        qmaMetrics.setMetricQualityFactorRelation(metricList, projectExternalId);
+    }
+
     public List<DTOMetricEvaluation> getAllMetricsCurrentEvaluation (String projectExternalId) throws IOException, ElasticsearchStatusException {
         return qmaMetrics.CurrentEvaluation(null, projectExternalId);
     }
@@ -140,5 +146,20 @@ public class MetricsController {
 
     public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, ElasticsearchStatusException {
         return qmaForecast.ForecastMetric(currentEvaluation, technique, freq, horizon, projectExternalId);
+    }
+
+    public String getMetricLabelFromValue(Float value) {
+        List<MetricCategory> metricCategoryList = metricCategoryRepository.findAllByOrderByUpperThresholdAsc();
+        if (value != null) {
+            for (MetricCategory metricCategory : metricCategoryList) {
+                if (value <= metricCategory.getUpperThreshold())
+                    return metricCategory.getName();
+            }
+        }
+        return "No Category";
+    }
+
+    public List<DTOMetricEvaluation> getAllMetricsEvaluation(String projectExternalId) throws IOException {
+        return qmaMetrics.getAllMetrics(projectExternalId);
     }
 }

@@ -14,7 +14,7 @@ public interface StrategicIndicatorQualityFactorsRepository extends CrudReposito
     @Query("from StrategicIndicatorQualityFactors r  where r.strategic_indicator = :strategicIndicator")
     List<StrategicIndicatorQualityFactors> findByStrategic_indicator(@Param("strategicIndicator") Strategic_Indicator strategicIndicator);
 
-    @Query("from StrategicIndicatorQualityFactors r  where r.quality_factor = :factor")
+    @Query("from StrategicIndicatorQualityFactors r  where r.factor = :factor")
     List<StrategicIndicatorQualityFactors> findByQuality_factor(@Param("factor") Factor factor);
 
 }

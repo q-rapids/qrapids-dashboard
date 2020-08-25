@@ -31,6 +31,8 @@ function getData() {
         type: "GET",
         async: true,
         success: function (data) {
+            console.log("inside ../api/strategicIndicators/historical")
+            console.log(data);
             j = 0;
             var line = [];
             var decisionsAdd = [];

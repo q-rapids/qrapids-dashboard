@@ -9,7 +9,11 @@ public interface QualityFactorRepository extends CrudRepository<Factor, Long> {
 
     List<Factor> findByProject_IdOrderByName (Long projectId);
 
+    List<Factor> findByProject_Id (Long projectId);
+
     Factor findByExternalId(String externalId);
+
+    Factor findByNameAndProject_Id (String name, Long projectId);
 
     Factor findByExternalIdAndProjectId(String factorExternalId,Long prjId);
 }

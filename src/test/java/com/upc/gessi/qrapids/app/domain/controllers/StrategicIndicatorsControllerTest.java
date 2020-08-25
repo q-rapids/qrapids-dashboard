@@ -138,7 +138,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<StrategicIndicatorQualityFactors> qualityFactors = domainObjectsBuilder.buildQualityFactors(strategicIndicator);
         for (StrategicIndicatorQualityFactors qf : qualityFactors) {
-            when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(qf.getQuality_factor()),eq(qf.getWeight()), any(Strategic_Indicator.class))).thenReturn(qf);
+            when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(qf.getFactor()),eq(qf.getWeight()), any(Strategic_Indicator.class))).thenReturn(qf);
         }
 
         // When
@@ -163,7 +163,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<StrategicIndicatorQualityFactors> qualityFactors = domainObjectsBuilder.buildQualityFactors(strategicIndicator);
         for (StrategicIndicatorQualityFactors qf : qualityFactors) {
-            when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(qf.getQuality_factor()),eq(qf.getWeight()), any(Strategic_Indicator.class))).thenReturn(qf);
+            when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(qf.getFactor()),eq(qf.getWeight()), any(Strategic_Indicator.class))).thenReturn(qf);
         }
 
         // When

@@ -25,19 +25,20 @@ public class FactorEvaluation {
 
     public void clearStrategicIndicatorsRelations(LocalDate date) {
         String qma_date = FormattedDates.formatDate(date);
-        List <String> si_IDs;
-
         for  (DTOFactorEvaluation factor: elements){
-            si_IDs = factor.getStrategicIndicators();
             factor.getStrategicIndicators().removeIf((String si_id)  ->  si_id.contains(qma_date));
         }
     }
-    public void clearStrategicIndicatorsRelations(LocalDate date, String strategicIndicatorName) {
-        List <String> si_IDs;
-        String si_hardID=strategicIndicatorName + "-" + FormattedDates.formatDate(date);
 
+    public void clearStrategicIndicatorsRelations(String strategicIndicatorExternalId) {
         for  (DTOFactorEvaluation factor: elements){
-            si_IDs = factor.getStrategicIndicators();
+            factor.getStrategicIndicators().removeIf((String si_id)  ->  si_id.contains(strategicIndicatorExternalId));
+        }
+    }
+
+    public void clearStrategicIndicatorsRelations(LocalDate date, String strategicIndicatorExternalId) {
+        String si_hardID=strategicIndicatorExternalId + "-" + FormattedDates.formatDate(date);
+        for  (DTOFactorEvaluation factor: elements){
             factor.getStrategicIndicators().removeIf((String si_id)  ->  si_id.contains(si_hardID));
         }
     }

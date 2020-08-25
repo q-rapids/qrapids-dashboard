@@ -1,26 +1,30 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.adapters.AssessQF;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
+import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMARelations;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
 import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
+import com.upc.gessi.qrapids.app.domain.models.Factor;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorMetricsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
+import evaluation.StrategicIndicator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.*;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class FactorsController {
@@ -33,6 +37,12 @@ public class FactorsController {
 
     @Autowired
     private QMASimulation qmaSimulation;
+
+    @Autowired
+    private QMARelations qmaRelations;
+
+    @Autowired
+    private AssessQF assessQF;
 
     @Autowired
     private QFCategoryRepository factorCategoryRepository;
@@ -53,7 +63,12 @@ public class FactorsController {
     private ProjectsController projectsController;
 
     @Autowired
+    private StrategicIndicatorsController strategicIndicatorsController;
+
+    @Autowired
     private QualityFactorMetricsController qualityFactorMetricsController;
+
+    private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
     public List<QFCategory> getFactorCategories () {
         List<QFCategory> factorCategoriesList = new ArrayList<>();
@@ -240,6 +255,282 @@ public class FactorsController {
         } else {
             throw new QualityFactorNotFoundException();
         }
+    }
+
+    // TODO test assess QF functions
+    public boolean assessQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
+        boolean correct = true;
+        if (dateFrom != null) {
+            LocalDate dateTo = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            while (correct && dateFrom.compareTo(dateTo) <= 0) {
+                correct = assessDateQualityFactors(projectExternalId, dateFrom);
+                dateFrom = dateFrom.plusDays(1);
+            }
+        } else {
+            correct = assessDateQualityFactors(projectExternalId, null);
+        }
+        return correct;
+    }
+
+    private boolean assessDateQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
+        boolean correct = true;
+
+        // if there is no specific project as a parameter, all the projects are assessed
+        if (projectExternalId == null) {
+            List<String> projects = projectsController.getAllProjects();
+            int i=0;
+            while (i<projects.size() && correct) {
+                // TODO implement prepare index for factors case
+                //  DONE
+                qmaQualityFactors.prepareQFIndex(projects.get(i));
+                correct = assessDateProjectQualityFactors(projects.get(i), dateFrom);
+                i++;
+            }
+        }
+        else {
+            // TODO implement prepare index for factors case
+            //  DONE
+            qmaQualityFactors.prepareQFIndex(projectExternalId);
+            correct = assessDateProjectQualityFactors(projectExternalId, dateFrom);
+        }
+        return correct;
+    }
+
+    private boolean assessDateProjectQualityFactors(String project, LocalDate evaluationDate) throws IOException, ProjectNotFoundException {
+        //metrics list, each of them includes list of QF in which is involved
+        MetricEvaluation metricEvaluationQma = new MetricEvaluation();
+        List<DTOMetricEvaluation> metricList;
+
+        // If we receive an evaluationData is because we are recomputing historical data.
+        // We need the metrics for an specific day, not the last evaluation
+        if (evaluationDate == null) {
+            evaluationDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            metricList = metricsController.getAllMetricsCurrentEvaluation(project);
+        }
+        else
+            metricList = metricsController.getAllMetricsHistoricalEvaluation(project, evaluationDate, evaluationDate);
+        metricEvaluationQma.setMetrics(metricList);
+
+        return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
+    }
+
+    private boolean assessProjectQualityFactors(LocalDate evaluationDate, String  projectExternalId, MetricEvaluation metricEvaluationQMA) throws IOException {
+        // List of ALL the quality factors in the local database
+        Project project = new Project();
+        try {
+            project = projectsController.findProjectByExternalId(projectExternalId);
+        } catch (ProjectNotFoundException e) {
+            List <String> prj = Arrays.asList(projectExternalId);
+            projectsController.updateDataBaseWithNewProjects(prj);
+        }
+        Iterable<Factor> factorIterable = qualityFactorRepository.findByProject_Id(project.getId());
+
+        boolean correct = true;
+
+        // 1.- We need to remove old data from metric evaluations in the quality_factor relationship attribute
+        //metricEvaluationQMA.clearQualityFactorsRelations(evaluationDate);
+
+        // 2.- We will compute the evaluation values for the QFs, adding the corresponding relations to the metrics
+        //      used for these computation
+        for (Factor f : factorIterable) {
+            // TODO
+            metricEvaluationQMA.clearQualityFactorsRelations(f.getExternalId());
+            correct = assessQualityFactor(evaluationDate, projectExternalId, f, metricEvaluationQMA);
+        }
+
+        // 3. When all the quality factors is calculated, we need to update the metrics with the information of
+        // the quality factors using them
+        // TODO setMetricQualityFactorRelation requires modify QMA
+        metricsController.setMetricQualityFactorRelation(metricEvaluationQMA.getMetrics(), projectExternalId);
+
+        return correct;
+    }
+
+    private boolean assessQualityFactor(LocalDate evaluationDate, String project, Factor qualityFactor, MetricEvaluation metricEvaluationQMA) throws IOException {
+        boolean correct = true;
+        // We need the evaluation for the metrics used to compute "qf"
+        List<Float> listMetricsAssessmentValues = new ArrayList<>();
+        // List of metrics impacting in ONE quality factor
+        List<String> qfMetrics;
+        List<DTOMetricEvaluation> metricList = new ArrayList<>();
+        List<String> missingMetrics = new ArrayList<>(); //List of metrics without assessment ---> QF assessment incomplete
+        long metricsMismatch=0;
+
+        // We need to identify the metrics in metrics_qma that are used to compute QF
+        Map<String,String> mapQFMetrics = new HashMap<>();
+        qfMetrics = qualityFactor.getMetrics(); // list of metrics external ids
+        metricsMismatch = buildMetricsInfoAndCalculateMismatch(evaluationDate, project, qualityFactor, metricEvaluationQMA, listMetricsAssessmentValues, qfMetrics, metricList, missingMetrics, metricsMismatch, mapQFMetrics);
+
+        String assessmentValueOrLabel = "";
+        try {
+            // TODO continue implementing assess functionality !!!
+            assessmentValueOrLabel = assessQualityFactors(evaluationDate, project, qualityFactor, listMetricsAssessmentValues, qfMetrics, missingMetrics, metricsMismatch, assessmentValueOrLabel);
+        } catch (AssessmentErrorException | CategoriesException e) {
+            logger.error(e.getMessage(), e);
+            correct = false;
+        }
+
+        // Save relations of metric -> QF
+        if (correct) {
+            correct = buildAndSaveMetricQFRelation(evaluationDate, project, qualityFactor, metricList, assessmentValueOrLabel);
+        }
+
+        return correct;
+    }
+
+    private long buildMetricsInfoAndCalculateMismatch(LocalDate evaluationDate, String project, Factor qualityFactor, MetricEvaluation metricEvaluationQMA, List<Float> listMetricsAssessmentValues, List<String> qfMetrics, List<DTOMetricEvaluation> metricList, List<String> missingMetrics, long metricsMismatch, Map<String, String> mapQFMetrics) throws IOException {
+        int index;
+        boolean metricFound;
+        DTOMetricEvaluation metric;//qfMetrics is the list of metrics that are needed to compute the QF
+        //missingMetrics will contain the metrics not found in QMA
+        for (String mID : qfMetrics) {
+            // mID contains a metric that is used to compute the QF
+            // We need to find the assessment of the metric in the QF definition, in case the metric is missing
+            // this metric will be added to the missing metrics list
+            index =0;
+            metricFound = false;
+            while (!metricFound && index < metricEvaluationQMA.getMetrics().size()){
+                metric = metricEvaluationQMA.getMetrics().get(index++);
+                if (metric.getId().equals(mID)) {
+                    metricFound = true;
+                    metricList.add(metric);
+                    listMetricsAssessmentValues.add(metric.getValue());
+                    mapQFMetrics.put(metric.getId(), metricsController.getMetricLabelFromValue(metric.getValue()));
+                    // TODO using getHardID or not
+                    metric.addQualityFactors(qualityFactor.getExternalId());
+                    //metric.addQualityFactors(evaluation.Factor.getHardID("", qualityFactor.getExternalId(), evaluationDate));
+                    // If there is some missing days, we keep the maximum gap to be materialised
+                    long mismach = DAYS.between(metric.getDate(), evaluationDate);
+                    if (mismach > metricsMismatch)
+                        metricsMismatch=mismach;
+                }
+            }
+            // mID is the metric searched in QMA results
+            if (!metricFound)
+                missingMetrics.add(mID);
+        }
+        return metricsMismatch;
+    }
+
+    private boolean buildAndSaveMetricQFRelation(LocalDate evaluationDate, String project, Factor qualityFactor, List<DTOMetricEvaluation> metricList, String assessmentValueOrLabel) throws IOException {
+        boolean correct;
+        List<String> metricsIds = new ArrayList<>();
+        List<Float> weights = new ArrayList<>();
+        List<Float> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        for (DTOMetricEvaluation dtoMetricEvaluation : metricList) {
+            metricsIds.add(dtoMetricEvaluation.getId());
+            Float weight = -1f; // default value --> no weighted factor
+            // when QF is not weighted the weight of metric value is computed as average
+            if (!qualityFactor.isWeighted()) {
+                weight = 1f/metricList.size();
+            } else { // when QF is weighted the weight of metric has corresponding value
+                List<String> mw = qualityFactor.getWeightsWithExternalId();
+                weight = Float.parseFloat(mw.get(mw.indexOf(dtoMetricEvaluation.getId()) + 1)) / 100;
+            }
+            // save weights of metrics
+            weights.add(weight);
+
+            if (weight == -1f){
+                values.add(dtoMetricEvaluation.getValue()*1f/metricList.size()); // value for representation (average)
+            } else {
+                values.add(dtoMetricEvaluation.getValue() * weight); // value of weighted metric
+            }
+            labels.add(metricsController.getMetricLabelFromValue(dtoMetricEvaluation.getValue()));
+        }
+        correct = saveMetricQFRelation(project, metricsIds, qualityFactor.getExternalId(), evaluationDate, weights, values, labels, assessmentValueOrLabel);
+        return correct;
+    }
+
+    private boolean saveMetricQFRelation(String prj, List<String> metricsIds, String qf, LocalDate evaluationDate, List<Float> weights, List<Float> metricValues, List<String> metricsLabels, String qfValueOrLabel) throws IOException {
+        // TODO first on QMARelations.java DONE
+        //      then on qma-elastic-0.18 --> evaluation --> relations DONE
+        return qmaRelations.setQualityFactorMetricRelation(prj, metricsIds, qf, evaluationDate, weights, metricValues, metricsLabels, qfValueOrLabel);
+    }
+
+    private String assessQualityFactors(LocalDate evaluationDate, String project, Factor qualityFactor, List<Float> listMetricsAssessmentValues, List<String> qfMetrics, List<String> missingMetrics, long metricsMismatch, String assessmentValueOrLabel) throws IOException, AssessmentErrorException, CategoriesException {
+        if (!listMetricsAssessmentValues.isEmpty()) {
+            float value;
+            List<Float> weights = new ArrayList<>();
+            boolean weighted = qualityFactor.isWeighted();
+            if (weighted) {
+                List<String> metricsWeights = qualityFactor.getWeights();
+                for ( int i = 1; i < metricsWeights.size(); i+=2) {
+                    weights.add(Float.valueOf(metricsWeights.get(i)));
+                }
+                value = assessQF.assessQF_weighted(listMetricsAssessmentValues, weights);
+            } else {
+                value = assessQF.assessQF(listMetricsAssessmentValues, qfMetrics.size());
+            }
+            assessmentValueOrLabel = String.valueOf(value);
+            String info = "metrics: {";
+            for (int j = 0; j < listMetricsAssessmentValues.size(); j++) {
+                String metricInfo = " " + qfMetrics.get(j) + " (value: " +  listMetricsAssessmentValues.get(j) + ", ";
+                if (weighted) metricInfo += "weight: " + weights.get(j).intValue() + "%);";
+                else metricInfo += "no weighted);";
+                info += metricInfo;
+            }
+            if (weighted) {
+                info += " }, formula: weighted average, value: " + value + ", category: " + getFactorLabelFromValue(value);
+            } else {
+                info += " }, formula: average, value: " + value + ", category: " + getFactorLabelFromValue(value);
+            }
+            // saving the QF's assessment
+            // in case of new factor -> indicators list is empty
+            List<String> indicators = new ArrayList<>();
+            // in case of edit factor -> old indicators list is specified
+            for (StrategicIndicatorQualityFactors siqf : strategicIndicatorQualityFactorsRepository.findByQuality_factor(qualityFactor)) {
+                //DTOStrategicIndicatorEvaluation si = strategicIndicatorsController.getSingleStrategicIndicatorsCurrentEvaluation(siqf.getStrategic_indicator().getExternalId(), project);
+                //indicators.add(StrategicIndicator.getHardID(project, si.getId(), si.getDate()));
+                indicators.add(siqf.getStrategic_indicator().getExternalId());
+            }
+            if (!qmaQualityFactors.setQualityFactorValue(
+                    project,
+                    qualityFactor.getExternalId(),
+                    qualityFactor.getName(),
+                    qualityFactor.getDescription(),
+                    value,
+                    info,
+                    evaluationDate,
+                    null,
+                    missingMetrics,
+                    metricsMismatch,
+                    indicators
+            ))
+                throw new AssessmentErrorException();
+        }
+        return assessmentValueOrLabel;
+    }
+
+    // Function for AssessQualityFactor to concrete project
+    public boolean assessQualityFactor(String name, String prj) throws IOException, ProjectNotFoundException {
+        boolean correct = false;
+        // Local date to be used as evaluation date
+        Date input = new Date();
+        LocalDate evaluationDate = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // Strategic Indicator
+        Project project = projectsController.findProjectByExternalId(prj);
+        Factor qf = qualityFactorRepository.findByNameAndProject_Id(name, project.getId());
+
+        // All the metrics' assessment from QMA external service
+        MetricEvaluation metricEvaluationQma = new MetricEvaluation();
+
+        // We will compute the evaluation values for the QF for THIS CONCRETE component
+
+        // TODO 1.- We need to remove old data from metric evaluations in the quality_factors relationship attribute
+        metricEvaluationQma.setMetrics(metricsController.getAllMetricsEvaluation(prj));
+        metricEvaluationQma.clearQualityFactorsRelations(qf.getExternalId());
+        //metricEvaluationQma.clearQualityFactorsRelations(evaluationDate, qf.getExternalId());
+
+        correct = assessQualityFactor(evaluationDate, prj, qf, metricEvaluationQma);
+
+        // 3. When all the quality factors is calculated, we need to update the metrics with the information of
+        // the quality factors using them
+        // TODO setMetricQualityFactorRelation requires modify QMA
+        metricsController.setMetricQualityFactorRelation(metricEvaluationQma.getMetrics(), prj);
+
+        return correct;
     }
 
     public DTOFactorEvaluation getSingleFactorEvaluation(String factorId, String projectExternalId) throws IOException {

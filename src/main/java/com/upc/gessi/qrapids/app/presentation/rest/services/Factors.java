@@ -7,10 +7,8 @@ import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.Factor;
-import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
-import org.apache.commons.io.IOUtils;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,7 +85,7 @@ public class Factors {
                         factor.getExternalId(),
                         factor.getName(),
                         factor.getDescription(),
-                        factor.getMetrics(),
+                        factor.getMetricsIds(),
                         factor.isWeighted(),
                         factor.getWeights());
                 dtoFactorsList.add(dtoFactor);
@@ -109,7 +106,7 @@ public class Factors {
                         factor.getExternalId(),
                         factor.getName(),
                         factor.getDescription(),
-                        factor.getMetrics(),
+                        factor.getMetricsIds(),
                         factor.isWeighted(),
                         factor.getWeights());
 
@@ -131,14 +128,14 @@ public class Factors {
                 Project project = projectsController.findProjectByExternalId(prj);
                 factorsController.saveQualityFactor(name, description, metrics, project);
                 // TODO assessQualityFactor functionality
-                //if (!factorsController.assessQualityFactor(name, prj)) {
-                //    throw new AssessmentErrorException();
-                //}
+                if (!factorsController.assessQualityFactor(name, prj)) {
+                    throw new AssessmentErrorException();
+                }
             }
-        }  // catch (AssessmentErrorException e) {
-           // logger.error(e.getMessage(), e);
-           // throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.ASSESSMENT_ERROR + e.getMessage());
-            catch (Exception e) {
+        }  catch (AssessmentErrorException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.ASSESSMENT_ERROR + e.getMessage());
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
@@ -162,19 +159,17 @@ public class Factors {
                 Factor oldFactor = factorsController.getQualityFactorById(id);
                 factorsController.editQualityFactor(oldFactor.getId(), name, description, qualityMetrics);
                 // TODO assessQualityFactor functionality
-                /*
                 if (!factorsController.assessQualityFactor(name, oldFactor.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }
-                 */
             }
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
-        } /* catch (AssessmentErrorException e) {
+        } catch (AssessmentErrorException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.ASSESSMENT_ERROR + e.getMessage());
-        }*/ catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Integrity violation: " + e.getMessage());
         } catch (Exception e) {

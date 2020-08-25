@@ -1,16 +1,15 @@
 package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 
-import DTOs.EvaluationDTO;
-import DTOs.FactorEvaluationDTO;
-import DTOs.FactorMetricEvaluationDTO;
+import DTOs.*;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import evaluation.Factor;
 import evaluation.StrategicIndicator;
+import org.elasticsearch.rest.RestStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import util.Queries;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -26,6 +25,70 @@ public class QMAQualityFactors {
 
     @Autowired
     private QFCategoryRepository QFCatRep;
+
+
+    public boolean prepareQFIndex(String projectExternalId) throws IOException {
+        qmacon.initConnexion();
+        // TODO in qma-elastic-0.18
+        //  DONE
+        return Queries.prepareQFIndex(projectExternalId);
+    }
+
+    public boolean setQualityFactorValue(String prj,
+                                         String qualityFactorID,
+                                         String qualityFactorName,
+                                         String qualityFactorDescription,
+                                         Float value,
+                                         String info,
+                                         LocalDate date,
+                                         List<DTOQFAssessment> assessment,
+                                         List<String> missingMetrics,
+                                         long dates_mismatch,
+                                         List<String> indicators
+    ) throws IOException {
+
+        RestStatus status;
+        if (assessment == null) {
+            // TODO in qma-elastic-0.18
+            //  DONE
+            status = Factor.setFactorEvaluation(prj,
+                    qualityFactorID,
+                    qualityFactorName,
+                    qualityFactorDescription,
+                    value,
+                    info,
+                    date,
+                    null,
+                    missingMetrics,
+                    dates_mismatch,
+                    indicators)
+                    .status();
+        } else {
+            // TODO in qma-elastic-0.18
+            //  DONE
+            status = Factor.setFactorEvaluation(prj,
+                    qualityFactorID,
+                    qualityFactorName,
+                    qualityFactorDescription,
+                    value,
+                    info,
+                    date,
+                    listDTOQFAssessmentToEstimationEvaluationDTO(assessment),
+                    missingMetrics,
+                    dates_mismatch,
+                    indicators)
+                    .status();
+        }
+        return status.equals(RestStatus.OK) || status.equals(RestStatus.CREATED);
+    }
+
+    private EstimationEvaluationDTO listDTOQFAssessmentToEstimationEvaluationDTO(List<DTOQFAssessment> assessment) {
+        List<QuadrupletDTO<Integer, String, Float, Float>> estimation = new ArrayList<>();
+        for (DTOQFAssessment dsa : assessment) {
+            estimation.add(new QuadrupletDTO<Integer, String, Float, Float>(dsa.getId() != null ? dsa.getId().intValue() : null, dsa.getLabel(), dsa.getValue(), dsa.getUpperThreshold()));
+        }
+        return new EstimationEvaluationDTO(estimation);
+    }
 
     public List<DTODetailedFactorEvaluation> CurrentEvaluation(String id, String prj) throws IOException {
         qmacon.initConnexion();
@@ -79,39 +142,37 @@ public class QMAQualityFactors {
     }
 
     public void setFactorStrategicIndicatorRelation(List<DTOFactorEvaluation> factors, String prj) throws IOException {
-
         qmacon.initConnexion();
-        List<FactorEvaluationDTO> qma_factors = FactorEvaluationDTOFactortoDTO(factors, prj);
+        List<FactorEvaluationDTO> qma_factors = FactorEvaluationDTOtoDTOFactor(factors, prj);
         Factor.setStrategicIndicatorRelation(qma_factors);
     }
 
-    private static List<FactorEvaluationDTO> FactorEvaluationDTOFactortoDTO(List<DTOFactorEvaluation> factors, String prj)
+    private static List<FactorEvaluationDTO> FactorEvaluationDTOtoDTOFactor(List<DTOFactorEvaluation> factors, String prj)
     {
-        List<FactorEvaluationDTO> qf = new ArrayList<>();
-        List <EvaluationDTO> eval = new ArrayList<>();
+        List<FactorEvaluationDTO> f = new ArrayList<>();
 
         // - list of factors (first iterator/for)
         for (Iterator<DTOFactorEvaluation> iterFactors = factors.iterator(); iterFactors.hasNext(); )
         {
+            List <EvaluationDTO> eval = new ArrayList<>();
             // For each factor, we have the factor information
             DTOFactorEvaluation factor = iterFactors.next();
 
-            eval.clear();
             eval.add(new EvaluationDTO(factor.getId(),
-                                        factor.getDatasource(),
-                                        factor.getDate(),
-                                        factor.getValue(),
-                                        factor.getRationale()));
+                    factor.getDatasource(),
+                    factor.getDate(),
+                    factor.getValue(),
+                    factor.getRationale()));
 
-            qf.add(new FactorEvaluationDTO(factor.getId(),
-                                            factor.getName(),
-                                            factor.getDescription(),
-                                            prj,
-                                            eval,
-                                            factor.getStrategicIndicators())
+            f.add(new FactorEvaluationDTO(factor.getId(),
+                    factor.getName(),
+                    factor.getDescription(),
+                    prj,
+                    eval,
+                    factor.getStrategicIndicators())
             );
         }
-        return qf;
+        return f;
 
     }
     private static List<DTODetailedFactorEvaluation> FactorMetricEvaluationDTOListToDTOQualityFactorList(List<FactorMetricEvaluationDTO> evals) {

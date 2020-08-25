@@ -102,7 +102,7 @@ public class StrategicIndicatorsController {
         List<StrategicIndicatorQualityFactors> newQualityFactorsWeights = new ArrayList();
         // Delete oldQualityFactorsWeights
         List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findByStrategic_indicator(strategicIndicator);
-        strategicIndicator.setQuality_factors(null);
+        strategicIndicator.setStrategicIndicatorQualityFactorsList(null);
         for (StrategicIndicatorQualityFactors old : oldQualityFactorsWeights) {
             strategicIndicatorQualityFactorsController.deleteStrategicIndicatorQualityFactor(old.getId());
         }
@@ -128,7 +128,7 @@ public class StrategicIndicatorsController {
             qualityFactors.remove(0);
         }
         // create the association between Strategic Indicator and its Quality Factors
-        strategicIndicator.setQuality_factors(newQualityFactorsWeights);
+        strategicIndicator.setStrategicIndicatorQualityFactorsList(newQualityFactorsWeights);
         return weighted;
     }
 
@@ -168,7 +168,7 @@ public class StrategicIndicatorsController {
             qualityFactors.remove(0);
         }
         // create the association between Strategic Indicator and its Quality Factors
-        strategicIndicator.setQuality_factors(qualityFactorsWeights);
+        strategicIndicator.setStrategicIndicatorQualityFactorsList(qualityFactorsWeights);
         return weighted;
     }
 
@@ -317,11 +317,13 @@ public class StrategicIndicatorsController {
         boolean correct = true;
 
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
-        factorEvaluationQMA.clearStrategicIndicatorsRelations(evaluationDate);
+        //factorEvaluationQMA.clearStrategicIndicatorsRelations(evaluationDate);
 
         // 2.- We will compute the evaluation values for the SIs, adding the corresponding relations to the factors
         //      used for these computation
         for (Strategic_Indicator si : strategicIndicatorIterable) {
+            // TODO
+            factorEvaluationQMA.clearStrategicIndicatorsRelations(si.getExternalId());
             correct = assessStrategicIndicator(evaluationDate, projectExternalId, si, factorEvaluationQMA);
         }
 
@@ -351,7 +353,7 @@ public class StrategicIndicatorsController {
         for (String prj: projects) {
             // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
             factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj));
-            factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, name);
+            factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
 
             correct = assessStrategicIndicator(evaluationDate, prj, si, factorEvaluationQma);
 
@@ -381,7 +383,8 @@ public class StrategicIndicatorsController {
 
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
         factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj));
-        factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, name);
+        factorEvaluationQma.clearStrategicIndicatorsRelations(si.getExternalId());
+        //factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
 
         correct = assessStrategicIndicator(evaluationDate, prj, si, factorEvaluationQma);
 
@@ -408,6 +411,7 @@ public class StrategicIndicatorsController {
 
         // We need to identify the factors in factors_qma that are used to compute SI
         Map<String,String> mapSIFactors = new HashMap<>();
+        // TODO devuelve mal los quality factors
         siFactors = strategicIndicator.getQuality_factors();
         factorsMismatch = buildFactorsInfoAndCalculateMismatch(evaluationDate, project, strategicIndicator, factorEvaluationQMA, listFactorsAssessmentValues, siFactors, factorList, missingFactors, factorsMismatch, mapSIFactors);
 
@@ -519,7 +523,6 @@ public class StrategicIndicatorsController {
             // this factor will be added to the missing factors list
             index =0;
             factorFound = false;
-            // TODO review missing factors
             while (!factorFound && index < factorEvaluationQMA.getFactors().size()){
                 factor = factorEvaluationQMA.getFactors().get(index++);
                 if (factor.getId().equals(qfId)) {
@@ -527,7 +530,9 @@ public class StrategicIndicatorsController {
                     factorList.add(factor);
                     listFactorsAssessmentValues.add(factor.getValue());
                     mapSIFactors.put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue()));
-                    factor.addStrategicIndicator(StrategicIndicator.getHardID(project, strategicIndicator.getExternalId(), evaluationDate));
+                    // TODO using getHardID or not
+                    factor.addStrategicIndicator(strategicIndicator.getExternalId());
+                    //factor.addStrategicIndicator(StrategicIndicator.getHardID(project, strategicIndicator.getExternalId(), evaluationDate));
                     // If there is some missing days, we keep the maximum gap to be materialised
                     long mismach = DAYS.between(factor.getDate(), evaluationDate);
                     if (mismach > factorsMismatch)
@@ -555,7 +560,7 @@ public class StrategicIndicatorsController {
                 if (!strategicIndicator.isWeighted()) {
                     weight = 1f/factorList.size();
                 } else { // when SI is weighted the weight of factor has corresponding value
-                    List<String> qfw = strategicIndicator.getWeights();
+                    List<String> qfw = strategicIndicator.getWeightsWithExternalId();
                     weight = Float.parseFloat(qfw.get(qfw.indexOf(dtoFactorEvaluation.getId()) + 1)) / 100;
                 }
             }

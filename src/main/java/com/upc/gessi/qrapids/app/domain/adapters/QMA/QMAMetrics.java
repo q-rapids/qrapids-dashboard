@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.EvaluationDTO;
 import DTOs.MetricEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import evaluation.Factor;
 import evaluation.Metric;
@@ -83,14 +84,63 @@ public class QMAMetrics {
         return m;
     }
 
+    // TODO add list of factors using the metric
+    //  DONE
     private static DTOMetricEvaluation MetricEvaluationDTOToDTOMetric(MetricEvaluationDTO metric, EvaluationDTO evaluation) {
         return new DTOMetricEvaluation(metric.getID(),
                 metric.getName(),
                 metric.getDescription(),
                 evaluation.getDatasource(),
                 evaluation.getRationale(),
+                metric.getFactors(),
                 evaluation.getEvaluationDate(),
                 evaluation.getValue());
+    }
+
+    // TODO implement this function
+    public void setMetricQualityFactorRelation(List<DTOMetricEvaluation> metricList, String projectExternalId) throws IOException {
+        qmacon.initConnexion();
+        List<MetricEvaluationDTO> qma_metrics = MetricEvaluationDTOtoDTOMetric(metricList, projectExternalId);
+        // TODO in qrapids-qma-elastic-0.18 -> evaluation -> Metric
+        //  DONE
+        Metric.setQualityFactorsRelation(qma_metrics);
+    }
+
+    // TODO with MetricEvaluationDTO
+    //  DONE
+    private static List<MetricEvaluationDTO> MetricEvaluationDTOtoDTOMetric(List<DTOMetricEvaluation> metrics, String prj)
+    {
+        List<MetricEvaluationDTO> m = new ArrayList<>();
+
+
+        // - list of metrics (first iterator/for)
+        for (Iterator<DTOMetricEvaluation> iterMetrics = metrics.iterator(); iterMetrics.hasNext(); )
+        {
+            List <EvaluationDTO> eval = new ArrayList<>();
+            // For each metric, we have the metric information
+            DTOMetricEvaluation metric = iterMetrics.next();
+
+            eval.add(new EvaluationDTO(metric.getId(),
+                                        metric.getDatasource(),
+                                        metric.getDate(),
+                                        metric.getValue(),
+                                        metric.getRationale()));
+
+            m.add(new MetricEvaluationDTO(metric.getId(),
+                                            metric.getName(),
+                                            metric.getDescription(),
+                                            prj,
+                                            eval,
+                                            metric.getQualityFactors())
+            );
+        }
+        return m;
+
+    }
+
+    public List<DTOMetricEvaluation> getAllMetrics(String prj) throws IOException {
+        qmacon.initConnexion();
+        return MetricEvaluationDTOListToDTOMetricList(Metric.getEvaluations(prj));
     }
 
 }

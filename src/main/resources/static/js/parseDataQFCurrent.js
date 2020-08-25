@@ -31,6 +31,8 @@ function getData() {
         type: "GET",
         async: true,
         success: function (data) {
+            console.log("getData() in QF Current");
+            console.log(data);
             for (i = 0; i < data.length; ++i) {
                 //for each qf save name to titles vector and id to ids vector
                 titles.push(data[i].name);

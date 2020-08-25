@@ -215,7 +215,6 @@ function openEdit() {  // This function is called by the checkbox click
 
 
 $("#QFweightEditButton").click(function () { // (...) btn
-    var wff = String(weightsForMetrics).split(",");
     var selector = getSelectedMetrics(false);
     if (selector.length > 0) {
         $("#QFweightsItems").empty();
@@ -232,8 +231,8 @@ $("#QFweightEditButton").click(function () { // (...) btn
                 }
                 j++;
             }
-            if (wff.includes(m)) {
-                $("#QFweightsItems").append('<tr class="weightItem"><td>' + selectedMetric + '</td><td id="' + id + '" contenteditable="true">' + Math.floor(wff[wff.indexOf(m)+1]) +'</tdid>');
+            if (weightsForMetrics.includes(m)) {
+                $("#QFweightsItems").append('<tr class="weightItem"><td>' + selectedMetric + '</td><td id="' + id + '" contenteditable="true">' + Math.floor(weightsForMetrics[weightsForMetrics.indexOf(m)+1]) +'</tdid>');
             } else {
                 $("#QFweightsItems").append('<tr class="weightItem"><td>' + selectedMetric + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
             }
@@ -320,12 +319,11 @@ $('#QFweightCheckbox').change(function(){
 
 function checkTotalSum () {
     var qualityMetrics = getSelectedMetrics(false);
-    var wff = String(weightsForMetrics).split(",");
     var totalSum = 0;
     for (var i = 0; i < qualityMetrics.length; i++){
-        if (wff.includes(qualityMetrics[i])) totalSum += parseFloat(wff[wff.indexOf(qualityMetrics[i])+1]);
+        if (weightsForMetrics.includes(qualityMetrics[i])) totalSum += parseFloat(weightsForMetrics[weightsForMetrics.indexOf(qualityMetrics[i])+1]);
     }
-    return totalSum == 100 && (qualityMetrics.length == wff.length/2);
+    return totalSum == 100 && (qualityMetrics.length == weightsForMetrics.length/2);
 }
 
 $("#saveQF").click(function () {
@@ -370,7 +368,7 @@ $("#saveQF").click(function () {
                 }
             },
             success: function() {
-                //location.href = "../QualityFactors/Configuration";
+                location.href = "../QualityFactors/Configuration";
             }
         });
     } else alert("Make sure that you have completed correctly all fields marked with an *");

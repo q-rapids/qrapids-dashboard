@@ -119,10 +119,28 @@ public class Factor {
         return metricsWeights;
     }
 
-    public List<String> getMetrics() {
+    public List<String> getWeightsWithExternalId() {
+        List<String> metricsWeights = new ArrayList<>();
+        for (int i = 0; i < this.qualityFactorMetricsList.size(); i ++) {
+            metricsWeights.add(String.valueOf(this.qualityFactorMetricsList.get(i).getMetric().getExternalId()));
+            metricsWeights.add(String.valueOf(this.qualityFactorMetricsList.get(i).getWeight()));
+        }
+        // list with metric external id and its corresponding weight
+        return metricsWeights;
+    }
+
+    public List<String> getMetricsIds() {
         List<String> metrics_ids = new ArrayList<>();
         for (int i = 0; i < this.qualityFactorMetricsList.size(); i ++) {
             metrics_ids.add(String.valueOf(this.qualityFactorMetricsList.get(i).getMetric().getId()));
+        }
+        return metrics_ids;
+    }
+
+    public List<String> getMetrics() {
+        List<String> metrics_ids = new ArrayList<>();
+        for (int i = 0; i < this.qualityFactorMetricsList.size(); i ++) {
+            metrics_ids.add(String.valueOf(this.qualityFactorMetricsList.get(i).getMetric().getExternalId()));
         }
         return metrics_ids;
     }

@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name="strategic_indicator_quality_factors",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"strategic_indicator_id", "quality_factor_id"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"strategic_indicator_id", "factor_id"}))
 public class StrategicIndicatorQualityFactors implements Serializable {
 
     // SerialVersion UID
@@ -16,7 +16,7 @@ public class StrategicIndicatorQualityFactors implements Serializable {
     private Long id;
 
     @ManyToOne
-    private Factor quality_factor;
+    private Factor factor;
 
     @Column(name = "weight")
     private Float weight;
@@ -28,7 +28,7 @@ public class StrategicIndicatorQualityFactors implements Serializable {
     }
 
     public StrategicIndicatorQualityFactors(Factor qualityFactor, float weight, Strategic_Indicator strategicIndicator) {
-        setQuality_factor(qualityFactor);
+        setFactor(qualityFactor);
         setWeight(weight);
         setStrategic_indicator(strategicIndicator);
     }
@@ -45,12 +45,12 @@ public class StrategicIndicatorQualityFactors implements Serializable {
         return strategic_indicator;
     }
 
-    public void setQuality_factor(Factor qualityFactor) {
-        this.quality_factor = qualityFactor;
+    public void setFactor(Factor qualityFactor) {
+        this.factor = qualityFactor;
     }
 
-    public Factor getQuality_factor() {
-        return quality_factor;
+    public Factor getFactor() {
+        return factor;
     }
 
     public void setWeight(float weight) {

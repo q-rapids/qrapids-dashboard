@@ -392,7 +392,8 @@ public class StrategicIndicators {
     private enum TrainType {
         NONE, ONE, ALL
     }
-//TODO: assessSI
+
+    // assess Strategic Indicators function legacy
     @RequestMapping("/api/assessStrategicIndicators")
     @ResponseStatus(HttpStatus.OK)
     public void assesStrategicIndicatorsLegacy(@RequestParam(value = "prj", required=false) String prj,
@@ -408,33 +409,35 @@ public class StrategicIndicators {
                                          @RequestParam(value = "from", required=false) String from,
                                          @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType) {
         boolean correct = true;
+        LocalDate dateFrom = null;
 
         try {
 
             if (from != null && !from.isEmpty()) {
-                LocalDate dateFrom = LocalDate.parse(from, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                // TODO first assess Factors
+                dateFrom = LocalDate.parse(from, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            }
+            // TODO first assess Factors
+            correct = factorsController.assessQualityFactors(prj, dateFrom);
+            if (correct)
                 correct = strategicIndicatorsController.assessStrategicIndicators(prj, dateFrom);
-            }
-            else
-                correct = strategicIndicatorsController.assessStrategicIndicators(prj, null);
 
-            // Train forecast models
-            if (trainType != TrainType.NONE) {
-                String technique = null;
-                if (trainType == TrainType.ONE) {
-                    technique = forecastTechnique;
+            if(correct) {
+                // Train forecast models
+                if (trainType != TrainType.NONE) {
+                    String technique = null;
+                    if (trainType == TrainType.ONE) {
+                        technique = forecastTechnique;
+                    }
+                    if (prj == null) {
+                        strategicIndicatorsController.trainForecastModelsAllProjects(technique);
+                    } else {
+                        strategicIndicatorsController.trainForecastModelsSingleProject(prj, technique);
+                    }
                 }
-                if (prj == null) {
-                    strategicIndicatorsController.trainForecastModelsAllProjects(technique);
-                } else {
-                    strategicIndicatorsController.trainForecastModelsSingleProject(prj, technique);
-                }
-            }
-
-            if (!correct) {
+            } else {
                 throw new AssessmentErrorException();
             }
+
         } catch (AssessmentErrorException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.ASSESSMENT_ERROR + e.getMessage());

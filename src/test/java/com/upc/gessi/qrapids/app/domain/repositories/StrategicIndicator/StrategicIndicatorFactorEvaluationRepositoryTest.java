@@ -75,7 +75,7 @@ public class StrategicIndicatorFactorEvaluationRepositoryTest {
     private List<String> convertToString (List<StrategicIndicatorQualityFactors> strategicIndicatorQualityFactorsList) {
         List <String> siqfList = new ArrayList<>();
         for (StrategicIndicatorQualityFactors s : strategicIndicatorQualityFactorsList) {
-            siqfList.add(s.getQuality_factor());
+            siqfList.add(s.getFactor());
             siqfList.add(String.valueOf(s.getWeight()));
         }
         return siqfList;
