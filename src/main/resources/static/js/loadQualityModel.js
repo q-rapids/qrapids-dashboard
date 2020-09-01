@@ -32,14 +32,14 @@ function buildTree(strategicIndicators) {
     for (var i = 0; i < strategicIndicators.length; i++) {
         var strategicIndicator = strategicIndicators[i];
         var node = createNode(strategicIndicator, siColor, strategicIndicator.color);
-        if (!qmnodes.has(strategicIndicator.id))
+        if (!qmnodes.has(strategicIndicator.id) && sessionStorage.getItem("profile_qualitylvl") == "ALL")
             qmnodes.set(strategicIndicator.id, node);
         for (var j = 0; j < strategicIndicator.factors.length; j++) {
             var factor = strategicIndicator.factors[j];
             var node = createNode(factor, factorColor, factorColor);
             if (!qmnodes.has(factor.id))
                 qmnodes.set(factor.id, node);
-            if (!qmedges.has(factor.id+"-"+strategicIndicator.id))
+            if (!qmedges.has(factor.id+"-"+strategicIndicator.id) && sessionStorage.getItem("profile_qualitylvl") == "ALL")
                 qmedges.set(factor.id+"-"+strategicIndicator.id, createEdge(factor, strategicIndicator));
             for (var k = 0; k < factor.metrics.length; k++) {
                 var metric = factor.metrics[k];

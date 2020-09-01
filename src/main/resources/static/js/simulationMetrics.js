@@ -605,6 +605,11 @@ window.onload = function() {
     $("#currentColorFactors").css("background-color", currentColor);
     getAllMetrics();
     getFactors();
-    getDetailedStrategicIndicators();
-    getData(200, 237, false, false, currentColor);
+    if (sessionStorage.getItem("profile_qualitylvl") == "ALL") {
+        getDetailedStrategicIndicators();
+        getData(200, 237, false, false, currentColor);
+    } else { // in case of metrics&factors profile quality level we only show factors info
+        document.getElementById("radarDetailed").hidden = true;
+        document.getElementById("gaugeChart").hidden = true;
+    }
 };

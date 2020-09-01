@@ -163,7 +163,7 @@ function showProjectSelector (projects) {
                     if (currentURL.search("/Prediction") !== -1)
                         url = serverUrl+ "/QualityFactors/PredictionChart";
                     else if (currentURL.search("/Simulation") !== -1)
-                        url = serverUrl+ "/Simulation/QualityFactors";
+                        url = serverUrl+ "/Simulation/Metrics";
                     else
                         url = serverUrl+ "/QualityFactors/" + time + viewMode;
                 }

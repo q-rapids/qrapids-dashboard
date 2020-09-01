@@ -269,7 +269,12 @@ function clickOnTree(e){
             allowedSIsCol.setAttribute('style', 'width: 100%');
             var allowedSIsP = document.createElement('p');
             allowedSIsP.appendChild(document.createTextNode("Allowed Strategic Indicators: "));
-            allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+            allowedSIsP.setAttribute('id', 'allowedSIsP');
+            if (inputMetrics.checked || inputMetricsFactors.checked) { // put it in grey color if it's not ALL quality level
+                allowedSIsP.setAttribute('style', 'color:grey; font-size: 18px; margin-bottom: 1%');
+            } else {
+                allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+            }
             var selSIsBtn = document.createElement('button');
             selSIsBtn.classList.add("btn");
             selSIsBtn.setAttribute('id', 'selSIsBtn');
@@ -477,6 +482,7 @@ function newProfile() {
     allowedSIsCol.setAttribute('style', 'width: 100%');
     var allowedSIsP = document.createElement('span');
     allowedSIsP.appendChild(document.createTextNode("Step 2.3 - Allowed Strategic Indicators: "));
+    allowedSIsP.setAttribute('id', 'allowedSIsP');
     allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
     var selSIsBtn = document.createElement('button');
     selSIsBtn.classList.add("btn");
@@ -927,6 +933,13 @@ function updateQualityLevel() {
     projectSIs = [];
     // disable button to edit SIs for project of profile
     document.getElementById('selSIsBtn').disabled = true;
+    // set grey color for title when SI selection is not allowed
+    var allowedSIsP = document.getElementById('allowedSIsP');
+    if ($("input[name=qualityLevelForm]:checked").val() == "ALL") {
+        allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+    } else {
+        allowedSIsP.setAttribute('style', 'color: grey; font-size: 18px; margin-bottom: 1%');
+    }
 }
 
 function moveProjectItemsLeft() {
