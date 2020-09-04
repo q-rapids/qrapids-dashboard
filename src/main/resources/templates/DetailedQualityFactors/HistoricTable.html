@@ -12,7 +12,7 @@
     <br/>
     <br/>
     <h1 id="title" align="center"></h1>
-    <p th:replace="Fragments/TemplateDashboard :: navLinkQF"></p>
+    <p th:replace="Fragments/TemplateDashboard :: navLinkDetailedQF"></p>
     <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
         <form class="form-inline well" style="float: right">
             <div class="form-group">
@@ -23,15 +23,15 @@
                 <label class="control-label"> To: </label>
                 <input id="datepickerTo" width="250" class="form-control"/>
             </div>
-            <button type="button" class="btn btn-default" ng-click="getFactorQualityHistoric()" ng-init="getFactorQualityHistoric()">Apply</button>
+            <button type="button" class="btn btn-default" ng-click="getDetailedFactorQualityHistoric()" ng-init="getDetailedFactorQualityHistoric()">Apply</button>
             <div class="form-group dropdown">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right">
-                    <li><a onclick="thisWeek()" ng-click="getFactorQualityHistoric()" href="#">This week</a></li>
-                    <li><a onclick="last7Days()" ng-click="getFactorQualityHistoric()" href="#">Last 7 days</a></li>
-                    <li><a onclick="last14Days()" ng-click="getFactorQualityHistoric()" href="#">Last 14 days</a></li>
-                    <li><a onclick="thisMonth()" ng-click="getFactorQualityHistoric()" href="#">This month</a></li>
-                    <li><a onclick="thisYear()" ng-click="getFactorQualityHistoric()" href="#">This year</a></li>
+                    <li><a onclick="thisWeek()" ng-click="getDetailedFactorQualityHistoric()" href="#">This week</a></li>
+                    <li><a onclick="last7Days()" ng-click="getDetailedFactorQualityHistoric()" href="#">Last 7 days</a></li>
+                    <li><a onclick="last14Days()" ng-click="getDetailedFactorQualityHistoric()" href="#">Last 14 days</a></li>
+                    <li><a onclick="thisMonth()" ng-click="getDetailedFactorQualityHistoric()" href="#">This month</a></li>
+                    <li><a onclick="thisYear()" ng-click="getDetailedFactorQualityHistoric()" href="#">This year</a></li>
                 </ul>
             </div>
         </form>
@@ -50,9 +50,15 @@
                         <span class="caret"></span>
                     </span>
                 </th>
-                <th ng-click="sortBy('name')">Factor
-                    <span ng-show="sortType == 'name' &amp;&amp; sortReverse" class="caret"></span>
-                    <span ng-show="sortType == 'name' &amp;&amp; !sortReverse" class="dropup">
+                <th ng-click="sortBy('factorName')">Factor
+                    <span ng-show="sortType == 'factorName' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'factorName' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('metricName')">Metric
+                    <span ng-show="sortType == 'metricName' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'metricName' &amp;&amp; !sortReverse" class="dropup">
                         <span class="caret"></span>
                     </span>
                 </th>
@@ -68,13 +74,7 @@
                         <span class="caret"></span>
                     </span>
                 </th>
-                <!--th ng-click="sortBy('categories')">Categories
-                    <span ng-show="sortType == 'categories' &amp;&amp; sortReverse" class="caret"></span>
-                    <span ng-show="sortType == 'categories' &amp;&amp; !sortReverse" class="dropup">
-                        <span class="caret"></span>
-                    </span>
-                </th-->
-                <th ng-click="sortBy('rationale')">Rationale
+                <th ng-click="sortBy('rationale')">Rationale (Metric)
                     <span ng-show="sortType == 'rationale' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'rationale' &amp;&amp; !sortReverse" class="dropup">
                         <span class="caret"></span>
@@ -84,12 +84,12 @@
             </thead>
             <tbody>
             <tr ng-repeat-start="d in data | filter:f | orderBy:sortType:sortReverse"></tr>
-                <td id="date">{{d.date}}</td>
-                <td id="name" ng-click="getURL(d.id, d.name, null, '../DetailedQualityFactors/HistoricTable', true)">{{d.name}}</td>
-                <td id="description" >{{d.description}}</td>
-                <td id="value" ng-class="{'color-red': (d.lowerThreshold > d.value.first), 'color-green': (d.value.first > d.upperThreshold)}">{{d.value}}</td>
-                <!--td id="categories">{{d.categories}}</td-->
-                <td id="rationale">{{d.rationale}}</td>
+                <td>{{d.date}}</td>
+                <td ng-click="getURL(d.id, d.factorName, fact, '../Metrics/HistoricTable', false, true)">{{d.factorName}}</td>
+                <td>{{d.metricName}}</td>
+                <td>{{d.description}}</td>
+                <td>{{d.value}}</td>
+                <td>{{d.rationale}}</td>
             <tr ng-repeat-end="d in data"></tr>
             </tbody>
         </table>

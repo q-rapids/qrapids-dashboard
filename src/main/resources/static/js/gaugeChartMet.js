@@ -9,9 +9,9 @@ var tau = Math.PI / 2;
 
 var url;
 if (getParameterByName('id').length !== 0) {
-    url = parseURLMetrics("../api/qualityFactors/metrics/current");
+    url = parseURLComposed("../api/qualityFactors/metrics/current");
 } else {
-    url = parseURLMetrics("../api/metrics/current");
+    url = parseURLComposed("../api/metrics/current");
 }
 
 var urlLink;

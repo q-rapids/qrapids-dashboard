@@ -1,5 +1,7 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
+import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -24,6 +26,8 @@ public class DTOFactorEvaluation {
     private String rationale;
     private List<String> strategic_indicators;
     private String forecastingError;
+    private int mismatchDays;
+    private List<String> missingMetrics;
 
     /**
      * Constructor of the DTO of Factors
@@ -103,7 +107,6 @@ public class DTOFactorEvaluation {
             this.description = description;
     }
     public void setValue(Float value) {
-
         this.value = value;
         setValue_description(value);
     }
@@ -111,7 +114,7 @@ public class DTOFactorEvaluation {
     public String getDescription() {return this.description; }
 
     private void setValue_description(Float value) {
-        value_description = String.format("%.2f", value);
+        value_description = String.format("%.2f",value);
     }
 
     public void setDate(LocalDate date) {
@@ -146,5 +149,21 @@ public class DTOFactorEvaluation {
 
     public void setForecastingError(String forecastingError) {
         this.forecastingError = forecastingError;
+    }
+
+    public int getMismatchDays() {
+        return mismatchDays;
+    }
+
+    public void setMismatchDays(int mismatchDays) {
+        this.mismatchDays = mismatchDays;
+    }
+
+    public List<String> getMissingMetrics() {
+        return missingMetrics;
+    }
+
+    public void setMissingMetrics(List<String> missingMetrics) {
+        this.missingMetrics = missingMetrics;
     }
 }

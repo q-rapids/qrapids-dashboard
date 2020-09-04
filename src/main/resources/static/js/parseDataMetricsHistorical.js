@@ -1,12 +1,13 @@
 var isSi = false;
 var isdsi = false;
 var isqf = false;
+var isdqf = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
-    url = parseURLMetrics("../api/qualityFactors/metrics/historical");
+    url = parseURLComposed("../api/qualityFactors/metrics/historical");
 } else {
-    url = parseURLMetrics("../api/metrics/historical");
+    url = parseURLComposed("../api/metrics/historical");
 }
 
 //initialize data vectors

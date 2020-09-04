@@ -148,13 +148,16 @@ public class QMADetailedStrategicIndicators {
     }
 
     static DTOFactorEvaluation FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
-        return new DTOFactorEvaluation(
+        DTOFactorEvaluation factorEval = new DTOFactorEvaluation(
                 factor.getID(),
                 factor.getName(),
                 factor.getDescription(),
                 evaluation.getValue(), evaluation.getEvaluationDate(),
                 evaluation.getDatasource(),evaluation.getRationale(),
                 factor.getStrategicIndicators());
+        factorEval.setMismatchDays(evaluation.getMismatchDays());
+        factorEval.setMissingMetrics(evaluation.getMissingElements());
+        return factorEval;
     }
 
 

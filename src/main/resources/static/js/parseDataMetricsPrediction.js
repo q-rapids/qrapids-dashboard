@@ -4,9 +4,9 @@ var isqf = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
-    url = parseURLMetrics("../api/qualityFactors/metrics/prediction");
+    url = parseURLComposed("../api/qualityFactors/metrics/prediction");
 } else {
-    url = parseURLMetrics("../api/metrics/prediction");
+    url = parseURLComposed("../api/metrics/prediction");
 }
 
 //initialize data vectors

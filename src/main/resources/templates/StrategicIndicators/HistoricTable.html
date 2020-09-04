@@ -84,7 +84,7 @@
                     <td id="date">{{d.date}}</td>
                     <td id="name" ng-click="getURL(d.id, d.name, null, '../DetailedStrategicIndicators/HistoricTable', false)">{{d.name}}</td>
                     <td id="description" >{{d.description}}</td>
-                    <td id="value" ng-class="{'color-red': (d.lowerThreshold > d.value.first), 'color-green': (d.value.first > d.upperThreshold)}">{{d.value}}</td>
+                    <td id="value" ng-class="{'color-red': (d.lowerThreshold > d.value), 'color-green': (d.value > d.upperThreshold)}">{{d.value}}</td>
                     <td id="categories">{{d.categories}}</td>
                     <td id="rationale">{{d.rationale}}</td>
                 </tr>

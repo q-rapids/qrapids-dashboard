@@ -17,6 +17,7 @@ import evaluation.StrategicIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -94,6 +95,14 @@ public class FactorsController {
     }
 
     // TODO new functions
+    public String buildDescriptiveLabelAndValue(Float value) {
+        String labelAndValue = getFactorLabelFromValue(value);
+        String numeric_value = String.format(Locale.ENGLISH, "%.2f", value);
+        labelAndValue += " (" + numeric_value + ')';
+        return labelAndValue;
+    }
+
+
     public Factor findFactorByExternalIdAndProjectId(String externalId, Long prjId) throws QualityFactorNotFoundException {
         Factor factor = qualityFactorRepository.findByExternalIdAndProjectId(externalId,prjId);
         if (factor == null) {
@@ -573,7 +582,7 @@ public class FactorsController {
         qmaQualityFactors.setFactorStrategicIndicatorRelation(factorList, projectExternalId);
     }
 
-    public String getFactorLabelFromValue (Float f) {
+    public String getFactorLabelFromValue(Float f) {
         List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
         if (f != null) {
             for (QFCategory qfCategory : qfCategoryList) {
