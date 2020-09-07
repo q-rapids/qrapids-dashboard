@@ -270,7 +270,7 @@ function clickOnTree(e){
             var allowedSIsP = document.createElement('p');
             allowedSIsP.appendChild(document.createTextNode("Allowed Strategic Indicators: "));
             allowedSIsP.setAttribute('id', 'allowedSIsP');
-            if (inputMetrics.checked || inputMetricsFactors.checked) { // put it in grey color if it's not ALL quality level
+            if (inputMetrics.checked) { // put it in grey color if it's METRICS quality level
                 allowedSIsP.setAttribute('style', 'color:grey; font-size: 18px; margin-bottom: 1%');
             } else {
                 allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
@@ -837,7 +837,7 @@ $("#submitProfileProjectSelectSIsModalBtn").click(function () {
 });
 
 function showSIsList() {
-    if (qualityLevel == 'ALL') {
+    if (qualityLevel != 'METRICS') {
         var allowedProjectsBox = document.getElementById("allowedProjectsBox");
         var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
         prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
@@ -935,10 +935,10 @@ function updateQualityLevel() {
     document.getElementById('selSIsBtn').disabled = true;
     // set grey color for title when SI selection is not allowed
     var allowedSIsP = document.getElementById('allowedSIsP');
-    if ($("input[name=qualityLevelForm]:checked").val() == "ALL") {
-        allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
-    } else {
+    if ($("input[name=qualityLevelForm]:checked").val() == "METRICS") {
         allowedSIsP.setAttribute('style', 'color: grey; font-size: 18px; margin-bottom: 1%');
+    } else {
+        allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
     }
 }
 
