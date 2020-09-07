@@ -160,6 +160,7 @@ function showProjectSelector (projects) {
                     sessionStorage.setItem("configuration", "Categories");
                     sessionStorage.setItem("assessment", "QualityFactors");
                     sessionStorage.setItem("simulation", "Metrics");
+                    sessionStorage.setItem("qmMode", "Graph");
                     if (currentURL.search("/Prediction") !== -1)
                         url = serverUrl+ "/QualityFactors/PredictionChart";
                     else if (currentURL.search("/Simulation") !== -1)

@@ -194,4 +194,11 @@ function getAndShowElement (url) {
         }});
 }
 
-loadData();
+window.onload = function() {
+    var QMView = document.getElementById('QMView');
+    QMView.hidden = true;
+    if (sessionStorage.getItem("profile_qualitylvl") == "ALL") {
+        QMView.hidden = false;
+    }
+    loadData();
+}

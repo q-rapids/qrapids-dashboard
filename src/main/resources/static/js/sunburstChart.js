@@ -138,4 +138,11 @@ function makeChart(strategicIndicators) {
     Plotly.newPlot('SunburstChart', data, layout, {displaylogo: false, responsive: true});
 }
 
-loadData();
+
+
+window.onload = function() {
+    if (sessionStorage.getItem("profile_qualitylvl") != "ALL") {
+        window.open("../QualityModelGraph","_self");
+    }
+    loadData();
+}
