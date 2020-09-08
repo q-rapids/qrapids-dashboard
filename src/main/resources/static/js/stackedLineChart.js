@@ -288,11 +288,11 @@ function drawChart() {
             var name = getParameterByName('name');
             var id = getParameterByName('id');
             if (name.length != 0) {//if we know from which Detailed Strategic Indicator we are coming
-                if (currentURL.match("/PredictionChart")) urlLink = "../Metrics/PredictionChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
+                if (currentURL.match("/PredictionChart")) urlLink = "../DetailedQualityFactors/PredictionChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
                 else urlLink = "../DetailedQualityFactors/HistoricChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
             }
             else {
-                if (currentURL.match("/PredictionChart")) urlLink = "../Metrics/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
+                if (currentURL.match("/PredictionChart")) urlLink = "../DetailedQualityFactors/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
                 else urlLink = "../DetailedQualityFactors/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             }
             a.setAttribute("href", urlLink);

@@ -1,5 +1,6 @@
 var isdsi = false;
 var isqf = true;
+var isdqf = false;
 
 var qualityModelSIMetrics = new Map();
 

@@ -1,6 +1,7 @@
 var isSi = false;
 var isdsi = false;
 var isqf = false;
+var isdqf = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
@@ -119,7 +120,6 @@ function getData() {
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("chartContainer").style.display = "block";
                 getMetricsCategories();
-                drawChart();
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 document.getElementById("loader").style.display = "none";

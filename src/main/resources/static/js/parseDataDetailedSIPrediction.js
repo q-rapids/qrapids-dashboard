@@ -82,7 +82,6 @@ function getData() {
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("chartContainer").style.display = "block";
                 getFactorsCategories();
-                drawChart();
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 document.getElementById("loader").style.display = "none";

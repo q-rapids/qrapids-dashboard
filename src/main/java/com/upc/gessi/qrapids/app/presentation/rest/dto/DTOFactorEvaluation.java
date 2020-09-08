@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
+import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +26,8 @@ public class DTOFactorEvaluation {
     private String datasource;
     private String rationale;
     private List<String> strategic_indicators;
+    private Pair<Float, Float> confidence80;
+    private Pair<Float, Float> confidence95;
     private String forecastingError;
     private int mismatchDays;
     private List<String> missingMetrics;
@@ -51,6 +54,31 @@ public class DTOFactorEvaluation {
         setDatasource(datasource);
         setRationale(rationale);
         setStrategicIndicators(strategicIndicators);
+    }
+
+    /**
+     * Constructor of the DTO of Factor
+     *
+     * @param id The parameter defines the ID of the Factor
+     * @param name The parameter defines the name of the Factor
+     * @param description The parameter defines the description of the Factor
+     * @param value The parameter defines the value of the factor evaluation
+     * @param date The parameter defines the date of the factor evaluation
+     * @param datasource The parameter defines the datasource of the factor evaluation
+     * @param rationale The parameter describes textually the rationale behind the value
+     * @param confidence80 Upper and lower values respectively for the 80% confidence interval
+     * @param confidence95 Upper and lower values respectively for the 95% confidence interval
+     */
+    public DTOFactorEvaluation(String id, String name, String description, String datasource, String rationale, LocalDate date, Float value, Pair<Float, Float> confidence80, Pair<Float, Float> confidence95) {
+        setId(id);
+        setName(name);
+        setDescription(description);
+        setValue(value);
+        setDate(date);
+        setDatasource(datasource);
+        setRationale(rationale);
+        setConfidence80(confidence80);
+        setConfidence95(confidence95);
     }
 
     public DTOFactorEvaluation(String id, String name, String forecastingError) {
@@ -92,7 +120,6 @@ public class DTOFactorEvaluation {
     }
 
     public String getRationale() { return rationale;}
-
 
     public void setId(String id) {
         this.id = id;
@@ -149,6 +176,22 @@ public class DTOFactorEvaluation {
 
     public void setForecastingError(String forecastingError) {
         this.forecastingError = forecastingError;
+    }
+
+    public Pair<Float, Float> getConfidence80() {
+        return confidence80;
+    }
+
+    public void setConfidence80(Pair<Float, Float> confidence80) {
+        this.confidence80 = confidence80;
+    }
+
+    public Pair<Float, Float> getConfidence95() {
+        return confidence95;
+    }
+
+    public void setConfidence95(Pair<Float, Float> confidence95) {
+        this.confidence95 = confidence95;
     }
 
     public int getMismatchDays() {

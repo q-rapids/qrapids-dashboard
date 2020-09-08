@@ -220,7 +220,7 @@ public class FactorEvaluationControllerTest {
         String freq = "7";
         String horizon = "7";
         String projectExternalId = "test";
-        when(qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, projectExternalId)).thenReturn(prediction);
+        when(qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId)).thenReturn(prediction);
 
         // When
         List<DTODetailedFactorEvaluation> predictionFound = factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, freq, horizon, projectExternalId);

@@ -3,12 +3,8 @@ var isqf = false;
 var isdqf = true;
 
 
-var url;
-if (getParameterByName('id').length !== 0) {
-    url = parseURLComposed("../api/qualityFactors/metrics/historical");
-} else {
-    url = parseURLComposed("../api/qualityFactors/metrics/historical");
-}
+var url = parseURLComposed("../api/qualityFactors/metrics/historical");
+
 
 //initialize data vectors
 var texts = [];

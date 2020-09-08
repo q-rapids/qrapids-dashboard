@@ -490,7 +490,10 @@ function navBack(toDetailed, factor) {
     var si = getParameterByName('si');
     if (currentURL.match("/PredictionChart")) {
         if (toDetailed)
-            urlNav = "../DetailedStrategicIndicators/PredictionChart";
+            if (factor)
+                urlNav = "../DetailedQualityFactors/PredictionChart" + "?id=" + id + "&name=" + name;
+            else
+                urlNav = "../DetailedStrategicIndicators/PredictionChart";
         else
             urlNav = "../QualityFactors/PredictionChart";
     }

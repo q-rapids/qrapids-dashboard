@@ -13,11 +13,9 @@ import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactor
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
-import evaluation.StrategicIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -571,7 +569,7 @@ public class FactorsController {
     }
 
     public List<DTODetailedFactorEvaluation> getFactorsWithMetricsPrediction(List<DTODetailedFactorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException {
-        return qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
+        return qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 
     public List<DTOFactorEvaluation> simulate (Map<String, Float> metricsValue, String projectExternalId, LocalDate date) throws IOException {
@@ -592,4 +590,10 @@ public class FactorsController {
         }
         return "No Category";
     }
+
+    // TODO Factors Forecast
+    public List<DTOFactorEvaluation> getFactorsPrediction(List<DTOFactorEvaluation> currentEvaluation, String prj, String technique, String freq, String horizon) throws IOException {
+        return qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
+    }
+
 }

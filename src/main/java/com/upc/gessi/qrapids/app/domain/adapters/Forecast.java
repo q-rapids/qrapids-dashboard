@@ -34,6 +34,7 @@ public class Forecast {
     private static final String HORIZON_QUERY = "&horizon=";
     private static final String TECHNIQUE_QUERY = "&technique=";
     private static final String METRIC_QUERY = "&metric=";
+    private static final String FACTOR_QUERY = "&factor=";
     private static final String HOST_QUERY = "&host=";
     private static final String PORT_QUERY = "&port=";
     private static final String PATH_QUERY = "&path=";
@@ -229,7 +230,7 @@ public class Forecast {
         if (m.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
-                    // Avoid predicted values out of range
+                    // TODO: Review Avoid predicted values out of range
                     float aux = mean.get(j).getAsFloat();
                     if (mean.get(j).getAsFloat() > 1) aux = 1;
                     else if (mean.get(j).getAsFloat() < 0) aux = 0;
@@ -259,7 +260,126 @@ public class Forecast {
         }
     }
 
-    public List<DTODetailedFactorEvaluation> ForecastFactor(List<DTODetailedFactorEvaluation> factor, String technique, String freq, String horizon, String prj) throws IOException {
+    public List<DTOFactorEvaluation> ForecastFactor(List<DTOFactorEvaluation> factor, String technique, String freq, String horizon, String prj) throws IOException {
+        StringBuffer urlString = new StringBuffer(url + "/api/QualityFactors/Forecast?index_factors=");
+        if (prefix == null) prefix = "";
+        urlString.append(URLEncoder.encode(prefix + Constants.INDEX_FACTORS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
+        urlString.append(HORIZON_QUERY).append(URLEncoder.encode(horizon, UTF_8));
+        urlString.append(TECHNIQUE_QUERY).append(URLEncoder.encode(technique, UTF_8));
+        for(DTOFactorEvaluation f : factor) {
+            urlString.append(FACTOR_QUERY).append(URLEncoder.encode(f.getId(), UTF_8));
+        }
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
+        urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
+        urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
+        urlString.append(PWD_QUERY).append(URLEncoder.encode(connection.getPassword(), UTF_8));
+        URL url = new URL(urlString.toString());
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod(GET);
+
+        con.setRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
+
+        int status = con.getResponseCode();
+        if (status == 200) {
+            return getDtoFactors(factor, con);
+        }
+        return null;
+    }
+
+    private List<DTOFactorEvaluation> getDtoFactors(List<DTOFactorEvaluation> factor, HttpURLConnection con) throws IOException {
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer content = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        con.disconnect();
+
+        List<DTOFactorEvaluation> result = new ArrayList<>();
+
+        JsonParser parser = new JsonParser();
+        JsonArray data = parser.parse(content.toString()).getAsJsonArray();
+        for (int i = 0; i < data.size(); ++i) {
+            JsonObject object = data.get(i).getAsJsonObject();
+
+            //check if error occurred
+            if (!object.get(ERROR).isJsonNull()) {
+                getFactorWithError(factor, result, object);
+            }
+            else {
+                getFactors(factor, result, object);
+            }
+        }
+        return result;
+    }
+
+    private void getFactors(List<DTOFactorEvaluation> factor, List<DTOFactorEvaluation> result, JsonObject object) {
+        //check if json values are null
+        JsonArray lower80;
+        if (!object.get(LOWER_80).isJsonNull()) lower80 = object.getAsJsonArray(LOWER_80);
+        else lower80 = new JsonArray();
+
+        JsonArray upper80;
+        if (!object.get(UPPER_80).isJsonNull()) upper80 = object.getAsJsonArray(UPPER_80);
+        else upper80 = new JsonArray();
+
+        JsonArray lower95;
+        if (!object.get(LOWER_95).isJsonNull()) lower95 = object.getAsJsonArray(LOWER_95);
+        else lower95 = new JsonArray();
+
+        JsonArray upper95;
+        if (!object.get(UPPER_95).isJsonNull()) upper95 = object.getAsJsonArray(UPPER_95);
+        else upper95 = new JsonArray();
+
+        JsonArray mean;
+        if (!object.get(MEAN).isJsonNull()) mean = object.getAsJsonArray(MEAN);
+        else mean = new JsonArray();
+
+        String id = object.get(ID).getAsString();
+
+        for (DTOFactorEvaluation f : factor) {
+            buildFactor(result, lower80, upper80, lower95, upper95, mean, id, f);
+        }
+    }
+
+    private void buildFactor(List<DTOFactorEvaluation> result, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, DTOFactorEvaluation f) {
+        if (f.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
+            if (lower80.size() > 0) {
+                for (int j = 0; j < lower80.size(); ++j) {
+                    // TODO: Review Avoid predicted values out of range
+                    float aux = mean.get(j).getAsFloat();
+                    if (mean.get(j).getAsFloat() > 1) aux = 1;
+                    else if (mean.get(j).getAsFloat() < 0) aux = 0;
+                    result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
+                            f.getDescription(),
+                            f.getDatasource(),
+                            f.getRationale(),
+                            LocalDate.now().plusDays((long) j), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                }
+            } else {
+                result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
+                        f.getDescription(),
+                        f.getDatasource(),
+                        f.getRationale(),
+                        LocalDate.now(), null, null, null));
+            }
+        }
+    }
+
+    private void getFactorWithError(List<DTOFactorEvaluation> factor, List<DTOFactorEvaluation> result, JsonObject object) {
+        String error = object.get(ERROR).getAsString();
+        String id = object.get(ID).getAsString();
+        for (DTOFactorEvaluation f : factor) {
+            if (f.getId().equals(id)) {
+                result.add(new DTOFactorEvaluation(id, f.getName(), error));
+            }
+        }
+    }
+
+    public List<DTODetailedFactorEvaluation> ForecastDetailedFactor(List<DTODetailedFactorEvaluation> factor, String technique, String freq, String horizon, String prj) throws IOException {
         StringBuffer urlString = new StringBuffer(url + "/api/Metrics/Forecast?index_metrics=");
         if (prefix == null) prefix = "";
         urlString.append(URLEncoder.encode(prefix + Constants.INDEX_METRICS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
@@ -477,6 +597,7 @@ public class Forecast {
         return dsi;
     }
 
+    // get factors for Detailed Strategic Indicator forecast
     private void getFactors(Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, List<List<DTOFactorEvaluation>> factorsMatrix, JsonObject object) {
         //check if json values are null
         JsonArray lower80;
@@ -506,11 +627,12 @@ public class Forecast {
         }
     }
 
+    // build factor for Detailed Strategic Indicator forecast
     private void buildFactor(Map<String, String> factorsNames, List<List<DTOFactorEvaluation>> factorsMatrix, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, Map.Entry<String, ArrayList<Integer>> m) {
         if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
-                    // Avoid predicted values out of range
+                    // TODO: Review Avoid predicted values out of range
                     float aux = mean.get(j).getAsFloat();
                     if (mean.get(j).getAsFloat() > 1) aux = 1;
                     else if (mean.get(j).getAsFloat() < 0) aux = 0;
@@ -526,6 +648,7 @@ public class Forecast {
         }
     }
 
+    // get factors for for Detailed Strategic Indicator forecast
     private void getFactorWithError(Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, List<List<DTOFactorEvaluation>> factorsMatrix, JsonObject object) {
         String error = object.get(ERROR).getAsString();
         String id = object.get(ID).getAsString();
