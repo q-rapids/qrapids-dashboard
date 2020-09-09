@@ -138,38 +138,44 @@ function showProjectSelector (projects) {
         var profileId = sessionStorage.getItem("profile_id");
         if (!profileId || profileId == "null"){
             sessionStorage.setItem("profile_qualitylvl", "ALL");
-        }
-        jQuery.ajax({
-            dataType: "json",
-            url: "../api/profiles/" + profileId,
-            cache: false,
-            type: "GET",
-            async: false,
-            success: function (data) {
-                sessionStorage.setItem("profile_qualitylvl", data.qualityLevel);
-                if (data.qualityLevel == "METRICS"){
-                    sessionStorage.setItem("prediction", "Metrics");
-                    sessionStorage.setItem("configuration", "Categories");
-                    sessionStorage.setItem("assessment", "Metrics");
-                    if (currentURL.search("/Prediction") !== -1)
-                        url = serverUrl+ "/Metrics/PredictionChart";
-                    else
-                        url = serverUrl+ "/Metrics/" + time + viewMode;
-                } else if (data.qualityLevel == "METRICS_FACTORS") {
-                    sessionStorage.setItem("prediction", "QualityFactors");
-                    sessionStorage.setItem("configuration", "Categories");
-                    sessionStorage.setItem("assessment", "QualityFactors");
-                    sessionStorage.setItem("simulation", "Metrics");
-                    sessionStorage.setItem("qmMode", "Graph");
-                    if (currentURL.search("/Prediction") !== -1)
-                        url = serverUrl+ "/QualityFactors/PredictionChart";
-                    else if (currentURL.search("/Simulation") !== -1)
-                        url = serverUrl+ "/Simulation/Metrics";
-                    else
-                        url = serverUrl+ "/QualityFactors/" + time + viewMode;
+        } else {
+            jQuery.ajax({
+                dataType: "json",
+                url: "../api/profiles/" + profileId,
+                cache: false,
+                type: "GET",
+                async: false,
+                success: function (data) {
+                    sessionStorage.setItem("profile_qualitylvl", data.qualityLevel);
+                    if (data.qualityLevel == "METRICS") {
+                        sessionStorage.setItem("prediction", "Metrics");
+                        sessionStorage.setItem("configuration", "Categories");
+                        sessionStorage.setItem("assessment", "Metrics");
+                        if (currentURL.search("/Prediction") !== -1)
+                            url = serverUrl + "/Metrics/PredictionChart";
+                        else
+                            url = serverUrl + "/Metrics/" + time + viewMode;
+                    } else if (data.qualityLevel == "METRICS_FACTORS") {
+                        sessionStorage.setItem("prediction", "QualityFactors");
+                        sessionStorage.setItem("configuration", "Categories");
+                        sessionStorage.setItem("assessment", "QualityFactors");
+                        sessionStorage.setItem("simulation", "Metrics");
+                        sessionStorage.setItem("qmMode", "Graph");
+                        if (currentURL.search("/Prediction") !== -1)
+                            url = serverUrl + "/QualityFactors/PredictionChart";
+                        else if (currentURL.search("/Simulation") !== -1)
+                            url = serverUrl + "/Simulation/Metrics";
+                        else {
+                            if (time == "Current" && viewMode == "Chart")
+                                url = serverUrl + "/QualityFactors/" + time + viewMode + representationMode;
+                            else
+                                url = serverUrl + "/QualityFactors/" + time + viewMode;
+                        }
+
+                    }
                 }
-            }
-        });
+            });
+        }
         setProject($this.text(), url);
     });
 

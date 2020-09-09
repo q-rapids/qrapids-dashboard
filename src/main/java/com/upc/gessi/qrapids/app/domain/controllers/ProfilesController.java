@@ -64,24 +64,26 @@ public class ProfilesController {
     }
 
     public DTOProfile getProfileById(String id) throws ProfileNotFoundException {
-        Optional<Profile> profileOptional = profileRep.findById(Long.parseLong(id));
-        if (profileOptional.isPresent()) {
-            Profile profile = profileOptional.get();
-            List<DTOProject> relatedProjects = new ArrayList<>();
-            List<Pair<Long,Boolean>> relatedAllSIs = new ArrayList<>();
-            for (ProfileProjects pp : profile.getProfileProjectsList()) {
-                DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId());
-                relatedProjects.add(project);
-                Pair<Long, Boolean> allSI = Pair.of(pp.getProject().getId(), pp.isAllSI());
-                relatedAllSIs.add(allSI);
-            }
-            Collections.sort(relatedProjects, new Comparator<DTOProject>() {
-                @Override
-                public int compare(DTOProject o1, DTOProject o2) {
-                    return o1.getName().compareTo(o2.getName());
+        if (!id.equals("null")) {
+            Optional<Profile> profileOptional = profileRep.findById(Long.parseLong(id));
+            if (profileOptional.isPresent()) {
+                Profile profile = profileOptional.get();
+                List<DTOProject> relatedProjects = new ArrayList<>();
+                List<Pair<Long, Boolean>> relatedAllSIs = new ArrayList<>();
+                for (ProfileProjects pp : profile.getProfileProjectsList()) {
+                    DTOProject project = new DTOProject(pp.getProject().getId(), pp.getProject().getExternalId(), pp.getProject().getName(), pp.getProject().getDescription(), pp.getProject().getLogo(), pp.getProject().getActive(), pp.getProject().getBacklogId());
+                    relatedProjects.add(project);
+                    Pair<Long, Boolean> allSI = Pair.of(pp.getProject().getId(), pp.isAllSI());
+                    relatedAllSIs.add(allSI);
                 }
-            });
-            return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), String.valueOf(profile.getQualityLevel()), relatedProjects, relatedAllSIs);
+                Collections.sort(relatedProjects, new Comparator<DTOProject>() {
+                    @Override
+                    public int compare(DTOProject o1, DTOProject o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+                return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), String.valueOf(profile.getQualityLevel()), relatedProjects, relatedAllSIs);
+            }
         }
         return null;
     }

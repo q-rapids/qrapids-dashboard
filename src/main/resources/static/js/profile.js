@@ -99,6 +99,13 @@ function buildProfileList() {
 }
 
 function clickOnTree(e){
+    // mark selected profile on the list
+    e.target.classList.add("active");
+    $(".profile").each(function () {
+        if (e.target.id !== $(this).attr('id'))
+            $(this).removeClass("active");
+    });
+
     // clean projectSIs
     projectSIs = [];
     // get selected profile info
@@ -326,6 +333,11 @@ function clickOnTree(e){
 }
 
 function newProfile() {
+    // clean selected items on profile list
+    $(".profile").each(function () {
+        $(this).removeClass("active");
+    });
+
     // clean temporal var
     profileProjects = [];
     projectSIs = [];
@@ -845,7 +857,7 @@ function showSIsList() {
             fillAllowedSIsBox();
         } else {
             if (currentProfile) { // saved project from profile
-                if (currentProfile.allSIs.find(x => x.key == prjID) && (currentProfile.allSIs.find(x => x.key == prjID).value)) {
+                if (currentProfile.allSIs.find(x => x.first == prjID) && (currentProfile.allSIs.find(x => x.first == prjID).second)) {
                     // "all si" = true - show all SIs del project
                     var url = "/api/strategicIndicators?prj=" + prjExternalID;
                     fillAllowedSIsBox(url);
@@ -1084,8 +1096,8 @@ function saveProfile() {
                 }
             } else { // if projectSIs is empty
                 // may be we have old info about it
-                if(currentProfile.allSIs.find(x => x.key == prjID)){
-                    allSI = currentProfile.allSIs.find(x => x.key == prjID).value;
+                if(currentProfile.allSIs.find(x => x.first == prjID)){
+                    allSI = currentProfile.allSIs.find(x => x.first == prjID).second;
                     if (allSI == false){
                         var getSIsurl = "/api/strategicIndicators?prj=" + prj + "&profile=" + currentProfileID;
                         if (serverUrl) {

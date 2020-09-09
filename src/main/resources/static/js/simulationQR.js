@@ -547,13 +547,15 @@ function removeSimulation() {
             factorsCharts[i].update();
         }
     }
-    if (detailedCharts[0].data.datasets.length > 4) {
-        for (var i = 0; i < detailedCharts.length; i++) {
-            detailedCharts[i].data.datasets.shift();
-            // change categories fill property (we remove simulated data)
-            detailedCharts[i].data.datasets[2].fill = detailedCharts[i].data.datasets[2].fill -1;
-            detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill -1;
-            detailedCharts[i].update();
+    if (sessionStorage.getItem("profile_qualitylvl") == "ALL") {
+        if (detailedCharts[0].data.datasets.length > 4) {
+            for (var i = 0; i < detailedCharts.length; i++) {
+                detailedCharts[i].data.datasets.shift();
+                // change categories fill property (we remove simulated data)
+                detailedCharts[i].data.datasets[2].fill = detailedCharts[i].data.datasets[2].fill - 1;
+                detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill - 1;
+                detailedCharts[i].update();
+            }
         }
     }
 }

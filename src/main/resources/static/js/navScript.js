@@ -504,7 +504,7 @@ function navBack(toDetailed) {
     location.href = urlNav;
 }
 
-// TODO profile quality level filtering
+// profile quality level filtering
 function profileQualityLevelFilter() {
     var profileId = sessionStorage.getItem("profile_id");
     jQuery.ajax({

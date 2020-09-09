@@ -87,6 +87,11 @@ function clickOnTree(e){
 }
 
 function newSI() {
+    // clean selected items on SI list
+    $(".SI").each(function () {
+        $(this).removeClass("active");
+    });
+
     $("#SIInfo").show();
     $("#SIInfoTitle").text("Step 1 - Fill the strategic indicator information");
     $("div.SIInfoRowID").hide();
