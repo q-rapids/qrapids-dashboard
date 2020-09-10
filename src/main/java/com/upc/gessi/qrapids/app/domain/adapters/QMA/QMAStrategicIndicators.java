@@ -143,7 +143,7 @@ public class QMAStrategicIndicators {
         boolean hasBN = false;
         boolean hasFeedback = false;
         boolean found=false; // to check if the SI is in the database
-        //TODO change filter function and test if it works well
+        // get strategic indicators from DB by project and by profile (if specified)
         Iterable<Strategic_Indicator> sis_DB = strategicIndicatorsController.
                 getStrategicIndicatorsByProjectAndProfile(prjExternalId,profileId);
 

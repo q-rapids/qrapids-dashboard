@@ -798,7 +798,7 @@ public class StrategicIndicatorsController {
         return category.getColor();
     }
 
-    public List<DTORelationsSI> getQualityModel(String projectExternalId, String profileId, LocalDate date) throws IOException, CategoriesException, ArithmeticException, ProjectNotFoundException {
+    public List<DTORelationsSI> getQualityModel(String projectExternalId, String profileId, LocalDate date) throws IOException, CategoriesException, ProjectNotFoundException {
         return qmaRelations.getRelations(projectExternalId, profileId, date);
     }
 

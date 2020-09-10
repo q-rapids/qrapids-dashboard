@@ -44,7 +44,7 @@ public class Profiles {
                 String projectID = projectsInfoJsonArray.get(i).getAsJsonObject().get("prj").getAsString();
                 Boolean allSI = projectsInfoJsonArray.get(i).getAsJsonObject().get("all_si").getAsBoolean();
                 List<String> si = new ArrayList<>();
-                if (allSI == false) {
+                if (!allSI) {
                     JsonArray siList = projectsInfoJsonArray.get(i).getAsJsonObject().get("si").getAsJsonArray();
                     for (int j = 0; j < siList.size(); j++) {
                         si.add(siList.get(j).getAsJsonObject().get("id").getAsString());
@@ -108,7 +108,7 @@ public class Profiles {
                 String projectID = projectsInfoJsonArray.get(i).getAsJsonObject().get("prj").getAsString();
                 Boolean allSI = projectsInfoJsonArray.get(i).getAsJsonObject().get("all_si").getAsBoolean();
                 List<String> si = new ArrayList<>();
-                if (allSI == false) {
+                if (!allSI) {
                     JsonArray siList = projectsInfoJsonArray.get(i).getAsJsonObject().get("si").getAsJsonArray();
                     for (int j = 0; j < siList.size(); j++) {
                         si.add(siList.get(j).getAsJsonObject().get("id").getAsString());
