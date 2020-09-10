@@ -4,10 +4,15 @@ app.controller('TablesCtrl', function($scope, $http) {
     $scope.data = [];
     $scope.data_aux = [];
 
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+
+    var profileId = sessionStorage.getItem("profile_id");
+
     $scope.getStratInd = function (){
         $http({
             method : "GET",
-            url : "../api/strategicIndicators/current"
+            url : "../api/strategicIndicators/current?profile="+profileId
         }).then(function mySuccess(response) {
             response.data.forEach(function (strategicIndicator) {
                 var siDate = new Date(strategicIndicator.date);
@@ -40,10 +45,14 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     $scope.getKPIEval = function(){
         $http({
             method : "GET",
-            url : "../api/strategicIndicators/historical",
+            url : "../api/strategicIndicators/historical?profile="+profileId,
             params: {from: $('#datepickerFrom').val(),
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {
@@ -466,12 +475,15 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.getKPIFactor = function (){
+        console.log("sessionStorage: profile_id");
+        console.log(sessionStorage.getItem("profile_id"));
+        var profileId = sessionStorage.getItem("profile_id");
         var id = getParameterByName('id');
         if (id !== "") {
             navTextSimple();
-            var url = "../api/strategicIndicators/" + id + "/qualityFactors/current";
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/current?profile="+profileId;
         } else {
-            var url = "../api/strategicIndicators/qualityFactors/current";
+            var url = "../api/strategicIndicators/qualityFactors/current?profile="+profileId;
         }
         $http({
             method : "GET",
@@ -526,12 +538,15 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.getKPIFactorTable = function(){
+        console.log("sessionStorage: profile_id");
+        console.log(sessionStorage.getItem("profile_id"));
+        var profileId = sessionStorage.getItem("profile_id");
         var id = getParameterByName('id');
         if (id !== "") {
             navTextSimple();
-            var url = "../api/strategicIndicators/" + id + "/qualityFactors/historical";
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/historical?profile="+profileId;
         } else {
-            var url = "../api/strategicIndicators/qualityFactors/historical";
+            var url = "../api/strategicIndicators/qualityFactors/historical?profile="+profileId;
         }
         $http({
             method : "GET",
@@ -565,7 +580,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             navTextSimple();
             var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/current";
         } else {
-            var url = "../api/qualityFactors/metrics/current";
+            var profileId = sessionStorage.getItem("profile_id");
+            var url = "../api/qualityFactors/metrics/current?profile="+profileId;
         }
         $http({
             method : "GET",
@@ -596,7 +612,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             navTextSimple();
             var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/historical";
         } else {
-            var url = "../api/qualityFactors/metrics/historical";
+            var profileId = sessionStorage.getItem("profile_id");
+            var url = "../api/qualityFactors/metrics/historical?profile="+profileId;
         }
         $http({
             method : "GET",

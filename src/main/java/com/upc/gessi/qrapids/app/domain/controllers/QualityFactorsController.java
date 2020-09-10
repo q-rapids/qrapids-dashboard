@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
@@ -63,24 +64,26 @@ public class QualityFactorsController {
         return qmaQualityFactors.getAllFactors(projectExternalId);
     }
 
-    public List<DTOQualityFactor> getAllFactorsWithMetricsCurrentEvaluation(String projectExternalId) throws IOException {
-        return qmaQualityFactors.CurrentEvaluation(null, projectExternalId);
+    public List<DTOQualityFactor> getAllFactorsWithMetricsCurrentEvaluation(String projectExternalId, String profileId) throws IOException, ProjectNotFoundException {
+        return qmaQualityFactors.CurrentEvaluation(null, projectExternalId, profileId);
     }
 
-    public List<DTOQualityFactor> getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(String strategicIndicatorId, String projectExternalId) throws IOException {
-        return qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId);
+    public List<DTOQualityFactor> getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(String strategicIndicatorId, String projectExternalId) throws IOException, ProjectNotFoundException {
+        // if we are asking for concrete indicator, we don't need to filter by profile
+        return qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId, null);
     }
 
     public List<DTOFactor> getAllFactorsHistoricalEvaluation (String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException {
         return qmaQualityFactors.getAllFactorsHistoricalData(projectExternalId, dateFrom, dateTo);
     }
 
-    public List<DTOQualityFactor> getAllFactorsWithMetricsHistoricalEvaluation(String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException {
-        return qmaQualityFactors.HistoricalData(null, dateFrom, dateTo, projectExternalId);
+    public List<DTOQualityFactor> getAllFactorsWithMetricsHistoricalEvaluation(String projectExternalId, String profileId, LocalDate dateFrom, LocalDate dateTo) throws IOException, ProjectNotFoundException {
+        return qmaQualityFactors.HistoricalData(null, dateFrom, dateTo, projectExternalId, profileId);
     }
 
-    public List<DTOQualityFactor> getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(String strategicIndicatorId, String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException {
-        return qmaQualityFactors.HistoricalData(strategicIndicatorId, dateFrom, dateTo, projectExternalId);
+    public List<DTOQualityFactor> getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(String strategicIndicatorId, String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException, ProjectNotFoundException {
+        // if we are asking for concrete indicator, we don't need to filter by profile
+        return qmaQualityFactors.HistoricalData(strategicIndicatorId, dateFrom, dateTo, projectExternalId, null);
     }
 
     public List<DTOQualityFactor> getFactorsWithMetricsPrediction(List<DTOQualityFactor> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException {

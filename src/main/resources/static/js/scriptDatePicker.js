@@ -138,6 +138,7 @@ function getPreviousMonday() {
 }
 
 function loadTechniques () {
+    // TODO
     jQuery.ajax({
         dataType: "json",
         url: "../api/forecastTechniques",
@@ -145,6 +146,8 @@ function loadTechniques () {
         type: "GET",
         async: true,
         success: function (techniques) {
+            console.log("tecniques");
+            console.log(techniques);
             for (i = 0; i < techniques.length; i++) {
                 $("#techniqueDropdown").append('<li><a onclick="setTechnique(\''+techniques[i]+'\')" href="#">'+ techniques[i] +'</a></li>');
             }
@@ -198,9 +201,14 @@ function getPredictionCurrentDate() {
             }
         });
     } else if (currentURL.match("/StrategicIndicators/PredictionChart") || currentURL.match("/DetailedStrategicIndicators/PredictionChart")) {
+
+        console.log("sessionStorage: profile_id");
+        console.log(sessionStorage.getItem("profile_id"));
+        var profileId = sessionStorage.getItem("profile_id");
+
         jQuery.ajax({
             dataType: "json",
-            url: "../api/strategicIndicators/currentDate",
+            url: "../api/strategicIndicators/currentDate?profile="+profileId,
             cache: false,
             type: "GET",
             async: false,

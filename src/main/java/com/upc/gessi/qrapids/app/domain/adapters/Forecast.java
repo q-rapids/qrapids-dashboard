@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -689,8 +690,8 @@ public class Forecast {
         }
     }
 
-    public List<DTOStrategicIndicatorEvaluation> ForecastSIDeprecated(String technique, String freq, String horizon, String prj) throws IOException {
-        List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj, true), technique, freq, horizon, prj);
+    public List<DTOStrategicIndicatorEvaluation> ForecastSIDeprecated(String technique, String freq, String horizon, String prj) throws IOException, ProjectNotFoundException {
+        List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj, null, true), technique, freq, horizon, prj);
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
         String categoriesDescription = strategicIndicatorsController.getCategories().toString();
         for (DTODetailedStrategicIndicator dsi : dsis) {

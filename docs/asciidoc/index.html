@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v1.4, 2020-06-16">
+<meta name="author" content="v1.4, 2020-09-09">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v1.4, 2020-06-16</span><br>
+<span id="author" class="author">v1.4, 2020-09-09</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -550,11 +550,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_get_product_detailed_evaluation">10.7. Get product detailed evaluation</a></li>
 </ul>
 </li>
-<li><a href="#_others">11. Others</a>
+<li><a href="#_profiles">11. Profiles</a>
 <ul class="sectlevel2">
-<li><a href="#_get_forecasting_techniques">11.1. Get forecasting techniques</a></li>
-<li><a href="#_get_project_milestones">11.2. Get project milestones</a></li>
-<li><a href="#_get_project_phases">11.3. Get project phases</a></li>
+<li><a href="#_get_all_profiles">11.1. Get all profiles</a></li>
+<li><a href="#_get_single_profile">11.2. Get single profile</a></li>
+<li><a href="#_new_profile">11.3. New profile</a></li>
+<li><a href="#_update_profile">11.4. Update profile</a></li>
+<li><a href="#_delete_profile">11.5. Delete profile</a></li>
+</ul>
+</li>
+<li><a href="#_others">12. Others</a>
+<ul class="sectlevel2">
+<li><a href="#_get_forecasting_techniques">12.1. Get forecasting techniques</a></li>
+<li><a href="#_get_project_milestones">12.2. Get project milestones</a></li>
+<li><a href="#_get_project_phases">12.3. Get project phases</a></li>
 </ul>
 </li>
 </ul>
@@ -591,6 +600,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
 </tr>
 </tbody>
 </table>
@@ -861,6 +874,10 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1115,6 +1132,10 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
 </tr>
 </tbody>
 </table>
@@ -1371,6 +1392,10 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1616,6 +1641,10 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>horizon</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Amount of days that the prediction will cover</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
 </tr>
 </tbody>
 </table>
@@ -1874,6 +1903,10 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2009,7 +2042,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 693
+Content-Length: 692
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2029,11 +2062,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2020-06-16",
+    "formattedDate" : "2020-09-09",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2098,6 +2131,10 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
 </tr>
 </tbody>
 </table>
@@ -2234,7 +2271,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 693
+Content-Length: 692
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2254,11 +2291,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2020-06-16",
+    "formattedDate" : "2020-09-09",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2309,6 +2346,10 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
 </tr>
 </tbody>
 </table>
@@ -2445,7 +2486,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 693
+Content-Length: 692
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2465,11 +2506,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2020-06-16",
+    "formattedDate" : "2020-09-09",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2542,6 +2583,10 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
 </tr>
 </tbody>
 </table>
@@ -2678,7 +2723,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 693
+Content-Length: 692
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2698,11 +2743,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "forecastingError" : null,
-    "formattedDate" : "2020-06-16",
+    "formattedDate" : "2020-09-09",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2753,6 +2798,10 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>horizon</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Amount of days that the prediction will cover</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
 </tr>
 </tbody>
 </table>
@@ -2889,8 +2938,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 676
 Content-Type: application/json;charset=UTF-8
+Content-Length: 675
 
 [ {
   "id" : "processperformance",
@@ -2909,11 +2958,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "formattedDate" : "2020-06-16",
+    "formattedDate" : "2020-09-09",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -2978,6 +3027,10 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>horizon</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Amount of days that the prediction will cover</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
 </tr>
 </tbody>
 </table>
@@ -3114,8 +3167,8 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 676
 Content-Type: application/json;charset=UTF-8
+Content-Length: 675
 
 [ {
   "id" : "processperformance",
@@ -3134,11 +3187,11 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "forecastingError" : null,
-    "formattedDate" : "2020-06-16",
+    "formattedDate" : "2020-09-09",
     "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
@@ -3174,6 +3227,10 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3181,7 +3238,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_all_strategic_indicators_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators?prj=test&amp;profile=null' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -3793,6 +3850,10 @@ This operation is deprecated. Please, use <a href="#_assess_strategic_indicators
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>factors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the names and new values of the quality factors</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4029,6 +4090,10 @@ Content-Length: 1006
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Date (yyyy-mm-dd) of the quality model evaluation</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4036,7 +4101,7 @@ Content-Length: 1006
 <h4 id="_get_quality_model_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/qualityModel?prj=test&amp;date=2019-07-07' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/qualityModel?prj=test&amp;date=2019-07-07&amp;profile=null' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -4338,6 +4403,10 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4345,7 +4414,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_current_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/current?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/current?prj=test&amp;profile=null' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -4444,7 +4513,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 488
+Content-Length: 487
 
 [ {
   "id" : "testingperformance",
@@ -4455,7 +4524,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4631,7 +4700,7 @@ Content-Length: 488
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 488
+Content-Length: 487
 
 [ {
   "id" : "testingperformance",
@@ -4642,7 +4711,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4698,6 +4767,10 @@ Content-Length: 488
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -4705,7 +4778,7 @@ Content-Length: 488
 <h4 id="_get_historical_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2020-06-09&amp;to=2020-06-16' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2020-09-02&amp;to=2020-09-09&amp;profile=null' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -4804,7 +4877,7 @@ Content-Length: 488
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 488
+Content-Length: 487
 
 [ {
   "id" : "testingperformance",
@@ -4815,7 +4888,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -4900,7 +4973,7 @@ Content-Length: 488
 <h4 id="_get_historical_evaluation_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2020-06-09&amp;to=2020-06-16' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2020-09-02&amp;to=2020-09-09' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -4999,7 +5072,7 @@ Content-Length: 488
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 488
+Content-Length: 487
 
 [ {
   "id" : "testingperformance",
@@ -5010,7 +5083,7 @@ Content-Length: 488
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -5066,6 +5139,10 @@ Content-Length: 488
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>horizon</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Amount of days that the prediction will cover</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -5073,7 +5150,7 @@ Content-Length: 488
 <h4 id="_get_prediction_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/prediction?prj=test&amp;technique=PROPHET&amp;horizon=7' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/prediction?prj=test&amp;technique=PROPHET&amp;horizon=7&amp;profile=null' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -5191,7 +5268,7 @@ Content-Length: 488
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 593
+Content-Length: 592
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5203,7 +5280,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -5412,7 +5489,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 593
+Content-Length: 592
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5424,7 +5501,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 6, 16 ],
+    "date" : [ 2020, 9, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -5568,7 +5645,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 395
+Content-Length: 394
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5577,11 +5654,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2020-06-16",
+  "formattedDate" : "2020-09-09",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -5736,7 +5813,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 391
+Content-Length: 390
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -5745,11 +5822,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2020-06-16",
+  "formattedDate" : "2020-09-09",
   "strategicIndicators" : [ "processperformance" ]
 }</code></pre>
 </div>
@@ -5920,7 +5997,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 395
+Content-Length: 394
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5929,11 +6006,11 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "forecastingError" : null,
-  "formattedDate" : "2020-06-16",
+  "formattedDate" : "2020-09-09",
   "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
@@ -6223,7 +6300,7 @@ Content-Length: 276
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 373
+Content-Length: 372
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6232,7 +6309,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6391,7 +6468,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 369
+Content-Length: 368
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -6400,7 +6477,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6559,7 +6636,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 373
+Content-Length: 372
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6568,7 +6645,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6713,7 +6790,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 373
+Content-Length: 372
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6722,7 +6799,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -6889,7 +6966,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 373
+Content-Length: 372
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6898,7 +6975,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -7065,7 +7142,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 373
+Content-Length: 372
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -7074,7 +7151,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -7240,7 +7317,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 466
+Content-Length: 465
 
 [ {
   "id" : "fasttests",
@@ -7248,7 +7325,7 @@ Content-Length: 466
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -7442,7 +7519,7 @@ Content-Length: 466
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 466
+Content-Length: 465
 
 [ {
   "id" : "fasttests",
@@ -7450,7 +7527,7 @@ Content-Length: 466
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 6, 16 ],
+  "date" : [ 2020, 9, 9 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -7761,7 +7838,7 @@ Content-Length: 257
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1592304288018,
+  "date" : 1599672596638,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -8557,7 +8634,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1592304287487,
+  "date" : 1599672596138,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8746,7 +8823,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : 3,
-  "date" : 1592304291593,
+  "date" : 1599672599742,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -8761,7 +8838,7 @@ Content-Type: application/json;charset=UTF-8
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1592304291593,
+    "date" : 1599672599742,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -8905,7 +8982,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1592304291708,
+  "date" : 1599672599854,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -9428,7 +9505,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : 2,
   "type" : "ADD",
-  "date" : 1592304288884,
+  "date" : 1599672597346,
   "author" : null,
   "rationale" : "User comments",
   "patternId" : 100,
@@ -9641,7 +9718,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "strategicIndicatorId" : 1,
-  "date" : "2020-06-16",
+  "date" : "2020-09-09",
   "author" : null,
   "oldValue" : 0.6,
   "newValue" : 0.75
@@ -11106,10 +11183,506 @@ Content-Length: 1129
 </div>
 </div>
 <div class="sect1">
-<h2 id="_others">11. Others</h2>
+<h2 id="_profiles">11. Profiles</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_get_forecasting_techniques">11.1. Get forecasting techniques</h3>
+<h3 id="_get_all_profiles">11.1. Get all profiles</h3>
+<div class="sect3">
+<h4 id="_get_all_profiles_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/profiles' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_all_profiles_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].qualityLevel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile quality level</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of all the projects which compose the profile</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].externalId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project logo file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].active</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is an active project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].projects[].backlogId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].allSIs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of pairs which specify for each project of profile, if it show all strategic indicators or not</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].allSIs[].first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].allSIs[].second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Are all strategic indicators shown?</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_all_profiles_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 364
+
+[ {
+  "id" : 1,
+  "name" : "Test",
+  "description" : "Test profile",
+  "qualityLevel" : "ALL",
+  "projects" : [ {
+    "id" : 1,
+    "externalId" : "test",
+    "name" : "Test",
+    "description" : "Test project",
+    "logo" : null,
+    "active" : true,
+    "backlogId" : "999"
+  } ],
+  "allSIs" : [ {
+    "first" : 1,
+    "second" : true
+  } ]
+} ]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_single_profile">11.2. Get single profile</h3>
+<div class="sect3">
+<h4 id="_get_single_profile_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/profiles/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_single_profile_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/profiles/1' -i -X GET</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_get_single_profile_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>qualityLevel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile quality level</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of all the projects which compose the profile</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].externalId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].logo</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project logo file</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].active</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Is an active project?</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects[].backlogId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier in the backlog</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>allSIs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of pairs which specify for each project of profile, if it show all strategic indicators or not</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>allSIs[].first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>allSIs[].second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Are all strategic indicators shown?</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_get_single_profile_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 360
+Content-Type: application/json;charset=UTF-8
+
+{
+  "id" : 1,
+  "name" : "Test",
+  "description" : "Test profile",
+  "qualityLevel" : "ALL",
+  "projects" : [ {
+    "id" : 1,
+    "externalId" : "test",
+    "name" : "Test",
+    "description" : "Test project",
+    "logo" : null,
+    "active" : true,
+    "backlogId" : "999"
+  } ],
+  "allSIs" : [ {
+    "first" : 1,
+    "second" : true
+  } ]
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_new_profile">11.3. New profile</h3>
+<div class="sect3">
+<h4 id="_new_profile_request_parameters">Request parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quality_level</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">One of three possible options: ALL, FACTOR_METRIC, METRICS</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects_info</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Array of JSON object { prj: project identifier, all_si: are all strategic indicators shown? , si: list of selected strategic indicators }</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_new_profile_request_parts">Request parts</h4>
+<div class="paragraph">
+<p>Snippet request-parts not found for operation::profiles/add</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_new_profile_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/profiles' -i -X POST \
+    -H 'Content-Type: multipart/form-data' \
+    -d 'name=Test&amp;description=Test+profile&amp;quality_level=ALL&amp;projects_info=%5B%7B%22si%22%3A%5B%5D%2C%22prj%22%3A1%2C%22all_si%22%3Atrue%7D%5D'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_new_profile_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 201 Created</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_name_already_exists_4">HTTP response name already exists</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_update_profile">11.4. Update profile</h3>
+<div class="sect3">
+<h4 id="_path_parameters_3">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. /api/products/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product identifier</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect4">
+<h5 id="_path_parameters_3_request_parameters">Request parameters</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quality_level</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">One of three possible options: ALL, FACTOR_METRIC, METRICS</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>projects_info</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Array of JSON object { prj: project identifier, all_si: are all strategic indicators shown? , si: list of selected strategic indicators }</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_3_request_parts">Request parts</h5>
+<div class="paragraph">
+<p>Snippet request-parts not found for operation::profiles/update</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_3_curl_request">Curl request</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/profiles/1' -i -X PUT \
+    -H 'Content-Type: multipart/form-data' \
+    -d 'name=Test&amp;description=Test+profile&amp;quality_level=ALL&amp;projects_info=%5B%7B%22si%22%3A%5B%5D%2C%22prj%22%3A1%2C%22all_si%22%3Atrue%7D%5D'</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_path_parameters_3_http_response">HTTP response</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_http_response_name_already_exists_5">HTTP response name already exists</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 409 Conflict</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_delete_profile">11.5. Delete profile</h3>
+<div class="sect3">
+<h4 id="_delete_profile_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/profiles/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Profile identifier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_delete_profile_curl_request">Curl request</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/profiles/1' -i -X DELETE</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_delete_profile_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_others">12. Others</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_get_forecasting_techniques">12.1. Get forecasting techniques</h3>
 <div class="sect3">
 <h4 id="_get_forecasting_techniques_curl_request">Curl request</h4>
 <div class="listingblock">
@@ -11156,7 +11729,7 @@ Content-Length: 26
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_project_milestones">11.2. Get project milestones</h3>
+<h3 id="_get_project_milestones">12.2. Get project milestones</h3>
 <div class="sect3">
 <h4 id="_get_project_milestones_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -11186,7 +11759,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-06-16' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-09-09' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -11238,7 +11811,7 @@ Content-Length: 137
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "date" : "2020-06-19",
+  "date" : "2020-09-12",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -11248,7 +11821,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_project_phases">11.3. Get project phases</h3>
+<h3 id="_get_project_phases">12.3. Get project phases</h3>
 <div class="sect3">
 <h4 id="_get_project_phases_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
@@ -11330,10 +11903,10 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-  "dateFrom" : "2020-06-01",
+  "dateFrom" : "2020-08-25",
   "name" : "Development",
   "description" : "Implementation of project functionalities",
-  "dateTo" : "2020-07-01"
+  "dateTo" : "2020-09-24"
 } ]</code></pre>
 </div>
 </div>
@@ -11344,7 +11917,7 @@ Content-Length: 156
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-16 12:42:48 +0200
+Last updated 2020-09-09 19:31:33 +0200
 </div>
 </div>
 </body>

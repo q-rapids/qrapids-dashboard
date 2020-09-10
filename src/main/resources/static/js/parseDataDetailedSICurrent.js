@@ -1,4 +1,7 @@
-var url = parseURLSimple("../api/strategicIndicators/qualityFactors/current");
+console.log("sessionStorage: profile_id");
+console.log(sessionStorage.getItem("profile_id"));
+var profileId = sessionStorage.getItem("profile_id");
+var url = parseURLSimple("../api/strategicIndicators/qualityFactors/current?profile="+profileId);
 
 var isdsi = true;
 

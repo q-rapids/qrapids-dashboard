@@ -1,7 +1,13 @@
 function getStrategicIndicators() {
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+
+    var profileId = sessionStorage.getItem("profile_id");
+
     jQuery.ajax({
         dataType: "json",
-        url: '../api/strategicIndicators/current',
+        url: '../api/strategicIndicators/current?profile='+profileId,
         cache: false,
         type: "GET",
         async: true,
@@ -12,9 +18,12 @@ function getStrategicIndicators() {
 }
 
 function getFactors(strategicIndicators) {
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
     jQuery.ajax({
         dataType: "json",
-        url: '../api/strategicIndicators/qualityFactors/current',
+        url: '../api/strategicIndicators/qualityFactors/current?profile='+profileId,
         cache: false,
         type: "GET",
         async: true,

@@ -136,6 +136,7 @@
         <a id="ProductsConfig">Products</a>
         <a id="StrategicIndicatorsConfig">Strategic Indicators</a>
         <a id="CategoriesConfig">Categories</a>
+        <a id="ProfilesConfig">Profiles</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="LogoutProfileConfig">Logout</a>
@@ -226,6 +227,11 @@
                 <ul id="projectsDropdownItems" class="dropdown-menu dropdown-menu-left">
                 </ul>
             </div>
+            <button class = "btn" id="projectModalButton">
+                <img class="icons" th:src="@{/icons/select.png}"
+                     src="../../static/icons/select.png" alt="select profile data"/>
+            </button>
+            <div th:replace="Fragments/Modals :: projectModal"></div>
         </div>
         <script type="text/javascript" th:src="@{/js/projectsSelector.js}"></script>
     </th:block>

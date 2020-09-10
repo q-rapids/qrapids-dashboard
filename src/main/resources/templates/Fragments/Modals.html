@@ -7,8 +7,21 @@
         <div class="modal fade" id="projectsModal" role="dialog" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content">
+                    <div class="modal-body">
+                        <div id="profileSelectorDiv" style="margin-top: 1em;">
+                            <h4 style="display: inline">Profile: </h4>
+                            <div class="dropdown" style="display: inline-grid">
+                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                    <span id = "profilesDropdownText" class="text"> Profiles </span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul id="profilesDropdownItems" class="dropdown-menu dropdown-menu-left">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     <div class="modal-header">
-                        <h4 class="modal-title">Select Project</h4>
+                        <h4 class="modal-title">Available Projects</h4>
                     </div>
                     <div class="modal-body">
                         <div class="list-group" id="projectsModalItems"></div>
@@ -331,6 +344,47 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="profileSelectProjectsModal">
+        <div class="modal fade" id="profileSelectProjectsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"> Select Projects </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="projectsRow"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="submitProfileSelectProjectsModalBtn" type="button" class="btn btn-primary pull-right">Accept</button>
+                        <button id="closeProfileSelectProjectsModalBtn" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="profileProjectSelectSIsModal">
+        <div class="modal fade" id="profileProjectSelectSIsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" id="modalTitle"> Select Strategic Indicators </h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="projectText"></p>
+                        <div id="SIsRow"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="submitProfileProjectSelectSIsModalBtn" type="button" class="btn btn-primary pull-right">Accept</button>
+                        <button id="closeProfileProjectSelectSIsModalBtn" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
     </th:block>

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.upc.gessi.qrapids.app.domain.controllers.FeedbackController;
 import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.FeedbackFactors;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFeedback;
@@ -78,7 +79,7 @@ public class Feedback {
 
     @RequestMapping("/api/strategicIndicators/{id}/feedbackReport")
     @ResponseStatus(HttpStatus.OK)
-    public List<FeedbackFactors> getFeedbackReport(@PathVariable Long id) throws IOException, CategoriesException {
+    public List<FeedbackFactors> getFeedbackReport(@PathVariable Long id) throws IOException, CategoriesException, ProjectNotFoundException {
         return feedbackController.getFeedbackReport(id);
     }
 
