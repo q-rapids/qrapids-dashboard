@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
@@ -56,10 +57,10 @@ public class QualityFactors {
 
     @GetMapping("/api/qualityFactors/metrics/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOQualityFactor> getQualityFactorsEvaluations(@RequestParam(value = "prj") String prj) {
+    public List<DTOQualityFactor> getQualityFactorsEvaluations(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile ) {
         try {
-            return qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
-        } catch (ElasticsearchStatusException e) {
+            return qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile);
+        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -85,10 +86,10 @@ public class QualityFactors {
     @GetMapping("/api/qualityFactors/metrics/historical")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    List<DTOQualityFactor> getQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
+    List<DTOQualityFactor> getQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
-            return qualityFactorsController.getAllFactorsWithMetricsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException e) {
+            return qualityFactorsController.getAllFactorsWithMetricsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
+        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -113,11 +114,11 @@ public class QualityFactors {
 
     @GetMapping("/api/qualityFactors/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOQualityFactor> getQualityFactorsPrediction(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
+    public List<DTOQualityFactor> getQualityFactorsPrediction(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
-            List<DTOQualityFactor> currentEvaluation = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
+            List<DTOQualityFactor> currentEvaluation = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile);
             return qualityFactorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
-        } catch (ElasticsearchStatusException e) {
+        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {

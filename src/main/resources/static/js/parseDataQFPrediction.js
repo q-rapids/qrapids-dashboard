@@ -7,8 +7,9 @@ if (getParameterByName('id').length !== 0) {
     urlpred = parseURLSimple("../api/strategicIndicators/qualityFactors/metrics/prediction");
     urlhist = parseURLSimple("../api/strategicIndicators/qualityFactors/metrics/historical");
 } else {
-    urlpred = parseURLSimple("../api/qualityFactors/metrics/prediction");
-    urlhist = parseURLSimple("../api/qualityFactors/metrics/historical");
+    var profileId = sessionStorage.getItem("profile_id");
+    urlpred = parseURLSimple("../api/qualityFactors/metrics/prediction?profile="+profileId);
+    urlhist = parseURLSimple("../api/qualityFactors/metrics/historical?profile="+profileId);
 }
 
 //initialize data vectors

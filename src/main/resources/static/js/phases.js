@@ -118,13 +118,20 @@ function checkCategories() {
 function getData(phases) {
     var today = new Date();
     var todayTextDate = parseDate(today);
+
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/strategicIndicators/historical?";
+    var profileId = sessionStorage.getItem("profile_id");
+
+    var url = "/api/strategicIndicators/historical?profile="+profileId;
     if (serverUrl) {
         url = serverUrl + url;
     }
-    $.getJSON(url + "from=" + phases[0].from + "&to=" + todayTextDate)
+    $.getJSON(url + "&from=" + phases[0].from + "&to=" + todayTextDate)
         .then (function(data) {
+
+            console.log("getData");
+            console.log(data);
+
             if (data.length === 0) {
                 var siData = [];
                 addNoDataStrategicIndicators (phases, siData);
@@ -214,8 +221,9 @@ function getData(phases) {
 }
 
 function addNoDataStrategicIndicators (phases, siData) {
+    var profileId = sessionStorage.getItem("profile_id");
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/strategicIndicators";
+    var url = "/api/strategicIndicators?profile="+profileId;
     if (serverUrl) {
         url = serverUrl + url;
     }

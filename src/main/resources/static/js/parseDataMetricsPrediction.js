@@ -5,8 +5,9 @@ var isqf = false;
 var urlpred; // to get prediction data
 var urlhist; // to get historical data
 if (getParameterByName('id').length !== 0) {
-    urlpred = parseURLMetrics("../api/qualityFactors/metrics/prediction");
-    urlhist = parseURLMetrics("../api/qualityFactors/metrics/historical");
+    var profileId = sessionStorage.getItem("profile_id");
+    urlpred = parseURLMetrics("../api/qualityFactors/metrics/prediction?profile="+profileId);
+    urlhist = parseURLMetrics("../api/qualityFactors/metrics/historical?profile="+profileId);
 } else {
     urlpred = parseURLMetrics("../api/metrics/prediction");
     urlhist = parseURLMetrics("../api/metrics/historical");

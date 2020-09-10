@@ -847,6 +847,50 @@ operation::products/evaluation[snippets='path-parameters,curl-request,response-f
 operation::products/evaluation-detailed[snippets='path-parameters,curl-request,response-fields,http-response']
 
 
+== Profiles
+
+=== Get all profiles
+
+operation::profiles/all[snippets='curl-request,response-fields,http-response']
+
+
+=== Get single profile
+
+operation::profiles/single[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== New profile
+
+operation::profiles/add[snippets='request-parameters,request-parts,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response name already exists
+include::{snippets}/profiles/add-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Update profile
+
+:numbered!:
+
+==== Path parameters
+
+include::{snippets}/products/single/path-parameters.adoc[]
+
+operation::profiles/update[snippets='request-parameters,request-parts,curl-request,http-response']
+
+==== HTTP response name already exists
+include::{snippets}/profiles/update-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Delete profile
+
+operation::profiles/delete[snippets='path-parameters,curl-request,http-response']
+
 
 == Others
 

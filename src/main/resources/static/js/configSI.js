@@ -8,7 +8,10 @@ var deleteUrl;
 var httpMethod = "POST";
 
 function buildSIList() {
-    var url = "/api/strategicIndicators";
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+    var url = "/api/strategicIndicators?profile=" + profileId;
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -84,6 +87,11 @@ function clickOnTree(e){
 }
 
 function newSI() {
+    // clean selected items on SI list
+    $(".SI").each(function () {
+        $(this).removeClass("active");
+    });
+
     $("#SIInfo").show();
     $("#SIInfoTitle").text("Step 1 - Fill the strategic indicator information");
     $("div.SIInfoRowID").hide();

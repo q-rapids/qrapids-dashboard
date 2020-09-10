@@ -4,7 +4,8 @@ var url;
 if (getParameterByName('id').length !== 0) {
     url = parseURLSimple("../api/strategicIndicators/qualityFactors/metrics/current");
 } else {
-    url = parseURLSimple("../api/qualityFactors/metrics/current");
+    var profileId = sessionStorage.getItem("profile_id");
+    url = parseURLSimple("../api/qualityFactors/metrics/current?profile="+profileId);
 }
 
 //initialize data vectors

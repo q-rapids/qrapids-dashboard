@@ -45,7 +45,7 @@ var options = {
         categories: [],
         labels: {
             formatter: function(value, timestamp, index) {
-                var parts = value.split(": &nbsp;");
+                var parts = new String(value).split(": &nbsp;");
                 return parts[0]
             }
         }
@@ -67,7 +67,7 @@ var options = {
         y: {
             formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
                 var v = Object.values(myTooltips[seriesIndex]);
-                return v[0][dataPointIndex]
+                return v[0][dataPointIndex];
             },
             title: {
                 formatter: (seriesName) => seriesName,
@@ -97,19 +97,19 @@ function drawChart() {
         xaxis_cat.push(parts);
         for(j = 0; j < labels[i].length; ++j){
             if (!mapForChart.has(labels[i][j])) { // map doesn't have this label
-                var data = [].fill.call({ length: titles.length }, 0);
-                var tooltips = [].fill.call({ length: titles.length }, 0);
+                var data = [].fill.call({ length: titles.length }, 0.0);
+                var tooltips = [].fill.call({ length: titles.length }, 0.0);
 
                 var w = parseFloat(weights[i][j]);
                 if (w == -1) { // if w == -1 means SI with Bayesian Network
                     dataLabels = false;
-                    data[i] = (parseFloat(weightedValues[i][j])).toFixed(2);
+                    data[i] = parseFloat(parseFloat(weightedValues[i][j]).toFixed(2));
                     tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (NA)";
                 } else {
                     if (weightedValues[i][j] === "0.0") {
-                        data[i] = parseFloat("0.02").toFixed(2);
+                        data[i] = parseFloat(parseFloat("0.02").toFixed(2));
                     } else {
-                        data[i] = parseFloat(weightedValues[i][j]).toFixed(2);
+                        data[i] = parseFloat(parseFloat(weightedValues[i][j]).toFixed(2));
                     }
                     tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (" + (w*100).toFixed() + "%)";
                 }
@@ -122,13 +122,13 @@ function drawChart() {
                 var w = parseFloat(weights[i][j]);
                 if (w == -1) {
                     dataLabels = false;
-                    data[i] = (parseFloat(weightedValues[i][j])).toFixed(2);
+                    data[i] = parseFloat(parseFloat(weightedValues[i][j]).toFixed(2));
                     tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (NA)";
                 } else {
                     if (weightedValues[i][j] === "0.0") {
-                        data[i] = parseFloat("0.02").toFixed(2);
+                        data[i] = parseFloat(parseFloat("0.02").toFixed(2));
                     } else {
-                        data[i] = parseFloat(weightedValues[i][j]).toFixed(2);
+                        data[i] = parseFloat(parseFloat(weightedValues[i][j]).toFixed(2));
                     }
                     tooltips[i] = parseFloat(assessmentValues[i][j]).toFixed(2) + " (" + (w*100).toFixed() + "%)";
                 }

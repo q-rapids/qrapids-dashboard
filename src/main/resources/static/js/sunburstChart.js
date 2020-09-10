@@ -1,4 +1,8 @@
-var url = "/api/strategicIndicators/qualityModel";
+console.log("sessionStorage: profile_id");
+console.log(sessionStorage.getItem("profile_id"));
+var profileId = sessionStorage.getItem("profile_id");
+
+var url = "/api/strategicIndicators/qualityModel?profile="+profileId;
 var serverUrl = sessionStorage.getItem("serverUrl");
 if (serverUrl) {
     url = serverUrl + url;
@@ -134,4 +138,11 @@ function makeChart(strategicIndicators) {
     Plotly.newPlot('SunburstChart', data, layout, {displaylogo: false, responsive: true});
 }
 
-loadData();
+
+
+window.onload = function() {
+    if (sessionStorage.getItem("profile_qualitylvl") != "ALL") {
+        window.open("../QualityModelGraph","_self");
+    }
+    loadData();
+}

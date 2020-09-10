@@ -1,8 +1,6 @@
 package com.upc.gessi.qrapids;
 
-import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
-import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
-import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
@@ -35,7 +33,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
         return new BCryptPasswordEncoder();
     }
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		ConfigurableApplicationContext context = SpringApplication.run(QrapidsApplication.class, args);
 
@@ -43,6 +41,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		List<SICategory> siCategoryList = context.getBean(StrategicIndicatorsController.class).getStrategicIndicatorCategories();
 		List<QFCategory> factorCategoryList = context.getBean(QualityFactorsController.class).getFactorCategories();
 		List<MetricCategory> metricCategoryList = context.getBean(MetricsController.class).getMetricCategories();
+
 		try {
 			// Declare default categories
 			List<Map<String, String>> categories = new ArrayList<>();

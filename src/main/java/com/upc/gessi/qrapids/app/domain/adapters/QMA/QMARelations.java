@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
@@ -68,7 +69,7 @@ public class QMARelations {
         return doubleArray;
     }
 
-    public List<DTORelationsSI> getRelations (String prj, LocalDate date) throws IOException, CategoriesException, ArithmeticException {
+    public List<DTORelationsSI> getRelations (String prj, String profile, LocalDate date) throws IOException, CategoriesException, ProjectNotFoundException {
         qmacon.initConnexion();
         List<RelationDTO> relationDTOS;
         // get relations from elasticsearch
@@ -77,8 +78,8 @@ public class QMARelations {
         else
             relationDTOS = Relations.getRelations(prj, date);
         // get current evaluations for SI and Quality Factors
-        List<DTOStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
-        List<DTOQualityFactor> qfEval = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
+        List<DTOStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj,profile);
+        List<DTOQualityFactor> qfEval = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile);
         return RelationDTOToDTORelationSI(relationDTOS, siEval, qfEval);
     }
 
@@ -141,52 +142,54 @@ public class QMARelations {
                 .filter(si -> target.getID().equals(si.getId()))
                 .findAny()
                 .orElse(null);
-        if (strategicIndicatorsMap.containsKey(target.getID())) {
-            strategicIndicator = strategicIndicatorsMap.get(target.getID());
-        } else {
-            strategicIndicator = new DTORelationsSI(target.getID());
-            strategicIndicator.setName(thisSI.getName());
-            strategicIndicatorsMap.put(target.getID(), strategicIndicator);
-        }
-        strategicIndicator.setValue(target.getValue());
-        try {
-            Float value = Float.parseFloat(strategicIndicator.getValue());
-            String label = strategicIndicatorsController.getLabel(value);
-            String valueDescription = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
-            strategicIndicator.setValueDescription(valueDescription);
-            strategicIndicator.setColor(strategicIndicatorsController.getColorFromLabel(label));
-        } catch (NumberFormatException nfe) {
-            String label = strategicIndicator.getValue();
-            Float value = strategicIndicatorsController.getValueFromLabel(label);
-            String valueDescription = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
-            strategicIndicator.setValueDescription(valueDescription);
-            strategicIndicator.setColor(strategicIndicatorsController.getColorFromLabel(label));
-        }
+        if(thisSI != null) { // if we found thisSI we can work
+            if (strategicIndicatorsMap.containsKey(target.getID())) {
+                strategicIndicator = strategicIndicatorsMap.get(target.getID());
+            } else {
+                strategicIndicator = new DTORelationsSI(target.getID());
+                strategicIndicator.setName(thisSI.getName());
+                strategicIndicatorsMap.put(target.getID(), strategicIndicator);
+            }
+            strategicIndicator.setValue(target.getValue());
+            try {
+                Float value = Float.parseFloat(strategicIndicator.getValue());
+                String label = strategicIndicatorsController.getLabel(value);
+                String valueDescription = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
+                strategicIndicator.setValueDescription(valueDescription);
+                strategicIndicator.setColor(strategicIndicatorsController.getColorFromLabel(label));
+            } catch (NumberFormatException nfe) {
+                String label = strategicIndicator.getValue();
+                Float value = strategicIndicatorsController.getValueFromLabel(label);
+                String valueDescription = StrategicIndicatorsController.buildDescriptiveLabelAndValue(Pair.of(value, label));
+                strategicIndicator.setValueDescription(valueDescription);
+                strategicIndicator.setColor(strategicIndicatorsController.getColorFromLabel(label));
+            }
 
-        DTORelationsFactor factor;
-        DTOQualityFactor thisFactor = qfEval.stream()
-                .filter(qf -> source.getID().equals(qf.getId()))
-                .findAny()
-                .orElse(null);
-        if (factorsMap.containsKey(source.getID())) {
-            factor = factorsMap.get(source.getID());
-        } else {
-            factor = new DTORelationsFactor(source.getID());
-            factor.setName(thisFactor.getName());
-            factorsMap.put(source.getID(), factor);
-        }
-        // Special cases
-        if (Float.parseFloat(weight) == 0f || Float.parseFloat(weight) == 1f || Float.parseFloat(weight) == -1f) {
-            factor.setWeight(weight);
-            factor.setWeightedValue(source.getValue());
-            factor.setAssessmentValue(source.getValue());
-        } else {
-            factor.setWeight(weight);
-            factor.setWeightedValue(source.getValue());
-            factor.setAssessmentValue(String.valueOf(Float.parseFloat(source.getValue())/Float.parseFloat(weight)));
-        }
+            DTORelationsFactor factor;
+            DTOQualityFactor thisFactor = qfEval.stream()
+                    .filter(qf -> source.getID().equals(qf.getId()))
+                    .findAny()
+                    .orElse(null);
+            if (factorsMap.containsKey(source.getID())) {
+                factor = factorsMap.get(source.getID());
+            } else {
+                factor = new DTORelationsFactor(source.getID());
+                factor.setName(thisFactor.getName());
+                factorsMap.put(source.getID(), factor);
+            }
+            // Special cases
+            if (Float.parseFloat(weight) == 0f || Float.parseFloat(weight) == 1f || Float.parseFloat(weight) == -1f) {
+                factor.setWeight(weight);
+                factor.setWeightedValue(source.getValue());
+                factor.setAssessmentValue(source.getValue());
+            } else {
+                factor.setWeight(weight);
+                factor.setWeightedValue(source.getValue());
+                factor.setAssessmentValue(String.valueOf(Float.parseFloat(source.getValue()) / Float.parseFloat(weight)));
+            }
 
-        strategicIndicator.setFactor(new DTORelationsFactor(factor));
+            strategicIndicator.setFactor(new DTORelationsFactor(factor));
+        }
     }
 
     private void buildFactorMetricRelation(Map<String, DTORelationsFactor> factorsMap, Map<String, DTORelationsMetric> metricsMap, String weight, SourceRelationDTO source, TargetRelationDTO target, List<DTOQualityFactor> qfEval) {
@@ -195,31 +198,33 @@ public class QMARelations {
                 .filter(qf -> target.getID().equals(qf.getId()))
                 .findAny()
                 .orElse(null);
-        if (factorsMap.containsKey(target.getID())) {
-            factor = factorsMap.get(target.getID());
-        } else {
-            factor = new DTORelationsFactor(target.getID());
-            factor.setName(thisFactor.getName());
-            factorsMap.put(target.getID(), factor);
-        }
+        if (thisFactor != null) {
+            if (factorsMap.containsKey(target.getID())) {
+                factor = factorsMap.get(target.getID());
+            } else {
+                factor = new DTORelationsFactor(target.getID());
+                factor.setName(thisFactor.getName());
+                factorsMap.put(target.getID(), factor);
+            }
 
-        DTORelationsMetric metric;
-        List<DTOMetric> metrics = thisFactor.getMetrics();
-        DTOMetric thisMetric = metrics.stream()
-                .filter(m -> source.getID().equals(m.getId()))
-                .findAny()
-                .orElse(null);
-        if (metricsMap.containsKey(source.getID())) {
-            metric = metricsMap.get(source.getID());
-        } else {
-            metric = new DTORelationsMetric(source.getID());
-            metric.setName(thisMetric.getName());
-            metricsMap.put(source.getID(), metric);
-        }
-        metric.setWeight(weight);
-        metric.setWeightedValue(source.getValue());
-        metric.setAssessmentValue(thisMetric.getValue().toString());
+            DTORelationsMetric metric;
+            List<DTOMetric> metrics = thisFactor.getMetrics();
+            DTOMetric thisMetric = metrics.stream()
+                    .filter(m -> source.getID().equals(m.getId()))
+                    .findAny()
+                    .orElse(null);
+            if (metricsMap.containsKey(source.getID())) {
+                metric = metricsMap.get(source.getID());
+            } else {
+                metric = new DTORelationsMetric(source.getID());
+                metric.setName(thisMetric.getName());
+                metricsMap.put(source.getID(), metric);
+            }
+            metric.setWeight(weight);
+            metric.setWeightedValue(source.getValue());
+            metric.setAssessmentValue(thisMetric.getValue().toString());
 
-        factor.setMetric(new DTORelationsMetric(metric));
+            factor.setMetric(new DTORelationsMetric(metric));
+        }
     }
 }

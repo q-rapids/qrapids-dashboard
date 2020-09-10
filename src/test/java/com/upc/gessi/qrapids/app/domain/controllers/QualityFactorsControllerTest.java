@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
@@ -133,16 +134,17 @@ public class QualityFactorsControllerTest {
     }
 
     @Test
-    public void getAllFactorsWithMetricsCurrentEvaluation() throws IOException {
+    public void getAllFactorsWithMetricsCurrentEvaluation() throws IOException, ProjectNotFoundException {
         // Given
         DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
         List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
         dtoQualityFactorList.add(dtoQualityFactor);
         String projectExternalId = "test";
-        when(qmaQualityFactors.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoQualityFactorList);
+        String profileId = "null"; // without profile
+        when(qmaQualityFactors.CurrentEvaluation(null, projectExternalId, profileId)).thenReturn(dtoQualityFactorList);
 
         // When
-        List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId);
+        List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, profileId);
 
         // Then
         assertEquals(dtoQualityFactorList.size(), dtoQualityFactorListFound.size());
@@ -150,14 +152,14 @@ public class QualityFactorsControllerTest {
     }
 
     @Test
-    public void getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation() throws IOException {
+    public void getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation() throws IOException, ProjectNotFoundException {
         // Given
         DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
         List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
         dtoQualityFactorList.add(dtoQualityFactor);
         String strategicIndicatorId = "processperformance";
         String projectExternalId = "test";
-        when(qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId)).thenReturn(dtoQualityFactorList);
+        when(qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId, null)).thenReturn(dtoQualityFactorList);
 
         // When
         List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(strategicIndicatorId, projectExternalId);
@@ -168,18 +170,19 @@ public class QualityFactorsControllerTest {
     }
 
     @Test
-    public void getAllFactorsWithMetricsHistoricalEvaluation() throws IOException {
+    public void getAllFactorsWithMetricsHistoricalEvaluation() throws IOException, ProjectNotFoundException {
         // Given
         DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
         List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
         dtoQualityFactorList.add(dtoQualityFactor);
         String projectExternalId = "test";
+        String profileId = "null"; // without profile
         LocalDate from = dtoQualityFactor.getMetrics().get(0).getDate().minusDays(7);
         LocalDate to = dtoQualityFactor.getMetrics().get(0).getDate();
-        when(qmaQualityFactors.HistoricalData(null, from, to, projectExternalId)).thenReturn(dtoQualityFactorList);
+        when(qmaQualityFactors.HistoricalData(null, from, to, projectExternalId, profileId)).thenReturn(dtoQualityFactorList);
 
         // When
-        List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, from, to);
+        List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, profileId, from, to);
 
         // Then
         assertEquals(dtoQualityFactorList.size(), dtoQualityFactorListFound.size());
@@ -187,7 +190,7 @@ public class QualityFactorsControllerTest {
     }
 
     @Test
-    public void getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation() throws IOException {
+    public void getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation() throws IOException, ProjectNotFoundException {
         // Given
         DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
         List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
@@ -196,7 +199,7 @@ public class QualityFactorsControllerTest {
         String projectExternalId = "test";
         LocalDate from = dtoQualityFactor.getMetrics().get(0).getDate().minusDays(7);
         LocalDate to = dtoQualityFactor.getMetrics().get(0).getDate();
-        when(qmaQualityFactors.HistoricalData(strategicIndicatorId, from, to, projectExternalId)).thenReturn(dtoQualityFactorList);
+        when(qmaQualityFactors.HistoricalData(strategicIndicatorId, from, to, projectExternalId, null)).thenReturn(dtoQualityFactorList);
 
         // When
         List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(strategicIndicatorId, projectExternalId, from, to);

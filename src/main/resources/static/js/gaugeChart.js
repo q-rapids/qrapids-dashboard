@@ -25,7 +25,12 @@ checkCategories();
 
 function getData(width, height, showButtons, chartHyperlinked, color) {
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/strategicIndicators/current";
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+
+    var profileId = sessionStorage.getItem("profile_id");
+    var url = "/api/strategicIndicators/current?profile="+profileId;
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -42,16 +47,22 @@ function getData(width, height, showButtons, chartHyperlinked, color) {
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
                 alert("Your datasource and DB categories IDs do not match.");
-            else if (jqXHR.status == 400)
+            else if (jqXHR.status == 400) {
                 alert("Datasource connection failed.");
+            }
         }
     });
 }
 
 function seeFeedback(i){
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     jQuery.ajax({
         dataType: "json",
-        url: '../api/strategicIndicators/current',
+        url: '../api/strategicIndicators/current?profile='+profileId,
         cache: false,
         type: "GET",
         async: true,
@@ -62,8 +73,9 @@ function seeFeedback(i){
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
                 alert("Your datasource and DB categories IDs do not match.");
-            else if (jqXHR.status == 400)
+            else if (jqXHR.status == 400) {
                 alert("Datasource connection failed.");
+            }
         }
     });
     console.log(data);

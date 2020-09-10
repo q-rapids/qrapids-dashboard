@@ -38,9 +38,14 @@ function getMetricsCategories (titles, ids, labels, values) {
 }
 
 function getDetailedStrategicIndicators () {
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     jQuery.ajax({
         dataType: "json",
-        url: "../api/strategicIndicators/qualityFactors/current",
+        url: "../api/strategicIndicators/qualityFactors/current?profile="+profileId,
         cache: false,
         type: "GET",
         async: true,
@@ -168,9 +173,10 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
 }
 
 function getFactors () {
+    var profileId = sessionStorage.getItem("profile_id");
     jQuery.ajax({
         dataType: "json",
-        url: "../api/qualityFactors/metrics/current",
+        url: "../api/qualityFactors/metrics/current?profile="+profileId,
         cache: false,
         type: "GET",
         async: true,
@@ -541,13 +547,15 @@ function removeSimulation() {
             factorsCharts[i].update();
         }
     }
-    if (detailedCharts[0].data.datasets.length > 4) {
-        for (var i = 0; i < detailedCharts.length; i++) {
-            detailedCharts[i].data.datasets.shift();
-            // change categories fill property (we remove simulated data)
-            detailedCharts[i].data.datasets[2].fill = detailedCharts[i].data.datasets[2].fill -1;
-            detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill -1;
-            detailedCharts[i].update();
+    if (sessionStorage.getItem("profile_qualitylvl") == "ALL") {
+        if (detailedCharts[0].data.datasets.length > 4) {
+            for (var i = 0; i < detailedCharts.length; i++) {
+                detailedCharts[i].data.datasets.shift();
+                // change categories fill property (we remove simulated data)
+                detailedCharts[i].data.datasets[2].fill = detailedCharts[i].data.datasets[2].fill - 1;
+                detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill - 1;
+                detailedCharts[i].update();
+            }
         }
     }
 }
@@ -664,8 +672,12 @@ function simulateSI (qualityFactors) {
     var formData = new FormData();
     formData.append("factors", JSON.stringify(qfs));
 
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     $.ajax({
-        url: "../api/strategicIndicators/simulate",
+        url: "../api/strategicIndicators/simulate?profile=" + profileId,
         data: formData,
         type: "POST",
         contentType: false,
@@ -810,8 +822,13 @@ window.onload = function () {
     $("#currentColorFactors").css("background-color", currentColor);
 
     getFactors();
-    getDetailedStrategicIndicators();
-    getData(200, 237, false, false, currentColor);
+    if (sessionStorage.getItem("profile_qualitylvl") == "ALL") {
+        getDetailedStrategicIndicators();
+        getData(200, 237, false, false, currentColor);
+    } else { // in case of metrics&factors profile quality level we only show factors info
+        document.getElementById("radarDetailed").hidden = true;
+        document.getElementById("gaugeChart").hidden = true;
+    }
 
     patternId = getParameterByName("pattern");
     alertId = getParameterByName("alert");
