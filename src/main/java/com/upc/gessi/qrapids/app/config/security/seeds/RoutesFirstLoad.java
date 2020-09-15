@@ -65,6 +65,7 @@ public class RoutesFirstLoad {
         routes.add( new Route( "Detailed Strategic Indicators - Current Chart", "/DetailedStrategicIndicators/CurrentChart") );
         routes.add( new Route( "Detailed Strategic Indicators - Current Stacked", "/DetailedStrategicIndicators/CurrentStacked") );
         routes.add( new Route( "Detailed Strategic Indicators - Current Polar", "/DetailedStrategicIndicators/CurrentPolar") );
+        routes.add( new Route( "Detailed Strategic Indicators - Current Bar", "/DetailedStrategicIndicators/CurrentBar") );
         routes.add( new Route( "Detailed Strategic Indicators - Current Table", "/DetailedStrategicIndicators/CurrentTable") );
 
         routes.add( new Route( "Detailed Strategic Indicators - Historic Table", "/DetailedStrategicIndicators/HistoricTable") );
