@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: ChartView"></th:block>
+</head>
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
+<table style="width:100%">
+    <tr>
+        <td width="80%"><div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div></td>
+        <td width="20%"><div th:replace="Fragments/TemplateDashboard :: RepresentationMode"></div></td>
+    </tr>
+</table>
+<br/>
+<br/>
+<h1 id="title" align="center"></h1>
+<p style="margin-left: 20px; font-size: medium; font-family: Arial "><a id="originSIQF" href="../StrategicIndicators/CurrentChart"></a></p>
+<br/>
+<br/>
+<div id="polarChart" style="text-align:center;"></div>
+<br/>
+<p style="position: absolute; bottom: 0px; right: 15px">Assessment date: <span id="assessmentDate"></span></p>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" src="../../static/js/parseDataDetailedSICurrent.js" th:src="@{/js/parseDataDetailedSICurrent.js}"></script>
+<script type="text/javascript" src="../../static/js/polarChart.js" th:src="@{/js/polarChart.js}"></script>
+</html>
