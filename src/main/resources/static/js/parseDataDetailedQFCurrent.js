@@ -23,8 +23,6 @@ function getData() {
     values = [];
     categories = [];
 
-    getCategories();
-
     //get data from API
     jQuery.ajax({
         dataType: "json",
@@ -49,7 +47,7 @@ function getData() {
                         labels[0].push(data[j].name.slice(0, 23) + "...");
                     values[0].push(data[j].value);
                 }
-                drawChart();
+                getMetricsCategories();
             } else { // in case we show all detailed factors
                 for (i = 0; i < data.length; ++i) {
                     //for each qf save name to titles vector and id to ids vector
@@ -66,7 +64,7 @@ function getData() {
                         values[i].push(data[i].metrics[j].value);
                     }
                 }
-                drawChart();
+                getMetricsCategories();
             }
         }
     });
@@ -91,5 +89,16 @@ function getCategories() {
             });
         }
         console.log(categories);
+    });
+}
+function getMetricsCategories() {
+    jQuery.ajax({
+        url: "../api/metrics/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
+            drawChart();
+        }
     });
 }

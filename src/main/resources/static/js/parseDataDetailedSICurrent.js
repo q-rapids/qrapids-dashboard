@@ -19,8 +19,6 @@ function getData() {
     values = [];
     categories = [];
 
-    getCategories();
-
     //get data from API
     jQuery.ajax({
         dataType: "json",
@@ -83,7 +81,7 @@ function getData() {
                 warnings.push(messages);
             }
             $("#assessmentDate").text(assessmentDate.toLocaleDateString());
-            drawChart();
+            getFactorsCategories();
         }
     });
 }
@@ -103,5 +101,16 @@ function getCategories() {
             });
         }
         console.log(categories);
+    });
+}
+function getFactorsCategories() {
+    jQuery.ajax({
+        url: "../api/qualityFactors/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categories = response;
+            drawChart();
+        }
     });
 }

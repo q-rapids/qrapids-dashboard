@@ -310,7 +310,7 @@ function disableViewModeAndTimeOption () {
 
 if (assessment === "QualityModel") $("#Assessment").attr("href", serverUrl + "/" + assessment + qmMode);
 else if ( assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
-else if (assessment === "DetailedStrategicIndicators" || assessment === "QualityFactors" ) $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode + representationMode);
+else if (assessment === "DetailedStrategicIndicators" || assessment === "DetailedQualityFactors" ) $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode + representationMode);
 else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");

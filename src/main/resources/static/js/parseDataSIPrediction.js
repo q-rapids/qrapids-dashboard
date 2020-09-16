@@ -40,6 +40,8 @@ function getData() {
             type: "GET",
             async: true,
             success: function (data) {
+                console.log("parseDATASI");
+                console.log(data);
                 j = 0;
                 var line = [];
                 if (data[j]) {
@@ -93,7 +95,7 @@ function getData() {
                     alert("Datasource connection failed.");
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("chartContainer").style.display = "block";
-                document.getElementById("chartContainer").innerHTML = "Error " + xhr.status;
+                document.getElementById("chartContainer").innerHTML = "Error " + jqXHR.status;
             }
         });
     }

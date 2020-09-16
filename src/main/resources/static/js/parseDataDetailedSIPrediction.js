@@ -39,6 +39,7 @@ function getData() {
             type: "GET",
             async: true,
             success: function (data) {
+                console.log("parseDataDetailedSI");
                 console.log(data);
                 for (i = 0; i < data.length; ++i) {
                     for (i = 0; i < data.length; ++i) {
