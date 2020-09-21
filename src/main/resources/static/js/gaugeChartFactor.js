@@ -323,8 +323,8 @@ function drawChart(factors, container, width, height, categories, chartHyperlink
 
 function sortDataAlphabetically (factors) {
     function compare (a, b) {
-        if (a.id < b.id) return -1;
-        else if (a.id > b.id) return 1;
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
         else return 0;
     }
     factors.sort(compare);

@@ -73,7 +73,7 @@
             </thead>
             <tbody>
             <tr ng-repeat-start="d in data | filter:f | orderBy:sortType:sortReverse"></tr>
-            <td id="date">{{d.date}}</td>
+                    <td id="date">{{d.date}}</td>
                     <td ng-click="getURL(d.id, d.strategicIndicatorName, null, '../QualityFactors/CurrentTable', false)">{{d.strategicIndicatorName}}</td>
                     <td>{{d.strategicIndicatorValue}}</td>
                     <td>{{d.factorName}}</td>

@@ -225,7 +225,7 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
 } else if (currentURL.search("/Products/DetailedEvaluation") !== -1) {
     id = "DetailedEvaluation";
     highlightandSaveCurrentProducts(id);
-} else {
+} else { // related to config views
     if (currentURL.match("/StrategicIndicators"))
         id = "StrategicIndicators";
     else if (currentURL.match("/Products"))
@@ -310,8 +310,13 @@ function disableViewModeAndTimeOption () {
 
 if (assessment === "QualityModel") $("#Assessment").attr("href", serverUrl + "/" + assessment + qmMode);
 else if ( assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
-else if (assessment === "DetailedStrategicIndicators" || assessment === "DetailedQualityFactors" ) $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode + representationMode);
-else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
+else if (assessment === "DetailedStrategicIndicators" || assessment === "DetailedQualityFactors" ) {
+    if (time == "Current" && viewMode == "Chart") {
+        $("#Assessment").attr("href", serverUrl + "/" + assessment + "/" + time + viewMode + representationMode);
+    } else {
+        $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
+    }
+} else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
 
@@ -319,7 +324,7 @@ $("#StrategicIndicatorsAssessment").attr("href", serverUrl + "/StrategicIndicato
 
 $("#StrategicIndicatorsPrediction").attr("href", serverUrl + "/StrategicIndicators/PredictionChart");
 
-if (time == "Current" && viewMode == "Chart") {
+if ((time == "Current") && (viewMode == "Chart")) {
     $("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode + representationMode);
 } else {
     $("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode);
@@ -331,7 +336,7 @@ $("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + tim
 
 $("#QualityFactorsPrediction").attr("href", serverUrl + "/QualityFactors/PredictionChart");
 
-if (time == "Current" && viewMode == "Chart") {
+if ((time == "Current") && (viewMode == "Chart")) {
     $("#DetailedQualityFactorsAssessment").attr("href", serverUrl + "/DetailedQualityFactors/" + time + viewMode + representationMode);
 } else {
     $("#DetailedQualityFactorsAssessment").attr("href", serverUrl + "/DetailedQualityFactors/" + time + viewMode);}

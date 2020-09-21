@@ -36,6 +36,7 @@ function getData() {
         success: function (data) {
             console.log(url);
             console.log("getData() in QF Historical");
+            sortDataAlphabetically(data);
             console.log(data);
             if (getParameterByName('id').length !== 0) {
                 texts.push(getParameterByName('name'));
@@ -158,6 +159,15 @@ function buildDecisionVectors (decisionsAdd, decisionsIgnore, metricId) {
             }
         }
     }
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getMetricsCategories () {

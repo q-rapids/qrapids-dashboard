@@ -24,6 +24,7 @@ function getData(width, height) {
         type: "GET",
         async: true,
         success: function (metrics) {
+            sortDataAlphabetically(metrics);
             getMetricsCategories(metrics, width, height);
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -140,4 +141,13 @@ function drawChart(metrics, container, width, height, categories) {
             .text(text);
 
     }
+}
+
+function sortDataAlphabetically (metrics) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    metrics.sort(compare);
 }

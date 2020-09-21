@@ -33,6 +33,7 @@ function getData() {
         success: function (data) {
             console.log(url);
             console.log("getData() in QF Current");
+            sortDataAlphabetically(data);
             console.log(data);
             if (id) { // in case we show one detailed factor
                 titles.push(getParameterByName('name'));
@@ -72,6 +73,15 @@ function getData() {
     console.log(titles);
     console.log(labels);
     console.log(values);
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getCategories() {

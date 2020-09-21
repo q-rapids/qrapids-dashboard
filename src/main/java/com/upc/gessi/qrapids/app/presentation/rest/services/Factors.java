@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;

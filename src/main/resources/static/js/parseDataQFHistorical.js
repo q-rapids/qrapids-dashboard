@@ -41,6 +41,7 @@ function getData() {
             if (getParameterByName('id').length !== 0) {
                 data = data[0].factors;
             }
+            sortDataAlphabetically(data);
             console.log("inside " + url);
             console.log(data);
             j = 0;
@@ -155,6 +156,15 @@ function buildDecisionVectors (decisionsAdd, decisionsIgnore, strategicIndicator
             }
         });
     }
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getFactorsCategories () {

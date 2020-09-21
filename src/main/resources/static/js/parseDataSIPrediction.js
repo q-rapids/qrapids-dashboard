@@ -41,6 +41,7 @@ function getData() {
             async: true,
             success: function (data) {
                 console.log("parseDATASI");
+                sortDataAlphabetically(data);
                 console.log(data);
                 j = 0;
                 var line = [];
@@ -104,6 +105,15 @@ function getData() {
     console.log(labels);
     console.log(texts);
     console.log(ids);
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 window.onload = function() {

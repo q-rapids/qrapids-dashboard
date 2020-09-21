@@ -579,6 +579,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                         factorEval.metrics.forEach(function (metric) {
                             data.push({
                                 id: factorEval.id,
+                                date: metric.date,
                                 factorName: factorEval.name,
                                 metricName: metric.name,
                                 description: metric.description,
@@ -591,6 +592,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                     factorEval.metrics.forEach(function (metric) {
                         data.push({
                             id: factorEval.id,
+                            date: metric.date,
                             factorName: factorEval.name,
                             metricName: metric.name,
                             description: metric.description,
@@ -835,7 +837,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                     date: factorEval.date,
                     name: factorEval.name,
                     description: factorEval.description,
-                    value: factorEval.value,
+                    value: factorEval.value.toFixed(2).replace(".", ","),
                     rationale: factorEval.rationale
                 })
             });

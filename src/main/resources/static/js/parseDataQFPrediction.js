@@ -51,6 +51,7 @@ function getData() {
                 if (getParameterByName('id').length !== 0) {
                     data = response[0].factors;
                 }
+                sortDataAlphabetically(data);
                 j = 0;
                 var line = [];
                 //var line80l = [];
@@ -138,6 +139,15 @@ function getData() {
     console.log(labels);
     console.log(texts);
     console.log(ids);
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getFactorsCategories () {

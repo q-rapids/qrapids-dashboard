@@ -21,6 +21,12 @@
         <table id="QFT" class="table table-hover">
             <thead>
             <tr style="white-space: nowrap">
+                <th ng-click="sortBy('date')">Date
+                    <span ng-show="sortType == 'date' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'date' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
                 <th ng-click="sortBy('factorName')">Factor
                     <span ng-show="sortType == 'factorName' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'factorName' &amp;&amp; !sortReverse" class="dropup">
@@ -55,6 +61,7 @@
             </thead>
             <tbody>
             <tr ng-repeat-start="d in data | filter:f | orderBy:sortType:sortReverse"></tr>
+                <td id="date">{{d.date}}</td>
                 <td ng-click="getURL(d.id, d.factorName, fact, '../Metrics/CurrentTable', false, true)">{{d.factorName}}</td>
                 <td>{{d.metricName}}</td>
                 <td>{{d.description}}</td>

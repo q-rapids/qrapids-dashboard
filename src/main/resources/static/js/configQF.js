@@ -368,7 +368,21 @@ $("#saveQF").click(function () {
                 }
             },
             success: function() {
-                location.href = "../QualityFactors/Configuration";
+                // after edit factor we need to assess si, in order to update its information
+                $.ajax({
+                    url: "../api/strategicIndicators/assess?train=NONE",
+                    type: "GET",
+                    contentType: false,
+                    processData: false,
+                    //ToDo: the service produces more than one error, the current message does not fit all of them
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert("Error in the ElasticSearch: contact to the system administrator");
+                        location.href = "../QualityFactors/Configuration";
+                    },
+                    success: function () {
+                        location.href = "../QualityFactors/Configuration";
+                    }
+                });
             }
         });
     } else alert("Make sure that you have completed correctly all fields marked with an *");

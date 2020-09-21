@@ -52,6 +52,7 @@ function getData() {
             type: "GET",
             async: true,
             success: function (data) {
+                sortDataAlphabetically(data);
                 j = 0;
                 var line = [];
                 //var line80l = [];
@@ -131,6 +132,15 @@ function getData() {
     console.log(value);
     console.log(texts);
 
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getMetricsCategories () {

@@ -57,71 +57,164 @@ public class DomainObjectsBuilder {
 
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
 
-        Long factor1Id = 1L;
-        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator);
-        factor1.setId(factor1Id);
-        qualityFactors.add(factor1);
+        // define factor1 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project);
+        QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
+        qfm1.setId(1L);
+        qualityMetrics1.add(qfm1);
+        factor1.setQualityFactorMetricsList(qualityMetrics1);
+        factor1.setWeighted(false);
+        // define si with factor1 union
+        Long siqf1Id = 1L;
+        StrategicIndicatorQualityFactors siqf1 = new StrategicIndicatorQualityFactors(factor1, -1, strategicIndicator);
+        siqf1.setId(siqf1Id);
+        qualityFactors.add(siqf1);
 
-        Long factor2Id = 2L;
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator);
-        factor2.setId(factor2Id);
-        qualityFactors.add(factor2);
+        // define factor2 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project);
+        QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
+        qfm2.setId(2L);
+        qualityMetrics2.add(qfm2);
+        factor2.setQualityFactorMetricsList(qualityMetrics2);
+        factor2.setWeighted(false);
+        // define si with factor2 union
+        Long siqf2Id = 2L;
+        StrategicIndicatorQualityFactors siqf2 = new StrategicIndicatorQualityFactors( factor2, -1, strategicIndicator);
+        siqf2.setId(siqf2Id);
+        qualityFactors.add(siqf2);
 
-        Long factor3Id = 3L;
-        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator);
-        factor3.setId(factor3Id);
-        qualityFactors.add(factor3);
+        // define factor3 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
+        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project);
+        QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
+        qfm3.setId(3L);
+        qualityMetrics3.add(qfm3);
+        factor3.setQualityFactorMetricsList(qualityMetrics3);
+        factor3.setWeighted(false);
+        // define si with factor3 union
+        Long siqf3Id = 3L;
+        StrategicIndicatorQualityFactors siqf3 = new StrategicIndicatorQualityFactors( factor3, -1, strategicIndicator);
+        siqf3.setId(siqf3Id);
+        qualityFactors.add(siqf3);
 
-        strategicIndicator.setQuality_factors(qualityFactors);
+        // finish define si with its factors composition
+        strategicIndicator.setStrategicIndicatorQualityFactorsList(qualityFactors);
         strategicIndicator.setWeighted(false);
 
         return strategicIndicator;
     }
 
-    public Strategic_Indicator addFactorToStrategicIndicator (Strategic_Indicator si, String factorId, float weight) {
+    public Strategic_Indicator addFactorToStrategicIndicator (Strategic_Indicator si, Factor factor, float weight) {
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
 
-        Long factor1Id = 1L;
-        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, si);
-        factor1.setId(factor1Id);
-        qualityFactors.add(factor1);
+        List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", si.getProject());
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", si.getProject());
+        QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
+        qfm1.setId(1L);
+        qualityMetrics1.add(qfm1);
+        factor1.setQualityFactorMetricsList(qualityMetrics1);
+        factor1.setWeighted(false);
 
-        Long factor2Id = 2L;
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, si);
-        factor2.setId(factor2Id);
-        qualityFactors.add(factor2);
+        Long siqf1Id = 1L;
+        StrategicIndicatorQualityFactors siqf1 = new StrategicIndicatorQualityFactors(factor1, -1, si);
+        siqf1.setId(siqf1Id);
+        qualityFactors.add(siqf1);
 
-        Long factor3Id = 3L;
-        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, si);
-        factor3.setId(factor3Id);
-        qualityFactors.add(factor3);
 
-        Long factor4Id = 4L;
-        StrategicIndicatorQualityFactors factor4 = new StrategicIndicatorQualityFactors(factorId, weight, si);
-        factor4.setId(factor4Id);
-        qualityFactors.add(factor4);
+        List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", si.getProject());
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", si.getProject());
+        QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
+        qfm2.setId(2L);
+        qualityMetrics2.add(qfm2);
+        factor2.setQualityFactorMetricsList(qualityMetrics2);
+        factor2.setWeighted(false);
 
-        si.setQuality_factors(qualityFactors);
+        Long siqf2Id = 2L;
+        StrategicIndicatorQualityFactors siqf2 = new StrategicIndicatorQualityFactors( factor2, -1, si);
+        siqf2.setId(siqf2Id);
+        qualityFactors.add(siqf2);
+
+
+        List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", si.getProject());
+        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", si.getProject());
+        QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
+        qfm3.setId(3L);
+        qualityMetrics3.add(qfm3);
+        factor3.setQualityFactorMetricsList(qualityMetrics3);
+        factor3.setWeighted(false);
+
+        Long siqf3Id = 3L;
+        StrategicIndicatorQualityFactors siqf3 = new StrategicIndicatorQualityFactors(factor3, -1, si);
+        siqf3.setId(siqf3Id);
+        qualityFactors.add(siqf3);
+
+
+
+        Long siqf4Id = 4L;
+        StrategicIndicatorQualityFactors siqf4 = new StrategicIndicatorQualityFactors(factor, weight, si);
+        siqf4.setId(siqf4Id);
+        qualityFactors.add(siqf4);
+
+        si.setStrategicIndicatorQualityFactorsList(qualityFactors);
         return si;
     }
 
     public List<StrategicIndicatorQualityFactors> buildQualityFactors (Strategic_Indicator strategicIndicator) {
+
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
 
-        Long factor1Id = 1L;
-        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator);
-        factor1.setId(factor1Id);
-        qualityFactors.add(factor1);
+        // define factor1 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code", strategicIndicator.getProject());
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", strategicIndicator.getProject());
+        QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
+        qfm1.setId(1L);
+        qualityMetrics1.add(qfm1);
+        factor1.setQualityFactorMetricsList(qualityMetrics1);
+        factor1.setWeighted(false);
+        // define si with factor1 union
+        Long siqf1Id = 1L;
+        StrategicIndicatorQualityFactors siqf1 = new StrategicIndicatorQualityFactors(factor1, -1, strategicIndicator);
+        siqf1.setId(siqf1Id);
+        qualityFactors.add(siqf1);
 
-        Long factor2Id = 2L;
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator);
-        factor2.setId(factor2Id);
-        qualityFactors.add(factor2);
+        // define factor2 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", strategicIndicator.getProject());
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", strategicIndicator.getProject());
+        QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
+        qfm2.setId(2L);
+        qualityMetrics2.add(qfm2);
+        factor2.setQualityFactorMetricsList(qualityMetrics2);
+        factor2.setWeighted(false);
+        // define si with factor2 union
+        Long siqf2Id = 2L;
+        StrategicIndicatorQualityFactors siqf2 = new StrategicIndicatorQualityFactors( factor2, -1, strategicIndicator);
+        siqf2.setId(siqf2Id);
+        qualityFactors.add(siqf2);
 
-        Long factor3Id = 3L;
-        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator);
-        factor3.setId(factor3Id);
-        qualityFactors.add(factor3);
+        // define factor3 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold", strategicIndicator.getProject());
+        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", strategicIndicator.getProject());
+        QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
+        qfm3.setId(3L);
+        qualityMetrics3.add(qfm3);
+        factor3.setQualityFactorMetricsList(qualityMetrics3);
+        factor3.setWeighted(false);
+        // define si with factor3 union
+        Long siqf3Id = 3L;
+        StrategicIndicatorQualityFactors siqf3 = new StrategicIndicatorQualityFactors( factor3, -1, strategicIndicator);
+        siqf3.setId(siqf3Id);
+        qualityFactors.add(siqf3);
 
         return qualityFactors;
     }
@@ -240,22 +333,28 @@ public class DomainObjectsBuilder {
     }
 
     public DTODetailedFactorEvaluation buildDTOQualityFactor () {
+        String factorId = "testingperformance";
+        String factorName = "Testing Performance";
+
         String metricId = "fasttests";
         String metricName = "Fast Tests";
         String metricDescription = "Percentage of tests under the testing duration threshold";
         float metricValue = 0.8f;
         LocalDate evaluationDate = LocalDate.now();
         String metricRationale = "parameters: {...}, formula: ...";
-        DTOMetricEvaluation dtoMetricEvaluation = new DTOMetricEvaluation(metricId, metricName, metricDescription, null, metricRationale, evaluationDate, metricValue);
+        List<String> qualityFactors = new ArrayList<>();
+        qualityFactors.add(factorId);
+        DTOMetricEvaluation dtoMetricEvaluation = new DTOMetricEvaluation(metricId, metricName, metricDescription, null, metricRationale, qualityFactors, evaluationDate, metricValue);
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
-        String factorId = "testingperformance";
-        String factorName = "Testing Performance";
         return new DTODetailedFactorEvaluation(factorId, factorName, dtoMetricEvaluationList);
     }
 
     public DTODetailedFactorEvaluation buildDTOQualityFactorForPrediction () {
+        String factorId = "testingperformance";
+        String factorName = "Testing Performance";
+
         String metricId = "fasttests";
         String metricName = "Fast Tests";
         String metricDescription = "Percentage of tests under the testing duration threshold";
@@ -263,7 +362,9 @@ public class DomainObjectsBuilder {
         Double metricValue = 0.8;
         LocalDate evaluationDate = LocalDate.now();
         String metricRationale = "Forecast";
-        DTOMetricEvaluation dtoMetricEvaluation = new DTOMetricEvaluation(metricId, metricName, metricDescription, metricDataSource, metricRationale, evaluationDate, metricValue.floatValue());
+        List<String> qualityFactors = new ArrayList<>();
+        qualityFactors.add(factorId);
+        DTOMetricEvaluation dtoMetricEvaluation = new DTOMetricEvaluation(metricId, metricName, metricDescription, metricDataSource, metricRationale, qualityFactors, evaluationDate, metricValue.floatValue());
         Double first80 = 0.97473043;
         Double second80 = 0.9745246;
         Pair<Float, Float> confidence80 = Pair.of(first80.floatValue(), second80.floatValue());
@@ -275,8 +376,6 @@ public class DomainObjectsBuilder {
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
-        String factorId = "testingperformance";
-        String factorName = "Testing Performance";
         return new DTODetailedFactorEvaluation(factorId, factorName, dtoMetricEvaluationList);
     }
 
@@ -300,7 +399,10 @@ public class DomainObjectsBuilder {
         float metricValue = 0.8f;
         LocalDate evaluationDate = LocalDate.now();
         String metricRationale = "parameters: {...}, formula: ...";
-        return new DTOMetricEvaluation(metricId, metricName, metricDescription, null, metricRationale, evaluationDate, metricValue);
+        String factorId = "testingperformance";
+        List<String> qualityFactors = new ArrayList<>();
+        qualityFactors.add(factorId);
+        return new DTOMetricEvaluation(metricId, metricName, metricDescription, null, metricRationale, qualityFactors, evaluationDate, metricValue);
     }
 
     public DTOStrategicIndicatorEvaluation buildDTOStrategicIndicatorEvaluation () {

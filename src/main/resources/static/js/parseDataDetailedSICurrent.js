@@ -27,6 +27,7 @@ function getData() {
         type: "GET",
         async: true,
         success: function (data) {
+            sortDataAlphabetically(data);
             var assessmentDate;
             for (i = 0; i < data.length; ++i) {
                 //for each dsi save name to titles vector and id to ids vector
@@ -84,6 +85,15 @@ function getData() {
             getFactorsCategories();
         }
     });
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getCategories() {
