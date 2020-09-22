@@ -1,9 +1,11 @@
 function drawChart() {
     for (i = 0; i < titles.length; ++i) {
+        var angles = weights[i].map(x => x * 2 * Math.PI);
         var a = document.createElement('a');
-        var title = titles[i];
-        if (titles[i].indexOf('<') > -1)
-            title = titles[i].substr(0, titles[i].indexOf('<'));
+        var t = titles[i].split(": &nbsp;");
+        var title = t[0] + "<br/>" + t[1];
+        if (title.indexOf('<') > -1)
+            title = title.substr(0, title.indexOf('<'));
         if (isdsi) { //if it is a radar chart for Detailed Strategic Indicators
             var urlLink = "../QualityFactors/CurrentChart" + representationMode+ "?id=" + ids[i] + "&name=" + title;
         } else { //if it is a radar chart for Quality Factors
@@ -15,10 +17,10 @@ function drawChart() {
                 var urlLink = "../Metrics/CurrentChart?id=" + ids[i] + "&name=" + title;
         }
         a.setAttribute("href", urlLink);
-        a.innerHTML = titles[i];
+        a.innerHTML = t[0] + "<br/>" + t[1];
         a.style.fontSize = "16px";
         var div = document.createElement('div');
-        div.id = titles[i];
+        div.id = t[0] + "<br/>" + t[1];
         div.style.display = "inline-block";
         div.style.margin = "0px 5px 60px 5px";
         var p = document.createElement('p');
@@ -29,51 +31,48 @@ function drawChart() {
         document.getElementById("polarChart").appendChild(div).appendChild(ctx);
         div.appendChild(p).appendChild(a);
         ctx.getContext("2d");
-        /* TODO make triangle chart
-        if (labels[i].length === 2) {
-            labels[i].push(null);
-        } else if (labels[i].length === 1) {
-            labels[i].push(null);
-            labels[i].push(null);
-        }
-        */
         var dataset = [];
-        var t = titles[i].split("<br/>");
         // TODO dataset backgroundColor a param = 0.0 -> no fill
         dataset.push({ // data
-            label: t[0],
-            backgroundColor: 'rgba(1, 119, 166, 0.0)',
-            borderColor: 'rgb(1, 119, 166)',
-            pointBackgroundColor: 'rgb(1, 119, 166)',
-            pointBorderColor: 'rgb(1, 119, 166)',
-            data: values[i],
+            label: titles[i],
+            xLabel: weights[i], // only used to have weights info on tooltip
+            backgroundColor: colorsForPolar[i],
+            borderColor: colorsForPolar[i],
+            data: assessmentValues[i],
             fill: false
         });
-        console.log(categories);
-        for (var k = categories.length-1; k >= 0; --k) {
-            var fill = categories.length-1-k;
-            if (k == categories.length-1) fill = true;
+        // TODO categories come diferent in Stacked Data parse
+        console.log(categoriesForPolar);
+        for (var k = categoriesForPolar.length-1; k >= 0; --k) {
+            var fill = categoriesForPolar.length-1-k;
+            if (k == categoriesForPolar.length-1) fill = true;
             // TODO  categories dataset backgroundColor a param = 0.0 -> no fill
             dataset.push({
-                label: categories[k].name,
-                borderWidth: 1,
-                backgroundColor: hexToRgbA(categories[k].color, 0.3),
-                borderColor: hexToRgbA(categories[k].color, 0.3),
+                label: categoriesForPolar[k].name,
+                borderWidth: 2,
+                backgroundColor: hexToRgbA(categoriesForPolar[k].color, 0.0),
+                borderColor: hexToRgbA(categoriesForPolar[k].color, 1),
                 pointHitRadius: 0,
                 pointHoverRadius: 0,
                 pointRadius: 0,
                 pointBorderWidth: 0,
                 pointBackgroundColor: 'rgba(0, 0, 0, 0)',
                 pointBorderColor: 'rgba(0, 0, 0, 0)',
-                data: [].fill.call({ length: labels[i].length }, categories[k].upperThreshold),
+                data: [].fill.call({ length: labels[i].length }, categoriesForPolar[k].upperThreshold),
                 fill: fill
             })
         }
+
         console.log("dataset before make a chart");
         console.log(dataset);
 
         console.log("labels");
         console.log(labels);
+
+        console.log("angles");
+        console.log(angles);
+
+        var t = titles[i].split(": &nbsp;");
 
         window.myLine = new Chart(ctx, {    //draw chart with the following config
             type: 'polarArea',
@@ -82,10 +81,15 @@ function drawChart() {
                 datasets: dataset
             },
             options: {
+                "elements": {
+                    "arc": {
+                        "angle": angles,
+                    }
+                },
                 title: {
                     display: false,
                     fontSize: 16,
-                    text: titles[i]
+                    text: t[0] + "<br/>" + t[1],
                 },
                 responsive: false,
                 legend: {
@@ -96,16 +100,32 @@ function drawChart() {
                 aspectRatio: 1.8,
                 scale: {    //make y axis scale 0 to 1 and set maximum number of axis lines
                     ticks: {
-                        beginAtZero: false,
                         min: 0,
                         max: 1,
-                        stepSize: 0.2
-                        //maxTicksLimit: 5
+                        stepSize: 0.2,
                     }
                 },
                 tooltips: {
                     filter: function (tooltipItem) {
                         return tooltipItem.datasetIndex === 0;
+                    },
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index] || '';
+
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += Math.round(tooltipItem.yLabel * 100) / 100; // add assessment value
+                            label += " (" + (data.datasets[0].xLabel[tooltipItem.index] * 100).toFixed(0) + "%)"; // add weight value
+                            return label;
+                        },
+                        title: function (tooltipItem, data) {
+                            if (tooltipItem.length != 0) {
+                                var title = data.datasets[0].label.split(": &nbsp;");
+                                return title[0] + ": " + title[1];
+                            }
+                        }
                     }
                 }
             }
