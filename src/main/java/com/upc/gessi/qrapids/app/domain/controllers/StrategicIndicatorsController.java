@@ -411,7 +411,6 @@ public class StrategicIndicatorsController {
 
         // We need to identify the factors in factors_qma that are used to compute SI
         Map<String,String> mapSIFactors = new HashMap<>();
-        // TODO devuelve mal los quality factors
         siFactors = strategicIndicator.getQuality_factors();
         factorsMismatch = buildFactorsInfoAndCalculateMismatch(evaluationDate, project, strategicIndicator, factorEvaluationQMA, listFactorsAssessmentValues, siFactors, factorList, missingFactors, factorsMismatch, mapSIFactors);
 

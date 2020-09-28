@@ -8,10 +8,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorQualityFactorNotFoundException;
-import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.models.SICategory;
-import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
-import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedStrategicIndicatorEvaluation;
@@ -1671,14 +1668,54 @@ public class StrategicIndicatorsTest {
         strategicIndicator.setId(strategicIndicatorId);
 
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
-        StrategicIndicatorQualityFactors factor1 = new StrategicIndicatorQualityFactors("codequality", -1, strategicIndicator);
-        qualityFactors.add(factor1);
-        StrategicIndicatorQualityFactors factor2 = new StrategicIndicatorQualityFactors( "softwarestability", -1, strategicIndicator);
-        qualityFactors.add(factor2);
-        StrategicIndicatorQualityFactors factor3 = new StrategicIndicatorQualityFactors( "testingstatus", -1, strategicIndicator);
-        qualityFactors.add(factor3);
 
-        strategicIndicator.setQuality_factors(qualityFactors);
+        // define factor1 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        Factor factor1 =  new Factor("codequality", "Quality of the implemented code", project);
+        QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
+        qfm1.setId(1L);
+        qualityMetrics1.add(qfm1);
+        factor1.setQualityFactorMetricsList(qualityMetrics1);
+        factor1.setWeighted(false);
+        // define si with factor1 union
+        Long siqf1Id = 1L;
+        StrategicIndicatorQualityFactors siqf1 = new StrategicIndicatorQualityFactors(factor1, -1, strategicIndicator);
+        siqf1.setId(siqf1Id);
+        qualityFactors.add(siqf1);
+
+        // define factor2 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics2 = new ArrayList<>();
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
+        Factor factor2 =  new Factor("softwarestability", "Stability of the software under development", project);
+        QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor2);
+        qfm2.setId(2L);
+        qualityMetrics2.add(qfm2);
+        factor2.setQualityFactorMetricsList(qualityMetrics2);
+        factor2.setWeighted(false);
+        // define si with factor2 union
+        Long siqf2Id = 2L;
+        StrategicIndicatorQualityFactors siqf2 = new StrategicIndicatorQualityFactors( factor2, -1, strategicIndicator);
+        siqf2.setId(siqf2Id);
+        qualityFactors.add(siqf2);
+
+        // define factor3 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics3 = new ArrayList<>();
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
+        Factor factor3 =  new Factor("testingstatus", "Performance of testing phases", project);
+        QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor3);
+        qfm3.setId(3L);
+        qualityMetrics3.add(qfm3);
+        factor3.setQualityFactorMetricsList(qualityMetrics3);
+        factor3.setWeighted(false);
+        // define si with factor3 union
+        Long siqf3Id = 3L;
+        StrategicIndicatorQualityFactors siqf3 = new StrategicIndicatorQualityFactors( factor3, -1, strategicIndicator);
+        siqf3.setId(siqf3Id);
+        qualityFactors.add(siqf3);
+
+        // finish define si with its factors composition
+        strategicIndicator.setStrategicIndicatorQualityFactorsList(qualityFactors);
         strategicIndicator.setWeighted(false);
 
         List<Strategic_Indicator> strategicIndicatorList = new ArrayList<>();

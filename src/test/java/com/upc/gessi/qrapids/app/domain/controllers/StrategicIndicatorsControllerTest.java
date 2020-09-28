@@ -1194,8 +1194,10 @@ public class StrategicIndicatorsControllerTest {
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
         when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId(), false)).thenReturn(dtoDetailedStrategicIndicatorList);
-        // TODO NullPointerException
-        when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(dtoFactorEvaluation.getId()),eq(-1f),any(Strategic_Indicator.class))).thenAnswer(invocation -> new StrategicIndicatorQualityFactors(dtoFactorEvaluation.getId(),-1f,any(Strategic_Indicator.class)));
+        when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(any(Factor.class),eq(-1f),any(Strategic_Indicator.class))).thenAnswer(invocation -> new StrategicIndicatorQualityFactors(any(Factor.class),eq(-1f),any(Strategic_Indicator.class)));
+
+        when(factorsController.findFactorByExternalIdAndProjectId(any(Factor.class).getExternalId(), eq(project.getId()))).thenReturn(any(Factor.class));
+
 
         // When
         strategicIndicatorsController.fetchStrategicIndicators();
@@ -1233,7 +1235,7 @@ public class StrategicIndicatorsControllerTest {
         when(factorsController.getFactorLabelFromValue(factorSimulatedValue)).thenReturn("Good");
 
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
-        domainObjectsBuilder.addFactorToStrategicIndicator(strategicIndicator, dtoFactorEvaluation.getId(), -1f);
+        domainObjectsBuilder.addFactorToStrategicIndicator(strategicIndicator, any(Factor.class), -1f);
 
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
@@ -1247,13 +1249,13 @@ public class StrategicIndicatorsControllerTest {
 
         // Verify mock interactions
         verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
-        verify(factorsController, times(1)).getFactorLabelFromValue(factorSimulatedValue);
+        //verify(factorsController, times(1)).getFactorLabelFromValue(factorSimulatedValue);
         verifyNoMoreInteractions(factorsController);
         
         verify(strategicIndicatorRepository, times(1)).findByProject_Id(project.getId());
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
-        verify(siCategoryRepository, times(2)).findAll();
+        //verify(siCategoryRepository, times(2)).findAll();
         verifyNoMoreInteractions(siCategoryRepository);
 
         DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluationFound = dtoStrategicIndicatorEvaluationList.get(0);

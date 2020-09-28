@@ -41,7 +41,7 @@ public class Strategic_Indicator {
     //@ElementCollection(fetch = FetchType.EAGER)
     //private List<String> quality_factors = new ArrayList<String>();
 
-    @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="strategic_indicator_id")
     private List<StrategicIndicatorQualityFactors> strategicIndicatorQualityFactorsList = new ArrayList<>();
 

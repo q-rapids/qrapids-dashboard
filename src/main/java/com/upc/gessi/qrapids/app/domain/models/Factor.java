@@ -25,7 +25,7 @@ public class Factor {
     @JoinColumn(name="project_id", referencedColumnName = "id")
     private Project project;
 
-    @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="quality_factor_id")
     private List<QualityFactorMetrics> qualityFactorMetricsList = new ArrayList<>();
 
