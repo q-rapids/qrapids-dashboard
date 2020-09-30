@@ -342,6 +342,8 @@ function drawSimulationNeedle (container, width, height, color) {
         var afterValue = data[i].value.first.toFixed(2);
 
         if (beforeValue < afterValue) {
+            if (beforeValue == 0)
+                beforeValue = 0.001;
             var inc = ((afterValue - beforeValue)/beforeValue)*100;
             svg.append("polygon") // increase icon
                 .attr("class", "simulation")

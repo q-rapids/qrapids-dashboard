@@ -15,7 +15,7 @@ Chart.plugins.register({
     afterDraw: function(chart) {
         var allEmpty = true;
         for (var i = 0; i < chart.data.datasets.length; i++) {
-            if (chart.data.datasets[i].data.length > 0) allEmpty = false;
+            if (chart.data.datasets[i].data.length > 0) allEmpty = false; // check if all data series are empty -> show error
         }
         if (allEmpty) {
             // No data is present
