@@ -132,6 +132,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<StrategicIndicatorQualityFactors> qualityFactors = domainObjectsBuilder.buildQualityFactors(strategicIndicator);
         for (StrategicIndicatorQualityFactors qf : qualityFactors) {
+            when(factorsController.getQualityFactorById(eq(qf.getFactor().getId()))).thenReturn(qf.getFactor());
             when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(qf.getFactor()),eq(qf.getWeight()), any(Strategic_Indicator.class))).thenReturn(qf);
         }
 
@@ -157,6 +158,7 @@ public class StrategicIndicatorsControllerTest {
 
         List<StrategicIndicatorQualityFactors> qualityFactors = domainObjectsBuilder.buildQualityFactors(strategicIndicator);
         for (StrategicIndicatorQualityFactors qf : qualityFactors) {
+            when(factorsController.getQualityFactorById(eq(qf.getFactor().getId()))).thenReturn(qf.getFactor());
             when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(qf.getFactor()),eq(qf.getWeight()), any(Strategic_Indicator.class))).thenReturn(qf);
         }
 
@@ -1194,10 +1196,35 @@ public class StrategicIndicatorsControllerTest {
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
         when(qmaDetailedStrategicIndicators.CurrentEvaluation(null, project.getExternalId(), false)).thenReturn(dtoDetailedStrategicIndicatorList);
-        when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(any(Factor.class),eq(-1f),any(Strategic_Indicator.class))).thenAnswer(invocation -> new StrategicIndicatorQualityFactors(any(Factor.class),eq(-1f),any(Strategic_Indicator.class)));
+        for (DTOFactorEvaluation qf : dtoFactorEvaluationList) {
+            Factor f = new Factor(qf.getId(), qf.getDescription(), project);
+            f.setId(1L);
+            when(factorsController.findFactorByExternalIdAndProjectId(any(String.class), eq(project.getId()))).thenReturn(f);
+        }
 
-        when(factorsController.findFactorByExternalIdAndProjectId(any(Factor.class).getExternalId(), eq(project.getId()))).thenReturn(any(Factor.class));
+        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicatorForSimulation(project);
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+        // define factor1 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        metric1.setId(1L);
+        Factor factor1 =  new Factor("testingperformance", "Performance of the tests", project);
+        factor1.setId(1L);
+        QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
+        qfm1.setId(1L);
+        qualityMetrics1.add(qfm1);
+        factor1.setQualityFactorMetricsList(qualityMetrics1);
+        factor1.setWeighted(false);
+        // define si with factor1 union
+        Long siqf1Id = 1L;
+        StrategicIndicatorQualityFactors siqf1 = new StrategicIndicatorQualityFactors(factor1, -1, strategicIndicator);
+        siqf1.setId(siqf1Id);
+        qualityFactors.add(siqf1);
 
+        for (StrategicIndicatorQualityFactors qf : qualityFactors) {
+            when(factorsController.getQualityFactorById(eq(qf.getFactor().getId()))).thenReturn(qf.getFactor());
+            when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(qf.getFactor()),eq(qf.getWeight()), any(Strategic_Indicator.class))).thenReturn(qf);
+        }
 
         // When
         strategicIndicatorsController.fetchStrategicIndicators();
@@ -1234,8 +1261,7 @@ public class StrategicIndicatorsControllerTest {
         factorSimulatedMap.put(dtoFactorEvaluation.getId(), factorSimulatedValue);
         when(factorsController.getFactorLabelFromValue(factorSimulatedValue)).thenReturn("Good");
 
-        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
-        domainObjectsBuilder.addFactorToStrategicIndicator(strategicIndicator, any(Factor.class), -1f);
+        Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicatorForSimulation(project);
 
         List<Strategic_Indicator> strategic_indicatorList = new ArrayList<>();
         strategic_indicatorList.add(strategicIndicator);
@@ -1249,13 +1275,13 @@ public class StrategicIndicatorsControllerTest {
 
         // Verify mock interactions
         verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId());
-        //verify(factorsController, times(1)).getFactorLabelFromValue(factorSimulatedValue);
+        verify(factorsController,times(1)).getFactorLabelFromValue(factorSimulatedValue);
         verifyNoMoreInteractions(factorsController);
         
         verify(strategicIndicatorRepository, times(1)).findByProject_Id(project.getId());
         verifyNoMoreInteractions(strategicIndicatorRepository);
 
-        //verify(siCategoryRepository, times(2)).findAll();
+        verify(siCategoryRepository, times(2)).findAll();
         verifyNoMoreInteractions(siCategoryRepository);
 
         DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluationFound = dtoStrategicIndicatorEvaluationList.get(0);

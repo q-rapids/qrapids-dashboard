@@ -115,6 +115,41 @@ public class DomainObjectsBuilder {
         return strategicIndicator;
     }
 
+    public Strategic_Indicator buildStrategicIndicatorForSimulation (Project project) {
+        Long strategicIndicatorId = 1L;
+        String strategicIndicatorName = "Product Quality";
+        String strategicIndicatorDescription = "Quality of the product built";
+
+        Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, project);
+        strategicIndicator.setId(strategicIndicatorId);
+
+        List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
+
+        // define factor1 with its metric composition
+        List<QualityFactorMetrics> qualityMetrics1 = new ArrayList<>();
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        metric1.setId(1L);
+        Factor factor1 =  new Factor("testingperformance", "Performance of the tests", project);
+        factor1.setId(1L);
+        QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor1);
+        qfm1.setId(1L);
+        qualityMetrics1.add(qfm1);
+        factor1.setQualityFactorMetricsList(qualityMetrics1);
+        factor1.setWeighted(false);
+        // define si with factor1 union
+        Long siqf1Id = 1L;
+        StrategicIndicatorQualityFactors siqf1 = new StrategicIndicatorQualityFactors(factor1, -1, strategicIndicator);
+        siqf1.setId(siqf1Id);
+        qualityFactors.add(siqf1);
+
+
+        // finish define si with its factors composition
+        strategicIndicator.setStrategicIndicatorQualityFactorsList(qualityFactors);
+        strategicIndicator.setWeighted(false);
+
+        return strategicIndicator;
+    }
+
     public Strategic_Indicator addFactorToStrategicIndicator (Strategic_Indicator si, Factor factor, float weight) {
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
 

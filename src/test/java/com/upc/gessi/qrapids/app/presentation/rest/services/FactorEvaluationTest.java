@@ -205,6 +205,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].metrics[0].confidence80", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getQualityFactors())))
                 .andDo(document("qf/current",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -239,7 +240,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].metrics[].confidence95")
                                         .description("Metric forecasting 95% confidence interval"),
                                 fieldWithPath("[].metrics[].forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].metrics[].qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 
@@ -257,7 +260,7 @@ public class FactorEvaluationTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/qualityFactors/{id}", dtoFactorEvaluation.getId())
+                .get("/api/qualityFactors/{id}/current", dtoFactorEvaluation.getId())
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -272,7 +275,11 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$.date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
                 .andExpect(jsonPath("$.datasource", is(nullValue())))
                 .andExpect(jsonPath("$.rationale", is(dtoFactorEvaluation.getRationale())))
+                .andExpect(jsonPath("$.confidence80", is(dtoFactorEvaluation.getConfidence80())))
+                .andExpect(jsonPath("$.confidence95", is(dtoFactorEvaluation.getConfidence95())))
                 .andExpect(jsonPath("$.forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$.mismatchDays", is(0)))
+                .andExpect(jsonPath("$.missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$.strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$.formattedDate", is(dtoFactorEvaluation.getDate().toString())))
                 .andDo(document("qf/single",
@@ -301,8 +308,16 @@ public class FactorEvaluationTest {
                                         .description("Quality factor source of data"),
                                 fieldWithPath("rationale")
                                         .description("Quality factor evaluation rationale"),
+                                fieldWithPath("confidence80")
+                                        .description("Quality factor forecasting 80% confidence interval"),
+                                fieldWithPath("confidence95")
+                                        .description("Quality factor forecasting 95% confidence interval"),
                                 fieldWithPath("forecastingError")
                                         .description("Description of forecasting errors"),
+                                fieldWithPath("mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics"),
+                                fieldWithPath("missingMetrics")
+                                        .description("Metrics without assessment"),
                                 fieldWithPath("strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("formattedDate")
@@ -353,6 +368,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].metrics[0].confidence80", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getQualityFactors())))
                 .andDo(document("qf/historical",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -391,7 +407,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].metrics[].confidence95")
                                         .description("Metric forecasting 95% confidence interval"),
                                 fieldWithPath("[].metrics[].forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].metrics[].qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 
@@ -411,7 +429,7 @@ public class FactorEvaluationTest {
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
-                .get("/api/qualityFactors")
+                .get("/api/qualityFactors/current")
                 .param("prj", projectExternalId);
 
         this.mockMvc.perform(requestBuilder)
@@ -427,7 +445,11 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
                 .andExpect(jsonPath("$[0].datasource", is(nullValue())))
                 .andExpect(jsonPath("$[0].rationale", is(dtoFactorEvaluation.getRationale())))
+                .andExpect(jsonPath("$[0].confidence80", is(dtoFactorEvaluation.getConfidence80())))
+                .andExpect(jsonPath("$[0].confidence95", is(dtoFactorEvaluation.getConfidence95())))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
                 .andDo(document("qf/all",
@@ -453,8 +475,16 @@ public class FactorEvaluationTest {
                                         .description("Quality factor source of data"),
                                 fieldWithPath("[].rationale")
                                         .description("Quality factor evaluation rationale"),
+                                fieldWithPath("[].confidence80")
+                                        .description("Quality factor forecasting 80% confidence interval"),
+                                fieldWithPath("[].confidence95")
+                                        .description("Quality factor forecasting 95% confidence interval"),
                                 fieldWithPath("[].forecastingError")
                                         .description("Description of forecasting errors"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics"),
+                                fieldWithPath("[].missingMetrics")
+                                        .description("Metrics without assessment"),
                                 fieldWithPath("[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].formattedDate")
@@ -506,6 +536,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].metrics[0].confidence95.first", is(HelperFunctions.getFloatAsDouble(dtoDetailedFactorEvaluation.getMetrics().get(0).getConfidence95().getFirst()))))
                 .andExpect(jsonPath("$[0].metrics[0].confidence95.second", is(HelperFunctions.getFloatAsDouble(dtoDetailedFactorEvaluation.getMetrics().get(0).getConfidence95().getSecond()))))
                 .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getQualityFactors())))
                 .andDo(document("qf/prediction",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -552,7 +583,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].metrics[].confidence95.second")
                                         .description("Metric forecasting 95% confidence interval lower values"),
                                 fieldWithPath("[].metrics[].forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].metrics[].qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 
@@ -607,7 +640,11 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
                 .andExpect(jsonPath("$[0].datasource", is(nullValue())))
                 .andExpect(jsonPath("$[0].rationale", is(dtoFactorEvaluation.getRationale())))
+                .andExpect(jsonPath("$[0].confidence80", is(dtoFactorEvaluation.getConfidence80())))
+                .andExpect(jsonPath("$[0].confidence95", is(dtoFactorEvaluation.getConfidence95())))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
                 .andExpect(jsonPath("$[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
                 .andDo(document("qf/simulation",
@@ -640,8 +677,16 @@ public class FactorEvaluationTest {
                                         .description("Quality factor source of data"),
                                 fieldWithPath("[].rationale")
                                         .description("Quality factor evaluation rationale"),
+                                fieldWithPath("[].confidence80")
+                                        .description("Quality factor forecasting 80% confidence interval"),
+                                fieldWithPath("[].confidence95")
+                                        .description("Quality factor forecasting 95% confidence interval"),
                                 fieldWithPath("[].forecastingError")
                                         .description("Description of forecasting errors"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics"),
+                                fieldWithPath("[].missingMetrics")
+                                        .description("Metrics without assessment"),
                                 fieldWithPath("[].strategicIndicators")
                                         .description("List of the strategic indicators that use this quality factor"),
                                 fieldWithPath("[].formattedDate")
@@ -684,6 +729,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].confidence80", is(nullValue())))
                 .andExpect(jsonPath("$[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
                 .andDo(document("metrics/current-qf",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -715,7 +761,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].confidence95")
                                         .description("Metric forecasting 95% confidence interval"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 
@@ -758,6 +806,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].confidence80", is(nullValue())))
                 .andExpect(jsonPath("$[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
                 .andDo(document("metrics/historical-qf",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -793,7 +842,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].confidence95")
                                         .description("Metric forecasting 95% confidence interval"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 
@@ -853,6 +904,7 @@ public class FactorEvaluationTest {
                 .andExpect(jsonPath("$[0].confidence95.first", is(first95)))
                 .andExpect(jsonPath("$[0].confidence95.second", is(second95)))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
                 .andDo(document("metrics/prediction-qf",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -896,7 +948,9 @@ public class FactorEvaluationTest {
                                 fieldWithPath("[].confidence95.second")
                                         .description("Metric forecasting 95% confidence interval lower values"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 

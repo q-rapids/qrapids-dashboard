@@ -202,6 +202,7 @@ public class MetricsTest {
                 .andExpect(jsonPath("$[0].confidence80", is(nullValue())))
                 .andExpect(jsonPath("$[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
                 .andDo(document("metrics/current",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -230,7 +231,9 @@ public class MetricsTest {
                                 fieldWithPath("[].confidence95")
                                         .description("Metric forecasting 95% confidence interval"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 
@@ -264,6 +267,7 @@ public class MetricsTest {
                 .andExpect(jsonPath("$.confidence80", is(nullValue())))
                 .andExpect(jsonPath("$.confidence95", is(nullValue())))
                 .andExpect(jsonPath("$.forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$.qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
                 .andDo(document("metrics/single",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -295,7 +299,9 @@ public class MetricsTest {
                                 fieldWithPath("confidence95")
                                         .description("Metric forecasting 95% confidence interval"),
                                 fieldWithPath("forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 
@@ -333,6 +339,7 @@ public class MetricsTest {
                 .andExpect(jsonPath("$[0].confidence80", is(nullValue())))
                 .andExpect(jsonPath("$[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
                 .andDo(document("metrics/historical",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -365,7 +372,9 @@ public class MetricsTest {
                                 fieldWithPath("[].confidence95")
                                         .description("Metric forecasting 95% confidence interval"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 
@@ -403,6 +412,7 @@ public class MetricsTest {
                 .andExpect(jsonPath("$[0].confidence80", is(nullValue())))
                 .andExpect(jsonPath("$[0].confidence95", is(nullValue())))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
                 .andDo(document("metrics/single-historical",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -438,7 +448,9 @@ public class MetricsTest {
                                 fieldWithPath("[].confidence95")
                                         .description("Metric forecasting 95% confidence interval"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 
@@ -491,6 +503,7 @@ public class MetricsTest {
                 .andExpect(jsonPath("$[0].confidence95.first", is(first95)))
                 .andExpect(jsonPath("$[0].confidence95.second", is(second95)))
                 .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
                 .andDo(document("metrics/prediction",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -531,7 +544,9 @@ public class MetricsTest {
                                 fieldWithPath("[].confidence95.second")
                                         .description("Metric forecasting 95% confidence interval lower values"),
                                 fieldWithPath("[].forecastingError")
-                                        .description("Description of forecasting errors")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].qualityFactors")
+                                        .description("List of the quality factors that use this metric")
                         )
                 ));
 
