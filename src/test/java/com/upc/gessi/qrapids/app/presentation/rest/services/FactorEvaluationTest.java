@@ -6,34 +6,47 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
-import com.upc.gessi.qrapids.app.domain.models.QFCategory;
+import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorQualityFactorNotFoundException;
+import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import com.upc.gessi.qrapids.app.testHelpers.HelperFunctions;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.upc.gessi.qrapids.app.testHelpers.HelperFunctions.getFloatAsDouble;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -58,6 +71,9 @@ public class FactorEvaluationTest {
 
     @Mock
     private MetricsController metricsDomainController;
+
+    @Mock
+    private ProjectsController projectsController;
 
     @InjectMocks
     private Factors factorsController;
@@ -332,7 +348,7 @@ public class FactorEvaluationTest {
     }
 
     @Test
-    public void getQualityFactorsHistoricalData() throws Exception {
+    public void getDetailedQualityFactorsHistoricalData() throws Exception {
         // Given
         DTODetailedFactorEvaluation dtoDetailedFactorEvaluation = domainObjectsBuilder.buildDTOQualityFactor();
         List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
@@ -419,7 +435,7 @@ public class FactorEvaluationTest {
     }
 
     @Test
-    public void getAllQualityFactors() throws Exception {
+    public void getAllDetailedQualityFactors() throws Exception {
         // Given
         DTOFactorEvaluation dtoFactorEvaluation = domainObjectsBuilder.buildDTOFactor();
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
@@ -959,4 +975,769 @@ public class FactorEvaluationTest {
         verify(metricsDomainController, times(1)).getMetricsPrediction(dtoMetricEvaluationList, projectExternalId, technique, freq, horizon);
         verifyNoMoreInteractions(metricsDomainController);
     }
+
+    // TODO: NEW TESTS
+    @Test
+    public void importFactorsAndUpdateDatabase() throws Exception {
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors/import");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("qualityFactors/import",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).importFactorsAndUpdateDatabase();
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void getQualityFactorsHistoricalData() throws Exception {
+        // Given
+        String projectExternalId = "test";
+        DTOFactorEvaluation dtoFactorEvaluation = domainObjectsBuilder.buildDTOFactor();
+        List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
+        dtoFactorEvaluationList.add(dtoFactorEvaluation);
+        String from = "2019-07-07";
+        LocalDate fromDate = LocalDate.parse(from);
+        String to = "2019-07-15";
+        LocalDate toDate = LocalDate.parse(to);
+        when(qualityFactorsDomainController.getAllFactorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenReturn(dtoFactorEvaluationList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors/historical")
+                .param("prj", projectExternalId)
+                .param("from", from)
+                .param("to", to);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(dtoFactorEvaluation.getId())))
+                .andExpect(jsonPath("$[0].name", is(dtoFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoFactorEvaluation.getDescription())))
+                .andExpect(jsonPath("$[0].value", is(getFloatAsDouble(dtoFactorEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].value_description", is(dtoFactorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].date[0]", is(dtoFactorEvaluation.getDate().getYear())))
+                .andExpect(jsonPath("$[0].date[1]", is(dtoFactorEvaluation.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].datasource", is(dtoFactorEvaluation.getDatasource())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoFactorEvaluation.getRationale())))
+                .andExpect(jsonPath("$[0].confidence80", is(dtoFactorEvaluation.getConfidence80())))
+                .andExpect(jsonPath("$[0].confidence95", is(dtoFactorEvaluation.getConfidence95())))
+                .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
+                .andExpect(jsonPath("$[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
+                .andExpect(jsonPath("$[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andDo(document("qualityFactors/historical",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("from")
+                                        .description("Starting date (yyyy-mm-dd) for the requested the period"),
+                                parameterWithName("to")
+                                        .description("Ending date (yyyy-mm-dd) for the requested the period")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
+                                fieldWithPath("[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].datasource")
+                                        .description("Quality factor source of data"),
+                                fieldWithPath("[].rationale")
+                                        .description("Quality factor evaluation rationale"),
+                                fieldWithPath("[].confidence80")
+                                        .description("Quality factor forecasting 80% confidence interval"),
+                                fieldWithPath("[].confidence95")
+                                        .description("Quality factor forecasting 95% confidence interval"),
+                                fieldWithPath("[].forecastingError")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics"),
+                                fieldWithPath("[].missingMetrics")
+                                        .description("Metrics without assessment"),
+                                fieldWithPath("[].strategicIndicators")
+                                        .description("List of the strategic indicators that use this quality factor"),
+                                fieldWithPath("[].formattedDate")
+                                        .description("Readable quality factor evaluation date")
+                        )
+                ));
+
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsHistoricalEvaluation(projectExternalId, fromDate, toDate);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void getQualityFactorsHistoricalDataReadError() throws Exception {
+        String projectExternalId = "test";
+        String from = "2019-07-07";
+        LocalDate fromDate = LocalDate.parse(from);
+        String to = "2019-07-15";
+        LocalDate toDate = LocalDate.parse(to);
+        when(qualityFactorsDomainController.getAllFactorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenThrow(new IOException());
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors/historical")
+                .param("prj", projectExternalId)
+                .param("from", from)
+                .param("to", to);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isInternalServerError())
+                .andDo(document("qualityFactors/historical-read-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+    }
+
+    @Test
+    public void getQualityFactorsPredictionData() throws Exception {
+        // Given
+        String projectExternalId = "test";
+        DTOFactorEvaluation dtoFactorEvaluation = domainObjectsBuilder.buildDTOFactor();
+        dtoFactorEvaluation.setDatasource("Forecast");
+        dtoFactorEvaluation.setRationale("Forecast");
+        Double first80 = 0.97473043;
+        Double second80 = 0.9745246;
+        Pair<Float, Float> confidence80 = Pair.of(first80.floatValue(), second80.floatValue());
+        dtoFactorEvaluation.setConfidence80(confidence80);
+        Double first95 = 0.9747849;
+        Double second95 = 0.97447014;
+        Pair<Float, Float> confidence95 = Pair.of(first95.floatValue(), second95.floatValue());
+        dtoFactorEvaluation.setConfidence95(confidence95);
+
+        List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
+        dtoFactorEvaluationList.add(dtoFactorEvaluation);
+
+        String technique = "PROPHET";
+        String freq = "7";
+        String horizon = "7";
+
+        when(qualityFactorsDomainController.getAllFactorsEvaluation(projectExternalId)).thenReturn(dtoFactorEvaluationList);
+        when(qualityFactorsDomainController.getFactorsPrediction(dtoFactorEvaluationList, projectExternalId, technique, freq, horizon)).thenReturn(dtoFactorEvaluationList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors/prediction")
+                .param("prj", projectExternalId)
+                .param("technique", technique)
+                .param("horizon", horizon);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(dtoFactorEvaluation.getId())))
+                .andExpect(jsonPath("$[0].name", is(dtoFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].description", is(dtoFactorEvaluation.getDescription())))
+                .andExpect(jsonPath("$[0].value", is(HelperFunctions.getFloatAsDouble(dtoFactorEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].value_description", is(String.format("%.2f", dtoFactorEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].date[0]", is(dtoFactorEvaluation.getDate().getYear())))
+                .andExpect(jsonPath("$[0].date[1]", is(dtoFactorEvaluation.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].datasource", is(dtoFactorEvaluation.getRationale())))
+                .andExpect(jsonPath("$[0].rationale", is(dtoFactorEvaluation.getRationale())))
+                .andExpect(jsonPath("$[0].confidence80.first", is(first80)))
+                .andExpect(jsonPath("$[0].confidence80.second", is(second80)))
+                .andExpect(jsonPath("$[0].confidence95.first", is(first95)))
+                .andExpect(jsonPath("$[0].confidence95.second", is(second95)))
+                .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
+                .andExpect(jsonPath("$[0].strategicIndicators[0]", is(dtoFactorEvaluation.getStrategicIndicators().get(0))))
+                .andExpect(jsonPath("$[0].formattedDate", is(dtoFactorEvaluation.getDate().toString())))
+                .andDo(document("qualityFactors/prediction",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("technique")
+                                        .description("Forecasting technique"),
+                                parameterWithName("horizon")
+                                        .description("Amount of days that the prediction will cover")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
+                                fieldWithPath("[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].datasource")
+                                        .description("Quality factor source of data"),
+                                fieldWithPath("[].rationale")
+                                        .description("Quality factor evaluation rationale"),
+                                fieldWithPath("[].confidence80")
+                                        .description("Quality factor forecasting 80% confidence interval"),
+                                fieldWithPath("[].confidence80.first")
+                                        .description("Quality factor forecasting 80% confidence interval higher values"),
+                                fieldWithPath("[].confidence80.second")
+                                        .description("Quality factor forecasting 80% confidence interval lower values"),
+                                fieldWithPath("[].confidence95")
+                                        .description("Quality factor forecasting 95% confidence interval"),
+                                fieldWithPath("[].confidence95.first")
+                                        .description("Quality factor forecasting 95% confidence interval higher values"),
+                                fieldWithPath("[].confidence95.second")
+                                        .description("Quality factor forecasting 95% confidence interval lower values"),
+                                fieldWithPath("[].forecastingError")
+                                        .description("Description of forecasting errors"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics"),
+                                fieldWithPath("[].missingMetrics")
+                                        .description("Metrics without assessment"),
+                                fieldWithPath("[].strategicIndicators")
+                                        .description("List of the strategic indicators that use this quality factor"),
+                                fieldWithPath("[].formattedDate")
+                                        .description("Readable quality factor evaluation date")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsEvaluation(projectExternalId);
+        verify(qualityFactorsDomainController, times(1)).getFactorsPrediction(dtoFactorEvaluationList, projectExternalId, technique, freq, horizon);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void getAllQualityFactors () throws Exception {
+        Long projectId = 1L;
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        String projectBacklogId = "prj-1";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+        project.setId(projectId);
+        project.setBacklogId(projectBacklogId);
+
+        when(projectsController.findProjectByExternalId(projectExternalId)).thenReturn(project);
+
+
+        // define factor with its metric composition
+        List<QualityFactorMetrics> qualityMetrics = new ArrayList<>();
+
+        Factor factor =  new Factor("codequality", "Quality of the implemented code", project);
+        factor.setId(1L);
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        metric1.setId(1L);
+        QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor);
+        qfm1.setId(1L);
+        qualityMetrics.add(qfm1);
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
+        metric2.setId(2L);
+        QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor);
+        qfm1.setId(2L);
+        qualityMetrics.add(qfm2);
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
+        metric3.setId(3L);
+        QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor);
+        qfm1.setId(3L);
+        qualityMetrics.add(qfm3);
+        factor.setQualityFactorMetricsList(qualityMetrics);
+        factor.setWeighted(false);
+
+        List<Factor> qualityFactorList = new ArrayList<>();
+        qualityFactorList.add(factor);
+
+        when(qualityFactorsDomainController.getQualityFactorsByProject(project)).thenReturn(qualityFactorList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors")
+                .param("prj", projectExternalId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(factor.getId().intValue())))
+                .andExpect(jsonPath("$[0].externalId", is(factor.getExternalId())))
+                .andExpect(jsonPath("$[0].name", is(factor.getName())))
+                .andExpect(jsonPath("$[0].description", is(factor.getDescription())))
+                .andExpect(jsonPath("$[0].metrics", hasSize(3)))
+                .andExpect(jsonPath("$[0].metrics[0]", is("1")))
+                .andExpect(jsonPath("$[0].metrics[1]", is("2")))
+                .andExpect(jsonPath("$[0].metrics[2]", is("3")))
+                .andExpect(jsonPath("$[0].weighted", is(factor.isWeighted())))
+                .andExpect(jsonPath("$[0].metricsWeights", is(factor.getWeights())))
+                .andDo(document("qualityFactors/get-all",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier")),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("[].externalId")
+                                        .description("Quality factor external identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].description")
+                                        .description("Quality factor description"),
+                                fieldWithPath("[].metrics")
+                                        .description("List of the metrics composing the quality factor"),
+                                fieldWithPath("[].metrics[]")
+                                        .description("Metric identifier"),
+                                fieldWithPath("[].weighted")
+                                        .description("Quality factor is weighted or not"),
+                                fieldWithPath("[].metricsWeights")
+                                        .description("List of the metrics composing the quality factor with their corresponding weights"))
+                ));
+
+        // Verify mock interactions
+        verify(projectsController, times(1)).findProjectByExternalId(projectExternalId);
+        verifyNoMoreInteractions(projectsController);
+
+        verify(qualityFactorsDomainController, times(1)).getQualityFactorsByProject(project);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void getStrategicIndicator() throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Factor factor = domainObjectsBuilder.buildFactor(project);
+
+        when(qualityFactorsDomainController.getQualityFactorById(factor.getId())).thenReturn(factor);
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/qualityFactors/{id}", factor.getId());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(factor.getId().intValue())))
+                .andExpect(jsonPath("$.externalId", is(factor.getExternalId())))
+                .andExpect(jsonPath("$.name", is(factor.getName())))
+                .andExpect(jsonPath("$.description", is(factor.getDescription())))
+                .andExpect(jsonPath("$.metrics", hasSize(3)))
+                .andExpect(jsonPath("$.metrics[0]", is(factor.getMetricsIds().get(0))))
+                .andExpect(jsonPath("$.metrics[1]", is(factor.getMetricsIds().get(1))))
+                .andExpect(jsonPath("$.metrics[2]", is(factor.getMetricsIds().get(2))))
+                .andExpect(jsonPath("$.weighted", is(factor.isWeighted())))
+                .andExpect(jsonPath("$.metricsWeights", is(factor.getWeights())))
+                .andDo(document("qualityFactors/get-one",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Quality factor identifier")),
+                        responseFields(
+                                fieldWithPath("id")
+                                        .description("Quality factor identifier"),
+                                fieldWithPath("externalId")
+                                        .description("Quality factor external identifier"),
+                                fieldWithPath("name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("description")
+                                        .description("Quality factor description"),
+                                fieldWithPath("metrics")
+                                        .description("List of the metrics composing the quality factor"),
+                                fieldWithPath("metrics[]")
+                                        .description("Metric identifier"),
+                                fieldWithPath("weighted")
+                                        .description("Quality factor is weighted or not"),
+                                fieldWithPath("metricsWeights[]")
+                                        .description("List of the metrics composing the quality factor with their corresponding weights"))
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void getMissingQualityFactor() throws Exception {
+        Long qualityFactorId = 2L;
+        when(qualityFactorsDomainController.getQualityFactorById(qualityFactorId)).thenThrow(new QualityFactorNotFoundException());
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors/{id}", qualityFactorId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isNotFound())
+                .andDo(document("qualityFactors/get-one-not-found",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+    }
+
+    @Test
+    public void newQualityFactor() throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
+
+        Factor factor = domainObjectsBuilder.buildFactor(project);
+        when(qualityFactorsDomainController.assessQualityFactor(factor.getName(),factor.getProject().getExternalId())).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/qualityFactors")
+                .param("prj", project.getExternalId())
+                .param("name", factor.getName())
+                .param("description", factor.getDescription())
+                .param("metrics", String.join(",", factor.getMetrics()));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated())
+                .andDo(document("qualityFactors/new",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("name")
+                                        .description("Quality factor name"),
+                                parameterWithName("description")
+                                        .description("Quality factor description"),
+                                parameterWithName("metrics")
+                                        .description("Comma separated values of the metrics identifiers which belong to the quality factor"))
+                ));
+
+        // Verify mock interactions
+        verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsController);
+
+        verify(qualityFactorsDomainController, times(1)).saveQualityFactor(eq(factor.getName()), eq(factor.getDescription()), eq(factor.getMetrics()), eq(project));
+        verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), factor.getProject().getExternalId());
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void newQualityFactorAssessmentError() throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
+
+        Factor factor = domainObjectsBuilder.buildFactor(project);
+        when(qualityFactorsDomainController.assessQualityFactor(factor.getName(),factor.getProject().getExternalId())).thenReturn(false);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/qualityFactors")
+                .param("prj", project.getExternalId())
+                .param("name", factor.getName())
+                .param("description", factor.getDescription())
+                .param("metrics", String.join(",", factor.getMetrics()));
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isInternalServerError())
+                .andDo(document("qualityFactors/new-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
+        verifyNoMoreInteractions(projectsController);
+
+        verify(qualityFactorsDomainController, times(1)).saveQualityFactor(eq(factor.getName()), eq(factor.getDescription()), eq(factor.getMetrics()), eq(project));
+        verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), factor.getProject().getExternalId());
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void editQualityFactor() throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Factor factor = domainObjectsBuilder.buildFactor(project);
+
+        when(qualityFactorsDomainController.getQualityFactorById(factor.getId())).thenReturn(factor);
+        when(qualityFactorsDomainController.assessQualityFactor(factor.getName(), project.getExternalId())).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/qualityFactors/{id}", factor.getId())
+                .param("name", factor.getName())
+                .param("description", factor.getDescription())
+                .param("metrics", String.join(",", factor.getWeights()))
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("qualityFactors/update",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Quality factor name"),
+                                parameterWithName("description")
+                                        .description("Quality factor description"),
+                                parameterWithName("metrics")
+                                        .description("Comma separated values of the metrics identifiers which belong to the quality factor and their corresponding weights (-1 if no weighted)"))
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
+        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getWeights()));
+        verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), factor.getProject().getExternalId());
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void editQualityFactorAssessment() throws Exception, StrategicIndicatorQualityFactorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Factor factor = domainObjectsBuilder.buildFactor(project);
+
+        when(qualityFactorsDomainController.getQualityFactorById(factor.getId())).thenReturn(factor);
+        when(qualityFactorsDomainController.assessQualityFactor(factor.getName(), project.getExternalId())).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/qualityFactors/{id}", factor.getId())
+                .param("name", factor.getName())
+                .param("description", factor.getDescription())
+                .param("metrics", String.join(",", factor.getWeights()))
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("qualityFactors/update-assessment",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
+        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getWeights()));
+        verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), project.getExternalId());
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void editQualityFactorAssessmentError() throws Exception {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Factor factor = domainObjectsBuilder.buildFactor(project);
+
+        when(qualityFactorsDomainController.getQualityFactorById(factor.getId())).thenReturn(factor);
+        when(qualityFactorsDomainController.assessQualityFactor(factor.getName(), project.getExternalId())).thenReturn(false);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/qualityFactors/{id}", factor.getId())
+                .param("name", factor.getName())
+                .param("description", factor.getDescription())
+                .param("metrics", String.join(",", factor.getMetrics()))
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isInternalServerError())
+                .andDo(document("qualityFactors/update-assessment-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
+        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getMetrics()));
+        verify(qualityFactorsDomainController, times(1)).assessQualityFactor(factor.getName(), project.getExternalId());
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void editQualityFactorMissingParam() throws Exception {
+        Long qualityFactorID = 1L;
+        String qualityFactorName = "Code Quality";
+        String qualityFactorDescription = "Quality of the implemented code";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/qualityFactors/{id}", qualityFactorID)
+                .param("name", qualityFactorName)
+                .param("description", qualityFactorDescription)
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andDo(document("qualityFactors/update-missing-params",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+    }
+
+    @Test
+    public void editQualityFactorIntegrityViolation() throws Exception, StrategicIndicatorQualityFactorNotFoundException {
+        // Given
+        Project project = domainObjectsBuilder.buildProject();
+        Factor factor = domainObjectsBuilder.buildFactor(project);
+
+        when(qualityFactorsDomainController.getQualityFactorById(factor.getId())).thenReturn(factor);
+        when(qualityFactorsDomainController.editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getMetrics()))).thenThrow(new DataIntegrityViolationException(""));
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart("/api/qualityFactors/{id}", factor.getId())
+                .param("name", factor.getName())
+                .param("description", factor.getDescription())
+                .param("metrics", String.join(",", factor.getMetrics()))
+                .with(new RequestPostProcessor() {
+                    @Override
+                    public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                        request.setMethod("PUT");
+                        return request;
+                    }
+                });
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isConflict())
+                .andDo(document("qualityFactors/update-data-integrity-violation",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).getQualityFactorById(factor.getId());
+        verify(qualityFactorsDomainController, times(1)).editQualityFactor(eq(factor.getId()), eq(factor.getName()), eq(factor.getDescription()), eq(factor.getMetrics()));
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void deleteOneQualityFactor() throws Exception {
+        Long factorId = 1L;
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .delete("/api/qualityFactors/{id}", factorId);
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("qualityFactors/delete-one",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Quality factor identifier"))
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).deleteFactor(factorId);
+    }
+
+    /* TODO: if decide it's necessary /api/qualityFactors/assess
+    @Test
+    public void assessQualityFactors() throws Exception {
+        String projectExternalId = "test";
+
+        when(qualityFactorsDomainController.assessQualityFactors(projectExternalId, null)).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors/assess")
+                .param("prj", projectExternalId)
+                .param("train", "NONE");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("si/assess",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("prj")
+                                        .description("Project external identifier"),
+                                parameterWithName("train")
+                                        .description("Indicates if the forecasting models should be trained: " +
+                                                "NONE for no training, ONE for one method training and ALL for all methods training"),
+                                parameterWithName("from")
+                                        .description("Date of the day (yyyy-mm-dd) from which execute several assessments, one for each day since today (optional)")
+                                        .optional())
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).assessQualityFactors(projectExternalId, null);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void assesQualityFactorsNotCorrect() throws Exception {
+        String projectExternalId = "test";
+        String projectName = "Test";
+        String projectDescription = "Test project";
+        Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
+
+        when(qualityFactorsDomainController.assessQualityFactors(projectExternalId, null)).thenReturn(false);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors/assess")
+                .param("prj", projectExternalId)
+                .param("train", "NONE");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isInternalServerError())
+                .andDo(document("qualityFactors/assess-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+
+        // Verify mock interactions
+        verify(qualityFactorsDomainController, times(1)).assessQualityFactors(projectExternalId, null);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
+    }
+
+    @Test
+    public void assesQualityFactorsBadParam() throws Exception {
+        String projectExternalId = "test";
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qualityFactors/assess")
+                .param("prj", projectExternalId)
+                .param("train", "NONE")
+                .param("from", "2019-15-03");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andDo(document("qualityFactors/assess-param-error",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint())
+                ));
+    }
+    */
 }

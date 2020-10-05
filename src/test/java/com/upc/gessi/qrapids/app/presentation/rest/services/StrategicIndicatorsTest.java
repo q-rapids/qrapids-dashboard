@@ -1988,9 +1988,9 @@ public class StrategicIndicatorsTest {
                                 parameterWithName("prj")
                                         .description("Project external identifier"),
                                 parameterWithName("name")
-                                        .description("Product name"),
+                                        .description("Strategic indicator name"),
                                 parameterWithName("description")
-                                        .description("Product description"),
+                                        .description("Strategic indicator description"),
                                 parameterWithName("quality_factors")
                                         .description("Comma separated values of the quality factors identifiers which belong to the strategic indicator")),
                         requestParts(

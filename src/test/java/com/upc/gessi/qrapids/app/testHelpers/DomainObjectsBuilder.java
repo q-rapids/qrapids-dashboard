@@ -150,6 +150,34 @@ public class DomainObjectsBuilder {
         return strategicIndicator;
     }
 
+    // build Factor without weights
+    public Factor buildFactor (Project project) {
+        // define factor with its metric composition
+        List<QualityFactorMetrics> qualityMetrics = new ArrayList<>();
+
+        Factor factor =  new Factor("codequality", "Quality of the implemented code", project);
+        factor.setId(1L);
+        Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
+        metric1.setId(1L);
+        QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor);
+        qfm1.setId(1L);
+        qualityMetrics.add(qfm1);
+        Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
+        metric2.setId(2L);
+        QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor);
+        qfm1.setId(2L);
+        qualityMetrics.add(qfm2);
+        Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
+        metric3.setId(3L);
+        QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor);
+        qfm1.setId(3L);
+        qualityMetrics.add(qfm3);
+        factor.setQualityFactorMetricsList(qualityMetrics);
+        factor.setWeighted(false);
+
+        return factor;
+    }
+
     public Strategic_Indicator addFactorToStrategicIndicator (Strategic_Indicator si, Factor factor, float weight) {
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
 
