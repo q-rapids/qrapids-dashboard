@@ -1,26 +1,33 @@
 package com.upc.gessi.qrapids;
 
 import com.upc.gessi.qrapids.app.domain.controllers.*;
+import com.upc.gessi.qrapids.app.domain.exceptions.AssessmentErrorException;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.presentation.rest.services.Alerts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import eval2.Eval;
+import java.time.LocalDate;
 
 @SpringBootApplication
+@EnableScheduling
 public class QrapidsApplication extends SpringBootServletInitializer {
 
 	@Override
@@ -32,6 +39,35 @@ public class QrapidsApplication extends SpringBootServletInitializer {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+	@Value("${projects.dir:}") // default -> empty string
+	private String projectsDir;
+
+	@Autowired
+	private StrategicIndicatorsController strategicIndicatorsController;
+
+	@Scheduled(cron = "${cron.expression:0 30 23 * * ?}")
+	public void scheduleTask() throws Exception {
+
+		final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		System.out.println("Fixed Delay Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
+
+		LocalDate evaluationDate = LocalDate.now();
+
+		// params config:
+		// 					projects dir path, evaluationDate, null
+		//					projects dir path, fromDate, toDate
+		Eval.evaluateQualityModel(projectsDir, evaluationDate.toString(), null);
+
+		boolean correct = true;
+		// assess strategic indicator for all projects
+		correct = strategicIndicatorsController.assessStrategicIndicators(null, evaluationDate);
+		// TODO: decide how to manage exception
+		if (!correct) {
+			throw new AssessmentErrorException();
+		}
+	}
+
 
 	public static void main(String[] args) throws Exception {
 
