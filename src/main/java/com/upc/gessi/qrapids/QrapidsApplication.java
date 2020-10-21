@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import eval2.Eval;
@@ -43,35 +44,35 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 	@Value("${projects.dir:}") // default -> empty string
 	private String projectsDir;
 
-	@Autowired
-	private StrategicIndicatorsController strategicIndicatorsController;
+	static ConfigurableApplicationContext context;
 
 	@Scheduled(cron = "${cron.expression:0 30 23 * * ?}")
 	public void scheduleTask() throws Exception {
-
+		// TODO: decide if we also copy this code to assessSI function
 		final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 		System.out.println("Fixed Delay Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
 
-		LocalDate evaluationDate = LocalDate.now();
+		LocalDate evaluationLocalDate = LocalDate.now(); // we need LocalDate for assessStrategicIndicators
+		Date evaluationDate= Date.from(evaluationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()); // we need Date for evaluateQualityModel in qrapids-eval libs
 
 		// params config:
 		// 					projects dir path, evaluationDate, null
 		//					projects dir path, fromDate, toDate
-		Eval.evaluateQualityModel(projectsDir, evaluationDate.toString(), null);
+		Eval.evaluateQualityModel(projectsDir, evaluationDate, null);
 
 		boolean correct = true;
 		// assess strategic indicator for all projects
-		correct = strategicIndicatorsController.assessStrategicIndicators(null, evaluationDate);
-		// TODO: decide how to manage exception
+		correct = context.getBean(StrategicIndicatorsController.class).assessStrategicIndicators(null, evaluationLocalDate);
 		if (!correct) {
-			throw new AssessmentErrorException();
+			Logger logger = LoggerFactory.getLogger(Alerts.class);
+			logger.error(evaluationLocalDate + ": strategic indicators assessment complete with error.");
 		}
 	}
 
 
 	public static void main(String[] args) throws Exception {
 
-		ConfigurableApplicationContext context = SpringApplication.run(QrapidsApplication.class, args);
+		context = SpringApplication.run(QrapidsApplication.class, args);
 
 		// Check the categories in the SQL database and if they are empty create the default ones
 		List<SICategory> siCategoryList = context.getBean(StrategicIndicatorsController.class).getStrategicIndicatorCategories();
