@@ -16,4 +16,6 @@ public interface QualityFactorRepository extends CrudRepository<Factor, Long> {
     Factor findByNameAndProject_Id (String name, Long projectId);
 
     Factor findByExternalIdAndProjectId(String factorExternalId,Long prjId);
+
+    boolean existsByExternalIdAndProject_Id (String externalId, Long projectId);
 }

@@ -212,7 +212,7 @@ public class Factors {
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedFactorEvaluation> getQualityFactorsEvaluations(@RequestParam(value = "prj") String prj) {
         try {
-            return factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
+            return factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, true);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -284,7 +284,7 @@ public class Factors {
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedFactorEvaluation> getQualityFactorsPrediction(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
-            List<DTODetailedFactorEvaluation> currentEvaluation = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
+            List<DTODetailedFactorEvaluation> currentEvaluation = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, true);
             return factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);

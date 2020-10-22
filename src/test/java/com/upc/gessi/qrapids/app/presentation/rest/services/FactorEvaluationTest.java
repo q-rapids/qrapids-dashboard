@@ -1315,11 +1315,10 @@ public class FactorEvaluationTest {
     }
 
     @Test
-    public void getStrategicIndicator() throws Exception {
+    public void getQualityFactor() throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Factor factor = domainObjectsBuilder.buildFactor(project);
-
         when(qualityFactorsDomainController.getQualityFactorById(factor.getId())).thenReturn(factor);
 
         // Perform request

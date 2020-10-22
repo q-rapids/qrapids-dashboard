@@ -95,7 +95,7 @@ public class QMARelations {
             relationDTOS = Relations.getRelations(prj, date);
         // get current evaluations for SI and Quality Factors
         List<DTODetailedStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, true);
-        List<DTODetailedFactorEvaluation> qfEval = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj);
+        List<DTODetailedFactorEvaluation> qfEval = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, true);
         return RelationDTOToDTORelationSI(relationDTOS, siEval, qfEval);
     }
 

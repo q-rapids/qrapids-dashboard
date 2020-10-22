@@ -2,7 +2,10 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 
 import DTOs.*;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import evaluation.Factor;
 import evaluation.StrategicIndicator;
@@ -17,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators.*;
+
 @Component
 public class QMAQualityFactors {
 
@@ -25,6 +30,12 @@ public class QMAQualityFactors {
 
     @Autowired
     private QFCategoryRepository QFCatRep;
+
+    @Autowired
+    private ProjectRepository prjRep;
+
+    @Autowired
+    private QualityFactorRepository qfRep;
 
 
     public boolean prepareQFIndex(String projectExternalId) throws IOException {
@@ -90,7 +101,7 @@ public class QMAQualityFactors {
         return new EstimationEvaluationDTO(estimation);
     }
 
-    public List<DTODetailedFactorEvaluation> CurrentEvaluation(String id, String prj) throws IOException {
+    public List<DTODetailedFactorEvaluation> CurrentEvaluation(String id, String prj, boolean filterDB) throws IOException {
         qmacon.initConnexion();
         List<FactorMetricEvaluationDTO> evals = new ArrayList<>();
         if (id == null) {
@@ -99,13 +110,13 @@ public class QMAQualityFactors {
             evals = StrategicIndicator.getMetricsEvaluations(prj, id);
         }
 //            Connection.closeConnection();
-        return FactorMetricEvaluationDTOListToDTOQualityFactorList(evals);
+        return FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(), evals, filterDB);
     }
 
     public DTOFactorEvaluation SingleCurrentEvaluation(String factorId, String prj) throws IOException {
         qmacon.initConnexion();
         FactorEvaluationDTO factorEvaluationDTO = Factor.getSingleEvaluation(prj, factorId);
-        return QMADetailedStrategicIndicators.FactorEvaluationDTOToDTOFactor(factorEvaluationDTO, factorEvaluationDTO.getEvaluations().get(0));
+        return FactorEvaluationDTOToDTOFactor(factorEvaluationDTO, factorEvaluationDTO.getEvaluations().get(0));
     }
 
     public List<DTODetailedFactorEvaluation> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
@@ -119,7 +130,7 @@ public class QMAQualityFactors {
             evals = StrategicIndicator.getMetricsEvaluations(prj, id, from, to);
         }
 //        Connection.closeConnection();
-        qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(evals);
+        qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(), evals, true);
 
         return qf;
     }
@@ -133,12 +144,12 @@ public class QMAQualityFactors {
 
     public List<DTOFactorEvaluation> getAllFactors(String prj) throws IOException {
         qmacon.initConnexion();
-        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj));
+        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj), prjRep.findByExternalId(prj).getId());
     }
 
     public List<DTOFactorEvaluation> getAllFactorsHistoricalData(String prj, LocalDate from, LocalDate to) throws IOException {
         qmacon.initConnexion();
-        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj, from, to));
+        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj, from, to), prjRep.findByExternalId(prj).getId());
     }
 
     public void setFactorStrategicIndicatorRelation(List<DTOFactorEvaluation> factors, String prj) throws IOException {
@@ -175,16 +186,20 @@ public class QMAQualityFactors {
         return f;
 
     }
-    private static List<DTODetailedFactorEvaluation> FactorMetricEvaluationDTOListToDTOQualityFactorList(List<FactorMetricEvaluationDTO> evals) {
+    private List<DTODetailedFactorEvaluation> FactorMetricEvaluationDTOListToDTOQualityFactorList(Long prjID, List<FactorMetricEvaluationDTO> evals, boolean filterDB) {
         List<DTODetailedFactorEvaluation> qf = new ArrayList<>();
-
+        boolean found; // to check if the SI is in the database
         // The evaluations (eval param) has the following structure:
         // - list of factors (first iterator/for)
-        for (Iterator<FactorMetricEvaluationDTO> iterFactors = evals.iterator(); iterFactors.hasNext(); )
-        {
+        for (Iterator<FactorMetricEvaluationDTO> iterFactors = evals.iterator(); iterFactors.hasNext(); ) {
             // For each factor, we have the factor inforamtion + the list of metrics evaluations
             FactorMetricEvaluationDTO qualityFactor = iterFactors.next();
-            qf.add(new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(qualityFactor.getMetrics())));
+            if (filterDB) found = qfRep.existsByExternalIdAndProject_Id(qualityFactor.getID(), prjID);
+            else found = true; // because we want make fetch
+            // only return Detailed Quality Factor if it is in local database
+            if (found) {
+                qf.add(new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(qualityFactor.getMetrics())));
+            }
         }
         return qf;
     }

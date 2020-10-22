@@ -113,7 +113,7 @@ public class FactorsController {
         List<String> projects = projectsController.getAllProjects();
         for (String prj : projects) {
             List<DTOFactorEvaluation> factors = getAllFactorsEvaluation(prj);
-            List<DTODetailedFactorEvaluation> factorsWithMetrics = getAllFactorsWithMetricsCurrentEvaluation(prj);
+            List<DTODetailedFactorEvaluation> factorsWithMetrics = getAllFactorsWithMetricsCurrentEvaluation(prj, false);
             updateDataBaseWithNewFactors(prj, factors, factorsWithMetrics);
         }
     }
@@ -548,12 +548,12 @@ public class FactorsController {
         return qmaQualityFactors.getAllFactors(projectExternalId);
     }
 
-    public List<DTODetailedFactorEvaluation> getAllFactorsWithMetricsCurrentEvaluation(String projectExternalId) throws IOException {
-        return qmaQualityFactors.CurrentEvaluation(null, projectExternalId);
+    public List<DTODetailedFactorEvaluation> getAllFactorsWithMetricsCurrentEvaluation(String projectExternalId, boolean filterDB) throws IOException {
+        return qmaQualityFactors.CurrentEvaluation(null, projectExternalId, filterDB);
     }
 
-    public List<DTODetailedFactorEvaluation> getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(String strategicIndicatorId, String projectExternalId) throws IOException {
-        return qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId);
+    public List<DTODetailedFactorEvaluation> getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(String strategicIndicatorId, String projectExternalId, boolean filterDB) throws IOException {
+        return qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId, filterDB);
     }
 
     public List<DTOFactorEvaluation> getAllFactorsHistoricalEvaluation (String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException {
