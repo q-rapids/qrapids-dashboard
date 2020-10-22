@@ -139,10 +139,10 @@ public class FactorEvaluationControllerTest {
         List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
         dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
         String projectExternalId = "test";
-        when(qmaQualityFactors.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoDetailedFactorEvaluationList);
+        when(qmaQualityFactors.CurrentEvaluation(null, projectExternalId, true)).thenReturn(dtoDetailedFactorEvaluationList);
 
         // When
-        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationListFound = factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId);
+        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationListFound = factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, true);
 
         // Then
         assertEquals(dtoDetailedFactorEvaluationList.size(), dtoDetailedFactorEvaluationListFound.size());
@@ -157,10 +157,10 @@ public class FactorEvaluationControllerTest {
         dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
         String strategicIndicatorId = "processperformance";
         String projectExternalId = "test";
-        when(qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId)).thenReturn(dtoDetailedFactorEvaluationList);
+        when(qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId, true)).thenReturn(dtoDetailedFactorEvaluationList);
 
         // When
-        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationListFound = factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(strategicIndicatorId, projectExternalId);
+        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationListFound = factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(strategicIndicatorId, projectExternalId, true);
 
         // Then
         assertEquals(dtoDetailedFactorEvaluationList.size(), dtoDetailedFactorEvaluationListFound.size());

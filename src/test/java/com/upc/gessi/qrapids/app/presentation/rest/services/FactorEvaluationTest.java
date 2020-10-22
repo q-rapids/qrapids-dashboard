@@ -196,7 +196,7 @@ public class FactorEvaluationTest {
         dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
 
         String projectExternalId = "test";
-        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoDetailedFactorEvaluationList);
+        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId,true)).thenReturn(dtoDetailedFactorEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -263,7 +263,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, true);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -522,7 +522,7 @@ public class FactorEvaluationTest {
         String freq = "7";
         String horizon = "7";
         String technique = "PROPHET";
-        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoDetailedFactorEvaluationList);
+        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, true)).thenReturn(dtoDetailedFactorEvaluationList);
         when(qualityFactorsDomainController.getFactorsWithMetricsPrediction(dtoDetailedFactorEvaluationList, technique, freq, horizon, projectExternalId)).thenReturn(dtoDetailedFactorEvaluationList);
 
         // Perform request
@@ -606,7 +606,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, true);
         verify(qualityFactorsDomainController, times(1)).getFactorsWithMetricsPrediction(dtoDetailedFactorEvaluationList, technique, freq, horizon, projectExternalId);
     }
 

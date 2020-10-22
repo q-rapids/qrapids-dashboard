@@ -481,7 +481,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
         dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
 
-        when(factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoDetailedFactorEvaluationList);
+        when(factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId,true)).thenReturn(dtoDetailedFactorEvaluationList);
 
         String technique = "PROPHET";
 
@@ -508,7 +508,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
         dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
 
-        when(factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoDetailedFactorEvaluationList);
+        when(factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, true)).thenReturn(dtoDetailedFactorEvaluationList);
 
         String technique = "PROPHET";
 
