@@ -1,6 +1,7 @@
 var isSi = true;
 var isdsi = false;
 var isqf = false;
+var isdqf = false;
 
 //initialize data vectors
 var texts = [];
@@ -39,6 +40,9 @@ function getData() {
             type: "GET",
             async: true,
             success: function (data) {
+                console.log("parseDATASI");
+                sortDataAlphabetically(data);
+                console.log(data);
                 j = 0;
                 var line = [];
                 if (data[j]) {
@@ -92,12 +96,24 @@ function getData() {
                     alert("Datasource connection failed.");
                 document.getElementById("loader").style.display = "none";
                 document.getElementById("chartContainer").style.display = "block";
-                document.getElementById("chartContainer").innerHTML = "Error " + xhr.status;
+                document.getElementById("chartContainer").innerHTML = "Error " + jqXHR.status;
             }
         });
     }
+    console.log(errors);
     console.log(value);
+    console.log(labels);
     console.log(texts);
+    console.log(ids);
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 window.onload = function() {

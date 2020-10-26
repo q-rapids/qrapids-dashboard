@@ -7,7 +7,7 @@ var categories = [];
 var detailedCharts = [];
 
 function getAllQualityFactors () {
-    var url = "../api/qualityFactors";
+    var url = "../api/qualityFactors/current";
     $.ajax({
         url : url,
         type: "GET",

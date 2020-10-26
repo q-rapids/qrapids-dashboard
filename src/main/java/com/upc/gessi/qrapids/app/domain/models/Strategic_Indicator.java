@@ -1,11 +1,8 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import static javax.persistence.CascadeType.ALL;
 
 /*
     This class is not following the class naming rules, it should be named as StrategicIndicator, without '_', but
@@ -18,10 +15,7 @@ import static javax.persistence.CascadeType.ALL;
 @Entity
 @Table(name="strategic_indicator",
         uniqueConstraints = @UniqueConstraint(columnNames = {"name", "projectId"}))
-public class Strategic_Indicator implements Serializable {
-
-    // SerialVersion UID
-    private static final long serialVersionUID = 14L;
+public class Strategic_Indicator {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,9 +41,9 @@ public class Strategic_Indicator implements Serializable {
     //@ElementCollection(fetch = FetchType.EAGER)
     //private List<String> quality_factors = new ArrayList<String>();
 
-    @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @OneToMany (cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="strategic_indicator_id")
-    private List<StrategicIndicatorQualityFactors> quality_factors = new ArrayList<>();
+    private List<StrategicIndicatorQualityFactors> strategicIndicatorQualityFactorsList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="projectId", referencedColumnName = "id")
@@ -63,7 +57,7 @@ public class Strategic_Indicator implements Serializable {
         setName(name);
         setDescription(description);
         setNetwork(network);
-        setQuality_factors(qualityFactors);
+        setStrategicIndicatorQualityFactorsList(qualityFactors);
         setWeighted(weighted);
         setProject(project);
     }
@@ -124,23 +118,50 @@ public class Strategic_Indicator implements Serializable {
 
     public List<String> getQuality_factors() {
         List<String> quality_factors_ids = new ArrayList<>();
-        for (int i = 0; i < this.quality_factors.size(); i ++) {
-            quality_factors_ids.add(this.quality_factors.get(i).getQuality_factor());
+        for (int i = 0; i < this.strategicIndicatorQualityFactorsList.size(); i ++) {
+            // ToDo this.strategicIndicatorQualityFactorsList contains repeated value due to quality_factor_metrics relation
+            if (!quality_factors_ids.contains(String.valueOf(this.strategicIndicatorQualityFactorsList.get(i).getFactor().getExternalId())))
+                quality_factors_ids.add(String.valueOf(this.strategicIndicatorQualityFactorsList.get(i).getFactor().getExternalId()));
+        }
+        return quality_factors_ids;
+    }
+
+    public List<String> getQuality_factorsIds() {
+        List<String> quality_factors_ids = new ArrayList<>();
+        for (int i = 0; i < this.strategicIndicatorQualityFactorsList.size(); i ++) {
+            // ToDo this.strategicIndicatorQualityFactorsList contains repeated value due to quality_factor_metrics relation
+            if (!quality_factors_ids.contains(String.valueOf(this.strategicIndicatorQualityFactorsList.get(i).getFactor().getId())))
+                quality_factors_ids.add(String.valueOf(this.strategicIndicatorQualityFactorsList.get(i).getFactor().getId()));
         }
         return quality_factors_ids;
     }
 
     public List<String> getWeights() {
         List<String> qualityFactorsWeights = new ArrayList<>();
-        for (int i = 0; i < this.quality_factors.size(); i ++) {
-            qualityFactorsWeights.add(this.quality_factors.get(i).getQuality_factor());
-            qualityFactorsWeights.add(String.valueOf(this.quality_factors.get(i).getWeight()));
+        for (int i = 0; i < this.strategicIndicatorQualityFactorsList.size(); i ++) {
+            // ToDo this.strategicIndicatorQualityFactorsList contains repeated value due to quality_factor_metrics relation
+            if (!qualityFactorsWeights.contains(String.valueOf(this.strategicIndicatorQualityFactorsList.get(i).getFactor().getId()))) {
+                qualityFactorsWeights.add(String.valueOf(this.strategicIndicatorQualityFactorsList.get(i).getFactor().getId()));
+                qualityFactorsWeights.add(String.valueOf(this.strategicIndicatorQualityFactorsList.get(i).getWeight()));
+            }
         }
         return qualityFactorsWeights;
     }
 
-    public void setQuality_factors(List<StrategicIndicatorQualityFactors> qualityFactors) {
-        this.quality_factors = qualityFactors;
+    public List<String> getWeightsWithExternalId() {
+        List<String> qualityFactorsWeights = new ArrayList<>();
+        for (int i = 0; i < this.strategicIndicatorQualityFactorsList.size(); i ++) {
+            // ToDo this.strategicIndicatorQualityFactorsList contains repeated value due to quality_factor_metrics relation
+            if (!qualityFactorsWeights.contains(String.valueOf(this.strategicIndicatorQualityFactorsList.get(i).getFactor().getExternalId()))) {
+                qualityFactorsWeights.add(String.valueOf(this.strategicIndicatorQualityFactorsList.get(i).getFactor().getExternalId()));
+                qualityFactorsWeights.add(String.valueOf(this.strategicIndicatorQualityFactorsList.get(i).getWeight()));
+            }
+        }
+        return qualityFactorsWeights;
+    }
+
+    public void setStrategicIndicatorQualityFactorsList(List<StrategicIndicatorQualityFactors> qualityFactors) {
+        this.strategicIndicatorQualityFactorsList = qualityFactors;
     }
 
     public Project getProject() {

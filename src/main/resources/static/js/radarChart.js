@@ -5,10 +5,10 @@ function drawChart() {
         if (titles[i].indexOf('<') > -1)
             title = titles[i].substr(0, titles[i].indexOf('<'));
         if (isdsi) { //if it is a radar chart for Detailed Strategic Indicators
-            var urlLink = "../QualityFactors/CurrentChart" + representationMode+ "?id=" + ids[i] + "&name=" + title;
+            var urlLink = "../QualityFactors/CurrentChart" + "?id=" + ids[i] + "&name=" + title;
         } else { //if it is a radar chart for Quality Factors
-            var name = getParameterByName('name');
-            var id = getParameterByName('id');
+            var name = getParameterByName('si');
+            var id = getParameterByName('siid');
             if (name.length != 0) //if we know from which Detailed Strategic Indicator we are coming
                 var urlLink = "../Metrics/CurrentChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + title;
             else

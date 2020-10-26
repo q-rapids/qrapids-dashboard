@@ -560,10 +560,10 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.getFactorQuality = function(){
-        var id = getParameterByName('id');
-        if (id !== "") {
-            navTextSimple();
-            var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/current";
+        var siid = getParameterByName('siid');
+        navTextComplex();
+        if (siid !== "") {
+            var url = "../api/strategicIndicators/" + siid + "/qualityFactors/metrics/current";
         } else {
             var url = "../api/qualityFactors/metrics/current";
         }
@@ -573,16 +573,34 @@ app.controller('TablesCtrl', function($scope, $http) {
         }).then(function mySuccess(response) {
             var data = [];
             response.data.forEach(function (factorEval) {
-                factorEval.metrics.forEach(function (metric) {
-                    data.push({
-                        id: factorEval.id,
-                        factorName: factorEval.name,
-                        metricName: metric.name,
-                        description: metric.description,
-                        value: metric.value_description,
-                        rationale: metric.rationale
-                    })
-                });
+                var id = getParameterByName('id');
+                if (id !== "") { // see concrete detailed factor
+                    if (factorEval.id == id) {
+                        factorEval.metrics.forEach(function (metric) {
+                            data.push({
+                                id: factorEval.id,
+                                date: metric.date,
+                                factorName: factorEval.name,
+                                metricName: metric.name,
+                                description: metric.description,
+                                value: metric.value_description,
+                                rationale: metric.rationale
+                            })
+                        });
+                    }
+                } else { // see all detailed factors
+                    factorEval.metrics.forEach(function (metric) {
+                        data.push({
+                            id: factorEval.id,
+                            date: metric.date,
+                            factorName: factorEval.name,
+                            metricName: metric.name,
+                            description: metric.description,
+                            value: metric.value_description,
+                            rationale: metric.rationale
+                        })
+                    });
+                }
             });
             $scope.data = data;
             $scope.sortType = 'factorName';
@@ -590,11 +608,11 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
-    $scope.getFactorQualityHistoric = function(){
-        var id = getParameterByName('id');
-        if (id !== "") {
-            navTextSimple();
-            var url = "../api/strategicIndicators/" + id + "/qualityFactors/metrics/historical";
+    $scope.getDetailedFactorQualityHistoric = function(){
+        var siid = getParameterByName('siid');
+        navTextComplex();
+        if (siid !== "") {
+            var url = "../api/strategicIndicators/" + siid + "/qualityFactors/metrics/historical";
         } else {
             var url = "../api/qualityFactors/metrics/historical";
         }
@@ -606,17 +624,34 @@ app.controller('TablesCtrl', function($scope, $http) {
         }).then(function mySuccess(response) {
             var data = [];
             response.data.forEach(function (factorEval) {
-                factorEval.metrics.forEach(function (metric) {
-                    data.push({
-                        id: factorEval.id,
-                        date: metric.date,
-                        factorName: factorEval.name,
-                        metricName: metric.name,
-                        description: metric.description,
-                        value: metric.value_description,
-                        rationale: metric.rationale
-                    })
-                });
+                var id = getParameterByName('id');
+                if (id !== "") { // see concrete detailed factor
+                    if (factorEval.id == id) {
+                        factorEval.metrics.forEach(function (metric) {
+                            data.push({
+                                id: factorEval.id,
+                                date: metric.date,
+                                factorName: factorEval.name,
+                                metricName: metric.name,
+                                description: metric.description,
+                                value: metric.value_description,
+                                rationale: metric.rationale
+                            })
+                        });
+                    }
+                } else {
+                    factorEval.metrics.forEach(function (metric) {
+                        data.push({
+                            id: factorEval.id,
+                            date: metric.date,
+                            factorName: factorEval.name,
+                            metricName: metric.name,
+                            description: metric.description,
+                            value: metric.value_description,
+                            rationale: metric.rationale
+                        })
+                    });
+                }
             });
             $scope.data = data;
             $scope.sortType = 'factorName';
@@ -685,10 +720,15 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
-    $scope.getURL = function(id, name, si, url2, isqf, cmd){
-        si = getParameterByName('name');
-        siid = getParameterByName('id');
-        if (!isqf || si.length == 0) url2 = url2 + "?id=" + id + "&name=" + name;
+    $scope.getURL = function(id, name, si, url2, isqf, isdqf, cmd){
+        si = getParameterByName('si');
+        if (si.length == 0)
+            si = getParameterByName('name');
+        siid = getParameterByName('siid');
+        if (siid.length == 0)
+            siid = getParameterByName('id');
+        if (si.length == 0) url2 = url2 + "?id=" + id + "&name=" + name;
+        else if (getParameterByName('si').length == 0 && isdqf) url2 = url2 + "?id=" + id + "&name=" + name;
         else {
             url2 = url2 + "?id=" + id + "&name=" + name + "&si=" + si + "&siid=" + siid + "&cmd=" + cmd;
         }
@@ -723,6 +763,90 @@ app.controller('TablesCtrl', function($scope, $http) {
         else if (v2.value < v1.value)
             return 1;
     }
+
+    $scope.getQualFact = function (){
+        var id = getParameterByName('id');
+        if (id !== "") {
+            navTextSimple();
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/current";
+        } else {
+            var url = "../api/qualityFactors/current";
+        }
+        $http({
+            method : "GET",
+            url : url
+        }).then(function mySuccess(response) {
+            var result = response.data;
+            if (id){
+                result = response.data[0].factors;
+            }
+            result.forEach(function (factor) {
+                var qfDate = new Date(factor.date);
+                var today = new Date();
+                today.setHours(0);
+                today.setMinutes(0);
+                today.setSeconds(0);
+                var millisecondsInOneDay = 86400000;
+                var millisecondsBetweenAssessmentAndToday = today.getTime() - qfDate.getTime();
+                var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
+                if (oldAssessment) {
+                    var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
+                    factor.warning = "The assessment is " + daysOld + " days old. \n";
+                }
+
+                var mismatchDays = factor.mismatchDays;
+                if (mismatchDays > 0) {
+                    factor.warning += "The assessment of the metrics and the factors \n has a difference of " + mismatchDays + " days. \n";
+                }
+
+                var missingMetrics = factor.missingMetrics;
+                if (missingMetrics && missingMetrics.length > 0) {
+                    var factors = missingMetrics.length === 1 ? missingMetrics[0] : [ missingMetrics.slice(0, -1).join(", "), missingMetrics[missingMetrics.length - 1] ].join(" and ");
+                    factor.warning += "The following metrics were missing when \nthe factor was assessed: " + factors;
+                }
+            });
+            $scope.data = result;
+            $scope.sortType = 'name';
+            $scope.sortReverse = false;
+        })
+    };
+
+    $scope.getFactorQualityHistoric = function(){
+        var id = getParameterByName('id');
+        if (id !== "") {
+            navTextSimple();
+            var url = "../api/strategicIndicators/" + id + "/qualityFactors/historical";
+        } else {
+            var url = "../api/qualityFactors/historical";
+        }
+        $http({
+            method : "GET",
+            url : url,
+            params: {from: $('#datepickerFrom').val(),
+                to: $('#datepickerTo').val()}
+        }).then(function mySuccess(response) {
+            var data = [];
+            var result = response.data;
+            if (id){
+                result = response.data[0].factors;
+            }
+            console.log(response.data);
+            result.forEach(function (factorEval) {
+                data.push({
+                    id: factorEval.id,
+                    date: factorEval.date,
+                    name: factorEval.name,
+                    description: factorEval.description,
+                    value: factorEval.value.toFixed(2).replace(".", ","),
+                    rationale: factorEval.rationale
+                })
+            });
+            $scope.data = data;
+            $scope.sortType = 'name';
+            $scope.sortReverse = false;
+        })
+    };
+
 });
 
 
@@ -763,18 +887,30 @@ function navTextSimple() {
 }
 
 function navTextComplex() {
+    var id = getParameterByName('id');
     var name = getParameterByName('name');
     var si = getParameterByName('si');
-    if (name.length !== 0) {
-        if (si.length !== 0) {
+    if (id.length !== 0) {
+        if (si.length === 0) {
+            $('a#origin').text(name + ' (QF)'); // in DQF view
+            $('a#originDQF').text(name + ' (DQF)'); // in Metric view
+        } else {
+            // in DQF view
             $('a#originSI').text(si + ' (DSI)');
             $('span#arrow').text('>');
             $('a#origin').text(name + ' (QF)');
+            // in Metric view
+            $('a#originDSI').text(si + ' (DSI)');
+            $('span#arrow1').text('>');
+            $('a#originQF').text(name + ' (QF)');
+            $('span#arrow2').text('>');
+            $('a#originDQF').text(name + ' (DQF)');
         }
-        else {
-            $('a#origin').text(name + (' (QF)'));
+        if (currentURL.search("/Detailed") !== -1) {
+            $('h1#title').text('Detailed ' + name + ' Factor');
+        } else {
+            $('h1#title').text('Metrics for ' + name + ' Factor');
         }
-        $('h1#title').text('Metrics for ' + name + ' Factor');
     }
 }
 

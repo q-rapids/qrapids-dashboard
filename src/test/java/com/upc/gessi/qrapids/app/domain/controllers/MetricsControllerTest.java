@@ -4,7 +4,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
@@ -102,139 +102,139 @@ public class MetricsControllerTest {
     @Test
     public void getAllMetricsCurrentEvaluation() throws IOException {
         // Given
-        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
-        List<DTOMetric> dtoMetricList = new ArrayList<>();
-        dtoMetricList.add(dtoMetric);
+        DTOMetricEvaluation dtoMetricEvaluation = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
+        dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String projectExternalId = "test";
-        when(qmaMetrics.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoMetricList);
+        when(qmaMetrics.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoMetricEvaluationList);
 
         // When
-        List<DTOMetric> dtoMetricListFound = metricsController.getAllMetricsCurrentEvaluation(projectExternalId);
+        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getAllMetricsCurrentEvaluation(projectExternalId);
 
         // Then
-        assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
-        assertEquals(dtoMetric, dtoMetricListFound.get(0));
+        assertEquals(dtoMetricEvaluationList.size(), dtoMetricEvaluationListFound.size());
+        assertEquals(dtoMetricEvaluation, dtoMetricEvaluationListFound.get(0));
     }
 
     @Test
     public void getSingleMetricCurrentEvaluation() throws IOException {
         // Given
-        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
+        DTOMetricEvaluation dtoMetricEvaluation = domainObjectsBuilder.buildDTOMetric();
         String projectExternalId = "test";
-        when(qmaMetrics.SingleCurrentEvaluation(dtoMetric.getId(), projectExternalId)).thenReturn(dtoMetric);
+        when(qmaMetrics.SingleCurrentEvaluation(dtoMetricEvaluation.getId(), projectExternalId)).thenReturn(dtoMetricEvaluation);
 
         // When
-        DTOMetric dtoMetricFound = metricsController.getSingleMetricCurrentEvaluation(dtoMetric.getId(), projectExternalId);
+        DTOMetricEvaluation dtoMetricEvaluationFound = metricsController.getSingleMetricCurrentEvaluation(dtoMetricEvaluation.getId(), projectExternalId);
 
         // Then
-        assertEquals(dtoMetric, dtoMetricFound);
+        assertEquals(dtoMetricEvaluation, dtoMetricEvaluationFound);
     }
 
     @Test
     public void getMetricsForQualityFactorCurrentEvaluation() throws IOException {
         // Given
-        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
-        List<DTOMetric> dtoMetricList = new ArrayList<>();
-        dtoMetricList.add(dtoMetric);
+        DTOMetricEvaluation dtoMetricEvaluation = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
+        dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String projectExternalId = "test";
         String factorId = "testingperformance";
-        when(qmaMetrics.CurrentEvaluation(factorId, projectExternalId)).thenReturn(dtoMetricList);
+        when(qmaMetrics.CurrentEvaluation(factorId, projectExternalId)).thenReturn(dtoMetricEvaluationList);
 
         // When
-        List<DTOMetric> dtoMetricListFound = metricsController.getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId);
+        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId);
 
         // Then
-        assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
-        assertEquals(dtoMetric, dtoMetricListFound.get(0));
+        assertEquals(dtoMetricEvaluationList.size(), dtoMetricEvaluationListFound.size());
+        assertEquals(dtoMetricEvaluation, dtoMetricEvaluationListFound.get(0));
     }
 
     @Test
     public void getSingleMetricHistoricalEvaluation() throws IOException {
         // Given
-        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
-        List<DTOMetric> dtoMetricList = new ArrayList<>();
-        dtoMetricList.add(dtoMetric);
+        DTOMetricEvaluation dtoMetricEvaluation = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
+        dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String projectExternalId = "test";
         LocalDate from = LocalDate.parse("2019-08-01");
         LocalDate to = LocalDate.parse("2019-08-31");
-        when(qmaMetrics.SingleHistoricalData(dtoMetric.getId(), from, to, projectExternalId)).thenReturn(dtoMetricList);
+        when(qmaMetrics.SingleHistoricalData(dtoMetricEvaluation.getId(), from, to, projectExternalId)).thenReturn(dtoMetricEvaluationList);
 
         // When
-        List<DTOMetric> dtoMetricListFound = metricsController.getSingleMetricHistoricalEvaluation(dtoMetric.getId(), projectExternalId, from, to);
+        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getSingleMetricHistoricalEvaluation(dtoMetricEvaluation.getId(), projectExternalId, from, to);
 
         // Then
-        assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
-        assertEquals(dtoMetric, dtoMetricListFound.get(0));
+        assertEquals(dtoMetricEvaluationList.size(), dtoMetricEvaluationListFound.size());
+        assertEquals(dtoMetricEvaluation, dtoMetricEvaluationListFound.get(0));
     }
 
     @Test
     public void getAllMetricsHistoricalEvaluation() throws IOException {
         // Given
-        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
-        List<DTOMetric> dtoMetricList = new ArrayList<>();
-        dtoMetricList.add(dtoMetric);
+        DTOMetricEvaluation dtoMetricEvaluation = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
+        dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String projectExternalId = "test";
         LocalDate from = LocalDate.parse("2019-08-01");
         LocalDate to = LocalDate.parse("2019-08-31");
-        when(qmaMetrics.HistoricalData(null, from, to, projectExternalId)).thenReturn(dtoMetricList);
+        when(qmaMetrics.HistoricalData(null, from, to, projectExternalId)).thenReturn(dtoMetricEvaluationList);
 
         // When
-        List<DTOMetric> dtoMetricListFound = metricsController.getAllMetricsHistoricalEvaluation(projectExternalId, from, to);
+        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getAllMetricsHistoricalEvaluation(projectExternalId, from, to);
 
         // Then
-        assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
-        assertEquals(dtoMetric, dtoMetricListFound.get(0));
+        assertEquals(dtoMetricEvaluationList.size(), dtoMetricEvaluationListFound.size());
+        assertEquals(dtoMetricEvaluation, dtoMetricEvaluationListFound.get(0));
     }
 
     @Test
     public void getMetricsForQualityFactorHistoricalEvaluation() throws IOException {
         // Given
-        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
-        List<DTOMetric> dtoMetricList = new ArrayList<>();
-        dtoMetricList.add(dtoMetric);
+        DTOMetricEvaluation dtoMetricEvaluation = domainObjectsBuilder.buildDTOMetric();
+        List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
+        dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String factorId = "testingperformance";
         String projectExternalId = "test";
         LocalDate from = LocalDate.parse("2019-08-01");
         LocalDate to = LocalDate.parse("2019-08-31");
-        when(qmaMetrics.HistoricalData(factorId, from, to, projectExternalId)).thenReturn(dtoMetricList);
+        when(qmaMetrics.HistoricalData(factorId, from, to, projectExternalId)).thenReturn(dtoMetricEvaluationList);
 
         // When
-        List<DTOMetric> dtoMetricListFound = metricsController.getMetricsForQualityFactorHistoricalEvaluation(factorId, projectExternalId, from, to);
+        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getMetricsForQualityFactorHistoricalEvaluation(factorId, projectExternalId, from, to);
 
         // Then
-        assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
-        assertEquals(dtoMetric, dtoMetricListFound.get(0));
+        assertEquals(dtoMetricEvaluationList.size(), dtoMetricEvaluationListFound.size());
+        assertEquals(dtoMetricEvaluation, dtoMetricEvaluationListFound.get(0));
     }
 
     @Test
     public void getMetricsPrediction() throws IOException {
         // Given
-        DTOMetric dtoMetric = domainObjectsBuilder.buildDTOMetric();
-        dtoMetric.setDatasource("Forecast");
-        dtoMetric.setRationale("Forecast");
+        DTOMetricEvaluation dtoMetricEvaluation = domainObjectsBuilder.buildDTOMetric();
+        dtoMetricEvaluation.setDatasource("Forecast");
+        dtoMetricEvaluation.setRationale("Forecast");
         float first80 = 0.97473043f;
         float second80 = 0.9745246f;
         Pair<Float, Float> confidence80 = Pair.of(first80, second80);
-        dtoMetric.setConfidence80(confidence80);
+        dtoMetricEvaluation.setConfidence80(confidence80);
         float first95 = 0.9747849f;
         float second95 = 0.97447014f;
         Pair<Float, Float> confidence95 = Pair.of(first95, second95);
-        dtoMetric.setConfidence95(confidence95);
-        List<DTOMetric> dtoMetricList = new ArrayList<>();
-        dtoMetricList.add(dtoMetric);
+        dtoMetricEvaluation.setConfidence95(confidence95);
+        List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
+        dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
         String projectExternalId = "test";
         String technique = "PROPHET";
         String freq = "7";
         String horizon = "7";
 
-        when(qmaForecast.ForecastMetric(dtoMetricList, technique, freq, horizon, projectExternalId)).thenReturn(dtoMetricList);
+        when(qmaForecast.ForecastMetric(dtoMetricEvaluationList, technique, freq, horizon, projectExternalId)).thenReturn(dtoMetricEvaluationList);
 
         // When
-        List<DTOMetric> dtoMetricListFound = metricsController.getMetricsPrediction(dtoMetricList, projectExternalId, technique, freq, horizon);
+        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getMetricsPrediction(dtoMetricEvaluationList, projectExternalId, technique, freq, horizon);
 
         // Then
-        assertEquals(dtoMetricList.size(), dtoMetricListFound.size());
-        assertEquals(dtoMetric, dtoMetricListFound.get(0));
+        assertEquals(dtoMetricEvaluationList.size(), dtoMetricEvaluationListFound.size());
+        assertEquals(dtoMetricEvaluation, dtoMetricEvaluationListFound.get(0));
     }
 }

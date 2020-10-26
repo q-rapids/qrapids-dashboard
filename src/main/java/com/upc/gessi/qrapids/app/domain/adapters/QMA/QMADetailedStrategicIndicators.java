@@ -7,9 +7,10 @@ import DTOs.StrategicIndicatorFactorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedStrategicIndicator;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedStrategicIndicatorEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
 import evaluation.StrategicIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,19 @@ import java.util.List;
 @Component
 public class QMADetailedStrategicIndicators {
 
+    // it was made to use qfRep in FactorEvaluationDTOListToDTOFactorList method
+    private static QualityFactorRepository qfRep;
+
+    @Autowired
+    public QMADetailedStrategicIndicators(QualityFactorRepository qfRep) {
+        QMADetailedStrategicIndicators.qfRep = qfRep;
+    }
+
     @Autowired
     private QMAConnection qmacon;
 
     @Autowired
     private StrategicIndicatorRepository siRep;
-
 
     @Autowired
     private ProjectRepository prjRep;
@@ -38,8 +46,8 @@ public class QMADetailedStrategicIndicators {
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
 
-    public List<DTODetailedStrategicIndicator> CurrentEvaluation(String id, String prj, boolean filterDB) throws IOException {
-        List<DTODetailedStrategicIndicator> dsi;
+    public List<DTODetailedStrategicIndicatorEvaluation> CurrentEvaluation(String id, String prj, boolean filterDB) throws IOException {
+        List<DTODetailedStrategicIndicatorEvaluation> dsi;
 
         // Data coming from QMA API
         qmacon.initConnexion();
@@ -58,8 +66,8 @@ public class QMADetailedStrategicIndicators {
         return dsi;
     }
 
-    public List<DTODetailedStrategicIndicator> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
-        List<DTODetailedStrategicIndicator> dsi;
+    public List<DTODetailedStrategicIndicatorEvaluation> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
+        List<DTODetailedStrategicIndicatorEvaluation> dsi;
 
         // Data coming from QMA API
         qmacon.initConnexion();
@@ -78,8 +86,8 @@ public class QMADetailedStrategicIndicators {
         return dsi;
     }
 
-    private List<DTODetailedStrategicIndicator> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(Long prjID, List<StrategicIndicatorFactorEvaluationDTO> evals, boolean filterDB) {
-        List<DTODetailedStrategicIndicator> dsi = new ArrayList<>();
+    private List<DTODetailedStrategicIndicatorEvaluation> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(Long prjID, List<StrategicIndicatorFactorEvaluationDTO> evals, boolean filterDB) {
+        List<DTODetailedStrategicIndicatorEvaluation> dsi = new ArrayList<>();
         boolean found; // to check if the SI is in the database
         //for each Detailed Strategic Indicador
         for (Iterator<StrategicIndicatorFactorEvaluationDTO> iterDSI = evals.iterator(); iterDSI.hasNext(); ) {
@@ -90,12 +98,12 @@ public class QMADetailedStrategicIndicators {
             if (found) {
                 EvaluationDTO evaluation = element.getEvaluations().get(0);
                 //Create Detailed Strategic Indicator with name, id and null factors
-                DTODetailedStrategicIndicator d = new DTODetailedStrategicIndicator(element.getID(), element.getName(), null);
+                DTODetailedStrategicIndicatorEvaluation d = new DTODetailedStrategicIndicatorEvaluation(element.getID(), element.getName(), null);
                 d.setDate(evaluation.getEvaluationDate());
                 d.setMismatchDays(evaluation.getMismatchDays());
                 d.setMissingFactors(evaluation.getMissingElements());
                 //set Factors to Detailed Strategic Indicator
-                d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors()));
+                d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors(),prjID));
 
                 // Get value
                 List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
@@ -133,28 +141,34 @@ public class QMADetailedStrategicIndicators {
         }
     }
 
-    static List<DTOFactor> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors) {
-        List<DTOFactor> listFact = new ArrayList<>();
+    public static List<DTOFactorEvaluation> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors, Long prjID) {
+        List<DTOFactorEvaluation> listFact = new ArrayList<>();
         //for each factor in the Detailed Strategic Indicator
         for (Iterator<FactorEvaluationDTO> iterFactor = factors.iterator(); iterFactor.hasNext(); ) {
             FactorEvaluationDTO factor = iterFactor.next();
-            //for each evaluation create new factor with factor name and id, and evaluation date and value
-            for (Iterator<EvaluationDTO> iterFactEval = factor.getEvaluations().iterator(); iterFactEval.hasNext(); ) {
-                EvaluationDTO evaluation = iterFactEval.next();
-                listFact.add(FactorEvaluationDTOToDTOFactor(factor, evaluation));
+            boolean found = qfRep.existsByExternalIdAndProject_Id(factor.getID(), prjID);
+            if (found) {
+                //for each evaluation create new factor with factor name and id, and evaluation date and value
+                for (Iterator<EvaluationDTO> iterFactEval = factor.getEvaluations().iterator(); iterFactEval.hasNext(); ) {
+                    EvaluationDTO evaluation = iterFactEval.next();
+                    listFact.add(FactorEvaluationDTOToDTOFactor(factor, evaluation));
+                }
             }
         }
         return listFact;
     }
 
-    static DTOFactor FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
-        return new DTOFactor(
+    static DTOFactorEvaluation FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
+        DTOFactorEvaluation factorEval = new DTOFactorEvaluation(
                 factor.getID(),
                 factor.getName(),
                 factor.getDescription(),
                 evaluation.getValue(), evaluation.getEvaluationDate(),
                 evaluation.getDatasource(),evaluation.getRationale(),
                 factor.getStrategicIndicators());
+        factorEval.setMismatchDays(evaluation.getMismatchDays());
+        factorEval.setMissingMetrics(evaluation.getMissingElements());
+        return factorEval;
     }
 
 

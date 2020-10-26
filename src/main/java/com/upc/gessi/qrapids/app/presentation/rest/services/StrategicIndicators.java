@@ -33,7 +33,7 @@ import java.util.*;
 public class StrategicIndicators {
 
     @Autowired
-    private QualityFactorsController qualityFactorsController;
+    private FactorsController factorsController;
 
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
@@ -82,7 +82,7 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/qualityFactors/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicator> getDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj) {
         try {
             return strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, true);
         } catch (ElasticsearchStatusException e) {
@@ -96,7 +96,7 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicator> getSingleDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getSingleDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id) {
         try {
             return strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
@@ -110,9 +110,9 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOQualityFactor> getQualityFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(@RequestParam(value = "prj") String prj, @PathVariable String id) {
+    public List<DTODetailedFactorEvaluation> getQualityFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(@RequestParam(value = "prj") String prj, @PathVariable String id) {
         try {
-            return qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj);
+            return factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj, true);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -141,7 +141,7 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/qualityFactors/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicator> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return strategicIndicatorsController.getAllDetailedStrategicIndicatorsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
@@ -155,7 +155,7 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicator> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return strategicIndicatorsController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
@@ -170,9 +170,9 @@ public class StrategicIndicators {
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/historical")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    List<DTOQualityFactor> getQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
+    List<DTODetailedFactorEvaluation> getQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
-            return qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
+            return factorsController.getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -198,9 +198,9 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/qualityFactors/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicator> getQualityFactorsPredictionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getQualityFactorsPredictionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
-            List<DTODetailedStrategicIndicator> currentEvaluation = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, true);
+            List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, true);
             return strategicIndicatorsController.getDetailedStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
@@ -213,9 +213,9 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicator> getSingleQualityFactorsPredictionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getSingleQualityFactorsPredictionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
         try {
-            List<DTODetailedStrategicIndicator> currentEvaluation = strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj);
+            List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj);
             return strategicIndicatorsController.getDetailedStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
@@ -228,10 +228,10 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOQualityFactor> getQualityFactorsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
+    public List<DTODetailedFactorEvaluation> getQualityFactorsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
         try {
-            List<DTOQualityFactor> currentEvaluation = qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj);
-            return qualityFactorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
+            List<DTODetailedFactorEvaluation> currentEvaluation = factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj, true);
+            return factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -254,7 +254,7 @@ public class StrategicIndicators {
                         strategic_indicator.getName(),
                         strategic_indicator.getDescription(),
                         strategic_indicator.getNetwork(),
-                        strategic_indicator.getQuality_factors(),
+                        strategic_indicator.getQuality_factorsIds(),
                         strategic_indicator.isWeighted(),
                         strategic_indicator.getWeights());
                 dtoSIList.add(dtosi);
@@ -276,7 +276,7 @@ public class StrategicIndicators {
                     strategicIndicator.getName(),
                     strategicIndicator.getDescription(),
                     strategicIndicator.getNetwork(),
-                    strategicIndicator.getQuality_factors(),
+                    strategicIndicator.getQuality_factorsIds(),
                     strategicIndicator.isWeighted(),
                     strategicIndicator.getWeights());
         } catch (StrategicIndicatorNotFoundException e) {
@@ -392,7 +392,8 @@ public class StrategicIndicators {
     private enum TrainType {
         NONE, ONE, ALL
     }
-//TODO: assessSI
+
+    // assess Strategic Indicators function legacy
     @RequestMapping("/api/assessStrategicIndicators")
     @ResponseStatus(HttpStatus.OK)
     public void assesStrategicIndicatorsLegacy(@RequestParam(value = "prj", required=false) String prj,
@@ -408,32 +409,35 @@ public class StrategicIndicators {
                                          @RequestParam(value = "from", required=false) String from,
                                          @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType) {
         boolean correct = true;
+        LocalDate dateFrom = null;
 
         try {
 
             if (from != null && !from.isEmpty()) {
-                LocalDate dateFrom = LocalDate.parse(from, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                dateFrom = LocalDate.parse(from, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            }
+            // TODO first assess Factors
+            correct = factorsController.assessQualityFactors(prj, dateFrom);
+            if (correct)
                 correct = strategicIndicatorsController.assessStrategicIndicators(prj, dateFrom);
-            }
-            else
-                correct = strategicIndicatorsController.assessStrategicIndicators(prj, null);
 
-            // Train forecast models
-            if (trainType != TrainType.NONE) {
-                String technique = null;
-                if (trainType == TrainType.ONE) {
-                    technique = forecastTechnique;
+            if(correct) {
+                // Train forecast models
+                if (trainType != TrainType.NONE) {
+                    String technique = null;
+                    if (trainType == TrainType.ONE) {
+                        technique = forecastTechnique;
+                    }
+                    if (prj == null) {
+                        strategicIndicatorsController.trainForecastModelsAllProjects(technique);
+                    } else {
+                        strategicIndicatorsController.trainForecastModelsSingleProject(prj, technique);
+                    }
                 }
-                if (prj == null) {
-                    strategicIndicatorsController.trainForecastModelsAllProjects(technique);
-                } else {
-                    strategicIndicatorsController.trainForecastModelsSingleProject(prj, technique);
-                }
-            }
-
-            if (!correct) {
+            } else {
                 throw new AssessmentErrorException();
             }
+
         } catch (AssessmentErrorException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.ASSESSMENT_ERROR + e.getMessage());

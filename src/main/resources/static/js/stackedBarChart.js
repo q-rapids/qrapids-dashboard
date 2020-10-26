@@ -45,7 +45,7 @@ var options = {
         categories: [],
         labels: {
             formatter: function(value, timestamp, index) {
-                var parts = value.split(": &nbsp;");
+                var parts = new String(value).split(": &nbsp;");
                 return parts[0]
             }
         }

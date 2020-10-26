@@ -2,7 +2,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
 import java.util.List;
 
-public class DTOSI {
+public class DTOSI { // get strategic indicator information from DB
     private Long id;
     private String externalId;
     private String name;

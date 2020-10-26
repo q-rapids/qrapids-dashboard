@@ -12,7 +12,7 @@ import java.util.List;
 *
 * @author: Oriol M/Guillem B
 * */
-public class DTODetailedStrategicIndicator {
+public class DTODetailedStrategicIndicatorEvaluation {
 
     //class atributes
     private String id;
@@ -22,7 +22,7 @@ public class DTODetailedStrategicIndicator {
     private String value_description;
     private int mismatchDays;
     private List<String> missingFactors;
-    private List<DTOFactor> factors;
+    private List<DTOFactorEvaluation> factors;
 
     /**
      * Constructor of the DTO of Detailed Strategic Indicators
@@ -31,7 +31,7 @@ public class DTODetailedStrategicIndicator {
      * @param name The parameter define the name of the Strategic Indicator
      * @param factors The parameter define the set of factors that compose the Strategic Indicator
      * */
-    public DTODetailedStrategicIndicator(String id, String name, List<DTOFactor> factors) {
+    public DTODetailedStrategicIndicatorEvaluation(String id, String name, List<DTOFactorEvaluation> factors) {
         this.id = id;
         this.name = name;
         this.factors = factors;
@@ -52,11 +52,11 @@ public class DTODetailedStrategicIndicator {
         return this.name.isEmpty() ? this.id : this.name;
     }
 
-    public List<DTOFactor> getFactors() {
+    public List<DTOFactorEvaluation> getFactors() {
         return factors;
     }
 
-    public void setFactors(List<DTOFactor> factors) {
+    public void setFactors(List<DTOFactorEvaluation> factors) {
         this.factors = factors;
     }
 

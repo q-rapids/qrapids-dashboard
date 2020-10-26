@@ -1,12 +1,13 @@
 var isSi = false;
 var isdsi = false;
 var isqf = false;
+var isdqf = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
-    url = parseURLMetrics("../api/qualityFactors/metrics/historical");
+    url = parseURLComposed("../api/qualityFactors/metrics/historical");
 } else {
-    url = parseURLMetrics("../api/metrics/historical");
+    url = parseURLComposed("../api/metrics/historical");
 }
 
 //initialize data vectors
@@ -34,6 +35,7 @@ function getData() {
         type: "GET",
         async: true,
         success: function (data) {
+            sortDataAlphabetically(data);
             j = 0;
             var line = [];
             var decisionsAdd = [];
@@ -109,6 +111,15 @@ function getData() {
             getMetricsCategories();
         }
     });
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getMetricsCategories () {

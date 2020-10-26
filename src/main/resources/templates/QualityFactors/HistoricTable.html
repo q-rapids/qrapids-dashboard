@@ -50,15 +50,9 @@
                         <span class="caret"></span>
                     </span>
                 </th>
-                <th ng-click="sortBy('factorName')">Factor
-                    <span ng-show="sortType == 'factorName' &amp;&amp; sortReverse" class="caret"></span>
-                    <span ng-show="sortType == 'factorName' &amp;&amp; !sortReverse" class="dropup">
-                        <span class="caret"></span>
-                    </span>
-                </th>
-                <th ng-click="sortBy('metricName')">Metric
-                    <span ng-show="sortType == 'metricName' &amp;&amp; sortReverse" class="caret"></span>
-                    <span ng-show="sortType == 'metricName' &amp;&amp; !sortReverse" class="dropup">
+                <th ng-click="sortBy('name')">Factor
+                    <span ng-show="sortType == 'name' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'name' &amp;&amp; !sortReverse" class="dropup">
                         <span class="caret"></span>
                     </span>
                 </th>
@@ -74,7 +68,13 @@
                         <span class="caret"></span>
                     </span>
                 </th>
-                <th ng-click="sortBy('rationale')">Rationale (Metric)
+                <!--th ng-click="sortBy('categories')">Categories
+                    <span ng-show="sortType == 'categories' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'categories' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th-->
+                <th ng-click="sortBy('rationale')">Rationale
                     <span ng-show="sortType == 'rationale' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'rationale' &amp;&amp; !sortReverse" class="dropup">
                         <span class="caret"></span>
@@ -84,12 +84,12 @@
             </thead>
             <tbody>
             <tr ng-repeat-start="d in data | filter:f | orderBy:sortType:sortReverse"></tr>
-                <td>{{d.date}}</td>
-                <td ng-click="getURL(d.id, d.factorName, fact, '../Metrics/HistoricTable', true)">{{d.factorName}}</td>
-                <td>{{d.metricName}}</td>
-                <td>{{d.description}}</td>
-                <td>{{d.value}}</td>
-                <td>{{d.rationale}}</td>
+                <td id="date">{{d.date}}</td>
+                <td id="name" ng-click="getURL(d.id, d.name, null, '../DetailedQualityFactors/HistoricTable', true)">{{d.name}}</td>
+                <td id="description" >{{d.description}}</td>
+                <td id="value" ng-class="{'color-red': (d.lowerThreshold > d.value.first), 'color-green': (d.value.first > d.upperThreshold)}">{{d.value}}</td>
+                <!--td id="categories">{{d.categories}}</td-->
+                <td id="rationale">{{d.rationale}}</td>
             <tr ng-repeat-end="d in data"></tr>
             </tbody>
         </table>
