@@ -1,14 +1,14 @@
 package com.upc.gessi.qrapids;
 
 import com.upc.gessi.qrapids.app.domain.controllers.*;
-import com.upc.gessi.qrapids.app.domain.exceptions.AssessmentErrorException;
+import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.presentation.rest.services.Alerts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,9 +20,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.LocalDateTime;
+import java.io.IOException;
+import java.text.ParseException;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import eval2.Eval;
 import java.time.LocalDate;
@@ -47,11 +47,8 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 	static ConfigurableApplicationContext context;
 
 	@Scheduled(cron = "${cron.expression:0 30 23 * * ?}")
-	public void scheduleTask() throws Exception {
-		// TODO: decide if we also copy this code to assessSI function
-		final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-		System.out.println("Fixed Delay Task :: Execution Time - " + dateTimeFormatter.format(LocalDateTime.now()));
-
+	public void scheduleTask() throws ParseException, ProjectNotFoundException, IOException, CategoriesException {
+		// ToDo: decide if we also copy this code to assessSI function
 		LocalDate evaluationLocalDate = LocalDate.now(); // we need LocalDate for assessStrategicIndicators
 		Date evaluationDate= Date.from(evaluationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()); // we need Date for evaluateQualityModel in qrapids-eval libs
 
