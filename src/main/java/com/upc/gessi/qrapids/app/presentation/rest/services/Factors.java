@@ -3,7 +3,6 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
-import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
@@ -255,7 +254,7 @@ public class Factors {
     @ResponseStatus(HttpStatus.OK)
     public List<DTOFactorEvaluation> getAllQualityFactorsEvaluation(@RequestParam(value = "prj") String prj) {
         try {
-            return factorsController.getAllFactorsEvaluation(prj);
+            return factorsController.getAllFactorsEvaluation(prj, true);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -269,7 +268,7 @@ public class Factors {
     @ResponseStatus(HttpStatus.OK)
     public List<DTOFactorEvaluation> getQualityFactorsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
         try {
-            List<DTOFactorEvaluation> currentEvaluation = factorsController.getAllFactorsEvaluation(prj);
+            List<DTOFactorEvaluation> currentEvaluation = factorsController.getAllFactorsEvaluation(prj, true);
             return factorsController.getFactorsPrediction(currentEvaluation, prj, technique, "7", horizon);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);

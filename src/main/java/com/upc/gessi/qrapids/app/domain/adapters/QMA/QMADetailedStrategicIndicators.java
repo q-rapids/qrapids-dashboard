@@ -103,7 +103,7 @@ public class QMADetailedStrategicIndicators {
                 d.setMismatchDays(evaluation.getMismatchDays());
                 d.setMissingFactors(evaluation.getMissingElements());
                 //set Factors to Detailed Strategic Indicator
-                d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors(),prjID));
+                d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors(),prjID, false));
 
                 // Get value
                 List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
@@ -141,12 +141,14 @@ public class QMADetailedStrategicIndicators {
         }
     }
 
-    public static List<DTOFactorEvaluation> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors, Long prjID) {
+    public static List<DTOFactorEvaluation> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors, Long prjID, boolean filterDB) {
         List<DTOFactorEvaluation> listFact = new ArrayList<>();
         //for each factor in the Detailed Strategic Indicator
         for (Iterator<FactorEvaluationDTO> iterFactor = factors.iterator(); iterFactor.hasNext(); ) {
             FactorEvaluationDTO factor = iterFactor.next();
-            boolean found = qfRep.existsByExternalIdAndProject_Id(factor.getID(), prjID);
+            boolean found = true;
+            if(filterDB)
+                found = qfRep.existsByExternalIdAndProject_Id(factor.getID(), prjID);
             if (found) {
                 //for each evaluation create new factor with factor name and id, and evaluation date and value
                 for (Iterator<EvaluationDTO> iterFactEval = factor.getEvaluations().iterator(); iterFactEval.hasNext(); ) {

@@ -294,7 +294,7 @@ public class StrategicIndicatorsController {
         // specific day, not the last evaluation
         if (evaluationDate == null) {
             evaluationDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            factorList = factorsController.getAllFactorsEvaluation(project);
+            factorList = factorsController.getAllFactorsEvaluation(project, false);
         }
         else
             factorList = factorsController.getAllFactorsHistoricalEvaluation(project, evaluationDate, evaluationDate);
@@ -352,7 +352,7 @@ public class StrategicIndicatorsController {
         // We will compute the evaluation values for the SI for all the components
         for (String prj: projects) {
             // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
-            factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj));
+            factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj, false));
             factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
 
             correct = assessStrategicIndicator(evaluationDate, prj, si, factorEvaluationQma);
@@ -382,7 +382,7 @@ public class StrategicIndicatorsController {
         // We will compute the evaluation values for the SI for THIS CONCRETE component
 
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
-        factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj));
+        factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj, false));
         factorEvaluationQma.clearStrategicIndicatorsRelations(si.getExternalId());
         //factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
 
@@ -633,7 +633,7 @@ public class StrategicIndicatorsController {
     }
 
     public List<DTOStrategicIndicatorEvaluation> simulateStrategicIndicatorsAssessment (Map<String, Float> factorsNameValueMap, String projectExternalId) throws IOException, ProjectNotFoundException {
-        List<DTOFactorEvaluation> factors = factorsController.getAllFactorsEvaluation(projectExternalId);
+        List<DTOFactorEvaluation> factors = factorsController.getAllFactorsEvaluation(projectExternalId, false);
         for (DTOFactorEvaluation factor : factors) {
             if (factorsNameValueMap.containsKey(factor.getId())) {
                 factor.setValue(factorsNameValueMap.get(factor.getId()));

@@ -112,7 +112,7 @@ public class FactorsController {
     public void importFactorsAndUpdateDatabase() throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException {
         List<String> projects = projectsController.getAllProjects();
         for (String prj : projects) {
-            List<DTOFactorEvaluation> factors = getAllFactorsEvaluation(prj);
+            List<DTOFactorEvaluation> factors = getAllFactorsEvaluation(prj, false);
             List<DTODetailedFactorEvaluation> factorsWithMetrics = getAllFactorsWithMetricsCurrentEvaluation(prj, false);
             updateDataBaseWithNewFactors(prj, factors, factorsWithMetrics);
         }
@@ -544,8 +544,8 @@ public class FactorsController {
         return qmaQualityFactors.SingleCurrentEvaluation(factorId, projectExternalId);
     }
 
-    public List<DTOFactorEvaluation> getAllFactorsEvaluation(String projectExternalId) throws IOException {
-        return qmaQualityFactors.getAllFactors(projectExternalId);
+    public List<DTOFactorEvaluation> getAllFactorsEvaluation(String projectExternalId, boolean filterDB) throws IOException {
+        return qmaQualityFactors.getAllFactors(projectExternalId, filterDB);
     }
 
     public List<DTODetailedFactorEvaluation> getAllFactorsWithMetricsCurrentEvaluation(String projectExternalId, boolean filterDB) throws IOException {

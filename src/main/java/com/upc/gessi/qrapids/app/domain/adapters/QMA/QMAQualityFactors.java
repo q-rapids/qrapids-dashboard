@@ -142,14 +142,14 @@ public class QMAQualityFactors {
             return false;
     }
 
-    public List<DTOFactorEvaluation> getAllFactors(String prj) throws IOException {
+    public List<DTOFactorEvaluation> getAllFactors(String prj, boolean filterDB) throws IOException {
         qmacon.initConnexion();
-        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj), prjRep.findByExternalId(prj).getId());
+        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj), prjRep.findByExternalId(prj).getId(), filterDB);
     }
 
     public List<DTOFactorEvaluation> getAllFactorsHistoricalData(String prj, LocalDate from, LocalDate to) throws IOException {
         qmacon.initConnexion();
-        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj, from, to), prjRep.findByExternalId(prj).getId());
+        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj, from, to), prjRep.findByExternalId(prj).getId(), true);
     }
 
     public void setFactorStrategicIndicatorRelation(List<DTOFactorEvaluation> factors, String prj) throws IOException {
