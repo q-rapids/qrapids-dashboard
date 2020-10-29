@@ -30,6 +30,18 @@ function getQualityFactorsCategories () {
     });
 }
 
+function getFactorsCategories (titles, ids, labels, values) {
+    var url = "../api/qualityFactors/categories";
+    $.ajax({
+        url : url,
+        type: "GET",
+        success: function (response) {
+            categories = response;
+            showDetailedStrategicIndicators(titles, ids, labels, values)
+        }
+    });
+}
+
 function showQualityFactorSliders () {
     // Factor categories
     var rangeHighlights = [];
@@ -109,7 +121,10 @@ function showQualityFactorSliders () {
 
 function getDetailedStrategicIndicators () {
     var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/strategicIndicators/qualityFactors/current";
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+    var url = "/api/strategicIndicators/qualityFactors/current?profile="+profileId;
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -155,7 +170,8 @@ function getDetailedStrategicIndicators () {
                 }
             }
             checkFactorsSliders();
-            showDetailedStrategicIndicators(titles, ids, labels, values);
+            getFactorsCategories (titles, ids, labels, values);
+            //showDetailedStrategicIndicators(titles, ids, labels, values);
         }
     });
 }
@@ -169,7 +185,8 @@ function checkFactorsSliders() {
                     present = true;
             });
         });
-        if (!present) {
+        var profileId = sessionStorage.getItem("profile_id");
+        if (!present && (profileId == null || profileId == "null")) {
             var warning = document.createElement("span");
             warning.setAttribute("class", "glyphicon glyphicon-alert");
             warning.title = "This quality factor is not related to any strategic indicator"
@@ -179,6 +196,9 @@ function checkFactorsSliders() {
             warning.style.textShadow = "-2px 0 2px black, 0 2px 2px black, 2px 0 2px black, 0 -2px 2px black";
             var divFactor = $("#div"+qualityFactor.id);
             divFactor.append(warning);
+        } else if (!present) { // remove unused factor if we have profile
+            var divFactor = $("#div"+qualityFactor.id);
+            divFactor.remove();
         }
     });
 }
@@ -201,21 +221,47 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
         ctx.getContext("2d");
         if (labels[i].length === 2) {
             labels[i].push(null);
-            //values[i].push(null);
+        } else if (labels[i].length === 1) {
+            labels[i].push(null);
+            labels[i].push(null);
+        }
+        var dataset = [];
+        dataset.push({
+            label: titles[i],
+            backgroundColor: 'rgba(105, 105, 105, 0.2)',
+            borderColor: currentColor,
+            pointBackgroundColor: currentColor,
+            pointBorderColor: currentColor,
+            data: values[i],
+            fill: false
+        });
+        var cat = categories;
+        cat.sort(function (a, b) {
+            return b.upperThreshold - a.upperThreshold;
+        });
+        for (var k = cat.length-1; k >= 0; --k) {
+            var fill = cat.length-1-k;
+            if (k == cat.length-1) fill = true;
+            dataset.push({
+                label: cat[k].name,
+                borderWidth: 1,
+                backgroundColor: hexToRgbA(cat[k].color, 0.3),
+                borderColor: hexToRgbA(cat[k].color, 0.3),
+                pointHitRadius: 0,
+                pointHoverRadius: 0,
+                pointRadius: 0,
+                pointBorderWidth: 0,
+                pointBackgroundColor: 'rgba(0, 0, 0, 0)',
+                pointBorderColor: 'rgba(0, 0, 0, 0)',
+                data: [].fill.call({ length: labels[i].length }, cat[k].upperThreshold),
+                fill: fill
+            })
         }
         var chart = new Chart(ctx, {    //draw chart with the following config
             type: 'radar',
             data: {
                 labels: labels[i],
-                datasets: [{
-                    label: titles[i],
-                    backgroundColor: 'rgba(105, 105, 105, 0.2)',
-                    borderColor: currentColor,
-                    pointBackgroundColor: currentColor,
-                    pointBorderColor: currentColor,
-                    data: values[i],
-                    fill: true
-                }]
+                datasets: dataset
             },
             options: {
                 title: {
@@ -236,6 +282,7 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
                 }
             }
         });
+        console.log(chart);
         detailedCharts.push(chart);
         window.myLine = chart;
     }
@@ -263,7 +310,7 @@ $('#apply').click(function () {
             pointBackgroundColor: simulationColor,
             pointBorderColor: simulationColor,
             data: [],
-            fill: true
+            fill: false
         };
         for (var j = 0; j < strategicIndicator.factors.length; j++) {
             var factor = strategicIndicator.factors[j];
@@ -272,19 +319,26 @@ $('#apply').click(function () {
             });
             dataset.data.push(newFactor.value);
         }
-
-        if (detailedCharts[i].data.datasets.length > 1)
+        if (detailedCharts[i].data.datasets.length > 4) {
             detailedCharts[i].data.datasets[0].data = dataset.data;
-        else
+        } else {
             detailedCharts[i].data.datasets.unshift(dataset);
+            // change categories fill property (we add simulated data)
+            detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill +1;
+            detailedCharts[i].data.datasets[4].fill = detailedCharts[i].data.datasets[4].fill +1;
+        }
         detailedCharts[i].update();
     }
 
     var formData = new FormData();
     formData.append("factors", JSON.stringify(qualityFactors));
 
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     $.ajax({
-        url: "../api/strategicIndicators/simulate",
+        url: "../api/strategicIndicators/simulate?profile="+profileId,
         data: formData,
         type: "POST",
         contentType: false,
@@ -309,12 +363,28 @@ $('#restore').click(function () {
 
 function removeSimulation() {
     d3.selectAll('.simulation').remove();
-    if (detailedCharts[0].data.datasets.length > 1) {
+    if (detailedCharts[0].data.datasets.length > 4) {
         for (var i = 0; i < detailedCharts.length; i++) {
             detailedCharts[i].data.datasets.shift();
+            // change categories fill property (we remove simulated data)
+            detailedCharts[i].data.datasets[2].fill = detailedCharts[i].data.datasets[2].fill -1;
+            detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill -1;
             detailedCharts[i].update();
         }
     }
+}
+
+function hexToRgbA(hex,a=1){ // (hex color, opacity)
+    var c;
+    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        c= hex.substring(1).split('');
+        if(c.length== 3){
+            c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        }
+        c= '0x'+c.join('');
+        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+ a +')';
+    }
+    throw new Error('Bad Hex');
 }
 
 window.onload = function() {

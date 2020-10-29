@@ -74,7 +74,7 @@ public class MetricsController {
     }
 
     public void importMetricsAndUpdateDatabase() throws IOException, CategoriesException, ProjectNotFoundException {
-        List<String> projects = projectController.getAllProjects();
+        List<String> projects = projectController.getAllProjectsExternalID();
         for (String prj : projects) {
             List<DTOMetricEvaluation> metrics = getAllMetricsCurrentEvaluation(prj);
             updateDataBaseWithNewMetrics(prj,metrics);

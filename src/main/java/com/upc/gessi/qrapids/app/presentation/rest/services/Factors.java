@@ -211,11 +211,12 @@ public class Factors {
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedFactorEvaluation> getQualityFactorsEvaluations(@RequestParam(value = "prj") String prj) {
         try {
-            return factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, true);
+            // TODO pass real profile
+            return factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, null, true);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (IOException e) {
+        } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
@@ -240,11 +241,12 @@ public class Factors {
     public @ResponseBody
     List<DTODetailedFactorEvaluation> getDetailedQualityFactorsHistoricalData(@RequestParam(value = "prj") String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
-            return factorsController.getAllFactorsWithMetricsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
+            // TODO pass real profile
+            return factorsController.getAllFactorsWithMetricsHistoricalEvaluation(prj,null, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (IOException e) {
+        } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
@@ -283,12 +285,13 @@ public class Factors {
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedFactorEvaluation> getQualityFactorsPrediction(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
-            List<DTODetailedFactorEvaluation> currentEvaluation = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, true);
+            // TODO pass real profile
+            List<DTODetailedFactorEvaluation> currentEvaluation = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, null, true);
             return factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (IOException e) {
+        } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }

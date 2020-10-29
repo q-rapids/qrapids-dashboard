@@ -5,7 +5,8 @@ var isdqf = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
-    url = parseURLComposed("../api/qualityFactors/metrics/historical");
+    var profileId = sessionStorage.getItem("profile_id");
+    url = parseURLMetrics("../api/qualityFactors/metrics/historical?profile="+profileId);
 } else {
     url = parseURLComposed("../api/metrics/historical");
 }

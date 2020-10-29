@@ -8,6 +8,10 @@ import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
@@ -85,7 +89,8 @@ public class QMARelations {
         return doubleArray;
     }
 
-    public List<DTORelationsSI> getRelations (String prj, LocalDate date) throws IOException, ArithmeticException {
+
+    public List<DTORelationsSI> getRelations (String prj, String profile, LocalDate date) throws IOException, CategoriesException, ProjectNotFoundException {
         qmacon.initConnexion();
         List<RelationDTO> relationDTOS;
         // get relations from elasticsearch
@@ -94,8 +99,8 @@ public class QMARelations {
         else
             relationDTOS = Relations.getRelations(prj, date);
         // get current evaluations for SI and Quality Factors
-        List<DTODetailedStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, true);
-        List<DTODetailedFactorEvaluation> qfEval = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, true);
+        List<DTODetailedStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, profile,true);
+        List<DTODetailedFactorEvaluation> qfEval = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile,true);
         return RelationDTOToDTORelationSI(relationDTOS, siEval, qfEval);
     }
 

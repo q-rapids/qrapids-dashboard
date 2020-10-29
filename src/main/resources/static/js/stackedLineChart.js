@@ -190,20 +190,24 @@ function drawChart() {
             var pointRadius = 3;
             var borderWidth = 1;
             var color = colors[j % colors.length];
+            // special logic to show decisions in historical views
             if (value[i][j][0] && value[i][j][0].y >= 1.1) {
                 showLine = false;
                 pointRadius = 5;
                 borderWidth = 2;
+                // on axis y = 1.1 is shown added decisions
                 if (value[i][j][0].y === 1.1) {
                     color = decisionAddColor;
                     pointStyle = 'cross';
                 }
+                // on axis y = 1.2 is shown ignored decisions
                 if (value[i][j][0].y === 1.2) {
                     color = decisionIgnoreColor;
                     pointStyle = 'crossRot';
                 }
             }
-
+            console.log("data");
+            console.log(value[i][j]);
             c.data.datasets.push({
                 label: labels[i][j],
                 hidden: false,
@@ -211,6 +215,11 @@ function drawChart() {
                 borderColor: color,
                 fill: false,
                 data: value[i][j],
+                trendlineLinear: {
+                    style: color,
+                    lineStyle: "dotted",
+                    width: 2
+                },
                 showLine: showLine,
                 pointStyle: pointStyle,
                 radius: pointRadius,
@@ -281,8 +290,7 @@ function drawChart() {
         var a = document.createElement('a');
         var currentURL = window.location.href;
         if (isdsi) {  //if it is a Stacked Line Chart for Detailed Strategic Indicators
-            if (currentURL.match("/PredictionChart")) urlLink = "../QualityFactors/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
-            else urlLink = "../QualityFactors/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
+            urlLink = "../QualityFactors/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             a.setAttribute("href", urlLink);
         } else if (isqf) { //if it is a Stacked Line Chart for Quality Factors
             var name = getParameterByName('name');
@@ -304,14 +312,12 @@ function drawChart() {
                 else urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
             }
             else {
-                if (currentURL.match("/PredictionChart")) urlLink = "../Metrics/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
-                else urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
+                urlLink = "../Metrics/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             }
             a.setAttribute("href", urlLink);
         } else if (isSi) {
             //if its a SI chart make it a hyperlink
-            if (currentURL.match("/PredictionChart")) urlLink = "../DetailedStrategicIndicators/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
-            else urlLink = "../DetailedStrategicIndicators/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
+            urlLink = "../DetailedStrategicIndicators/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             a.setAttribute("href", urlLink);
         }
         a.innerHTML = texts[i];

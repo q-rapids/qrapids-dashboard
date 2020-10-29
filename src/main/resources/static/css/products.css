@@ -1,24 +1,23 @@
 @CHARSET "UTF-8";
 
 
-#productView, #SIConfigView, #QFConfigView, #CategoriesConfigView {
+#productView, #profileView, #SIConfigView, #QFConfigView, #CategoriesConfigView, #ReportingView {
 	display: flex;
 	flex-direction: row;
 }
-
-#productTree, #SITree, #QFTree, #CategoriesElementSelector {
+#productTree, #profileTree, #SITree, #QFTree, #CategoriesElementSelector, #ProjectSelector {
 	margin: 1%;
 	width: 21%;
 }
 
-#productInfo, #SIInfo, #QFInfo, #Categories {
+#productInfo, #profileInfo, #SIInfo, #QFInfo, #Categories, #ReportingInfo {
 	margin: 1%;
 	width: 75%;
 	display: flex;
 	flex-direction: column;
 }
 
-#productForm, #SIForm, #QFForm, #SICategories, #FactorsCategories, #MetricsCategories {
+#productForm, #profileForm, #SIForm, #QFForm, #SICategories, #FactorsCategories, #MetricsCategories, #RedirectToReport, #tableREPdiv {
 	margin: 1%;
 	display: flex;
 	flex-direction: column;
@@ -32,7 +31,7 @@
 	width: 81%;
 }
 
-.productInfoRow, .SIInfoRow, .SIInfoRowID, .QFInfoRow, .QFInfoRowID {
+.productInfoRow, .profileInfoRow, .SIInfoRow, .SIInfoRowID, .QFInfoRow, .QFInfoRowID {
 	margin: 1%;
 	margin-bottom: 3%;
 	width: 90%;

@@ -196,7 +196,7 @@ public class FactorEvaluationTest {
         dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
 
         String projectExternalId = "test";
-        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId,true)).thenReturn(dtoDetailedFactorEvaluationList);
+        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId,null,true)).thenReturn(dtoDetailedFactorEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -263,7 +263,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, true);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, null,true);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -357,7 +357,7 @@ public class FactorEvaluationTest {
         String projectExternalId = "test";
         LocalDate from = dtoDetailedFactorEvaluation.getMetrics().get(0).getDate().minusDays(7);
         LocalDate to = dtoDetailedFactorEvaluation.getMetrics().get(0).getDate();
-        when(qualityFactorsDomainController.getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, from, to)).thenReturn(dtoDetailedFactorEvaluationList);
+        when(qualityFactorsDomainController.getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, null, from, to)).thenReturn(dtoDetailedFactorEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -430,7 +430,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, from, to);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId,null, from, to);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -441,7 +441,7 @@ public class FactorEvaluationTest {
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
         String projectExternalId = "test";
-        when(qualityFactorsDomainController.getAllFactorsEvaluation(projectExternalId)).thenReturn(dtoFactorEvaluationList);
+        when(qualityFactorsDomainController.getAllFactorsEvaluation(projectExternalId, true)).thenReturn(dtoFactorEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -509,7 +509,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsEvaluation(projectExternalId);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsEvaluation(projectExternalId, true);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -522,7 +522,7 @@ public class FactorEvaluationTest {
         String freq = "7";
         String horizon = "7";
         String technique = "PROPHET";
-        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, true)).thenReturn(dtoDetailedFactorEvaluationList);
+        when(qualityFactorsDomainController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, null,true)).thenReturn(dtoDetailedFactorEvaluationList);
         when(qualityFactorsDomainController.getFactorsWithMetricsPrediction(dtoDetailedFactorEvaluationList, technique, freq, horizon, projectExternalId)).thenReturn(dtoDetailedFactorEvaluationList);
 
         // Perform request
@@ -606,7 +606,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, true);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, null,true);
         verify(qualityFactorsDomainController, times(1)).getFactorsWithMetricsPrediction(dtoDetailedFactorEvaluationList, technique, freq, horizon, projectExternalId);
     }
 
@@ -1132,7 +1132,7 @@ public class FactorEvaluationTest {
         String freq = "7";
         String horizon = "7";
 
-        when(qualityFactorsDomainController.getAllFactorsEvaluation(projectExternalId)).thenReturn(dtoFactorEvaluationList);
+        when(qualityFactorsDomainController.getAllFactorsEvaluation(projectExternalId, true)).thenReturn(dtoFactorEvaluationList);
         when(qualityFactorsDomainController.getFactorsPrediction(dtoFactorEvaluationList, projectExternalId, technique, freq, horizon)).thenReturn(dtoFactorEvaluationList);
 
         // Perform request
@@ -1216,7 +1216,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsEvaluation(projectExternalId);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsEvaluation(projectExternalId, true);
         verify(qualityFactorsDomainController, times(1)).getFactorsPrediction(dtoFactorEvaluationList, projectExternalId, technique, freq, horizon);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }

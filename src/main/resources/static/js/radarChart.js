@@ -46,6 +46,7 @@ function drawChart() {
             data: values[i],
             fill: false
         });
+        console.log(categories);
         for (var k = categories.length-1; k >= 0; --k) {
             var fill = categories.length-1-k;
             if (k == categories.length-1) fill = true;
@@ -64,6 +65,7 @@ function drawChart() {
                 fill: fill
             })
         }
+        console.log(dataset);
         window.myLine = new Chart(ctx, {    //draw chart with the following config
             type: 'radar',
             data: {
@@ -94,7 +96,6 @@ function drawChart() {
                 }
             }
         });
-
         //Warnings
         if (typeof warnings !== "undefined") {
             var text = "";

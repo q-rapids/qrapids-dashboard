@@ -149,4 +149,16 @@ public class Metrics {
         }
     }
 
+    @GetMapping("/api/metrics/currentDate")
+    @ResponseStatus(HttpStatus.OK)
+    public LocalDate getcurrentDate(@RequestParam(value = "prj") String prj) {
+        try {
+            List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(prj);
+            return metrics.get(0).getDate();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        // if the response is null
+        return null;
+    }
 }

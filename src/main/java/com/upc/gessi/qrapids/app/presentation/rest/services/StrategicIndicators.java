@@ -48,13 +48,13 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsEvaluation(@RequestParam(value = "prj") String prj) {
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsEvaluation(@RequestParam(value = "prj") String prj,@RequestParam(value = "profile", required = false) String profile) {
         try {
-            return strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj);
+            return strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj,profile);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (CategoriesException e) {
+        } catch (CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {
@@ -65,13 +65,13 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/{id}/current")
     @ResponseStatus(HttpStatus.OK)
-    public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorEvaluation(@RequestParam("prj") String prj, @PathVariable String id) {
+    public DTOStrategicIndicatorEvaluation getSingleStrategicIndicatorEvaluation(@RequestParam("prj") String prj,@RequestParam(value = "profile", required = false) String profile, @PathVariable String id) {
         try {
-            return strategicIndicatorsController.getSingleStrategicIndicatorsCurrentEvaluation(id, prj);
+            return strategicIndicatorsController.getSingleStrategicIndicatorsCurrentEvaluation(id,prj,profile);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (CategoriesException e) {
+        } catch (CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {
@@ -82,10 +82,10 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/qualityFactors/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
-            return strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, true);
-        } catch (ElasticsearchStatusException e) {
+            return strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, profile,true);
+        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -96,10 +96,10 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicatorEvaluation> getSingleDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getSingleDetailedSICurrentEvaluation(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile, @PathVariable String id) {
         try {
-            return strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj);
-        } catch (ElasticsearchStatusException e) {
+            return strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj, profile);
+        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -112,11 +112,11 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedFactorEvaluation> getQualityFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(@RequestParam(value = "prj") String prj, @PathVariable String id) {
         try {
-            return factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj, true);
+            return factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (IOException e) {
+        } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
@@ -124,13 +124,13 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsHistoricalData(@RequestParam(value = "prj", required=false) String prj,@RequestParam(value = "profile", required = false) String profile, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
-            return strategicIndicatorsController.getAllStrategicIndicatorsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
+            return strategicIndicatorsController.getAllStrategicIndicatorsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (CategoriesException e) {
+        } catch (CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {
@@ -141,10 +141,10 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/qualityFactors/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
-            return strategicIndicatorsController.getAllDetailedStrategicIndicatorsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException e) {
+            return strategicIndicatorsController.getAllDetailedStrategicIndicatorsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
+        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -155,10 +155,10 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedSIHistorical(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
-            return strategicIndicatorsController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
-        } catch (ElasticsearchStatusException e) {
+            return strategicIndicatorsController.getSingleDetailedStrategicIndicatorsHistoricalEvaluation(id, prj, profile, LocalDate.parse(from), LocalDate.parse(to));
+        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -176,7 +176,7 @@ public class StrategicIndicators {
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (IOException e) {
+        } catch (IOException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
@@ -184,13 +184,14 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
+    public List<DTOStrategicIndicatorEvaluation> getStrategicIndicatorsPrediction(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
-            return strategicIndicatorsController.getStrategicIndicatorsPrediction(technique, "7", horizon, prj);
+            List<DTOStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj,profile);
+            return strategicIndicatorsController.getStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
-        } catch (IOException e) {
+        } catch (IOException | CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
@@ -198,11 +199,11 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/qualityFactors/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicatorEvaluation> getQualityFactorsPredictionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedStrategicIndicatorsPredictionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) {
         try {
-            List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, true);
+            List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, profile,true);
             return strategicIndicatorsController.getDetailedStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
-        } catch (ElasticsearchStatusException e) {
+        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -213,11 +214,11 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/{id}/qualityFactors/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTODetailedStrategicIndicatorEvaluation> getSingleQualityFactorsPredictionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
+    public List<DTODetailedStrategicIndicatorEvaluation> getSingleQualityFactorsPredictionData(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required = false) String profile, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
         try {
-            List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj);
+            List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation = strategicIndicatorsController.getSingleDetailedStrategicIndicatorCurrentEvaluation(id, prj, profile);
             return strategicIndicatorsController.getDetailedStrategicIndicatorsPrediction(currentEvaluation, technique, "7", horizon, prj);
-        } catch (ElasticsearchStatusException e) {
+        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -230,9 +231,9 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<DTODetailedFactorEvaluation> getQualityFactorsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon, @PathVariable String id) {
         try {
-            List<DTODetailedFactorEvaluation> currentEvaluation = factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj, true);
+            List<DTODetailedFactorEvaluation> currentEvaluation = factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(id, prj);
             return factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, "7", horizon, prj);
-        } catch (ElasticsearchStatusException e) {
+        } catch (ElasticsearchStatusException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
@@ -243,10 +244,9 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOSI> getAllStrategicIndicators (@RequestParam(value = "prj") String prj) {
+    public List<DTOSI> getAllStrategicIndicators (@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile ) {
         try {
-            Project project = projectsController.findProjectByExternalId(prj);
-            List<Strategic_Indicator> strategicIndicatorList = strategicIndicatorsController.getStrategicIndicatorsByProject(project);
+            List<Strategic_Indicator> strategicIndicatorList = strategicIndicatorsController.getStrategicIndicatorsByProjectAndProfile(prj, profile);
             List<DTOSI> dtoSIList = new ArrayList<>();
             for (Strategic_Indicator strategic_indicator : strategicIndicatorList) {
                 DTOSI dtosi = new DTOSI(strategic_indicator.getId(),
@@ -431,10 +431,11 @@ public class StrategicIndicators {
                     if (prj == null) {
                         strategicIndicatorsController.trainForecastModelsAllProjects(technique);
                     } else {
-                        strategicIndicatorsController.trainForecastModelsSingleProject(prj, technique);
+                        strategicIndicatorsController.trainForecastModelsSingleProject(prj, null, technique);
                     }
                 }
-            } else {
+            }
+            if (!correct) {
                 throw new AssessmentErrorException();
             }
 
@@ -460,7 +461,7 @@ public class StrategicIndicators {
 
     @PostMapping("/api/strategicIndicators/simulate")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOStrategicIndicatorEvaluation> simulate(@RequestParam(value = "prj", required=false) String prj, HttpServletRequest request) {
+    public List<DTOStrategicIndicatorEvaluation> simulate(@RequestParam(value = "prj", required=false) String prj, @RequestParam(value = "profile", required=false) String profile, HttpServletRequest request) {
         try {
             JsonParser parser = new JsonParser();
             JsonArray simulatedFactorsJsonArray = parser.parse(request.getParameter("factors")).getAsJsonArray();
@@ -470,7 +471,7 @@ public class StrategicIndicators {
                 Float factorValue = simulatedFactorsJsonArray.get(i).getAsJsonObject().get("value").getAsFloat();
                 simulatedFactorsMap.put(factorName, factorValue);
             }
-            return strategicIndicatorsController.simulateStrategicIndicatorsAssessment(simulatedFactorsMap, prj);
+            return strategicIndicatorsController.simulateStrategicIndicatorsAssessment(simulatedFactorsMap, prj, profile);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Simulation error: " + e.getMessage());
@@ -479,13 +480,13 @@ public class StrategicIndicators {
 
     @GetMapping("/api/strategicIndicators/qualityModel")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTORelationsSI> getQualityModel(@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date) {
+    public List<DTORelationsSI> getQualityModel(@RequestParam("prj") String prj, @RequestParam(value = "date", required = false) String date,@RequestParam(value = "profile", required = false) String profile) {
         try {
             if (date == null)
-                return strategicIndicatorsController.getQualityModel(prj, null);
+                return strategicIndicatorsController.getQualityModel(prj, profile, null);
             else
-                return strategicIndicatorsController.getQualityModel(prj, LocalDate.parse(date));
-        } catch (IOException | ArithmeticException | CategoriesException e) {
+                return strategicIndicatorsController.getQualityModel(prj, profile, LocalDate.parse(date));
+        } catch (IOException | ArithmeticException | CategoriesException | ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
@@ -495,5 +496,54 @@ public class StrategicIndicators {
     @ResponseStatus(HttpStatus.OK)
     public List<String> getForecastTechniques() {
         return strategicIndicatorsController.getForecastTechniques();
+    }
+
+    @GetMapping("/api/strategicIndicators/currentDate")
+    @ResponseStatus(HttpStatus.OK)
+    public LocalDate getcurrentDate(@RequestParam(value = "prj") String prj,@RequestParam(value = "profile", required = false) String profile) {
+        try {
+            List<DTOStrategicIndicatorEvaluation> si = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj, profile);
+            return si.get(0).getDate();
+        } catch (IOException | CategoriesException | ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
+        }
+        // if the response is null
+        return null;
+    }
+
+    @GetMapping("/api/strategicIndicators/current_and_historical")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOSICurrentHistoricEvaluation> getStrategicIndicatorsCurrentHistoricEvaluation(@RequestParam(value = "prj", required=false) String prj,@RequestParam(value = "profile", required = false) String profile, @RequestParam("from") String from, @RequestParam("to") String to) {
+        try {
+            Project project = projectsController.findProjectByExternalId(prj);
+            List<DTOStrategicIndicatorEvaluation> currentData = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj, profile);
+            List<DTOStrategicIndicatorEvaluation> historicData = strategicIndicatorsController.getAllStrategicIndicatorsHistoricalEvaluation(prj, profile, LocalDate.parse(from), LocalDate.parse(to));
+            List<DTOSICurrentHistoricEvaluation> result = new ArrayList<>();
+            int j = 0;
+            for (int i = 0; i < currentData.size(); i++) {
+                DTOStrategicIndicatorEvaluation aux = currentData.get(i);
+                DTOSICurrentHistoricEvaluation siInfo = new DTOSICurrentHistoricEvaluation(aux.getId(),project.getName(),aux.getName(),aux.getDescription(),
+                        aux.getValue(), aux.getDbId(),aux.getRationale(),aux.getProbabilities(),aux.getDate());
+                List<DTOSICurrentHistoricEvaluation.DTOHistoricalData> siHistInfo = new ArrayList<>();
+                while (j < historicData.size() && aux.getId().equals(historicData.get(j).getId())) {
+                    DTOStrategicIndicatorEvaluation histAux = historicData.get(j);
+                    DTOSICurrentHistoricEvaluation.DTOHistoricalData histInfo = new DTOSICurrentHistoricEvaluation.DTOHistoricalData(histAux.getValue(),histAux.getRationale(),histAux.getDate());
+                    siHistInfo.add(histInfo);
+                    j++;
+                }
+                siInfo.setHistoricalDataList(siHistInfo);
+                result.add(siInfo);
+            }
+            return result;
+        } catch (ElasticsearchStatusException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
+        } catch (CategoriesException | ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
     }
 }

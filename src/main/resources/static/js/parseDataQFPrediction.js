@@ -3,7 +3,8 @@ var isdsi = false;
 var isqf = true;
 var isdqf = false;
 
-var url;
+var urlpred; // to get prediction data
+var urlhist; // to get historical data
 if (getParameterByName('id').length !== 0) {
     url = parseURLSimple("../api/strategicIndicators/qualityFactors/prediction");
 } else {
@@ -28,17 +29,18 @@ function getData() {
     ids = [];
     errors = [];
     var technique = $("#selectedTechnique").text();
-    var date1 = new Date($('#datepickerFrom').val());
-    var date2 = new Date($('#datepickerTo').val());
-    var timeDiff = date2.getTime() - date1.getTime();
+    var dateFrom = new Date($('#datepickerFrom').val());
+    var dateC = new Date($('#datepickerCurrentDate').val());
+    var dateTo = new Date($('#datepickerTo').val());
+    var timeDiff = dateTo.getTime() - dateC.getTime();
     var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
     if (diffDays < 1) {
         alert('To date has to be bigger than from date');
     } else {
-        //get data from API
+        //get predicted data from API
         jQuery.ajax({
             dataType: "json",
-            url: url,
+            url: urlpred,
             data: {
                 "technique": technique,
                 "horizon": diffDays
@@ -134,6 +136,7 @@ function getData() {
             }
         });
     }
+
     console.log(errors);
     console.log(value);
     console.log(labels);

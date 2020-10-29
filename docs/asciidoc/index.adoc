@@ -1,5 +1,5 @@
 = Q-Rapids Dashboard API REST Documentation
-v1.2, {docdate}
+v1.6, {docdate}
 :toc: left
 
 :sectnums:
@@ -45,6 +45,21 @@ include::{snippets}/si/single-current-read-error/http-response.adoc[]
 === Get historical evaluation
 
 operation::si/historical[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response categories error
+include::{snippets}/si/historical-conflict/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/si/historical-read-error/http-response.adoc[]
+:numbered:
+
+=== Get current and historical evaluation
+
+operation::si/current_and_historical[snippets='request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
 ==== HTTP response wrong project
@@ -336,7 +351,7 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 === Get detailed current evaluation for strategic indicator
 
-operation::qf/current-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+operation::qf/historical-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
 
@@ -931,6 +946,50 @@ operation::products/evaluation[snippets='path-parameters,curl-request,response-f
 
 operation::products/evaluation-detailed[snippets='path-parameters,curl-request,response-fields,http-response']
 
+
+== Profiles
+
+=== Get all profiles
+
+operation::profiles/all[snippets='curl-request,response-fields,http-response']
+
+
+=== Get single profile
+
+operation::profiles/single[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== New profile
+
+operation::profiles/add[snippets='request-parameters,request-parts,curl-request,http-response']
+
+:numbered!:
+
+==== HTTP response name already exists
+include::{snippets}/profiles/add-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Update profile
+
+:numbered!:
+
+==== Path parameters
+
+include::{snippets}/products/single/path-parameters.adoc[]
+
+operation::profiles/update[snippets='request-parameters,request-parts,curl-request,http-response']
+
+==== HTTP response name already exists
+include::{snippets}/profiles/update-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Delete profile
+
+operation::profiles/delete[snippets='path-parameters,curl-request,http-response']
 
 
 == Others

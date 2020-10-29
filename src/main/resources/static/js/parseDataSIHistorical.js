@@ -20,10 +20,15 @@ function getData() {
     value = [];
     labels = [];
     ids = [];
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     //get data from API
     jQuery.ajax({
         dataType: "json",
-        url: "../api/strategicIndicators/historical",
+        url: "../api/strategicIndicators/historical?profile="+profileId,
         data: {
             "from": $('#datepickerFrom').val(),
             "to": $('#datepickerTo').val()
@@ -103,8 +108,9 @@ function getData() {
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
                 alert("Your datasource and DB categories IDs do not match.");
-            else if (jqXHR.status == 400)
+            else if (jqXHR.status == 400) {
                 alert("Datasource connection failed.");
+            }
         }
     });
 }
@@ -119,10 +125,15 @@ function sortDataAlphabetically (data) {
 }
 
 function getQualityModel () {
+
+    console.log("sessionStorage: profile_id");
+    console.log(sessionStorage.getItem("profile_id"));
+    var profileId = sessionStorage.getItem("profile_id");
+
     jQuery.ajax({
         dataType: "json",
         type: "GET",
-        url : "../api/strategicIndicators/qualityModel",
+        url : "../api/strategicIndicators/qualityModel?profile="+profileId,
         async: false,
         success: function (data) {
             data.forEach(function (strategicIndicator) {

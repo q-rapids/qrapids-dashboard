@@ -50,7 +50,9 @@ function checkProducts () {
         type: "GET",
         async: true,
         success: function (data) {
-            if (data.length > 0)
+            console.log("checkProducts");
+            console.log(sessionStorage.getItem("profile_qualitylvl"));
+            if ((data.length > 0) && (sessionStorage.getItem("profile_qualitylvl") == "ALL"))
                 $("#Products").show();
             else
                 $("#Products").hide();
@@ -66,7 +68,7 @@ function checkPhases () {
         type: "GET",
         async: true,
         success: function (data) {
-            if (data.length > 0)
+            if ((data.length > 0) && (sessionStorage.getItem("profile_qualitylvl") == "ALL"))
                 $("#PhasesAssessment").show();
             else
                 $("#PhasesAssessment").hide();
@@ -211,6 +213,9 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
 } else if (currentURL.search("/Decisions") !== -1) {
     id = "Decisions";
     highlight(id);
+} else if (currentURL.search("/Reporting") !== -1) {
+    id = "Reporting";
+    highlight(id);
 } else if (currentURL.search("/QualityModel") !== -1) {
     id = "QualityModel";
     highlightAndSaveCurrentAssessment(id);
@@ -232,6 +237,8 @@ if ((currentURL.search("/StrategicIndicators/") !== -1 || currentURL.search("/Ed
         id = "Products";
     else if (currentURL.match("/QualityFactors"))
         id = "QualityFactors";
+    else if (currentURL.match("/Profiles"))
+        id = "Profiles";
     else if (currentURL.match("/Categories"))
         id = "Categories";
     else if (currentURL.match("/profile"))
@@ -379,6 +386,8 @@ $("#QualityFactorsConfig").attr("href", serverUrl + "/QualityFactors/Configurati
 
 $("#ProductsConfig").attr("href", serverUrl + "/Products/Configuration");
 
+$("#ProfilesConfig").attr("href", serverUrl + "/Profiles/Configuration");
+
 $("#CategoriesConfig").attr("href", serverUrl + "/Categories/Configuration");
 
 $("#profileConfig").attr("href", serverUrl + "/profile");
@@ -386,6 +395,8 @@ $("#profileConfig").attr("href", serverUrl + "/profile");
 $("#usersConfig").attr("href", serverUrl + "/users");
 
 $("#usergroupsConfig").attr("href", serverUrl + "/usergroups");
+
+$("#Reporting").attr("href", serverUrl + "/Reporting");
 
 $("#LogoutProfileConfig").attr("href", serverUrl + "/logout_user");
 $("#LogoutProfileConfig").click(function () {
@@ -524,4 +535,58 @@ function navBack(toDetailed, factor) {
             urlNav = urlNav + "?id=" + siid + "&name=" + si;
     }
     location.href = urlNav;
+}
+
+// profile quality level filtering
+function profileQualityLevelFilter() {
+    var profileId = sessionStorage.getItem("profile_id");
+    jQuery.ajax({
+        dataType: "json",
+        url: "../api/profiles/"+profileId,
+        cache: false,
+        type: "GET",
+        async: false,
+        success: function (data) {
+            sessionStorage.setItem("profile_qualitylvl", data.qualityLevel);
+            if (data.qualityLevel == "METRICS") { // hide some menu options from navBar
+                $("#Products").hide();
+                $("#Simulation").hide();
+
+                $("#StrategicIndicatorsAssessment").hide();
+                $("#DetailedStrategicIndicatorsAssessment").hide();
+                $("#QualityFactorsAssessment").hide();
+
+                $("#QualityModelAssessment").hide();
+
+                $("#StrategicIndicatorsPrediction").hide();
+                $("#DetailedStrategicIndicatorsPrediction").hide();
+                $("#QualityFactorsPrediction").hide();
+
+                $("#ProductsConfig").hide();
+                $("#StrategicIndicatorsConfig").hide();
+            } else if (data.qualityLevel == "METRICS_FACTORS") {
+                $("#Products").hide();
+                $("#FactorsSimulation").hide();
+
+                $("#StrategicIndicatorsAssessment").hide();
+                $("#DetailedStrategicIndicatorsAssessment").hide();
+                $("#PhasesAssessment").hide();
+
+                $("#StrategicIndicatorsPrediction").hide();
+                $("#DetailedStrategicIndicatorsPrediction").hide();
+
+                $("#ProductsConfig").hide();
+                $("#StrategicIndicatorsConfig").hide();
+            }
+        }
+    });
+}
+
+profileQualityLevelFilter();
+
+window.onload = function() {
+    if(!window.location.hash) {
+        window.location = window.location + '#loaded';
+        window.location.reload();
+    }
 }

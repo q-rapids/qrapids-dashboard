@@ -1,4 +1,5 @@
-var url = "/api/strategicIndicators/qualityModel";
+var profileId = sessionStorage.getItem("profile_id");
+var url = "/api/strategicIndicators/qualityModel?profile="+profileId;
 var serverUrl = sessionStorage.getItem("serverUrl");
 if (serverUrl) {
     url = serverUrl + url;

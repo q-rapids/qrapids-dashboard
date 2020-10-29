@@ -343,7 +343,31 @@ $('input[name=upperThres][class!="hide"]').each(function (i) {
     $(this).val(Math.round((size-i)*100/size));
 });
 checkFirst();
-loadSICategories();
-loadFactorCategories();
-loadMetricsCategories();
+if (sessionStorage.getItem("profile_qualitylvl") == "METRICS") {
+    // hide SI Categories info
+    $("#SICategories").hide();
+    $("#SICategoriesButton").hide();
+    // hide Factor Categories info
+    $("#FactorsCategories").hide();
+    $("#FactorsCategoriesButton").hide();
+    // show Metric Categories info
+    loadMetricsCategories();
+    selectElement($("#MetricsCategoriesButton"));
+    $("#MetricsCategories").show();
+} else if (sessionStorage.getItem("profile_qualitylvl") == "METRICS_FACTORS") {
+    // hide SI Categories info
+    $("#SICategories").hide();
+    $("#SICategoriesButton").hide();
+    // show Factor Categories info
+    loadFactorCategories();
+    selectElement($("#FactorsCategoriesButton"));
+    $("#FactorsCategories").show();
+    // load Metric Categories info
+    loadMetricsCategories();
+} else {
+    // load all Categories info
+    loadSICategories();
+    loadFactorCategories();
+    loadMetricsCategories();
+}
 addButtonBehaviour();

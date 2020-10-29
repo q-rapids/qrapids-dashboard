@@ -35,7 +35,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
         return new BCryptPasswordEncoder();
     }
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		ConfigurableApplicationContext context = SpringApplication.run(QrapidsApplication.class, args);
 
@@ -43,6 +43,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		List<SICategory> siCategoryList = context.getBean(StrategicIndicatorsController.class).getStrategicIndicatorCategories();
 		List<QFCategory> factorCategoryList = context.getBean(FactorsController.class).getFactorCategories();
 		List<MetricCategory> metricCategoryList = context.getBean(MetricsController.class).getMetricCategories();
+
 		try {
 			// Declare default categories
 			List<Map<String, String>> categories = new ArrayList<>();

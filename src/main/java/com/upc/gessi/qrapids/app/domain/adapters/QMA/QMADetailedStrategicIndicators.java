@@ -6,6 +6,7 @@ import DTOs.FactorEvaluationDTO;
 import DTOs.StrategicIndicatorFactorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
@@ -46,7 +47,7 @@ public class QMADetailedStrategicIndicators {
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
 
-    public List<DTODetailedStrategicIndicatorEvaluation> CurrentEvaluation(String id, String prj, boolean filterDB) throws IOException {
+    public List<DTODetailedStrategicIndicatorEvaluation> CurrentEvaluation(String id, String prj, String profile, boolean filterDB) throws IOException, ProjectNotFoundException {
         List<DTODetailedStrategicIndicatorEvaluation> dsi;
 
         // Data coming from QMA API
@@ -61,12 +62,13 @@ public class QMADetailedStrategicIndicators {
             evals.add(StrategicIndicator.getFactorsEvaluations(prj, id));
         }
 
-        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals, filterDB);
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prj, profile, evals, filterDB);
         //Connection.closeConnection();
         return dsi;
     }
 
-    public List<DTODetailedStrategicIndicatorEvaluation> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
+
+    public List<DTODetailedStrategicIndicatorEvaluation> HistoricalData(String id, LocalDate from, LocalDate to, String prj, String profile) throws IOException, ProjectNotFoundException {
         List<DTODetailedStrategicIndicatorEvaluation> dsi;
 
         // Data coming from QMA API
@@ -81,18 +83,19 @@ public class QMADetailedStrategicIndicators {
             evals = new ArrayList<>();
             evals.add(StrategicIndicator.getFactorsEvaluations(prj, id, from, to));
         }
-        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prjRep.findByExternalId(prj).getId(), evals, true);
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prj, profile, evals, true);
         //Connection.closeConnection();
         return dsi;
     }
 
-    private List<DTODetailedStrategicIndicatorEvaluation> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(Long prjID, List<StrategicIndicatorFactorEvaluationDTO> evals, boolean filterDB) {
+
+    private List<DTODetailedStrategicIndicatorEvaluation> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(String prj, String profile, List<StrategicIndicatorFactorEvaluationDTO> evals, boolean filterDB) throws ProjectNotFoundException {
         List<DTODetailedStrategicIndicatorEvaluation> dsi = new ArrayList<>();
         boolean found; // to check if the SI is in the database
         //for each Detailed Strategic Indicador
         for (Iterator<StrategicIndicatorFactorEvaluationDTO> iterDSI = evals.iterator(); iterDSI.hasNext(); ) {
             StrategicIndicatorFactorEvaluationDTO element = iterDSI.next();
-            if (filterDB) found = siRep.existsByExternalIdAndProject_Id(element.getID(), prjID);
+            if (filterDB) found = strategicIndicatorsController.existsByExternalIdAndProjectAndProfile(element.getID(), prj, profile);
             else found = true; // because we want make fetch
             // only return Detailed Strategic Indicator if it is in local database
             if (found) {
@@ -103,7 +106,7 @@ public class QMADetailedStrategicIndicators {
                 d.setMismatchDays(evaluation.getMismatchDays());
                 d.setMissingFactors(evaluation.getMissingElements());
                 //set Factors to Detailed Strategic Indicator
-                d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors(),prjID, false));
+                d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors(),prjRep.findByExternalId(prj).getId(), false));
 
                 // Get value
                 List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();

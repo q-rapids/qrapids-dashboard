@@ -1,3 +1,4 @@
+var isSi = false;
 var isdsi = false;
 var isqf = false;
 var isdqf = true;

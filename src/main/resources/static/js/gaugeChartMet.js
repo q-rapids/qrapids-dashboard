@@ -9,7 +9,8 @@ var tau = Math.PI / 2;
 
 var url;
 if (getParameterByName('id').length !== 0) {
-    url = parseURLComposed("../api/qualityFactors/metrics/current");
+    var profileId = sessionStorage.getItem("profile_id");
+    url = parseURLMetrics("../api/qualityFactors/metrics/current?profile="+profileId);
 } else {
     url = parseURLComposed("../api/metrics/current");
 }
@@ -30,8 +31,9 @@ function getData(width, height) {
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
                 alert("Your datasource and DB categories IDs do not match.");
-            else if (jqXHR.status == 400)
+            else if (jqXHR.status == 400) {
                 alert("Datasource connection failed.");
+            }
         }
     });
 }

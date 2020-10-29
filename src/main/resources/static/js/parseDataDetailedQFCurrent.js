@@ -3,10 +3,11 @@ var id = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
-    url = parseURLComposed("../api/qualityFactors/metrics/current");
+    url = parseURLSimple("../api/strategicIndicators/qualityFactors/metrics/current");
     id = true;
 } else {
-    url = parseURLComposed("../api/qualityFactors/metrics/current");
+    var profileId = sessionStorage.getItem("profile_id");
+    url = parseURLSimple("../api/qualityFactors/metrics/current?profile="+profileId);
 }
 
 //initialize data vectors
@@ -84,23 +85,6 @@ function sortDataAlphabetically (data) {
     data.sort(compare);
 }
 
-function getCategories() {
-    var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/metrics/categories";
-    if (serverUrl) {
-        url = serverUrl + url;
-    }
-    $.getJSON(url).then (function(cat) {
-        for (var i = 0; i < cat.length; i++) {
-            categories.push({
-                name: cat[i].name,
-                color: cat[i].color,
-                upperThreshold: cat[i].upperThreshold,
-            });
-        }
-        console.log(categories);
-    });
-}
 function getMetricsCategories() {
     jQuery.ajax({
         url: "../api/metrics/categories",

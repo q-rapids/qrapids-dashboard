@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackValueRepository;
@@ -124,7 +125,7 @@ public class FeedbackControllerTest {
     }
 
     @Test
-    public void getFeedbackReport() throws IOException, CategoriesException {
+    public void getFeedbackReport() throws IOException, CategoriesException, ProjectNotFoundException {
         // Given
         Project project = domainObjectsBuilder.buildProject();
         Strategic_Indicator strategicIndicator = domainObjectsBuilder.buildStrategicIndicator(project);
@@ -147,7 +148,7 @@ public class FeedbackControllerTest {
         List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = new ArrayList<>();
         dtoStrategicIndicatorEvaluationList.add(dtoStrategicIndicatorEvaluation);
 
-        when(qmaStrategicIndicators.CurrentEvaluation(project.getExternalId())).thenReturn(dtoStrategicIndicatorEvaluationList);
+        when(qmaStrategicIndicators.CurrentEvaluation(project.getExternalId(), null)).thenReturn(dtoStrategicIndicatorEvaluationList);
 
         FeedbackValues codeQualityFeedbackValues = new FeedbackValues("codequality", "Code Quality", 0.8f, Date.valueOf("2019-07-31"), strategicIndicatorId, feedbackDate);
         FeedbackValues softwareStabilityFeedbackValues = new FeedbackValues("softwarestability", "Software Stability", 0.7f, Date.valueOf("2019-07-31"), strategicIndicatorId, feedbackDate);

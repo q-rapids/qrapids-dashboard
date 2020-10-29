@@ -796,4 +796,59 @@ public class DomainObjectsBuilder {
         phaseList.add(new DTOPhase(dateFrom.toString(), phaseName, phaseDescription, dateTo.toString()));
         return phaseList;
     }
+
+    public DTOSICurrentHistoricEvaluation buildDTOSICurrentHistoricEvaluation() {
+        List<DTOSIAssessment> dtoSIAssessmentList = new ArrayList<>();
+
+        Long assessment1Id = 10L;
+        String assessment1Label = "Good";
+        Float assessment1Value = null;
+        String assessment1Color = "#00ff00";
+        Float assessment1UpperThreshold = 0.66f;
+        DTOSIAssessment dtoSIAssessment1 = new DTOSIAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssessment1);
+
+        Long assessment2Id = 11L;
+        String assessment2Label = "Neutral";
+        Float assessment2Value = null;
+        String assessment2Color = "#ff8000";
+        Float assessment2UpperThreshold = 0.33f;
+        DTOSIAssessment dtoSIAssessment2 = new DTOSIAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssessment2);
+
+        Long assessment3Id = 11L;
+        String assessment3Label = "Bad";
+        Float assessment3Value = null;
+        String assessment3Color = "#ff0000";
+        Float assessment3UpperThreshold = 0f;
+        DTOSIAssessment dtoSIAssessment3 = new DTOSIAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+        dtoSIAssessmentList.add(dtoSIAssessment3);
+
+        String strategicIndicatorId = "processperformance";
+        Long strategicIndicatorDbId = 1L;
+        String strategicIndicatorName = "Process Performance";
+        String strategicIndicatorDescription = "Performance of the processes involved in the development";
+        Float strategicIndicatorValue = 0.8f;
+        String strategicIndicatorCategory = "Good";
+        Pair<Float, String> strategicIndicatorValuePair = Pair.of(strategicIndicatorValue, strategicIndicatorCategory);
+        String dateString = "2019-07-07";
+        LocalDate date = LocalDate.parse(dateString);
+        String strategicIndicatorRationale = "factors: {...}, formula: ..., value: ..., category: ...";
+        DTOSICurrentHistoricEvaluation dtoSICurrentHistoricEvaluationEvaluation = new DTOSICurrentHistoricEvaluation(strategicIndicatorId,"Test", strategicIndicatorName, strategicIndicatorDescription, strategicIndicatorValuePair, strategicIndicatorDbId, strategicIndicatorRationale, dtoSIAssessmentList, date);
+
+
+        return dtoSICurrentHistoricEvaluationEvaluation;
+
+    }
+
+    public DTOSICurrentHistoricEvaluation.DTOHistoricalData buildDTOHistoricalData() {
+        Float strategicIndicatorValue = 0.8f;
+        String strategicIndicatorCategory = "Good";
+        Pair<Float, String> strategicIndicatorValuePair = Pair.of(strategicIndicatorValue, strategicIndicatorCategory);
+        String dateString = "2019-07-07";
+        LocalDate date = LocalDate.parse(dateString);
+        String strategicIndicatorRationale = "factors: {...}, formula: ..., value: ..., category: ...";
+        DTOSICurrentHistoricEvaluation.DTOHistoricalData dtoHistoricalData = new DTOSICurrentHistoricEvaluation.DTOHistoricalData(strategicIndicatorValuePair,strategicIndicatorRationale,date);
+        return dtoHistoricalData;
+    }
 }

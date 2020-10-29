@@ -1,4 +1,7 @@
-var url = parseURLSimple("../api/strategicIndicators/qualityFactors/current");
+console.log("sessionStorage: profile_id");
+console.log(sessionStorage.getItem("profile_id"));
+var profileId = sessionStorage.getItem("profile_id");
+var url = parseURLSimple("../api/strategicIndicators/qualityFactors/current?profile="+profileId);
 
 var isdsi = true;
 
@@ -96,23 +99,6 @@ function sortDataAlphabetically (data) {
     data.sort(compare);
 }
 
-function getCategories() {
-    var serverUrl = sessionStorage.getItem("serverUrl");
-    var url = "/api/qualityFactors/categories";
-    if (serverUrl) {
-        url = serverUrl + url;
-    }
-    $.getJSON(url).then (function(cat) {
-        for (var i = 0; i < cat.length; i++) {
-            categories.push({
-                name: cat[i].name,
-                color: cat[i].color,
-                upperThreshold: cat[i].upperThreshold,
-            });
-        }
-        console.log(categories);
-    });
-}
 function getFactorsCategories() {
     jQuery.ajax({
         url: "../api/qualityFactors/categories",

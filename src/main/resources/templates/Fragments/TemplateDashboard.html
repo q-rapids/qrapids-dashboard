@@ -32,6 +32,9 @@
             <script type="text/javascript" th:src="@{/js/lib/moment.js}"></script>
             <script type="text/javascript" th:src="@{/js/lib/Chart.min.js}"></script>
             <script type="text/javascript" th:src="@{/js/lib/chartjs-plugin-annotation.min.js}"></script>
+
+            <script type="text/javascript" th:src="@{/js/chartjs-plugin-trendline.js}"></script>
+
         </th:block>
 
         <th:block th:fragment="HistoricView">
@@ -50,6 +53,7 @@
         <a id="QualityAlerts">Alerts</a>
         <a id="QualityRequirements">Quality Requirements</a>
         <a id="Decisions">Decisions</a>
+        <a id="Reporting" th:if="${@environment.getProperty('jasperServer.url') != ''}">Reporting</a>
         <a id="Configuration" ><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
         <div id="helpDropdown" class="dropdown pull-right" style="margin-top: 1em; margin-right: 1em; margin-left: 1em;">
             <button id="helpDropdownButton" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
@@ -135,6 +139,7 @@
         <a id="StrategicIndicatorsConfig">Strategic Indicators</a>
         <a id="QualityFactorsConfig">Quality Factors</a>
         <a id="CategoriesConfig">Categories</a>
+        <a id="ProfilesConfig">Profiles</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
         <a th:if="${@environment.getProperty('security.enable')}" id="LogoutProfileConfig">Logout</a>
@@ -170,31 +175,51 @@
         <br/>
         <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
             <form class="form-inline well" style="float: right">
-                <div class="form-group" id="fitToContentDiv" style="margin-right: 10px">
-                    <input type="checkbox" class="form-check-input" id="fitToContent">
-                    <label class="control-label" for="fitToContent">Fit to content</label>
-                </div>
-                <div class="form-group dropdown" id="techniqueDropdownDiv">
-                    <label class="control-label">Technique: </label>
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                        <span id="selectedTechnique" th:text="${@environment.getProperty('forecast.technique')}"></span>
-                        <span class="caret"></span>
-                    </button>
-                    <ul id="techniqueDropdown" class="dropdown-menu dropdown-menu-right"></ul>
-                </div>
-                <div class="form-group" id="fromDiv">
-                    <label class="control-label">From: </label>
-                    <input id="datepickerFrom" width="250" class="form-control"/>
-                </div>
-                <div class="form-group">
-                    <label class="control-label"> To: </label>
-                    <input id="datepickerTo" width="250" class="form-control"/>
-                </div>
-                <button id="applyButton" type="button" class="btn btn-default">Apply</button>
-                <div class="form-group dropdown">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
-                    <ul id="intervalsDropdown" class="dropdown-menu dropdown-menu-right"></ul>
-                </div>
+                <table style="width:100%">
+                    <tr>
+                        <td>
+                            <div class="form-group" id="fitToContentDiv" style="margin-right: 10px">
+                                <input type="checkbox" class="form-check-input" id="fitToContent">
+                                <label class="control-label" for="fitToContent">Fit to content</label>
+                            </div>
+                        </td>
+                        <td rowspan="2">
+                            <div class="form-group dropdown" id="techniqueDropdownDiv">
+                                <label class="control-label">Technique: </label>
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <span id="selectedTechnique" th:text="${@environment.getProperty('forecast.technique')}"></span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul id="techniqueDropdown" class="dropdown-menu dropdown-menu-right"></ul>
+                            </div>
+                            <div class="form-group" id="fromDiv">
+                                <label class="control-label">From: </label>
+                                <input id="datepickerFrom" width="250" class="form-control"/>
+                            </div>
+                            <div class="form-group" id="current_dateDiv">
+                                <label class="control-label">Current: </label>
+                                <input id="datepickerCurrentDate" width="250" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label"> To: </label>
+                                <input id="datepickerTo" width="250" class="form-control"/>
+                            </div>
+                            <button id="applyButton" type="button" class="btn btn-default">Apply</button>
+                            <div class="form-group dropdown">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
+                                <ul id="intervalsDropdown" class="dropdown-menu dropdown-menu-right"></ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group" id="showConfidenceDiv" style="margin-right: 10px">
+                                <input type="checkbox" class="form-check-input" id="showConfidence">
+                                <label class="control-label" for="showConfidence">Show confidence intervals</label>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </form>
         </div>
         <br/>
@@ -212,6 +237,11 @@
                 <ul id="projectsDropdownItems" class="dropdown-menu dropdown-menu-left">
                 </ul>
             </div>
+            <button class = "btn" id="projectModalButton">
+                <img class="icons" th:src="@{/icons/select.png}"
+                     src="../../static/icons/select.png" alt="select profile data"/>
+            </button>
+            <div th:replace="Fragments/Modals :: projectModal"></div>
         </div>
         <script type="text/javascript" th:src="@{/js/projectsSelector.js}"></script>
     </th:block>
