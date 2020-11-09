@@ -348,10 +348,10 @@ public class StrategicIndicatorsController {
         // specific day, not the last evaluation
         if (evaluationDate == null) {
             evaluationDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            factorList = factorsController.getAllFactorsEvaluation(project, false);
+            factorList = factorsController.getAllFactorsEvaluation(project, null,false);
         }
         else
-            factorList = factorsController.getAllFactorsHistoricalEvaluation(project, evaluationDate, evaluationDate);
+            factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null,evaluationDate, evaluationDate);
         factorEvaluationQma.setFactors(factorList);
 
         return assessProjectStrategicIndicators(evaluationDate, project, factorEvaluationQma);
@@ -405,7 +405,7 @@ public class StrategicIndicatorsController {
         // We will compute the evaluation values for the SI for all the components
         for (String prj: projects) {
             // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
-            factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj, false));
+            factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj, null,false));
             factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
 
             correct = assessStrategicIndicator(evaluationDate, prj, si, factorEvaluationQma);
@@ -435,7 +435,7 @@ public class StrategicIndicatorsController {
         // We will compute the evaluation values for the SI for THIS CONCRETE component
 
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
-        factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj, false));
+        factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj, null,false));
         factorEvaluationQma.clearStrategicIndicatorsRelations(si.getExternalId());
         //factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
 
@@ -582,7 +582,7 @@ public class StrategicIndicatorsController {
                     factorList.add(factor);
                     listFactorsAssessmentValues.add(factor.getValue());
                     mapSIFactors.put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue()));
-                    // TODO using getHardID or not
+                    // ToDo using getHardID or not
                     factor.addStrategicIndicator(strategicIndicator.getExternalId());
                     //factor.addStrategicIndicator(StrategicIndicator.getHardID(project, strategicIndicator.getExternalId(), evaluationDate));
                     // If there is some missing days, we keep the maximum gap to be materialised
@@ -686,7 +686,7 @@ public class StrategicIndicatorsController {
     }
 
     public List<DTOStrategicIndicatorEvaluation> simulateStrategicIndicatorsAssessment (Map<String, Float> factorsNameValueMap, String projectExternalId, String profileId) throws IOException, ProjectNotFoundException {
-        List<DTOFactorEvaluation> factors = factorsController.getAllFactorsEvaluation(projectExternalId,true);
+        List<DTOFactorEvaluation> factors = factorsController.getAllFactorsEvaluation(projectExternalId,profileId,true);
         for (DTOFactorEvaluation factor : factors) {
             if (factorsNameValueMap.containsKey(factor.getId())) {
                 factor.setValue(factorsNameValueMap.get(factor.getId()));

@@ -356,22 +356,19 @@ public class Forecast {
         if (f.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
-                    // TODO: Review Avoid predicted values out of range
                     float aux = mean.get(j).getAsFloat();
-                    if (mean.get(j).getAsFloat() > 1) aux = 1;
-                    else if (mean.get(j).getAsFloat() < 0) aux = 0;
                     result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
                             f.getDescription(),
                             f.getDatasource(),
                             f.getRationale(),
-                            LocalDate.now().plusDays((long) j), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                            LocalDate.now().plusDays((long) j + 1), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
                 result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
                         f.getDescription(),
                         f.getDatasource(),
                         f.getRationale(),
-                        LocalDate.now(), null, null, null));
+                        LocalDate.now().plusDays((long) 1), null, null, null));
             }
         }
     }
@@ -607,7 +604,7 @@ public class Forecast {
         return dsi;
     }
 
-
+    // get factors for Detailed Strategic Indicator forecast
     private void getFactors(LocalDate current, Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, List<List<DTOFactorEvaluation>> factorsMatrix, JsonObject object) {
         //check if json values are null
         JsonArray lower80;
@@ -637,7 +634,7 @@ public class Forecast {
         }
     }
 
-
+    // build factor for Detailed Strategic Indicator forecast
     private void buildFactor(Map<String, String> factorsNames, List<List<DTOFactorEvaluation>> factorsMatrix, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, Map.Entry<String, ArrayList<Integer>> m, LocalDate current) {
         if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
@@ -645,12 +642,12 @@ public class Forecast {
                     float aux = mean.get(j).getAsFloat();
                     for (Integer index : m.getValue())
                         factorsMatrix.get(index).add(new DTOFactorEvaluation(m.getKey(), factorsNames.get(m.getKey()), "",
-                                aux, current.plusDays((long) j + 1), FORECAST_SOURCE, FORECAST_SOURCE, null));
+                                FORECAST_SOURCE, FORECAST_SOURCE, current.plusDays((long) j + 1), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
                 for (Integer index : m.getValue())
                     factorsMatrix.get(index).add(new DTOFactorEvaluation(m.getKey(), factorsNames.get(m.getKey()), "",
-                            null, current.plusDays((long) 1), FORECAST_SOURCE, FORECAST_SOURCE, null));
+                            FORECAST_SOURCE,FORECAST_SOURCE,current.plusDays((long) 1), null,null,null));
             }
         }
     }

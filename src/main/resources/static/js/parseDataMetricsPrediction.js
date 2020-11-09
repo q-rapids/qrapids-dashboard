@@ -49,7 +49,12 @@ function getData() {
             cache: false,
             type: "GET",
             async: true,
-            success: function (data) {
+            success: function (response) {
+                var data = response;
+                if (getParameterByName('id').length !== 0) {
+                    data = response[0].metrics;
+                }
+                sortDataAlphabetically(data);
                 //get historical data from API
                 jQuery.ajax({
                     dataType: "json",
@@ -61,7 +66,12 @@ function getData() {
                     cache: false,
                     type: "GET",
                     async: true,
-                    success: function (data_hist) {
+                    success: function (response) {
+                        var data_hist = response;
+                        if (getParameterByName('id').length !== 0) {
+                            data_hist = response[0].metrics;
+                        }
+                        sortDataAlphabetically(data_hist);
                         j = 0;
                         var line_hist = [];
                         // generate historical serie of values

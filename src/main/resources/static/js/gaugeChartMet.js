@@ -10,7 +10,7 @@ var tau = Math.PI / 2;
 var url;
 if (getParameterByName('id').length !== 0) {
     var profileId = sessionStorage.getItem("profile_id");
-    url = parseURLMetrics("../api/qualityFactors/metrics/current?profile="+profileId);
+    url = parseURLComposed("../api/qualityFactors/metrics/current?profile="+profileId);
 } else {
     url = parseURLComposed("../api/metrics/current");
 }

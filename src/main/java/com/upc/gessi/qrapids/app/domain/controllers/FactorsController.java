@@ -8,9 +8,11 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
 import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.models.Factor;
+import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrategicIndicatorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorMetricsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import org.slf4j.Logger;
@@ -56,13 +58,16 @@ public class FactorsController {
     private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
 
     @Autowired
+    private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
+
+    @Autowired
     private MetricsController metricsController;
 
     @Autowired
     private ProjectsController projectsController;
 
     @Autowired
-    private StrategicIndicatorsController strategicIndicatorsController;
+    private ProfilesController profilesController;
 
     @Autowired
     private QualityFactorMetricsController qualityFactorMetricsController;
@@ -112,7 +117,7 @@ public class FactorsController {
     public void importFactorsAndUpdateDatabase() throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException {
         List<String> projects = projectsController.getAllProjectsExternalID();
         for (String prj : projects) {
-            List<DTOFactorEvaluation> factors = getAllFactorsEvaluation(prj, false);
+            List<DTOFactorEvaluation> factors = getAllFactorsEvaluation(prj, null,false);
             // when we import factors we don't use profile and don't filter by Data Base
             List<DTODetailedFactorEvaluation> factorsWithMetrics = getAllFactorsWithMetricsCurrentEvaluation(prj, null,false);
             updateDataBaseWithNewFactors(prj, factors, factorsWithMetrics);
@@ -265,7 +270,6 @@ public class FactorsController {
         }
     }
 
-    // TODO test assess QF functions
     public boolean assessQualityFactors(String projectExternalId, LocalDate dateFrom) throws IOException, CategoriesException, ProjectNotFoundException {
         boolean correct = true;
         if (dateFrom != null) {
@@ -397,7 +401,7 @@ public class FactorsController {
                     metricList.add(metric);
                     listMetricsAssessmentValues.add(metric.getValue());
                     mapQFMetrics.put(metric.getId(), metricsController.getMetricLabelFromValue(metric.getValue()));
-                    // TODO using getHardID or not
+                    // ToDo using getHardID or not
                     metric.addQualityFactors(qualityFactor.getExternalId());
                     //metric.addQualityFactors(evaluation.Factor.getHardID("", qualityFactor.getExternalId(), evaluationDate));
                     // If there is some missing days, we keep the maximum gap to be materialised
@@ -517,7 +521,7 @@ public class FactorsController {
 
         // We will compute the evaluation values for the QF for THIS CONCRETE component
 
-        // TODO 1.- We need to remove old data from metric evaluations in the quality_factors relationship attribute
+        // 1.- We need to remove old data from metric evaluations in the quality_factors relationship attribute
         metricEvaluationQma.setMetrics(metricsController.getAllMetricsEvaluation(prj));
         metricEvaluationQma.clearQualityFactorsRelations(qf.getExternalId());
         //metricEvaluationQma.clearQualityFactorsRelations(evaluationDate, qf.getExternalId());
@@ -526,7 +530,6 @@ public class FactorsController {
 
         // 3. When all the quality factors is calculated, we need to update the metrics with the information of
         // the quality factors using them
-        // TODO setMetricQualityFactorRelation requires modify QMA
         metricsController.setMetricQualityFactorRelation(metricEvaluationQma.getMetrics(), prj);
 
         return correct;
@@ -536,31 +539,29 @@ public class FactorsController {
         return qmaQualityFactors.SingleCurrentEvaluation(factorId, projectExternalId);
     }
 
-    public List<DTOFactorEvaluation> getAllFactorsEvaluation(String projectExternalId, boolean filterDB) throws IOException {
-        return qmaQualityFactors.getAllFactors(projectExternalId, filterDB);
+    public List<DTOFactorEvaluation> getAllFactorsEvaluation(String projectExternalId, String profile, boolean filterDB) throws IOException {
+        return qmaQualityFactors.getAllFactors(projectExternalId, profile, filterDB);
     }
 
     public List<DTODetailedFactorEvaluation> getAllFactorsWithMetricsCurrentEvaluation(String projectExternalId, String profile, boolean filterDB) throws IOException, ProjectNotFoundException {
-        // TODO pass real profile & maybe filterDB
         return qmaQualityFactors.CurrentEvaluation(null, projectExternalId, profile, filterDB);
     }
 
     public List<DTODetailedFactorEvaluation> getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(String strategicIndicatorId, String projectExternalId) throws IOException, ProjectNotFoundException {
-        // TODO pass real profile & maybe filterDB
+        // we are looking for factors of one SI -> profile is already checked by SI Controller & we need to filterDB (if factor is involved in SI, it can't be deleted)
         return qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId, null, true);
     }
 
-    public List<DTOFactorEvaluation> getAllFactorsHistoricalEvaluation (String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException {
-        return qmaQualityFactors.getAllFactorsHistoricalData(projectExternalId, dateFrom, dateTo);
+    public List<DTOFactorEvaluation> getAllFactorsHistoricalEvaluation (String projectExternalId, String profile, LocalDate dateFrom, LocalDate dateTo) throws IOException {
+        return qmaQualityFactors.getAllFactorsHistoricalData(projectExternalId, profile, dateFrom, dateTo);
     }
 
     public List<DTODetailedFactorEvaluation> getAllFactorsWithMetricsHistoricalEvaluation(String projectExternalId, String profile, LocalDate dateFrom, LocalDate dateTo) throws IOException, ProjectNotFoundException {
-        // TODO pass real profile & maybe filterDB
         return qmaQualityFactors.HistoricalData(null, dateFrom, dateTo, projectExternalId, profile);
     }
 
     public List<DTODetailedFactorEvaluation> getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(String strategicIndicatorId, String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException, ProjectNotFoundException {
-        // TODO pass real profile & maybe filterDB
+        // // we are looking for factors of one SI -> profile is already checked by SI Controller
         return qmaQualityFactors.HistoricalData(strategicIndicatorId, dateFrom, dateTo, projectExternalId, null);
     }
 
@@ -568,8 +569,8 @@ public class FactorsController {
         return qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 
-    public List<DTOFactorEvaluation> simulate (Map<String, Float> metricsValue, String projectExternalId, LocalDate date) throws IOException {
-        return qmaSimulation.simulateQualityFactors(metricsValue, projectExternalId, date);
+    public List<DTOFactorEvaluation> simulate (Map<String, Float> metricsValue, String projectExternalId, String profile, LocalDate date) throws IOException {
+        return qmaSimulation.simulateQualityFactors(metricsValue, projectExternalId, profile, date);
     }
 
     public void setFactorStrategicIndicatorRelation (List<DTOFactorEvaluation> factorList, String projectExternalId) throws IOException {
@@ -591,4 +592,27 @@ public class FactorsController {
         return qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, prj);
     }
 
+    public List<Factor> getQualityFactorsByProjectAndProfile(String prjExternalId, String profileId) throws ProjectNotFoundException {
+        Project project = projectsController.findProjectByExternalId(prjExternalId);
+        if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
+            Profile profile = profilesController.findProfileById(profileId);
+            if (profile.getAllSIByProject(project)){ // if allSI true --> return all factors
+                return getQualityFactorsByProject(project);
+            } else { // if allSI false --> return filtered factors
+                List<ProfileProjectStrategicIndicators> ppsiList =
+                        profileProjectStrategicIndicatorsRepository.findByProfileAndProject(profile,project);
+                List<Factor> result = new ArrayList<>();
+                for (ProfileProjectStrategicIndicators ppsi : ppsiList) {
+                    List<StrategicIndicatorQualityFactors> siqfList = ppsi.getStrategicIndicator().getStrategicIndicatorQualityFactorsList();
+                    for(StrategicIndicatorQualityFactors siqf : siqfList) {
+                        if (!result.contains(siqf.getFactor())) // check to avoid repeated factors
+                            result.add(siqf.getFactor());
+                    }
+                }
+                return result;
+            }
+        } else { // if profile is null --> return all factors
+            return getQualityFactorsByProject(project);
+        }
+    }
 }

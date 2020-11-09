@@ -441,7 +441,7 @@ public class FactorEvaluationTest {
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
         String projectExternalId = "test";
-        when(qualityFactorsDomainController.getAllFactorsEvaluation(projectExternalId, true)).thenReturn(dtoFactorEvaluationList);
+        when(qualityFactorsDomainController.getAllFactorsEvaluation(projectExternalId, null,true)).thenReturn(dtoFactorEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -509,7 +509,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsEvaluation(projectExternalId, true);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsEvaluation(projectExternalId, null,true);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -629,7 +629,7 @@ public class FactorEvaluationTest {
         Map<String, Float> metricsMap = new HashMap<>();
         metricsMap.put(metricId, metricValue);
 
-        when(qualityFactorsDomainController.simulate(metricsMap, projectExternalId, LocalDate.parse(date))).thenReturn(dtoFactorEvaluationList);
+        when(qualityFactorsDomainController.simulate(metricsMap, projectExternalId, null, LocalDate.parse(date))).thenReturn(dtoFactorEvaluationList);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
@@ -711,7 +711,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).simulate(metricsMap, projectExternalId, LocalDate.parse(date));
+        verify(qualityFactorsDomainController, times(1)).simulate(metricsMap, projectExternalId, null, LocalDate.parse(date));
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -795,10 +795,14 @@ public class FactorEvaluationTest {
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String factorId = "testingperformance";
+        String factorName = "Testing Performance";
         String projectExternalId = "test";
         String dateFrom = "2019-07-07";
         String dateTo = "2019-07-15";
+        DTOFactorEvaluation factorEvaluation = new DTOFactorEvaluation(factorId, factorName ,null);
+
         when(metricsDomainController.getMetricsForQualityFactorHistoricalEvaluation(factorId, projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))).thenReturn(dtoMetricEvaluationList);
+        when(qualityFactorsDomainController.getSingleFactorEvaluation(factorId,projectExternalId)).thenReturn(factorEvaluation);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -809,20 +813,23 @@ public class FactorEvaluationTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(dtoMetricEvaluation.getId())))
-                .andExpect(jsonPath("$[0].name", is(dtoMetricEvaluation.getName())))
-                .andExpect(jsonPath("$[0].description", is(dtoMetricEvaluation.getDescription())))
-                .andExpect(jsonPath("$[0].value", is(HelperFunctions.getFloatAsDouble(dtoMetricEvaluation.getValue()))))
-                .andExpect(jsonPath("$[0].value_description", is(String.format("%.2f", dtoMetricEvaluation.getValue()))))
-                .andExpect(jsonPath("$[0].date[0]", is(dtoMetricEvaluation.getDate().getYear())))
-                .andExpect(jsonPath("$[0].date[1]", is(dtoMetricEvaluation.getDate().getMonthValue())))
-                .andExpect(jsonPath("$[0].date[2]", is(dtoMetricEvaluation.getDate().getDayOfMonth())))
-                .andExpect(jsonPath("$[0].datasource", is(nullValue())))
-                .andExpect(jsonPath("$[0].rationale", is(dtoMetricEvaluation.getRationale())))
-                .andExpect(jsonPath("$[0].confidence80", is(nullValue())))
-                .andExpect(jsonPath("$[0].confidence95", is(nullValue())))
-                .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
-                .andExpect(jsonPath("$[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(factorId)))
+                .andExpect(jsonPath("$[0].name", is(factorName)))
+                .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluation.getId())))
+                .andExpect(jsonPath("$[0].metrics[0].name", is(dtoMetricEvaluation.getName())))
+                .andExpect(jsonPath("$[0].metrics[0].description", is(dtoMetricEvaluation.getDescription())))
+                .andExpect(jsonPath("$[0].metrics[0].value", is(HelperFunctions.getFloatAsDouble(dtoMetricEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].metrics[0].value_description", is(String.format("%.2f", dtoMetricEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].metrics[0].date[0]", is(dtoMetricEvaluation.getDate().getYear())))
+                .andExpect(jsonPath("$[0].metrics[0].date[1]", is(dtoMetricEvaluation.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].metrics[0].date[2]", is(dtoMetricEvaluation.getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].metrics[0].datasource", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].rationale", is(dtoMetricEvaluation.getRationale())))
+                .andExpect(jsonPath("$[0].metrics[0].confidence80", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].confidence95", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
                 .andDo(document("metrics/historical-qf",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -838,28 +845,34 @@ public class FactorEvaluationTest {
                                         .description("Ending date (yyyy-mm-dd) for the requested the period")),
                         responseFields(
                                 fieldWithPath("[].id")
-                                        .description("Metric identifier"),
+                                        .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].metrics")
+                                        .description("List with all the quality factor metrics"),
+                                fieldWithPath("[].metrics[].id")
+                                        .description("Metric identifier"),
+                                fieldWithPath("[].metrics[].name")
                                         .description("Metric name"),
-                                fieldWithPath("[].description")
+                                fieldWithPath("[].metrics[].description")
                                         .description("Metric description"),
-                                fieldWithPath("[].value")
+                                fieldWithPath("[].metrics[].value")
                                         .description("Metric value"),
-                                fieldWithPath("[].value_description")
+                                fieldWithPath("[].metrics[].value_description")
                                         .description("Metric readable value"),
-                                fieldWithPath("[].date")
+                                fieldWithPath("[].metrics[].date")
                                         .description("Metric evaluation date"),
-                                fieldWithPath("[].datasource")
+                                fieldWithPath("[].metrics[].datasource")
                                         .description("Metric source of data"),
-                                fieldWithPath("[].rationale")
+                                fieldWithPath("[].metrics[].rationale")
                                         .description("Metric evaluation rationale"),
-                                fieldWithPath("[].confidence80")
+                                fieldWithPath("[].metrics[].confidence80")
                                         .description("Metric forecasting 80% confidence interval"),
-                                fieldWithPath("[].confidence95")
+                                fieldWithPath("[].metrics[].confidence95")
                                         .description("Metric forecasting 95% confidence interval"),
-                                fieldWithPath("[].forecastingError")
+                                fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
-                                fieldWithPath("[].qualityFactors")
+                                fieldWithPath("[].metrics[].qualityFactors")
                                         .description("List of the quality factors that use this metric")
                         )
                 ));
@@ -867,6 +880,8 @@ public class FactorEvaluationTest {
         // Verify mock interactions
         verify(metricsDomainController, times(1)).getMetricsForQualityFactorHistoricalEvaluation(factorId, projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo));
         verifyNoMoreInteractions(metricsDomainController);
+        verify(qualityFactorsDomainController, times(1)).getSingleFactorEvaluation(factorId,projectExternalId);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
     @Test
@@ -876,7 +891,10 @@ public class FactorEvaluationTest {
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String factorId = "testingperformance";
+        String factorName = "Testing Performance";
         String projectExternalId = "test";
+        DTOFactorEvaluation factorEvaluation = new DTOFactorEvaluation(factorId, factorName ,null);
+
         when(metricsDomainController.getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId)).thenReturn(dtoMetricEvaluationList);
 
         dtoMetricEvaluation.setDatasource("Forecast");
@@ -895,6 +913,8 @@ public class FactorEvaluationTest {
         String horizon = "7";
 
         when(metricsDomainController.getMetricsPrediction(dtoMetricEvaluationList, projectExternalId, technique, freq, horizon)).thenReturn(dtoMetricEvaluationList);
+        when(qualityFactorsDomainController.getSingleFactorEvaluation(factorId,projectExternalId)).thenReturn(factorEvaluation);
+
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -905,22 +925,25 @@ public class FactorEvaluationTest {
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(dtoMetricEvaluation.getId())))
-                .andExpect(jsonPath("$[0].name", is(dtoMetricEvaluation.getName())))
-                .andExpect(jsonPath("$[0].description", is(dtoMetricEvaluation.getDescription())))
-                .andExpect(jsonPath("$[0].value", is(HelperFunctions.getFloatAsDouble(dtoMetricEvaluation.getValue()))))
-                .andExpect(jsonPath("$[0].value_description", is(String.format("%.2f", dtoMetricEvaluation.getValue()))))
-                .andExpect(jsonPath("$[0].date[0]", is(dtoMetricEvaluation.getDate().getYear())))
-                .andExpect(jsonPath("$[0].date[1]", is(dtoMetricEvaluation.getDate().getMonthValue())))
-                .andExpect(jsonPath("$[0].date[2]", is(dtoMetricEvaluation.getDate().getDayOfMonth())))
-                .andExpect(jsonPath("$[0].datasource", is(dtoMetricEvaluation.getRationale())))
-                .andExpect(jsonPath("$[0].rationale", is(dtoMetricEvaluation.getRationale())))
-                .andExpect(jsonPath("$[0].confidence80.first", is(first80)))
-                .andExpect(jsonPath("$[0].confidence80.second", is(second80)))
-                .andExpect(jsonPath("$[0].confidence95.first", is(first95)))
-                .andExpect(jsonPath("$[0].confidence95.second", is(second95)))
-                .andExpect(jsonPath("$[0].forecastingError", is(nullValue())))
-                .andExpect(jsonPath("$[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(factorId)))
+                .andExpect(jsonPath("$[0].name", is(factorName)))
+                .andExpect(jsonPath("$[0].metrics[0].id", is(dtoMetricEvaluation.getId())))
+                .andExpect(jsonPath("$[0].metrics[0].name", is(dtoMetricEvaluation.getName())))
+                .andExpect(jsonPath("$[0].metrics[0].description", is(dtoMetricEvaluation.getDescription())))
+                .andExpect(jsonPath("$[0].metrics[0].value", is(HelperFunctions.getFloatAsDouble(dtoMetricEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].metrics[0].value_description", is(String.format("%.2f", dtoMetricEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].metrics[0].date[0]", is(dtoMetricEvaluation.getDate().getYear())))
+                .andExpect(jsonPath("$[0].metrics[0].date[1]", is(dtoMetricEvaluation.getDate().getMonthValue())))
+                .andExpect(jsonPath("$[0].metrics[0].date[2]", is(dtoMetricEvaluation.getDate().getDayOfMonth())))
+                .andExpect(jsonPath("$[0].metrics[0].datasource", is(dtoMetricEvaluation.getRationale())))
+                .andExpect(jsonPath("$[0].metrics[0].rationale", is(dtoMetricEvaluation.getRationale())))
+                .andExpect(jsonPath("$[0].metrics[0].confidence80.first", is(first80)))
+                .andExpect(jsonPath("$[0].metrics[0].confidence80.second", is(second80)))
+                .andExpect(jsonPath("$[0].metrics[0].confidence95.first", is(first95)))
+                .andExpect(jsonPath("$[0].metrics[0].confidence95.second", is(second95)))
+                .andExpect(jsonPath("$[0].metrics[0].forecastingError", is(nullValue())))
+                .andExpect(jsonPath("$[0].metrics[0].qualityFactors", is(dtoMetricEvaluation.getQualityFactors())))
                 .andDo(document("metrics/prediction-qf",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -936,36 +959,42 @@ public class FactorEvaluationTest {
                                         .description("Amount of days that the prediction will cover")),
                         responseFields(
                                 fieldWithPath("[].id")
-                                        .description("Metric identifier"),
+                                        .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
+                                        .description("Quality factor name"),
+                                fieldWithPath("[].metrics")
+                                        .description("List with all the quality factor metrics"),
+                                fieldWithPath("[].metrics[].id")
+                                        .description("Metric identifier"),
+                                fieldWithPath("[].metrics[].name")
                                         .description("Metric name"),
-                                fieldWithPath("[].description")
+                                fieldWithPath("[].metrics[].description")
                                         .description("Metric description"),
-                                fieldWithPath("[].value")
+                                fieldWithPath("[].metrics[].value")
                                         .description("Metric value"),
-                                fieldWithPath("[].value_description")
+                                fieldWithPath("[].metrics[].value_description")
                                         .description("Metric readable value"),
-                                fieldWithPath("[].date")
+                                fieldWithPath("[].metrics[].date")
                                         .description("Metric evaluation date"),
-                                fieldWithPath("[].datasource")
+                                fieldWithPath("[].metrics[].datasource")
                                         .description("Metric source of data"),
-                                fieldWithPath("[].rationale")
+                                fieldWithPath("[].metrics[].rationale")
                                         .description("Metric evaluation rationale"),
-                                fieldWithPath("[].confidence80")
+                                fieldWithPath("[].metrics[].confidence80")
                                         .description("Metric forecasting 80% confidence interval"),
-                                fieldWithPath("[].confidence80.first")
+                                fieldWithPath("[].metrics[].confidence80.first")
                                         .description("Metric forecasting 80% confidence interval higher values"),
-                                fieldWithPath("[].confidence80.second")
+                                fieldWithPath("[].metrics[].confidence80.second")
                                         .description("Metric forecasting 80% confidence interval lower values"),
-                                fieldWithPath("[].confidence95")
+                                fieldWithPath("[].metrics[].confidence95")
                                         .description("Metric forecasting 95% confidence interval"),
-                                fieldWithPath("[].confidence95.first")
+                                fieldWithPath("[].metrics[].confidence95.first")
                                         .description("Metric forecasting 95% confidence interval higher values"),
-                                fieldWithPath("[].confidence95.second")
+                                fieldWithPath("[].metrics[].confidence95.second")
                                         .description("Metric forecasting 95% confidence interval lower values"),
-                                fieldWithPath("[].forecastingError")
+                                fieldWithPath("[].metrics[].forecastingError")
                                         .description("Description of forecasting errors"),
-                                fieldWithPath("[].qualityFactors")
+                                fieldWithPath("[].metrics[].qualityFactors")
                                         .description("List of the quality factors that use this metric")
                         )
                 ));
@@ -974,9 +1003,11 @@ public class FactorEvaluationTest {
         verify(metricsDomainController, times(1)).getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId);
         verify(metricsDomainController, times(1)).getMetricsPrediction(dtoMetricEvaluationList, projectExternalId, technique, freq, horizon);
         verifyNoMoreInteractions(metricsDomainController);
+        verify(qualityFactorsDomainController, times(1)).getSingleFactorEvaluation(factorId,projectExternalId);
+        verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
-    // TODO: NEW TESTS
+    // NEW TESTS
     @Test
     public void importFactorsAndUpdateDatabase() throws Exception {
         // Perform request
@@ -1006,7 +1037,7 @@ public class FactorEvaluationTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(qualityFactorsDomainController.getAllFactorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenReturn(dtoFactorEvaluationList);
+        when(qualityFactorsDomainController.getAllFactorsHistoricalEvaluation(projectExternalId,null, fromDate, toDate)).thenReturn(dtoFactorEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1081,7 +1112,7 @@ public class FactorEvaluationTest {
 
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsHistoricalEvaluation(projectExternalId, fromDate, toDate);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsHistoricalEvaluation(projectExternalId, null, fromDate, toDate);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 
@@ -1092,7 +1123,7 @@ public class FactorEvaluationTest {
         LocalDate fromDate = LocalDate.parse(from);
         String to = "2019-07-15";
         LocalDate toDate = LocalDate.parse(to);
-        when(qualityFactorsDomainController.getAllFactorsHistoricalEvaluation(projectExternalId, fromDate, toDate)).thenThrow(new IOException());
+        when(qualityFactorsDomainController.getAllFactorsHistoricalEvaluation(projectExternalId,null, fromDate, toDate)).thenThrow(new IOException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1132,7 +1163,7 @@ public class FactorEvaluationTest {
         String freq = "7";
         String horizon = "7";
 
-        when(qualityFactorsDomainController.getAllFactorsEvaluation(projectExternalId, true)).thenReturn(dtoFactorEvaluationList);
+        when(qualityFactorsDomainController.getAllFactorsEvaluation(projectExternalId, null,true)).thenReturn(dtoFactorEvaluationList);
         when(qualityFactorsDomainController.getFactorsPrediction(dtoFactorEvaluationList, projectExternalId, technique, freq, horizon)).thenReturn(dtoFactorEvaluationList);
 
         // Perform request
@@ -1216,7 +1247,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(qualityFactorsDomainController, times(1)).getAllFactorsEvaluation(projectExternalId, true);
+        verify(qualityFactorsDomainController, times(1)).getAllFactorsEvaluation(projectExternalId, null,true);
         verify(qualityFactorsDomainController, times(1)).getFactorsPrediction(dtoFactorEvaluationList, projectExternalId, technique, freq, horizon);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
@@ -1231,9 +1262,6 @@ public class FactorEvaluationTest {
         Project project = new Project(projectExternalId, projectName, projectDescription, null, true);
         project.setId(projectId);
         project.setBacklogId(projectBacklogId);
-
-        when(projectsController.findProjectByExternalId(projectExternalId)).thenReturn(project);
-
 
         // define factor with its metric composition
         List<QualityFactorMetrics> qualityMetrics = new ArrayList<>();
@@ -1261,7 +1289,7 @@ public class FactorEvaluationTest {
         List<Factor> qualityFactorList = new ArrayList<>();
         qualityFactorList.add(factor);
 
-        when(qualityFactorsDomainController.getQualityFactorsByProject(project)).thenReturn(qualityFactorList);
+        when(qualityFactorsDomainController.getQualityFactorsByProjectAndProfile(projectExternalId, null)).thenReturn(qualityFactorList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -1307,10 +1335,7 @@ public class FactorEvaluationTest {
                 ));
 
         // Verify mock interactions
-        verify(projectsController, times(1)).findProjectByExternalId(projectExternalId);
-        verifyNoMoreInteractions(projectsController);
-
-        verify(qualityFactorsDomainController, times(1)).getQualityFactorsByProject(project);
+        verify(qualityFactorsDomainController, times(1)).getQualityFactorsByProjectAndProfile(projectExternalId, null);
         verifyNoMoreInteractions(qualityFactorsDomainController);
     }
 

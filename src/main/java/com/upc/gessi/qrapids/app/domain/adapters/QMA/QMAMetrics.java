@@ -84,8 +84,6 @@ public class QMAMetrics {
         return m;
     }
 
-    // TODO add list of factors using the metric
-    //  DONE
     private static DTOMetricEvaluation MetricEvaluationDTOToDTOMetric(MetricEvaluationDTO metric, EvaluationDTO evaluation) {
         return new DTOMetricEvaluation(metric.getID(),
                 metric.getName(),
@@ -97,17 +95,12 @@ public class QMAMetrics {
                 evaluation.getValue());
     }
 
-    // TODO implement this function
     public void setMetricQualityFactorRelation(List<DTOMetricEvaluation> metricList, String projectExternalId) throws IOException {
         qmacon.initConnexion();
         List<MetricEvaluationDTO> qma_metrics = MetricEvaluationDTOtoDTOMetric(metricList, projectExternalId);
-        // TODO in qrapids-qma-elastic-0.18 -> evaluation -> Metric
-        //  DONE
         Metric.setQualityFactorsRelation(qma_metrics);
     }
 
-    // TODO with MetricEvaluationDTO
-    //  DONE
     private static List<MetricEvaluationDTO> MetricEvaluationDTOtoDTOMetric(List<DTOMetricEvaluation> metrics, String prj)
     {
         List<MetricEvaluationDTO> m = new ArrayList<>();

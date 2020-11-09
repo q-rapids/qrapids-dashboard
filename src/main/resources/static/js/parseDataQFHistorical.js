@@ -8,7 +8,8 @@ var url;
 if (getParameterByName('id').length !== 0) {
     url = parseURLSimple("../api/strategicIndicators/qualityFactors/historical");
 } else {
-    url = parseURLSimple("../api/qualityFactors/historical");
+    var profileId = sessionStorage.getItem("profile_id");
+    url = parseURLSimple("../api/qualityFactors/historical?profile="+profileId);
 }
 
 //initialize data vectors

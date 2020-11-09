@@ -558,7 +558,7 @@ public class MetricsTest {
         verifyNoMoreInteractions(metricsDomainController);
     }
 
-    // TODO: NEW TESTS
+    // NEW TESTS
     @Test
     public void importMetricsAndUpdateDatabase() throws Exception {
         // Perform request

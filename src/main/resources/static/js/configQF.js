@@ -8,7 +8,8 @@ var deleteUrl;
 var httpMethod = "POST";
 
 function buildQFList() {
-    var url = "/api/qualityFactors";
+    var profileId = sessionStorage.getItem("profile_id");
+    var url = "/api/qualityFactors?profile=" + profileId;
     if (serverUrl) {
         url = serverUrl + url;
     }
@@ -265,7 +266,7 @@ $("#QFsubmitWeightsButton").click(function () {
             ok = false;
         } else {
             totalSum += weightValue;
-            aux.push(qualityMetrics[i], weightValue); // TODO habian []
+            aux.push(qualityMetrics[i], weightValue);
         }
         i++;
     }

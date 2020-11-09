@@ -2529,7 +2529,7 @@ function dfsAssignLowLim(tree, visited, nextLim, v, parent) {
   if (parent) {
     label.parent = parent;
   } else {
-    // TODO should be able to remove this when we incrementally update low lim
+    // ToDo should be able to remove this when we incrementally update low lim
     delete label.parent;
   }
 

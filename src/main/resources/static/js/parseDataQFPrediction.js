@@ -6,9 +6,12 @@ var isdqf = false;
 var urlpred; // to get prediction data
 var urlhist; // to get historical data
 if (getParameterByName('id').length !== 0) {
-    url = parseURLSimple("../api/strategicIndicators/qualityFactors/prediction");
+    urlpred = parseURLSimple("../api/strategicIndicators/qualityFactors/prediction");
+    urlhist =parseURLSimple("../api/strategicIndicators/qualityFactors/historical");
 } else {
-    url = parseURLSimple("../api/qualityFactors/prediction");
+    var profileId = sessionStorage.getItem("profile_id");
+    urlpred = parseURLSimple("../api/qualityFactors/prediction?profile="+profileId);
+    urlhist = parseURLSimple("../api/qualityFactors/historical?profile="+profileId);
 }
 
 //initialize data vectors
@@ -54,76 +57,122 @@ function getData() {
                     data = response[0].factors;
                 }
                 sortDataAlphabetically(data);
-                j = 0;
-                var line = [];
-                //var line80l = [];
-                //var line80u = [];
-                //var line95l = [];
-                //var line95u = [];
-                if (data[j]) {
-                    last = data[j].id;
-                    texts.push(data[j].name);
-                    ids.push(data[j].id)
-                    labels.push([data[j].name]);
-                    errors.push([data[j].forecastingError]);
-                }
-                while (data[j]) {
-                    //check if we are still on the same metric
-                    if (data[j].id !== last) {
-                        value.push([line]);
-                        //lower80.push(line80l);
-                        //upper80.push(line80u);
-                        //lower95.push(line95l);
-                        //upper95.push(line95u);
-                        line = [];
-                        //line80l = [];
-                        //line80u = [];
-                        //line95l = [];
-                        //line95u = [];
-                        last = data[j].id;
-                        texts.push(data[j].name);
-                        ids.push(data[j].id);
-                        labels.push([data[j].name]);
-                        errors.push([data[j].forecastingError]);
-                    }
-                    //push date and value to line vector
-                    if (!isNaN(data[j].value)) {
-                        if (data[j].value !== null) {
-                            line.push({
-                                x: data[j].date,
-                                y: data[j].value
-                            });
-                            // line80l.push({
-                            //     x: data[j].date,
-                            //     y: data[j].confidence80.second
-                            // });
-                            // line80u.push({
-                            //     x: data[j].date,
-                            //     y: data[j].confidence80.first
-                            // });
-                            // line95l.push({
-                            //     x: data[j].date,
-                            //     y: data[j].confidence95.second
-                            // });
-                            // line95u.push({
-                            //     x: data[j].date,
-                            //     y: data[j].confidence95.first
-                            // });
+                //get historical data from API
+                jQuery.ajax({
+                    dataType: "json",
+                    url: urlhist,
+                    data: {
+                        "from": parseDate(dateFrom),
+                        "to": parseDate(dateC)
+                    },
+                    cache: false,
+                    type: "GET",
+                    async: true,
+                    success: function (response) {
+                        var data_hist = response;
+                        if (getParameterByName('id').length !== 0) {
+                            data_hist = response[0].factors;
                         }
+                        sortDataAlphabetically(data_hist);
+                        j = 0;
+                        var line_hist = [];
+                        // generate historical serie of values
+                        if (data_hist[j]) {
+                            last = data_hist[j].id;
+                            texts.push(data_hist[j].name);
+                            labels.push([data_hist[j].name]);
+                            ids.push(data_hist[j].id);
+                        }
+                        while (data_hist[j]) {
+                            //check if we are still on the same metric
+                            if (data_hist[j].id != last) {
+                                var val = [line_hist];
+                                value.push(val);
+                                line_hist = [];
+                                last = data_hist[j].id;
+                                texts.push(data_hist[j].name);
+                                var labelsForOneChart = [];
+                                labelsForOneChart.push(data_hist[j].name);
+                                labels.push(labelsForOneChart);
+                                ids.push(data_hist[j].id);
+                            }
+                            //push date and value to line vector
+                            if (!isNaN(data_hist[j].value)) {
+                                line_hist.push({
+                                    x: data_hist[j].date,
+                                    y: data_hist[j].value
+                                });
+                            }
+                            ++j;
+                        }
+                        //push line vector to values vector for the last metric
+                        if (data_hist[j - 1]) {
+                            var val = [line_hist];
+                            value.push(val);
+                        }
+                        // add prediction series generated
+                        j = 0;
+                        x = 0;
+                        var line = [];
+                        var line80l = [];
+                        var line80u = [];
+                        var line95l = [];
+                        var line95u = [];
+                        if (data[j]) {
+                            last = data[j].id;
+                            labels[x].push("Predicted data", "80", "80", "95", "95");
+                            errors.push([data[j].forecastingError]);
+                        }
+                        while (data[j]) {
+                            //check if we are still on the same metric
+                            if (data[j].id !== last) {
+                                value[x].push(line, line80l, line80u, line95l, line95u);
+                                line = [];
+                                line80l = [];
+                                line80u = [];
+                                line95l = [];
+                                line95u = [];
+                                last = data[j].id;
+                                x++;
+                                labels[x].push("Predicted data", "80", "80", "95", "95");
+                                errors.push([data[j].forecastingError]);
+                            }
+                            //push date and value to line vector
+                            if (!isNaN(data[j].value)) {
+                                if (data[j].value !== null) {
+                                    line.push({
+                                        x: data[j].date,
+                                        y: data[j].value
+                                    });
+                                    line80l.push({
+                                        x: data[j].date,
+                                        y: data[j].confidence80.second
+                                    });
+                                    line80u.push({
+                                        x: data[j].date,
+                                        y: data[j].confidence80.first
+                                    });
+                                    line95l.push({
+                                        x: data[j].date,
+                                        y: data[j].confidence95.second
+                                    });
+                                    line95u.push({
+                                        x: data[j].date,
+                                        y: data[j].confidence95.first
+                                    });
+                                }
+                            }
+                            ++j;
+                        }
+                        //push line vector to values vector for the last metric
+                        if (data[j - 1]) {
+                            value[x].push(line, line80l, line80u, line95l, line95u);
+                        }
+                        document.getElementById("loader").style.display = "none";
+                        document.getElementById("chartContainer").style.display = "block";
+                        getFactorsCategories();
                     }
-                    ++j;
-                }
-                //push line vector to values vector for the last metric
-                if (data[j - 1]) {
-                    value.push([line]);
-                    // lower80.push(line80l);
-                    // upper80.push(line80u);
-                    // lower95.push(line95l);
-                    // upper95.push(line95u);
-                }
-                document.getElementById("loader").style.display = "none";
-                document.getElementById("chartContainer").style.display = "block";
-                getFactorsCategories();
+                });
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 409)
@@ -136,12 +185,6 @@ function getData() {
             }
         });
     }
-
-    console.log(errors);
-    console.log(value);
-    console.log(labels);
-    console.log(texts);
-    console.log(ids);
 }
 
 function sortDataAlphabetically (data) {

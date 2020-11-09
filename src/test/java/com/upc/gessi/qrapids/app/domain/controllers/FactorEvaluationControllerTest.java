@@ -123,10 +123,10 @@ public class FactorEvaluationControllerTest {
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
         String projectExternalId = "test";
-        when(qmaQualityFactors.getAllFactors(projectExternalId, true)).thenReturn(dtoFactorEvaluationList);
+        when(qmaQualityFactors.getAllFactors(projectExternalId, null,true)).thenReturn(dtoFactorEvaluationList);
 
         // When
-        List<DTOFactorEvaluation> dtoFactorEvaluationListFound = factorsController.getAllFactorsEvaluation(projectExternalId, true);
+        List<DTOFactorEvaluation> dtoFactorEvaluationListFound = factorsController.getAllFactorsEvaluation(projectExternalId, null,true);
 
         // Then
         assertEquals(dtoFactorEvaluationList.size(), dtoFactorEvaluationListFound.size());
@@ -254,10 +254,10 @@ public class FactorEvaluationControllerTest {
         Map<String, Float> metricsMap = new HashMap<>();
         metricsMap.put(metricId, metricValue);
 
-        when(qmaSimulation.simulateQualityFactors(metricsMap, projectExternalId, date)).thenReturn(dtoFactorEvaluationList);
+        when(qmaSimulation.simulateQualityFactors(metricsMap, projectExternalId,null, date)).thenReturn(dtoFactorEvaluationList);
 
         // When
-        List<DTOFactorEvaluation> factorsSimulationList = factorsController.simulate(metricsMap, projectExternalId, date);
+        List<DTOFactorEvaluation> factorsSimulationList = factorsController.simulate(metricsMap, projectExternalId, null, date);
 
         // Then
         assertEquals(dtoFactorEvaluationList.size(), factorsSimulationList.size());

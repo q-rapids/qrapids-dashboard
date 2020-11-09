@@ -160,6 +160,10 @@ public class Strategic_Indicator {
         return qualityFactorsWeights;
     }
 
+    public List<StrategicIndicatorQualityFactors> getStrategicIndicatorQualityFactorsList() {
+        return strategicIndicatorQualityFactorsList;
+    }
+
     public void setStrategicIndicatorQualityFactorsList(List<StrategicIndicatorQualityFactors> qualityFactors) {
         this.strategicIndicatorQualityFactorsList = qualityFactors;
     }

@@ -10,7 +10,8 @@ if (getParameterByName('id').length !== 0) {
     id = true;
     url = parseURLSimple("../api/strategicIndicators/qualityFactors/current");
 } else {
-    url = parseURLSimple("../api/qualityFactors/current");
+    var profileId = sessionStorage.getItem("profile_id");
+    url = parseURLSimple("../api/qualityFactors/current?profile="+profileId);
 }
 
 var urlLink;

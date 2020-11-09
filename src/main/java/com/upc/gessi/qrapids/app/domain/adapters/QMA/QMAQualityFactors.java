@@ -153,14 +153,14 @@ public class QMAQualityFactors {
             return false;
     }
 
-    public List<DTOFactorEvaluation> getAllFactors(String prj, boolean filterDB) throws IOException {
+    public List<DTOFactorEvaluation> getAllFactors(String prj, String profile, boolean filterDB) throws IOException {
         qmacon.initConnexion();
-        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj), prjRep.findByExternalId(prj).getId(), filterDB);
+        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj), prjRep.findByExternalId(prj).getId(), profile, filterDB);
     }
 
-    public List<DTOFactorEvaluation> getAllFactorsHistoricalData(String prj, LocalDate from, LocalDate to) throws IOException {
+    public List<DTOFactorEvaluation> getAllFactorsHistoricalData(String prj, String profile, LocalDate from, LocalDate to) throws IOException {
         qmacon.initConnexion();
-        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj, from, to), prjRep.findByExternalId(prj).getId(), true);
+        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj, from, to), prjRep.findByExternalId(prj).getId(), profile,true);
     }
 
     public void setFactorStrategicIndicatorRelation(List<DTOFactorEvaluation> factors, String prj) throws IOException {
@@ -205,7 +205,7 @@ public class QMAQualityFactors {
         // get project info
         Iterator<FactorMetricEvaluationDTO> iter = evals.iterator();
         FactorMetricEvaluationDTO firstQualityFactor = iter.next();
-        Project project = projectsController.findProjectByExternalId(firstQualityFactor.getProject());;
+        Project project = projectsController.findProjectByExternalId(firstQualityFactor.getProject());
 
         // The evaluations (eval param) has the following structure:
         // - list of factors (first iterator/for)

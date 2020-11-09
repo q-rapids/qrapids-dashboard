@@ -25,7 +25,7 @@ public class QMASimulation {
     @Autowired
     private ProjectRepository prjRep;
 
-    public List<DTOFactorEvaluation> simulateQualityFactors (Map<String, Float> metrics, String prj, LocalDate date) throws IOException {
+    public List<DTOFactorEvaluation> simulateQualityFactors (Map<String, Float> metrics, String prj, String profile, LocalDate date) throws IOException {
         qmacon.initConnexion();
         Model model = Simulator.createModel(prj, date.toString());
         for(Map.Entry<String, Float> metric : metrics.entrySet()) {
@@ -34,7 +34,7 @@ public class QMASimulation {
         }
         Collection<FactorEvaluationDTO> factors = model.simulate();
         List<FactorEvaluationDTO> factorsList = new ArrayList<>(factors);
-        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(factorsList, prjRep.findByExternalId(prj).getId(), true);
+        return QMADetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(factorsList, prjRep.findByExternalId(prj).getId(), profile,true);
     }
 
 }

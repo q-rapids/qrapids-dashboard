@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v1.4, 2020-09-10">
+<meta name="author" content="v1.6, 2020-11-02">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,11 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<<<<<<< HEAD
-<span id="author" class="author">v1.2, 2020-10-21</span><br>
-=======
-<span id="author" class="author">v1.4, 2020-09-10</span><br>
->>>>>>> develop
+<span id="author" class="author">v1.6, 2020-11-02</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -1799,36 +1795,6 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strategic indicator source of data</p></td>
 </tr>
 <tr>
-<<<<<<< HEAD
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].confidence80</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor forecasting 80% confidence interval</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].confidence95</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor forecasting 95% confidence interval</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].forecastingError</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description of forecasting errors</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].mismatchDays</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].missingMetrics</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].strategicIndicators</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">List of the strategic indicators that use this quality factor</p></td>
-=======
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].categories_description</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Array with the strategic indicator categories and thresholds</p></td>
@@ -1837,7 +1803,6 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].hasBN</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Does the strategic indicator have a Bayesian Network?</p></td>
->>>>>>> develop
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].hasFeedback</code></p></td>
@@ -2066,9 +2031,29 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation rationale</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].confidence80</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor forecasting 80% confidence interval</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].confidence95</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor forecasting 95% confidence interval</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].forecastingError</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description of forecasting errors</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].strategicIndicators</code></p></td>
@@ -2088,7 +2073,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 805
+Content-Length: 804
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2108,24 +2093,16 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-<<<<<<< HEAD
-    "date" : [ 2020, 10, 21 ],
-=======
-    "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+    "date" : [ 2020, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
-<<<<<<< HEAD
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2020-10-21",
-=======
-    "formattedDate" : "2020-09-10",
->>>>>>> develop
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2020-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -2349,7 +2326,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 805
+Content-Length: 804
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2369,24 +2346,16 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-<<<<<<< HEAD
-    "date" : [ 2020, 10, 21 ],
-=======
-    "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+    "date" : [ 2020, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
-<<<<<<< HEAD
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2020-10-21",
-=======
-    "formattedDate" : "2020-09-10",
->>>>>>> develop
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2020-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -2596,7 +2565,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 805
+Content-Length: 804
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2616,24 +2585,16 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-<<<<<<< HEAD
-    "date" : [ 2020, 10, 21 ],
-=======
-    "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+    "date" : [ 2020, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
-<<<<<<< HEAD
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2020-10-21",
-=======
-    "formattedDate" : "2020-09-10",
->>>>>>> develop
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2020-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -2865,7 +2826,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 805
+Content-Length: 804
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2885,24 +2846,16 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-<<<<<<< HEAD
-    "date" : [ 2020, 10, 21 ],
-=======
-    "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+    "date" : [ 2020, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
-<<<<<<< HEAD
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2020-10-21",
-=======
-    "formattedDate" : "2020-09-10",
->>>>>>> develop
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2020-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -3112,7 +3065,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 788
+Content-Length: 787
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -3132,24 +3085,16 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-<<<<<<< HEAD
-    "date" : [ 2020, 10, 21 ],
-=======
-    "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+    "date" : [ 2020, 11, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
-<<<<<<< HEAD
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2020-10-21",
-=======
-    "formattedDate" : "2020-09-10",
->>>>>>> develop
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2020-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -3373,7 +3318,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 788
+Content-Length: 787
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -3393,24 +3338,16 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Performance of the tests",
     "value" : 0.8,
     "value_description" : "0,80",
-<<<<<<< HEAD
-    "date" : [ 2020, 10, 21 ],
-=======
-    "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+    "date" : [ 2020, 11, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
-<<<<<<< HEAD
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "formattedDate" : "2020-10-21",
-=======
-    "formattedDate" : "2020-09-10",
->>>>>>> develop
-    "strategicIndicators" : [ "processperformance" ]
+    "strategicIndicators" : [ "processperformance" ],
+    "formattedDate" : "2020-11-09"
   } ]
 } ]</code></pre>
 </div>
@@ -4640,10 +4577,6 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -4651,11 +4584,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_current_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<<<<<<< HEAD
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/current?prj=test' -i -X GET</code></pre>
-=======
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/current?prj=test&amp;profile=null' -i -X GET</code></pre>
->>>>>>> develop
 </div>
 </div>
 </div>
@@ -4759,16 +4688,15 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 499
+Content-Length: 498
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
-<<<<<<< HEAD
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 10, 21 ],
+  "date" : [ 2020, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4776,23 +4704,8 @@ Content-Length: 499
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "formattedDate" : "2020-10-21",
-  "strategicIndicators" : [ "processperformance" ]
-=======
-  "metrics" : [ {
-    "id" : "fasttests",
-    "name" : "Fast Tests",
-    "description" : "Percentage of tests under the testing duration threshold",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 9, 10 ],
-    "datasource" : null,
-    "rationale" : "parameters: {...}, formula: ...",
-    "confidence80" : null,
-    "confidence95" : null,
-    "forecastingError" : null
-  } ]
->>>>>>> develop
+  "strategicIndicators" : [ "processperformance" ],
+  "formattedDate" : "2020-11-09"
 } ]</code></pre>
 </div>
 </div>
@@ -4966,17 +4879,16 @@ Content-Length: 499
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 495
+Content-Length: 494
 Content-Type: application/json;charset=UTF-8
 
 {
   "id" : "testingperformance",
   "name" : "Testing Performance",
-<<<<<<< HEAD
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 10, 21 ],
+  "date" : [ 2020, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4984,25 +4896,9 @@ Content-Type: application/json;charset=UTF-8
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "formattedDate" : "2020-10-21",
-  "strategicIndicators" : [ "processperformance" ]
+  "strategicIndicators" : [ "processperformance" ],
+  "formattedDate" : "2020-11-09"
 }</code></pre>
-=======
-  "metrics" : [ {
-    "id" : "fasttests",
-    "name" : "Fast Tests",
-    "description" : "Percentage of tests under the testing duration threshold",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 9, 10 ],
-    "datasource" : null,
-    "rationale" : "parameters: {...}, formula: ...",
-    "confidence80" : null,
-    "confidence95" : null,
-    "forecastingError" : null
-  } ]
-} ]</code></pre>
->>>>>>> develop
 </div>
 </div>
 </div>
@@ -5051,13 +4947,6 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
 </tr>
-<<<<<<< HEAD
-=======
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
-</tr>
->>>>>>> develop
 </tbody>
 </table>
 </div>
@@ -5065,11 +4954,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_historical_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<<<<<<< HEAD
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/historical?prj=test&amp;from=2019-07-07&amp;to=2019-07-15' -i -X GET</code></pre>
-=======
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2020-09-03&amp;to=2020-09-10&amp;profile=null' -i -X GET</code></pre>
->>>>>>> develop
 </div>
 </div>
 </div>
@@ -5173,16 +5058,15 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 499
+Content-Length: 498
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
-<<<<<<< HEAD
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 10, 21 ],
+  "date" : [ 2020, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5190,23 +5074,8 @@ Content-Length: 499
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "formattedDate" : "2020-10-21",
-  "strategicIndicators" : [ "processperformance" ]
-=======
-  "metrics" : [ {
-    "id" : "fasttests",
-    "name" : "Fast Tests",
-    "description" : "Percentage of tests under the testing duration threshold",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 9, 10 ],
-    "datasource" : null,
-    "rationale" : "parameters: {...}, formula: ...",
-    "confidence80" : null,
-    "confidence95" : null,
-    "forecastingError" : null
-  } ]
->>>>>>> develop
+  "strategicIndicators" : [ "processperformance" ],
+  "formattedDate" : "2020-11-09"
 } ]</code></pre>
 </div>
 </div>
@@ -5233,10 +5102,6 @@ Content-Length: 499
 <div class="sect3">
 <h4 id="_get_prediction_evaluation_2_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<<<<<<< HEAD
-=======
-<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/metrics/historical</caption>
->>>>>>> develop
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -5260,14 +5125,6 @@ Content-Length: 499
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>horizon</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Amount of days that the prediction will cover</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Starting date (yyyy-mm-dd) for the requested the period</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -5275,11 +5132,7 @@ Content-Length: 499
 <h4 id="_get_prediction_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<<<<<<< HEAD
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/prediction?prj=test&amp;technique=PROPHET&amp;horizon=7' -i -X GET</code></pre>
-=======
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2020-09-03&amp;to=2020-09-10' -i -X GET</code></pre>
->>>>>>> develop
 </div>
 </div>
 </div>
@@ -5402,17 +5255,16 @@ Content-Length: 499
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 592
+Content-Length: 591
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
-<<<<<<< HEAD
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 10, 21 ],
+  "date" : [ 2020, 11, 9 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -5426,23 +5278,8 @@ Content-Type: application/json;charset=UTF-8
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "formattedDate" : "2020-10-21",
-  "strategicIndicators" : [ "processperformance" ]
-=======
-  "metrics" : [ {
-    "id" : "fasttests",
-    "name" : "Fast Tests",
-    "description" : "Percentage of tests under the testing duration threshold",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 9, 10 ],
-    "datasource" : null,
-    "rationale" : "parameters: {...}, formula: ...",
-    "confidence80" : null,
-    "confidence95" : null,
-    "forecastingError" : null
-  } ]
->>>>>>> develop
+  "strategicIndicators" : [ "processperformance" ],
+  "formattedDate" : "2020-11-09"
 } ]</code></pre>
 </div>
 </div>
@@ -5484,21 +5321,6 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
 </tr>
-<<<<<<< HEAD
-=======
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>technique</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Forecasting technique</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>horizon</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Amount of days that the prediction will cover</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>profile</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Profile data base identifier</p></td>
-</tr>
->>>>>>> develop
 </tbody>
 </table>
 </div>
@@ -5506,11 +5328,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_detailed_current_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<<<<<<< HEAD
 <pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/current?prj=test' -i -X GET</code></pre>
-=======
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/prediction?prj=test&amp;technique=PROPHET&amp;horizon=7&amp;profile=null' -i -X GET</code></pre>
->>>>>>> develop
 </div>
 </div>
 </div>
@@ -5613,7 +5431,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 539
+Content-Length: 538
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -5625,28 +5443,13 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-<<<<<<< HEAD
-    "date" : [ 2020, 10, 21 ],
+    "date" : [ 2020, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
     "confidence95" : null,
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
-=======
-    "date" : [ 2020, 9, 10 ],
-    "datasource" : "Forecast",
-    "rationale" : "Forecast",
-    "confidence80" : {
-      "first" : 0.97473043,
-      "second" : 0.9745246
-    },
-    "confidence95" : {
-      "first" : 0.9747849,
-      "second" : 0.97447014
-    },
-    "forecastingError" : null
->>>>>>> develop
   } ]
 } ]</code></pre>
 </div>
@@ -5807,45 +5610,21 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 422
+Content-Length: 421
 
 [ {
-<<<<<<< HEAD
   "id" : "fasttests",
   "name" : "Fast Tests",
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 10, 21 ],
+  "date" : [ 2020, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
   "confidence95" : null,
   "forecastingError" : null,
   "qualityFactors" : [ "testingperformance" ]
-=======
-  "id" : "testingperformance",
-  "name" : "Testing Performance",
-  "metrics" : [ {
-    "id" : "fasttests",
-    "name" : "Fast Tests",
-    "description" : "Percentage of tests under the testing duration threshold",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 9, 10 ],
-    "datasource" : "Forecast",
-    "rationale" : "Forecast",
-    "confidence80" : {
-      "first" : 0.97473043,
-      "second" : 0.9745246
-    },
-    "confidence95" : {
-      "first" : 0.9747849,
-      "second" : 0.97447014
-    },
-    "forecastingError" : null
-  } ]
->>>>>>> develop
 } ]</code></pre>
 </div>
 </div>
@@ -5872,7 +5651,7 @@ Content-Length: 422
 <div class="sect3">
 <h4 id="_get_detailed_current_evaluation_for_strategic_indicator_path_parameters">Path parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/metrics/current</caption>
+<caption class="title">Table 1. /api/strategicIndicators/{id}/qualityFactors/metrics/historical</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -5909,6 +5688,14 @@ Content-Length: 422
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>from</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Starting date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>to</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ending date (yyyy-mm-dd) for the requested the period</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -5916,7 +5703,7 @@ Content-Length: 422
 <h4 id="_get_detailed_current_evaluation_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/current?prj=test' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2020-11-02&amp;to=2020-11-09' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -6019,20 +5806,19 @@ Content-Length: 422
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 539
+Content-Length: 538
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
-<<<<<<< HEAD
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 10, 21 ],
+    "date" : [ 2020, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6040,17 +5826,6 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "qualityFactors" : [ "testingperformance" ]
   } ]
-=======
-  "description" : "Performance of the tests",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 9, 10 ],
-  "datasource" : null,
-  "rationale" : "parameters: {...}, formula: ...",
-  "forecastingError" : null,
-  "formattedDate" : "2020-09-10",
-  "strategicIndicators" : [ "processperformance" ]
->>>>>>> develop
 } ]</code></pre>
 </div>
 </div>
@@ -6107,7 +5882,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_detailed_historical_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2020-10-14&amp;to=2020-10-21' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2020-11-02&amp;to=2020-11-09' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -6210,20 +5985,19 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 539
+Content-Length: 538
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
-<<<<<<< HEAD
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 10, 21 ],
+    "date" : [ 2020, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6232,18 +6006,6 @@ Content-Type: application/json;charset=UTF-8
     "qualityFactors" : [ "testingperformance" ]
   } ]
 } ]</code></pre>
-=======
-  "description" : "Performance of the tests",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 9, 10 ],
-  "datasource" : null,
-  "rationale" : "parameters: {...}, formula: ...",
-  "forecastingError" : null,
-  "formattedDate" : "2020-09-10",
-  "strategicIndicators" : [ "processperformance" ]
-}</code></pre>
->>>>>>> develop
 </div>
 </div>
 </div>
@@ -6344,60 +6106,75 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor identifier</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric name</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].description</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value_description</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric readable value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation date</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].datasource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].datasource</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric source of data</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].rationale</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation rationale</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence80</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence95</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forecastingError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].forecastingError</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description of forecasting errors</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].qualityFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].qualityFactors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
@@ -6409,28 +6186,32 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 538
 Content-Type: application/json;charset=UTF-8
-Content-Length: 422
 
 [ {
-  "id" : "fasttests",
-  "name" : "Fast Tests",
-  "description" : "Percentage of tests under the testing duration threshold",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 10, 21 ],
-  "datasource" : null,
-  "rationale" : "parameters: {...}, formula: ...",
-  "confidence80" : null,
-  "confidence95" : null,
-  "forecastingError" : null,
-  "qualityFactors" : [ "testingperformance" ]
+  "id" : "testingperformance",
+  "name" : "Testing Performance",
+  "metrics" : [ {
+    "id" : "fasttests",
+    "name" : "Fast Tests",
+    "description" : "Percentage of tests under the testing duration threshold",
+    "value" : 0.8,
+    "value_description" : "0,80",
+    "date" : [ 2020, 11, 9 ],
+    "datasource" : null,
+    "rationale" : "parameters: {...}, formula: ...",
+    "confidence80" : null,
+    "confidence95" : null,
+    "forecastingError" : null,
+    "qualityFactors" : [ "testingperformance" ]
+  } ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_19">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_20">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -6438,7 +6219,7 @@ Content-Length: 422
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_16">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_17">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -6598,7 +6379,7 @@ Content-Length: 422
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 539
+Content-Length: 538
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6610,7 +6391,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 10, 21 ],
+    "date" : [ 2020, 11, 9 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6623,7 +6404,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_20">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_21">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -6631,7 +6412,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_17">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_18">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -6797,7 +6578,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 644
+Content-Length: 643
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -6809,7 +6590,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 10, 21 ],
+    "date" : [ 2020, 11, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -6828,7 +6609,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_21">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_22">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -6836,7 +6617,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_18">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_19">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -6924,80 +6705,95 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor identifier</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric name</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].description</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value_description</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric readable value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation date</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].datasource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].datasource</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric source of data</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].rationale</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation rationale</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence80</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence80.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval higher values</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence80.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80.second</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval lower values</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence95</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence95.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval higher values</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence95.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95.second</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval lower values</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forecastingError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].forecastingError</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description of forecasting errors</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].qualityFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].qualityFactors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
@@ -7009,34 +6805,38 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 515
+Content-Length: 643
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "id" : "fasttests",
-  "name" : "Fast Tests",
-  "description" : "Percentage of tests under the testing duration threshold",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 10, 21 ],
-  "datasource" : "Forecast",
-  "rationale" : "Forecast",
-  "confidence80" : {
-    "first" : 0.97473043,
-    "second" : 0.9745246
-  },
-  "confidence95" : {
-    "first" : 0.9747849,
-    "second" : 0.97447014
-  },
-  "forecastingError" : null,
-  "qualityFactors" : [ "testingperformance" ]
+  "id" : "testingperformance",
+  "name" : "Testing Performance",
+  "metrics" : [ {
+    "id" : "fasttests",
+    "name" : "Fast Tests",
+    "description" : "Percentage of tests under the testing duration threshold",
+    "value" : 0.8,
+    "value_description" : "0,80",
+    "date" : [ 2020, 11, 9 ],
+    "datasource" : "Forecast",
+    "rationale" : "Forecast",
+    "confidence80" : {
+      "first" : 0.97473043,
+      "second" : 0.9745246
+    },
+    "confidence95" : {
+      "first" : 0.9747849,
+      "second" : 0.97447014
+    },
+    "forecastingError" : null,
+    "qualityFactors" : [ "testingperformance" ]
+  } ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_22">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_23">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -7044,7 +6844,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_19">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_20">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -7232,7 +7032,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 644
+Content-Length: 643
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -7244,7 +7044,7 @@ Content-Type: application/json;charset=UTF-8
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 10, 21 ],
+    "date" : [ 2020, 11, 9 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -7263,7 +7063,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_wrong_project_23">HTTP response wrong project</h4>
+<h4 id="_http_response_wrong_project_24">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -7271,7 +7071,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_20">HTTP response error on ElasticSearch connection</h4>
+<h4 id="_http_response_error_on_elasticsearch_connection_21">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -7860,7 +7660,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 499
+Content-Length: 498
 
 [ {
   "id" : "testingperformance",
@@ -7868,34 +7668,22 @@ Content-Length: 499
   "description" : "Performance of the tests",
   "value" : 0.8,
   "value_description" : "0,80",
-<<<<<<< HEAD
-  "date" : [ 2020, 10, 21 ],
-=======
-  "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+  "date" : [ 2020, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
   "confidence95" : null,
   "forecastingError" : null,
-<<<<<<< HEAD
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "formattedDate" : "2020-10-21",
-=======
-  "formattedDate" : "2020-09-10",
->>>>>>> develop
-  "strategicIndicators" : [ "processperformance" ]
+  "strategicIndicators" : [ "processperformance" ],
+  "formattedDate" : "2020-11-09"
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_24">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_20">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_25">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -7903,11 +7691,7 @@ Content-Length: 499
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_error_on_elasticsearch_connection_21">HTTP response error on ElasticSearch connection</h4>
-=======
-<h4 id="_http_response_error_on_elasticsearch_connection_17">HTTP response error on ElasticSearch connection</h4>
->>>>>>> develop
+<h4 id="_http_response_error_on_elasticsearch_connection_22">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -8207,7 +7991,7 @@ Content-Length: 276
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 422
+Content-Length: 421
 
 [ {
   "id" : "fasttests",
@@ -8215,11 +7999,7 @@ Content-Length: 422
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-<<<<<<< HEAD
-  "date" : [ 2020, 10, 21 ],
-=======
-  "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+  "date" : [ 2020, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8231,11 +8011,7 @@ Content-Length: 422
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_25">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_21">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_26">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -8243,11 +8019,7 @@ Content-Length: 422
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_error_on_elasticsearch_connection_22">HTTP response error on ElasticSearch connection</h4>
-=======
-<h4 id="_http_response_error_on_elasticsearch_connection_18">HTTP response error on ElasticSearch connection</h4>
->>>>>>> develop
+<h4 id="_http_response_error_on_elasticsearch_connection_23">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -8379,142 +8151,6 @@ Content-Length: 422
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description of forecasting errors</p></td>
 </tr>
-<<<<<<< HEAD
-=======
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_single_current_evaluation_http_response">HTTP response</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 369
-Content-Type: application/json;charset=UTF-8
-
-{
-  "id" : "fasttests",
-  "name" : "Fast Tests",
-  "description" : "Percentage of tests under the testing duration threshold",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 9, 10 ],
-  "datasource" : null,
-  "rationale" : "parameters: {...}, formula: ...",
-  "confidence80" : null,
-  "confidence95" : null,
-  "forecastingError" : null
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_wrong_project_22">HTTP response wrong project</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_http_response_error_on_elasticsearch_connection_19">HTTP response error on ElasticSearch connection</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_get_current_evaluation_for_quality_factor">4.3. Get current evaluation for quality factor</h3>
-<div class="sect3">
-<h4 id="_get_current_evaluation_for_quality_factor_path_parameters">Path parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /api/qualityFactors/{id}/metrics/current</caption>
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_current_evaluation_for_quality_factor_request_parameters">Request parameters</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>prj</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project external identifier</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_get_current_evaluation_for_quality_factor_curl_request">Curl request</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/testingperformance/metrics/current?prj=test' -i -X GET</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_get_current_evaluation_for_quality_factor_response_fields">Response fields</h4>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Path</th>
-<th class="tableblock halign-left valign-top">Type</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric value</p></td>
-</tr>
->>>>>>> develop
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>qualityFactors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
@@ -8528,7 +8164,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 418
+Content-Length: 417
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -8537,11 +8173,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-<<<<<<< HEAD
-  "date" : [ 2020, 10, 21 ],
-=======
-  "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+  "date" : [ 2020, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8553,11 +8185,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_26">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_23">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_27">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -8565,11 +8193,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_error_on_elasticsearch_connection_23">HTTP response error on ElasticSearch connection</h4>
-=======
-<h4 id="_http_response_error_on_elasticsearch_connection_20">HTTP response error on ElasticSearch connection</h4>
->>>>>>> develop
+<h4 id="_http_response_error_on_elasticsearch_connection_24">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -8701,7 +8325,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 422
+Content-Length: 421
 
 [ {
   "id" : "fasttests",
@@ -8709,11 +8333,7 @@ Content-Length: 422
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-<<<<<<< HEAD
-  "date" : [ 2020, 10, 21 ],
-=======
-  "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+  "date" : [ 2020, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8725,11 +8345,7 @@ Content-Length: 422
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_27">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_24">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_28">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -8737,11 +8353,7 @@ Content-Length: 422
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_error_on_elasticsearch_connection_24">HTTP response error on ElasticSearch connection</h4>
-=======
-<h4 id="_http_response_error_on_elasticsearch_connection_21">HTTP response error on ElasticSearch connection</h4>
->>>>>>> develop
+<h4 id="_http_response_error_on_elasticsearch_connection_25">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -8895,7 +8507,7 @@ Content-Length: 422
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 422
+Content-Length: 421
 
 [ {
   "id" : "fasttests",
@@ -8903,11 +8515,7 @@ Content-Length: 422
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-<<<<<<< HEAD
-  "date" : [ 2020, 10, 21 ],
-=======
-  "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+  "date" : [ 2020, 11, 9 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8919,11 +8527,7 @@ Content-Length: 422
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_28">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_25">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_29">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -8931,11 +8535,7 @@ Content-Length: 422
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_error_on_elasticsearch_connection_25">HTTP response error on ElasticSearch connection</h4>
-=======
-<h4 id="_http_response_error_on_elasticsearch_connection_22">HTTP response error on ElasticSearch connection</h4>
->>>>>>> develop
+<h4 id="_http_response_error_on_elasticsearch_connection_26">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -9023,60 +8623,75 @@ Content-Length: 422
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor identifier</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric name</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].description</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value_description</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric readable value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation date</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].datasource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].datasource</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric source of data</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].rationale</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation rationale</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence80</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence95</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forecastingError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].forecastingError</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description of forecasting errors</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].qualityFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].qualityFactors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
@@ -9088,36 +8703,32 @@ Content-Length: 422
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 538
 Content-Type: application/json;charset=UTF-8
-Content-Length: 422
 
 [ {
-  "id" : "fasttests",
-  "name" : "Fast Tests",
-  "description" : "Percentage of tests under the testing duration threshold",
-  "value" : 0.8,
-  "value_description" : "0,80",
-<<<<<<< HEAD
-  "date" : [ 2020, 10, 21 ],
-=======
-  "date" : [ 2020, 9, 10 ],
->>>>>>> develop
-  "datasource" : null,
-  "rationale" : "parameters: {...}, formula: ...",
-  "confidence80" : null,
-  "confidence95" : null,
-  "forecastingError" : null,
-  "qualityFactors" : [ "testingperformance" ]
+  "id" : "testingperformance",
+  "name" : "Testing Performance",
+  "metrics" : [ {
+    "id" : "fasttests",
+    "name" : "Fast Tests",
+    "description" : "Percentage of tests under the testing duration threshold",
+    "value" : 0.8,
+    "value_description" : "0,80",
+    "date" : [ 2020, 11, 9 ],
+    "datasource" : null,
+    "rationale" : "parameters: {...}, formula: ...",
+    "confidence80" : null,
+    "confidence95" : null,
+    "forecastingError" : null,
+    "qualityFactors" : [ "testingperformance" ]
+  } ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_29">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_26">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_30">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -9125,11 +8736,7 @@ Content-Length: 422
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_error_on_elasticsearch_connection_26">HTTP response error on ElasticSearch connection</h4>
-=======
-<h4 id="_http_response_error_on_elasticsearch_connection_23">HTTP response error on ElasticSearch connection</h4>
->>>>>>> develop
+<h4 id="_http_response_error_on_elasticsearch_connection_27">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -9280,7 +8887,7 @@ Content-Length: 422
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 515
+Content-Length: 514
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -9289,11 +8896,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-<<<<<<< HEAD
-  "date" : [ 2020, 10, 21 ],
-=======
-  "date" : [ 2020, 9, 10 ],
->>>>>>> develop
+  "date" : [ 2020, 11, 9 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -9311,11 +8914,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_30">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_27">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_31">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -9323,11 +8922,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_error_on_elasticsearch_connection_27">HTTP response error on ElasticSearch connection</h4>
-=======
-<h4 id="_http_response_error_on_elasticsearch_connection_24">HTTP response error on ElasticSearch connection</h4>
->>>>>>> develop
+<h4 id="_http_response_error_on_elasticsearch_connection_28">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -9415,80 +9010,95 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor identifier</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric name</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].description</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value_description</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric readable value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation date</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].datasource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].datasource</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric source of data</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].rationale</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation rationale</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence80</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence80.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval higher values</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence80.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80.second</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval lower values</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence95</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Object</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence95.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval higher values</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence95.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95.second</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval lower values</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forecastingError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].forecastingError</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description of forecasting errors</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].qualityFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].qualityFactors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
@@ -9500,42 +9110,38 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 515
+Content-Length: 643
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "id" : "fasttests",
-  "name" : "Fast Tests",
-  "description" : "Percentage of tests under the testing duration threshold",
-  "value" : 0.8,
-  "value_description" : "0,80",
-<<<<<<< HEAD
-  "date" : [ 2020, 10, 21 ],
-=======
-  "date" : [ 2020, 9, 10 ],
->>>>>>> develop
-  "datasource" : "Forecast",
-  "rationale" : "Forecast",
-  "confidence80" : {
-    "first" : 0.97473043,
-    "second" : 0.9745246
-  },
-  "confidence95" : {
-    "first" : 0.9747849,
-    "second" : 0.97447014
-  },
-  "forecastingError" : null,
-  "qualityFactors" : [ "testingperformance" ]
+  "id" : "testingperformance",
+  "name" : "Testing Performance",
+  "metrics" : [ {
+    "id" : "fasttests",
+    "name" : "Fast Tests",
+    "description" : "Percentage of tests under the testing duration threshold",
+    "value" : 0.8,
+    "value_description" : "0,80",
+    "date" : [ 2020, 11, 9 ],
+    "datasource" : "Forecast",
+    "rationale" : "Forecast",
+    "confidence80" : {
+      "first" : 0.97473043,
+      "second" : 0.9745246
+    },
+    "confidence95" : {
+      "first" : 0.9747849,
+      "second" : 0.97447014
+    },
+    "forecastingError" : null,
+    "qualityFactors" : [ "testingperformance" ]
+  } ]
 } ]</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_31">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_28">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_32">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -9543,11 +9149,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_error_on_elasticsearch_connection_28">HTTP response error on ElasticSearch connection</h4>
-=======
-<h4 id="_http_response_error_on_elasticsearch_connection_25">HTTP response error on ElasticSearch connection</h4>
->>>>>>> develop
+<h4 id="_http_response_error_on_elasticsearch_connection_29">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -9833,11 +9435,7 @@ Content-Length: 257
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-<<<<<<< HEAD
-  "date" : 1603301133058,
-=======
-  "date" : 1599734035352,
->>>>>>> develop
+  "date" : 1604926503330,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -9846,11 +9444,7 @@ Content-Length: 257
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_32">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_29">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_33">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -10148,11 +9742,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_33">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_30">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_34">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -10477,11 +10067,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_34">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_31">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_35">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -10645,11 +10231,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-<<<<<<< HEAD
-  "date" : 1603301132545,
-=======
-  "date" : 1599734034817,
->>>>>>> develop
+  "date" : 1604926502856,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -10838,11 +10420,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : 3,
-<<<<<<< HEAD
-  "date" : 1603301136717,
-=======
-  "date" : 1599734038693,
->>>>>>> develop
+  "date" : 1604926507090,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -10857,11 +10435,7 @@ Content-Type: application/json;charset=UTF-8
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-<<<<<<< HEAD
-    "date" : 1603301136717,
-=======
-    "date" : 1599734038693,
->>>>>>> develop
+    "date" : 1604926507090,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -10871,11 +10445,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_35">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_32">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_36">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -11009,11 +10579,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-<<<<<<< HEAD
-  "date" : 1603301136820,
-=======
-  "date" : 1599734038821,
->>>>>>> develop
+  "date" : 1604926507197,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -11083,11 +10649,7 @@ Content-Length: 410
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_wrong_project_36">HTTP response wrong project</h4>
-=======
-<h4 id="_http_response_wrong_project_33">HTTP response wrong project</h4>
->>>>>>> develop
+<h4 id="_http_response_wrong_project_37">HTTP response wrong project</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 400 Bad Request</code></pre>
@@ -11540,11 +11102,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : 2,
   "type" : "ADD",
-<<<<<<< HEAD
-  "date" : 1603301133819,
-=======
-  "date" : 1599734036176,
->>>>>>> develop
+  "date" : 1604926504064,
   "author" : null,
   "rationale" : "User comments",
   "patternId" : 100,
@@ -11757,11 +11315,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "strategicIndicatorId" : 1,
-<<<<<<< HEAD
-  "date" : "2020-10-21",
-=======
-  "date" : "2020-09-10",
->>>>>>> develop
+  "date" : "2020-11-09",
   "author" : null,
   "oldValue" : 0.6,
   "newValue" : 0.75
@@ -11967,11 +11521,7 @@ Content-Type: application/json;charset=UTF-8
 </div>
 </div>
 <div class="sect3">
-<<<<<<< HEAD
-<h4 id="_http_response_error_on_elasticsearch_connection_29">HTTP response error on ElasticSearch connection</h4>
-=======
-<h4 id="_http_response_error_on_elasticsearch_connection_26">HTTP response error on ElasticSearch connection</h4>
->>>>>>> develop
+<h4 id="_http_response_error_on_elasticsearch_connection_30">HTTP response error on ElasticSearch connection</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 500 Internal Server Error</code></pre>
@@ -13806,11 +13356,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<<<<<<< HEAD
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-10-21' -i -X GET</code></pre>
-=======
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-09-10' -i -X GET</code></pre>
->>>>>>> develop
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-11-09' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -13862,11 +13408,7 @@ Content-Length: 137
 Content-Type: application/json;charset=UTF-8
 
 [ {
-<<<<<<< HEAD
-  "date" : "2020-10-24",
-=======
-  "date" : "2020-09-13",
->>>>>>> develop
+  "date" : "2020-11-12",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -13958,17 +13500,10 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-<<<<<<< HEAD
-  "dateFrom" : "2020-10-06",
+  "dateFrom" : "2020-10-25",
   "name" : "Development",
   "description" : "Implementation of project functionalities",
-  "dateTo" : "2020-11-05"
-=======
-  "dateFrom" : "2020-08-26",
-  "name" : "Development",
-  "description" : "Implementation of project functionalities",
-  "dateTo" : "2020-09-25"
->>>>>>> develop
+  "dateTo" : "2020-11-24"
 } ]</code></pre>
 </div>
 </div>
@@ -13979,11 +13514,7 @@ Content-Length: 156
 </div>
 <div id="footer">
 <div id="footer-text">
-<<<<<<< HEAD
-Last updated 2020-10-21 17:53:37 +0200
-=======
-Last updated 2020-09-10 12:03:26 +0200
->>>>>>> develop
+Last updated 2020-11-02 10:53:58 +0100
 </div>
 </div>
 </body>

@@ -693,6 +693,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             response.data.forEach(function (metricEval) {
                 data.push({
                     id: metricEval.id,
+                    date: metricEval.date,
                     name: metricEval.name,
                     description: metricEval.description,
                     value: metricEval.value_description,
@@ -721,7 +722,11 @@ app.controller('TablesCtrl', function($scope, $http) {
                 to: $('#datepickerTo').val()}
         }).then(function mySuccess(response) {
             var data = [];
-            response.data.forEach(function (metricEval) {
+            var for_data = response.data;
+            if (id !== "") {
+                for_data = response.data[0].metrics;
+            }
+            for_data.forEach(function (metricEval) {
                 data.push({
                     id: metricEval.id,
                     date: metricEval.date,
@@ -787,7 +792,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             navTextSimple();
             var url = "../api/strategicIndicators/" + id + "/qualityFactors/current";
         } else {
-            var url = "../api/qualityFactors/current";
+            var profileId = sessionStorage.getItem("profile_id");
+            var url = "../api/qualityFactors/current?profile="+profileId;
         }
         $http({
             method : "GET",
@@ -834,7 +840,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             navTextSimple();
             var url = "../api/strategicIndicators/" + id + "/qualityFactors/historical";
         } else {
-            var url = "../api/qualityFactors/historical";
+            var profileId = sessionStorage.getItem("profile_id");
+            var url = "../api/qualityFactors/historical?profile="+profileId;
         }
         $http({
             method : "GET",

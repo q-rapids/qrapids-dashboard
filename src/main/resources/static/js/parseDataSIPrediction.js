@@ -49,7 +49,7 @@ function getData() {
                 console.log("sessionStorage: profile_id");
                 console.log(sessionStorage.getItem("profile_id"));
                 var profileId = sessionStorage.getItem("profile_id");
-
+                sortDataAlphabetically(data);
                 //get historical data from API
                 jQuery.ajax({
                     dataType: "json",
@@ -62,6 +62,7 @@ function getData() {
                     type: "GET",
                     async: true,
                     success: function (data_hist) {
+                        sortDataAlphabetically(data_hist);
                         j = 0;
                         var line_hist = [];
                         if (data_hist[j]) {
@@ -165,8 +166,8 @@ function getData() {
                         document.getElementById("loader").style.display = "none";
                         document.getElementById("chartContainer").style.display = "block";
                         drawChart();
-
-                    }});
+                    }
+                });
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 409)
@@ -180,6 +181,15 @@ function getData() {
             }
         });
     }
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 window.onload = function() {

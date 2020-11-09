@@ -6,7 +6,7 @@ var isdqf = false;
 var url;
 if (getParameterByName('id').length !== 0) {
     var profileId = sessionStorage.getItem("profile_id");
-    url = parseURLMetrics("../api/qualityFactors/metrics/historical?profile="+profileId);
+    url = parseURLComposed("../api/qualityFactors/metrics/historical?profile="+profileId);
 } else {
     url = parseURLComposed("../api/metrics/historical");
 }
@@ -35,7 +35,11 @@ function getData() {
         cache: false,
         type: "GET",
         async: true,
-        success: function (data) {
+        success: function (response) {
+            var data = response;
+            if (getParameterByName('id').length !== 0) {
+                data = response[0].metrics;
+            }
             sortDataAlphabetically(data);
             j = 0;
             var line = [];

@@ -555,15 +555,18 @@ function profileQualityLevelFilter() {
                 $("#StrategicIndicatorsAssessment").hide();
                 $("#DetailedStrategicIndicatorsAssessment").hide();
                 $("#QualityFactorsAssessment").hide();
+                $("#DetailedQualityFactorsAssessment").hide();
 
                 $("#QualityModelAssessment").hide();
 
                 $("#StrategicIndicatorsPrediction").hide();
                 $("#DetailedStrategicIndicatorsPrediction").hide();
                 $("#QualityFactorsPrediction").hide();
+                $("#DetailedQualityFactorsPrediction").hide();
 
                 $("#ProductsConfig").hide();
                 $("#StrategicIndicatorsConfig").hide();
+                $("#QualityFactorsConfig").hide();
             } else if (data.qualityLevel == "METRICS_FACTORS") {
                 $("#Products").hide();
                 $("#FactorsSimulation").hide();

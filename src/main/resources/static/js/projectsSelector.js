@@ -166,10 +166,7 @@ function showProjectSelector (projects) {
                         else if (currentURL.search("/Simulation") !== -1)
                             url = serverUrl + "/Simulation/Metrics";
                         else {
-                            if (time == "Current" && viewMode == "Chart")
-                                url = serverUrl + "/QualityFactors/" + time + viewMode + representationMode;
-                            else
-                                url = serverUrl + "/QualityFactors/" + time + viewMode;
+                            url = serverUrl + "/QualityFactors/" + time + viewMode;
                         }
 
                     }

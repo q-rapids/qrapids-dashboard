@@ -517,8 +517,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
         dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
 
-        when(factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, profileId, true)).thenReturn(dtoDetailedFactorEvaluationList);
-
+        when(factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, profileId, false)).thenReturn(dtoDetailedFactorEvaluationList);
 
         String technique = "PROPHET";
 
@@ -546,7 +545,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
         dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
 
-        when(factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, profileId, true)).thenReturn(dtoDetailedFactorEvaluationList);
+        when(factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, profileId, false)).thenReturn(dtoDetailedFactorEvaluationList);
 
         DTOStrategicIndicatorEvaluation dtoStrategicIndicator = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
         List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorList = new ArrayList<>();
@@ -598,7 +597,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluationList.add(dtoFactorEvaluation2);
         dtoFactorEvaluationList.add(dtoFactorEvaluation3);
 
-        when(factorsController.getAllFactorsEvaluation(project.getExternalId(), true)).thenReturn(dtoFactorEvaluationList);
+        when(factorsController.getAllFactorsEvaluation(project.getExternalId(), null,false)).thenReturn(dtoFactorEvaluationList);
 
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Process Performance";
@@ -708,7 +707,7 @@ public class StrategicIndicatorsControllerTest {
         verifyNoMoreInteractions(projectsController);
 
         verify(factorsController, times(1)).setFactorStrategicIndicatorRelation(dtoFactorEvaluationList, project.getExternalId());
-        verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), true);
+        verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), null,false);
         verify(factorsController, times(6)).getFactorLabelFromValue(anyFloat());
         verifyNoMoreInteractions(factorsController);
 
@@ -758,7 +757,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluationList.add(dtoFactorEvaluation2);
         dtoFactorEvaluationList.add(dtoFactorEvaluation3);
 
-        when(factorsController.getAllFactorsEvaluation(project.getExternalId(), true)).thenReturn(dtoFactorEvaluationList);
+        when(factorsController.getAllFactorsEvaluation(project.getExternalId(), null,false)).thenReturn(dtoFactorEvaluationList);
 
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Process Performance";
@@ -851,7 +850,7 @@ public class StrategicIndicatorsControllerTest {
         verifyNoMoreInteractions(projectsController);
 
         verify(factorsController, times(1)).setFactorStrategicIndicatorRelation(dtoFactorEvaluationList, project.getExternalId());
-        verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), true);
+        verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), null,false);
         verify(factorsController, times(3)).getFactorLabelFromValue(anyFloat());
         verifyNoMoreInteractions(factorsController);
 
@@ -900,7 +899,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluationList.add(dtoFactorEvaluation2);
         dtoFactorEvaluationList.add(dtoFactorEvaluation3);
 
-        when(factorsController.getAllFactorsEvaluation(project.getExternalId(), true)).thenReturn(dtoFactorEvaluationList);
+        when(factorsController.getAllFactorsEvaluation(project.getExternalId(), null,false)).thenReturn(dtoFactorEvaluationList);
 
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Process Performance";
@@ -1004,7 +1003,7 @@ public class StrategicIndicatorsControllerTest {
         assertTrue(correct);
 
         verify(factorsController, times(1)).setFactorStrategicIndicatorRelation(dtoFactorEvaluationList, project.getExternalId());
-        verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), true);
+        verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), null,false);
         verify(factorsController, times(6)).getFactorLabelFromValue(anyFloat());
         verifyNoMoreInteractions(factorsController);
 
@@ -1053,7 +1052,8 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluationList.add(dtoFactorEvaluation2);
         dtoFactorEvaluationList.add(dtoFactorEvaluation3);
 
-        when(factorsController.getAllFactorsEvaluation(project.getExternalId(), true)).thenReturn(dtoFactorEvaluationList);
+        // without profile & don't filter DB
+        when(factorsController.getAllFactorsEvaluation(project.getExternalId(), null,false)).thenReturn(dtoFactorEvaluationList);
 
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Process Performance";
@@ -1140,7 +1140,7 @@ public class StrategicIndicatorsControllerTest {
         assertFalse(correct);
 
         verify(factorsController, times(1)).setFactorStrategicIndicatorRelation(dtoFactorEvaluationList, project.getExternalId());
-        verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), true);
+        verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), null,false);
         verify(factorsController, times(3)).getFactorLabelFromValue(anyFloat());
         verifyNoMoreInteractions(factorsController);
 
@@ -1300,7 +1300,7 @@ public class StrategicIndicatorsControllerTest {
         DTOFactorEvaluation dtoFactorEvaluation = domainObjectsBuilder.buildDTOFactor();
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
-        when(factorsController.getAllFactorsEvaluation(project.getExternalId(), true)).thenReturn(dtoFactorEvaluationList);
+        when(factorsController.getAllFactorsEvaluation(project.getExternalId(), null, true)).thenReturn(dtoFactorEvaluationList);
 
         Map<String, Float> factorSimulatedMap = new HashMap<>();
         Float factorSimulatedValue = 0.9f;
@@ -1320,7 +1320,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTOStrategicIndicatorEvaluation> dtoStrategicIndicatorEvaluationList = strategicIndicatorsController.simulateStrategicIndicatorsAssessment(factorSimulatedMap, project.getExternalId(), null); // without profile
 
         // Verify mock interactions
-        verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), true);
+        verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), null,true);
         verify(factorsController,times(1)).getFactorLabelFromValue(factorSimulatedValue);
         verifyNoMoreInteractions(factorsController);
         

@@ -116,7 +116,6 @@ public class MetricsController {
     }
 
     public void setMetricQualityFactorRelation (List<DTOMetricEvaluation> metricList, String projectExternalId) throws IOException {
-        // TODO el set en el QMA
         qmaMetrics.setMetricQualityFactorRelation(metricList, projectExternalId);
     }
 

@@ -2,13 +2,8 @@ var isdsi = false;
 var isqf = false;
 var isdqf = true;
 
-var url;
-if (getParameterByName('id').length !== 0) {
-    url = parseURLSimple("../api/strategicIndicators/qualityFactors/metrics/historical");
-} else {
-    var profileId = sessionStorage.getItem("profile_id");
-    url = parseURLSimple("../api/qualityFactors/metrics/historical?profile="+profileId);
-}
+var profileId = sessionStorage.getItem("profile_id");
+var url = parseURLComposed("../api/qualityFactors/metrics/historical?profile="+profileId);
 
 //initialize data vectors
 var texts = [];
@@ -42,94 +37,51 @@ function getData() {
             console.log("getData() in QF Historical");
             sortDataAlphabetically(data);
             console.log(data);
-            if (getParameterByName('id').length !== 0) {
-                texts.push(getParameterByName('name'));
-                ids.push(getParameterByName('id'));
+            for (i = 0; i < data.length; ++i) {
+                //for each qf save name to texts vector and id to ids vector
+                if (data[i].metrics.length > 0) {
+                    texts.push(data[i].name);
+                    ids.push(data[i].id);
 
-                value.push([[]]);
-                last = data[0].id;
-                labels.push([data[0].name]);
-
-                k = 0;
-                var decisionsAdd = [];
-                var decisionsIgnore = [];
-                for (i = 0; i < data.length; ++i) {
-                    //check if we are still on the same metric
-                    if (last !== data[i].id) {
-                        buildDecisionVectors(decisionsAdd, decisionsIgnore, data[i-1].id);
-                        // New metric
-                        labels[0].push(data[i].name);
-                        last = data[i].id;
-                        ++k;
-                        value[0].push([]);
-                    }
-                    //push date and value to values vector
-                    if (!isNaN(data[i].value)) {
-                        value[0][k].push(
-                            {
-                                x: data[i].date,
-                                y: data[i].value
-                            }
-                        );
-                    }
-                }
-                buildDecisionVectors(decisionsAdd, decisionsIgnore, data[[data.length - 1]].id);
-                // Add decisions to chart
-                if (decisionsAdd.length > 0) {
-                    value[0].push(decisionsAdd);
-                    labels[0].push("Added decisions");
-                }
-                if (decisionsIgnore.length > 0) {
-                    value[0].push(decisionsIgnore);
-                    labels[0].push("Ignored decisions");
-                }
-            } else {
-                for (i = 0; i < data.length; ++i) {
-                    //for each qf save name to texts vector and id to ids vector
-                    if (data[i].metrics.length > 0) {
-                        texts.push(data[i].name);
-                        ids.push(data[i].id);
-
-                        value.push([[]]);
-                        last = data[i].metrics[0].id;
-                        labels.push([data[i].metrics[0].name]);
-                        k = 0;
-                        var decisionsAdd = [];
-                        var decisionsIgnore = [];
-                        for (j = 0; j < data[i].metrics.length; ++j) {
-                            //check if we are still on the same metric
-                            if (last !== data[i].metrics[j].id) {
-                                buildDecisionVectors(decisionsAdd, decisionsIgnore, data[i].metrics[j - 1].id);
-                                // New metric
-                                labels[i].push(data[i].metrics[j].name);
-                                last = data[i].metrics[j].id;
-                                ++k;
-                                value[i].push([]);
-                            }
-                            //push date and value to values vector
-                            if (!isNaN(data[i].metrics[j].value)) {
-                                value[i][k].push(
-                                    {
-                                        x: data[i].metrics[j].date,
-                                        y: data[i].metrics[j].value
-                                    }
-                                );
-                            }
+                    value.push([[]]);
+                    last = data[i].metrics[0].id;
+                    labels.push([data[i].metrics[0].name]);
+                    k = 0;
+                    var decisionsAdd = [];
+                    var decisionsIgnore = [];
+                    for (j = 0; j < data[i].metrics.length; ++j) {
+                        //check if we are still on the same metric
+                        if (last !== data[i].metrics[j].id) {
+                            buildDecisionVectors(decisionsAdd, decisionsIgnore, data[i].metrics[j - 1].id);
+                            // New metric
+                            labels[i].push(data[i].metrics[j].name);
+                            last = data[i].metrics[j].id;
+                            ++k;
+                            value[i].push([]);
                         }
-                        buildDecisionVectors(decisionsAdd, decisionsIgnore, data[i].metrics[data[i].metrics.length - 1].id);
-                        // Add decisions to chart
-                        if (decisionsAdd.length > 0) {
-                            value[i].push(decisionsAdd);
-                            labels[i].push("Added decisions");
+                        //push date and value to values vector
+                        if (!isNaN(data[i].metrics[j].value)) {
+                            value[i][k].push(
+                                {
+                                    x: data[i].metrics[j].date,
+                                    y: data[i].metrics[j].value
+                                }
+                            );
                         }
-                        if (decisionsIgnore.length > 0) {
-                            value[i].push(decisionsIgnore);
-                            labels[i].push("Ignored decisions");
-                        }
-                    } else {
-                        data.splice(i, 1);
-                        --i;
                     }
+                    buildDecisionVectors(decisionsAdd, decisionsIgnore, data[i].metrics[data[i].metrics.length - 1].id);
+                    // Add decisions to chart
+                    if (decisionsAdd.length > 0) {
+                        value[i].push(decisionsAdd);
+                        labels[i].push("Added decisions");
+                    }
+                    if (decisionsIgnore.length > 0) {
+                        value[i].push(decisionsIgnore);
+                        labels[i].push("Ignored decisions");
+                    }
+                } else {
+                    data.splice(i, 1);
+                    --i;
                 }
             }
             console.log(texts);

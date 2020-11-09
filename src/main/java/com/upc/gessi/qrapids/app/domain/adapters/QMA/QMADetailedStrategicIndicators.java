@@ -5,8 +5,14 @@ import DTOs.EvaluationDTO;
 import DTOs.FactorEvaluationDTO;
 import DTOs.StrategicIndicatorFactorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
+import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
+import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.models.Profile;
+import com.upc.gessi.qrapids.app.domain.models.ProfileProjectStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrategicIndicatorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
@@ -23,16 +29,24 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class QMADetailedStrategicIndicators {
 
     // it was made to use qfRep in FactorEvaluationDTOListToDTOFactorList method
     private static QualityFactorRepository qfRep;
+    private static ProfilesController profilesController;
+    private static ProjectRepository prjRep;
+    private static ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
 
     @Autowired
-    public QMADetailedStrategicIndicators(QualityFactorRepository qfRep) {
+    public QMADetailedStrategicIndicators(QualityFactorRepository qfRep, ProfilesController profilesController,
+                                          ProjectRepository prjRep, ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository) {
         QMADetailedStrategicIndicators.qfRep = qfRep;
+        QMADetailedStrategicIndicators.profilesController = profilesController;
+        QMADetailedStrategicIndicators.prjRep = prjRep;
+        QMADetailedStrategicIndicators.profileProjectStrategicIndicatorsRepository = profileProjectStrategicIndicatorsRepository;
     }
 
     @Autowired
@@ -40,9 +54,6 @@ public class QMADetailedStrategicIndicators {
 
     @Autowired
     private StrategicIndicatorRepository siRep;
-
-    @Autowired
-    private ProjectRepository prjRep;
 
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
@@ -106,7 +117,7 @@ public class QMADetailedStrategicIndicators {
                 d.setMismatchDays(evaluation.getMismatchDays());
                 d.setMissingFactors(evaluation.getMissingElements());
                 //set Factors to Detailed Strategic Indicator
-                d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors(),prjRep.findByExternalId(prj).getId(), false));
+                d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors(),prjRep.findByExternalId(prj).getId(), profile, false));
 
                 // Get value
                 List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
@@ -144,7 +155,7 @@ public class QMADetailedStrategicIndicators {
         }
     }
 
-    public static List<DTOFactorEvaluation> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors, Long prjID, boolean filterDB) {
+    public static List<DTOFactorEvaluation> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors, Long prjID, String profileId, boolean filterDB) {
         List<DTOFactorEvaluation> listFact = new ArrayList<>();
         //for each factor in the Detailed Strategic Indicator
         for (Iterator<FactorEvaluationDTO> iterFactor = factors.iterator(); iterFactor.hasNext(); ) {
@@ -160,7 +171,28 @@ public class QMADetailedStrategicIndicators {
                 }
             }
         }
-        return listFact;
+        Optional<Project> project = prjRep.findById(prjID);
+        if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
+            Profile profile = profilesController.findProfileById(profileId);
+            if (profile.getAllSIByProject(project.get())) { // if allSI true, return all quality factors
+                return listFact;
+            } else { // if allSI false, return quality factors involved in SIs
+                List<ProfileProjectStrategicIndicators> ppsiList =
+                        profileProjectStrategicIndicatorsRepository.findByProfileAndProject(profile,project.get());
+                List<String> qfOfSIs = new ArrayList<>();
+                for (ProfileProjectStrategicIndicators ppsi : ppsiList) {
+                    for (String factor : ppsi.getStrategicIndicator().getQuality_factors())
+                        qfOfSIs.add(factor);
+                }
+                List<DTOFactorEvaluation> reviewQF = new ArrayList<>();
+                for (int i = 0; i < listFact.size(); i++) {
+                    if (qfOfSIs.contains(listFact.get(i).getId())) reviewQF.add(listFact.get(i));
+                }
+                return reviewQF;
+            }
+        } else { // if profile is null, return all quality factors
+            return listFact;
+        }
     }
 
     static DTOFactorEvaluation FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
