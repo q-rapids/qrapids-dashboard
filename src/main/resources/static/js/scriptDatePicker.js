@@ -138,7 +138,6 @@ function getPreviousMonday() {
 }
 
 function loadTechniques () {
-    // TODO
     jQuery.ajax({
         dataType: "json",
         url: "../api/forecastTechniques",
@@ -184,7 +183,7 @@ function getPredictionCurrentDate() {
                 }
             }
         });
-    } else if (currentURL.match("/QualityFactors/PredictionChart")) {
+    } else if (currentURL.match("/QualityFactors/PredictionChart")|| currentURL.match("/DetailedQualityFactors/PredictionChart")) {
         jQuery.ajax({
             dataType: "json",
             url: "../api/qualityFactors/currentDate",

@@ -2,9 +2,11 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
+import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOCategoryThreshold;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Messages;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -28,6 +30,31 @@ public class Metrics {
     private MetricsController metricsController;
 
     private Logger logger = LoggerFactory.getLogger(Metrics.class);
+
+    @GetMapping("/api/metrics/import")
+    @ResponseStatus(HttpStatus.OK)
+    public void importMetrics() {
+        try {
+            metricsController.importMetricsAndUpdateDatabase();
+        } catch (CategoriesException | ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");
+        }
+    }
+
+    @GetMapping("/api/metrics")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Metric> getMetrics(@RequestParam(value = "prj") String prj) {
+        try {
+            return metricsController.getMetricsByProject(prj);
+        } catch (ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
+        }
+    }
 
     @GetMapping("/api/metrics/categories")
     @ResponseStatus(HttpStatus.OK)
@@ -53,7 +80,7 @@ public class Metrics {
 
     @RequestMapping("/api/metrics/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetric> getMetricsEvaluations(@RequestParam(value = "prj") String prj) {
+    public List<DTOMetricEvaluation> getMetricsEvaluations(@RequestParam(value = "prj") String prj) {
         try {
             return metricsController.getAllMetricsCurrentEvaluation(prj);
         } catch (ElasticsearchStatusException e) {
@@ -67,7 +94,7 @@ public class Metrics {
 
     @RequestMapping("/api/metrics/{id}/current")
     @ResponseStatus(HttpStatus.OK)
-    public DTOMetric getSingleMetricEvaluation(@RequestParam("prj") String prj, @PathVariable String id) {
+    public DTOMetricEvaluation getSingleMetricEvaluation(@RequestParam("prj") String prj, @PathVariable String id) {
         try {
             return metricsController.getSingleMetricCurrentEvaluation(id, prj);
         } catch (ElasticsearchStatusException e) {
@@ -81,7 +108,7 @@ public class Metrics {
 
     @RequestMapping("/api/metrics/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetric> getMetricsHistoricalData(@RequestParam(value = "prj") String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
+    public List<DTOMetricEvaluation> getMetricsHistoricalData(@RequestParam(value = "prj") String prj, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return metricsController.getAllMetricsHistoricalEvaluation(prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
@@ -95,7 +122,7 @@ public class Metrics {
 
     @RequestMapping("/api/metrics/{id}/historical")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetric> getHistoricalDataForMetric(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
+    public List<DTOMetricEvaluation> getHistoricalDataForMetric(@RequestParam(value = "prj") String prj, @PathVariable String id, @RequestParam("from") String from, @RequestParam("to") String to) {
         try {
             return metricsController.getSingleMetricHistoricalEvaluation(id, prj, LocalDate.parse(from), LocalDate.parse(to));
         } catch (ElasticsearchStatusException e) {
@@ -109,10 +136,10 @@ public class Metrics {
 
     @RequestMapping("/api/metrics/prediction")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetric> getMetricsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String technique, @RequestParam("horizon") String horizon) throws IOException {
+    public List<DTOMetricEvaluation> getMetricsPredictionData(@RequestParam(value = "prj") String prj, @RequestParam("technique") String techinique, @RequestParam("horizon") String horizon) throws IOException {
         try {
-            List<DTOMetric> currentEvaluation = metricsController.getAllMetricsCurrentEvaluation(prj);
-            return metricsController.getMetricsPrediction(currentEvaluation, prj, technique, "7", horizon);
+            List<DTOMetricEvaluation> currentEvaluation = metricsController.getAllMetricsCurrentEvaluation(prj);
+            return metricsController.getMetricsPrediction(currentEvaluation, prj, techinique, "7", horizon);
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
@@ -126,7 +153,7 @@ public class Metrics {
     @ResponseStatus(HttpStatus.OK)
     public LocalDate getcurrentDate(@RequestParam(value = "prj") String prj) {
         try {
-            List<DTOMetric> metrics = metricsController.getAllMetricsCurrentEvaluation(prj);
+            List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(prj);
             return metrics.get(0).getDate();
         } catch (IOException e) {
             logger.error(e.getMessage(), e);

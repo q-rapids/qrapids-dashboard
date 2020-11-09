@@ -1,5 +1,5 @@
 = Q-Rapids Dashboard API REST Documentation
-v1.4, {docdate}
+v1.6, {docdate}
 :toc: left
 
 :sectnums:
@@ -262,7 +262,65 @@ include::{snippets}/si/categories-new-error/http-response.adoc[]
 
 == Quality Factors
 
+=== Import factors
+
+operation::qualityFactors/import[snippets='curl-request,http-response']
+
 === Get current evaluation
+
+operation::qf/all[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+
+:numbered:
+
+=== Get one current evaluation
+
+operation::qf/single[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+
+:numbered:
+
+=== Get historical evaluation
+
+operation::qualityFactors/historical[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/qualityFactors/historical-read-error/http-response.adoc[]
+:numbered:
+
+=== Get prediction evaluation
+
+operation::qualityFactors/prediction[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+
+:numbered:
+
+=== Get detailed current evaluation
 
 operation::qf/current[snippets='request-parameters,curl-request,response-fields,http-response']
 
@@ -276,25 +334,9 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
 
+=== Get one detailed current evaluation
 
-=== Get current evaluation for strategic indicator
-
-operation::qf/current-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
-
-:numbered!:
-
-==== HTTP response wrong project
-include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
-
-==== HTTP response error on ElasticSearch connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
-
-:numbered:
-
-
-=== Get historical evaluation
-
-operation::qf/historical[snippets='request-parameters,curl-request,response-fields,http-response']
+operation::metrics/current-qf[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
 
@@ -307,7 +349,7 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 :numbered:
 
 
-=== Get historical evaluation for strategic indicator
+=== Get detailed current evaluation for strategic indicator
 
 operation::qf/historical-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
 
@@ -322,7 +364,51 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 :numbered:
 
 
-=== Get prediction
+=== Get detailed historical evaluation
+
+operation::qf/historical[snippets='request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+
+:numbered:
+
+=== Get one detailed historical evaluation
+
+operation::metrics/historical-qf[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Get detailed historical evaluation for strategic indicator
+
+operation::qf/current-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Get detailed prediction evaluation
 
 operation::qf/prediction[snippets='request-parameters,curl-request,response-fields,http-response']
 
@@ -336,8 +422,22 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 :numbered:
 
+=== Get one detailed prediction evaluation
 
-=== Get prediction for strategic indicators
+operation::metrics/prediction-qf[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+
+:numbered!:
+
+==== HTTP response wrong project
+include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
+
+==== HTTP response error on ElasticSearch connection
+include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
+
+:numbered:
+
+
+=== Get detailed prediction evaluation for strategic indicator
 
 operation::qf/prediction-si[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
 
@@ -354,32 +454,43 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 
 === Get all quality factors
 
-operation::qf/all[snippets='request-parameters,curl-request,response-fields,http-response']
-
-:numbered!:
-
-==== HTTP response wrong project
-include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
-
-==== HTTP response error on ElasticSearch connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
-
-:numbered:
+operation::qualityFactors/get-all[snippets='request-parameters,curl-request,response-fields,http-response']
 
 
 === Get one quality factor
 
-operation::qf/single[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
+operation::qualityFactors/get-one[snippets='path-parameters,curl-request,response-fields,http-response']
+
+
+=== Add quality factor
+
+operation::qualityFactors/new[snippets='request-parameters,request-parts,curl-request,http-response']
 
 :numbered!:
-
-==== HTTP response wrong project
-include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
-
-==== HTTP response error on ElasticSearch connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
-
+==== HTTP response assessment error
+include::{snippets}/qualityFactors/new-error/http-response.adoc[]
 :numbered:
+
+
+=== Update quality factor
+
+operation::qualityFactors/update[snippets='request-parameters,request-parts,curl-request,http-response']
+
+:numbered!:
+==== HTTP response missing parameter
+include::{snippets}/qualityFactors/update-missing-params/http-response.adoc[]
+
+==== HTTP response data integrity violation
+include::{snippets}/qualityFactors/update-data-integrity-violation/http-response.adoc[]
+
+==== HTTP response assessment error
+include::{snippets}/qualityFactors/update-assessment-error/http-response.adoc[]
+:numbered:
+
+
+=== Delete quality factor
+
+operation::qualityFactors/delete-one[snippets='path-parameters,curl-request,http-response']
 
 
 === Simulate quality factors assessment
@@ -415,6 +526,10 @@ include::{snippets}/qf/categories-new-error/http-response.adoc[]
 
 == Metrics
 
+=== Import metrics
+
+operation::metrics/import[snippets='curl-request,http-response']
+
 === Get current evaluation
 
 operation::metrics/current[snippets='request-parameters,curl-request,response-fields,http-response']
@@ -433,21 +548,6 @@ include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
 === Get single current evaluation
 
 operation::metrics/single[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
-
-:numbered!:
-
-==== HTTP response wrong project
-include::{snippets}/alerts/get-all-wrong-project/http-response.adoc[]
-
-==== HTTP response error on ElasticSearch connection
-include::{snippets}/alerts/add-qr-from-alert-backlog-error/http-response.adoc[]
-
-:numbered:
-
-
-=== Get current evaluation for quality factor
-
-operation::metrics/current-qf[snippets='path-parameters,request-parameters,curl-request,response-fields,http-response']
 
 :numbered!:
 

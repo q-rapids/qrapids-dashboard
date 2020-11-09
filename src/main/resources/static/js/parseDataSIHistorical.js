@@ -1,6 +1,7 @@
 var isSi = true;
 var isdsi = false;
 var isqf = false;
+var isdqf = false;
 
 var qualityModelSIMetrics = new Map();
 
@@ -36,6 +37,9 @@ function getData() {
         type: "GET",
         async: true,
         success: function (data) {
+            console.log("inside ../api/strategicIndicators/historical")
+            sortDataAlphabetically(data);
+            console.log(data);
             j = 0;
             var line = [];
             var decisionsAdd = [];
@@ -109,6 +113,15 @@ function getData() {
             }
         }
     });
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getQualityModel () {

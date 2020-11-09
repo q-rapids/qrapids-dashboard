@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+</head>
+<body ng-app="TablesApp" ng-controller="TablesCtrl">
+    <div th:replace="Fragments/Template :: logo"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+    <br/>
+    <br/>
+    <h1 id="title" align="center"></h1>
+    <p th:replace="Fragments/TemplateDashboard :: navLinkDetailedQF"></p>
+    <br/>
+    <div class="container" id="tableCurrent" ng-init="getFactorQuality()">
+        <br/>
+        <span><b>Search:</b></span> <input ng-model="f"></input>
+        <br/>
+        <br/>
+        <table id="QFT" class="table table-hover">
+            <thead>
+            <tr style="white-space: nowrap">
+                <th ng-click="sortBy('date')">Date
+                    <span ng-show="sortType == 'date' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'date' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('factorName')">Factor
+                    <span ng-show="sortType == 'factorName' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'factorName' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('metricName')">Metric
+                    <span ng-show="sortType == 'metricName' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'metricName' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('description')">Description
+                    <span ng-show="sortType == 'description' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'description' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('value')">Current Value
+                    <span ng-show="sortType == 'value' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'value' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('rationale')">Rationale (Metric)
+                    <span ng-show="sortType == 'rationale' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'rationale' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat-start="d in data | filter:f | orderBy:sortType:sortReverse"></tr>
+                <td id="date">{{d.date}}</td>
+                <td ng-click="getURL(d.id, d.factorName, fact, '../Metrics/CurrentTable', false, true)">{{d.factorName}}</td>
+                <td>{{d.metricName}}</td>
+                <td>{{d.description}}</td>
+                <td>{{d.value}}</td>
+                <td>{{d.rationale}}</td>
+            <tr ng-repeat-end="d in data"></tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+</html>

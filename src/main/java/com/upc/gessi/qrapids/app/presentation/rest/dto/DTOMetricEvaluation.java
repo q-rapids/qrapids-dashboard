@@ -3,6 +3,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.dto;
 import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * This class define objects with all the information about a Metric, which includes the Metric id, name, source,
@@ -10,7 +11,7 @@ import java.time.LocalDate;
  *
  * @author Oriol M./Guillem B/Lidia L.
  */
-public class DTOMetric {
+public class DTOMetricEvaluation {
 
     //class attributes
     private String id;
@@ -23,7 +24,9 @@ public class DTOMetric {
     private String rationale;
     private Pair<Float, Float> confidence80;
     private Pair<Float, Float> confidence95;
+    private List<String> quality_factors;
     private String forecastingError;
+
 
     /**
      * Constructor of the DTO of Metrics
@@ -35,8 +38,9 @@ public class DTOMetric {
      * @param date The parameter defines the date of the metric evaluation
      * @param datasource The parameter defines the datasource of the metric evaluation
      * @param rationale The parameter describes textually the rationale behind the value
+     * @param qualityFactors The list of factors IDs using this metric evaluation
      */
-    public DTOMetric(String id, String name, String description, String datasource, String rationale, LocalDate date, float value) {
+    public DTOMetricEvaluation(String id, String name, String description, String datasource, String rationale, List<String> qualityFactors, LocalDate date, float value) {
         setId(id);
         setName(name);
         setDescription(description);
@@ -44,6 +48,7 @@ public class DTOMetric {
         setDate(date);
         setDatasource(datasource);
         setRationale(rationale);
+        setQualityFactors(qualityFactors);
     }
 
     /**
@@ -59,7 +64,7 @@ public class DTOMetric {
      * @param confidence80 Upper and lower values respectively for the 80% confidence interval
      * @param confidence95 Upper and lower values respectively for the 95% confidence interval
      */
-    public DTOMetric(String id, String name, String description, String datasource, String rationale, LocalDate date, Float value, Pair<Float, Float> confidence80, Pair<Float, Float> confidence95) {
+    public DTOMetricEvaluation(String id, String name, String description, String datasource, String rationale, LocalDate date, Float value, Pair<Float, Float> confidence80, Pair<Float, Float> confidence95) {
         setId(id);
         setName(name);
         setDescription(description);
@@ -71,13 +76,13 @@ public class DTOMetric {
         setConfidence95(confidence95);
     }
 
-    public DTOMetric(String id, String name, String forecastingError) {
+    public DTOMetricEvaluation(String id, String name, String forecastingError) {
         this.id = id;
         this.name = name;
         this.forecastingError = forecastingError;
     }
 
-    public DTOMetric() {
+    public DTOMetricEvaluation() {
     }
 
     /**
@@ -170,6 +175,18 @@ public class DTOMetric {
     public void setRationale(String rationale) {
         if (rationale!=null)
             this.rationale = rationale;
+    }
+
+    public List<String> getQualityFactors() {
+        return quality_factors;
+    }
+
+    public void setQualityFactors(List<String> quality_factors) {
+        this.quality_factors = quality_factors;
+    }
+
+    public void addQualityFactors(String qualityFactorID) {
+        this.quality_factors.add(qualityFactorID);
     }
 
     public String getForecastingError() {

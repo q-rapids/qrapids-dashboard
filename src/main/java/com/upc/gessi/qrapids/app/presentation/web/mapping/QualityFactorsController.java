@@ -10,16 +10,6 @@ public class QualityFactorsController {
         return "QualityFactors/CurrentChart";
     }
 
-    @RequestMapping("/QualityFactors/CurrentChartRadar")
-    public String CurrentChartRadar(){
-        return "QualityFactors/CurrentChart";
-    }
-
-    @RequestMapping("/QualityFactors/CurrentChartStacked")
-    public String CurrentChartStacked(){
-        return "QualityFactors/CurrentStacked";
-    }
-
     @RequestMapping("/QualityFactors/CurrentTable")
     public String CurrentTable(){
         return "QualityFactors/CurrentTable";
@@ -38,5 +28,10 @@ public class QualityFactorsController {
     @RequestMapping("/QualityFactors/PredictionChart")
     public String PredictionChart(){
         return "QualityFactors/PredictionChart";
+    }
+
+    @RequestMapping("/QualityFactors/Configuration")
+    public String Config(){
+        return "QualityFactors/AdditionalScreens/QualityFactorsConfig";
     }
 }

@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name="strategic_indicator_quality_factors",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"strategic_indicator_id", "quality_factors"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"strategic_indicator_id", "factor_id"}))
 public class StrategicIndicatorQualityFactors implements Serializable {
 
     // SerialVersion UID
@@ -15,10 +15,10 @@ public class StrategicIndicatorQualityFactors implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "quality_factors")
-    private String quality_factor;
+    @ManyToOne
+    private Factor factor;
 
-    @Column(name = "weights")
+    @Column(name = "weight")
     private Float weight;
 
     @ManyToOne
@@ -27,13 +27,8 @@ public class StrategicIndicatorQualityFactors implements Serializable {
     public StrategicIndicatorQualityFactors() {
     }
 
-    public StrategicIndicatorQualityFactors(String qualityFactor, float weight) {
-        setQuality_factor(qualityFactor);
-        setWeight(weight);
-    }
-
-    public StrategicIndicatorQualityFactors(String qualityFactor, float weight, Strategic_Indicator strategicIndicator) {
-        setQuality_factor(qualityFactor);
+    public StrategicIndicatorQualityFactors(Factor qualityFactor, float weight, Strategic_Indicator strategicIndicator) {
+        setFactor(qualityFactor);
         setWeight(weight);
         setStrategic_indicator(strategicIndicator);
     }
@@ -50,12 +45,12 @@ public class StrategicIndicatorQualityFactors implements Serializable {
         return strategic_indicator;
     }
 
-    public void setQuality_factor(String qualityFactor) {
-        this.quality_factor = qualityFactor;
+    public void setFactor(Factor qualityFactor) {
+        this.factor = qualityFactor;
     }
 
-    public String getQuality_factor() {
-        return quality_factor;
+    public Factor getFactor() {
+        return factor;
     }
 
     public void setWeight(float weight) {

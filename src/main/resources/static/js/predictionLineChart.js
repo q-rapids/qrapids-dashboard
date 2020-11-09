@@ -2,13 +2,13 @@ var timeFormat = 'YYYY-MM-DD';
 var config = [];
 var charts = [];
 
-if (isqf || isdsi) {// qf and dsi -> no intervals of confidence
+if (isdqf || isdsi) {// dqf and dsi -> no intervals of confidence
     var colors = ['rgb(1, 119, 166)', 'rgb(255, 153, 51)', 'rgb(51, 204, 51)', 'rgb(255, 80, 80)',
         'rgb(204, 201, 53)', 'rgb(192, 96, 201)'];
-} else // metrics and si -> intervals of confidence
+} else // si, factors and metrics -> intervals of confidence
     var colors = ['rgb(1, 119, 166)', 'rgb(1, 119, 166)', 'rgb( 254, 126, 0)', 'rgb( 254, 126, 0)', 'rgb( 255, 177, 101)', 'rgb( 255, 177, 101)'];
 
-if (isqf || isdsi) { // qf and dsi -> no intervals of confidence
+if (isdqf || isdsi) { // dqf and dsi -> no intervals of confidence
     $('#showConfidence').prop("disabled",true);
 }
 Chart.plugins.register({
@@ -196,7 +196,7 @@ function drawChart() {
             var pointRadius = 2.5;
             var borderWidth = 1;
             var color = [];
-            if (isqf || isdsi) {
+            if (isdqf || isdsi) {
                 var num = value[i].length/2;
                 if (j < num) { // if we work with historical data
                     color = colors[j % colors.length];
@@ -311,8 +311,8 @@ function drawChart() {
             c.options.annotation.annotations = annotations;
         }
 
-        // filter legend in case of SIs i Metrics
-        if (!isqf && !isdsi) {
+        // filter legend in case of SIs, TODO: Factors i Metrics
+        if (!isdqf && !isdsi) {
             var filter = function(legendItem) {
                 // hide duplicated 80 and 95 from legend and Predicted data too
                 if (legendItem.index === 3 || legendItem.index === 5 || legendItem.index === 1) {
@@ -337,13 +337,22 @@ function drawChart() {
 
     for (i = 0; i < texts.length; ++i) {
         var a = document.createElement('a');
-        var currentURL = window.location.href;
         if (isdsi) {  //if it is a Stacked Line Chart for Detailed Strategic Indicators
             urlLink = "../QualityFactors/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
             a.setAttribute("href", urlLink);
-        } else if (isqf) { //if it is a Stacked Line Chart for Quality Factors
+        }  else if (isqf) { //if it is a Stacked Line Chart for Quality Factors
             var name = getParameterByName('name');
             var id = getParameterByName('id');
+            if (name.length != 0) {//if we know from which Detailed Strategic Indicator we are coming
+                urlLink = "../DetailedQualityFactors/PredictionChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
+            }
+            else {
+                urlLink = "../DetailedQualityFactors/PredictionChart?id=" + ids[i] + "&name=" + texts[i];
+            }
+            a.setAttribute("href", urlLink);
+        }else if (isdqf) { //if it is a Stacked Line Chart for Detailed Quality Factors
+            var name = getParameterByName('si');
+            var id = getParameterByName('siid');
             if (name.length != 0) {//if we know from which Detailed Strategic Indicator we are coming
                 urlLink = "../Metrics/PredictionChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + texts[i];
             }
@@ -490,7 +499,7 @@ function fitToContent() {
             if (legendItem.text === "80" || legendItem.text === "95") {
                 chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
                 chart.data.datasets[index + 1].hidden = !chart.data.datasets[index + 1].hidden;
-            } else if (!isqf && !isdsi) { // hide & show logic for SIs and Metrics
+            } else if (!isdqf && !isdsi) { // hide & show logic for SIs, TODO:Factors and Metrics
                 chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
                 if(chart.data.datasets[index].hidden == true) { // if hide hist. data
                     // for predicted data
@@ -552,7 +561,7 @@ function normalRange() {
             if (legendItem.text === "80" || legendItem.text === "95") {
                 chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
                 chart.data.datasets[index + 1].hidden = !chart.data.datasets[index + 1].hidden;
-            } else if (!isqf && !isdsi) { // hide & show logic for SIs and Metrics
+            } else if (!isdqf && !isdsi) { // hide & show logic for SIs, TODO:Factors and Metrics
                 chart.data.datasets[index].hidden = !chart.data.datasets[index].hidden;
                 if(chart.data.datasets[index].hidden == true) { // if hide hist. data
                     // for predicted data

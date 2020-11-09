@@ -1,13 +1,14 @@
 var isSi = false;
 var isdsi = false;
 var isqf = false;
+var isdqf = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
     var profileId = sessionStorage.getItem("profile_id");
-    url = parseURLMetrics("../api/qualityFactors/metrics/historical?profile="+profileId);
+    url = parseURLComposed("../api/qualityFactors/metrics/historical?profile="+profileId);
 } else {
-    url = parseURLMetrics("../api/metrics/historical");
+    url = parseURLComposed("../api/metrics/historical");
 }
 
 //initialize data vectors
@@ -34,7 +35,12 @@ function getData() {
         cache: false,
         type: "GET",
         async: true,
-        success: function (data) {
+        success: function (response) {
+            var data = response;
+            if (getParameterByName('id').length !== 0) {
+                data = response[0].metrics;
+            }
+            sortDataAlphabetically(data);
             j = 0;
             var line = [];
             var decisionsAdd = [];
@@ -110,6 +116,15 @@ function getData() {
             getMetricsCategories();
         }
     });
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getMetricsCategories () {

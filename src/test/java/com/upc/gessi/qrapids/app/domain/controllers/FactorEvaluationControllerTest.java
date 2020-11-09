@@ -6,8 +6,8 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactor;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class QualityFactorsControllerTest {
+public class FactorEvaluationControllerTest {
 
     private DomainObjectsBuilder domainObjectsBuilder;
 
@@ -43,7 +43,7 @@ public class QualityFactorsControllerTest {
     private QFCategoryRepository factorCategoryRepository;
 
     @InjectMocks
-    private QualityFactorsController qualityFactorsController;
+    private FactorsController factorsController;
 
     @Before
     public void setUp() {
@@ -57,7 +57,7 @@ public class QualityFactorsControllerTest {
         when(factorCategoryRepository.findAll()).thenReturn(factorCategoryList);
 
         // When
-        List<QFCategory> factorCategoryListFound = qualityFactorsController.getFactorCategories();
+        List<QFCategory> factorCategoryListFound = factorsController.getFactorCategories();
 
         // Then
         assertEquals(factorCategoryList.size(), factorCategoryListFound.size());
@@ -72,7 +72,7 @@ public class QualityFactorsControllerTest {
         List<Map<String, String>> categories = domainObjectsBuilder.buildRawFactorCategoryList();
 
         // When
-        qualityFactorsController.newFactorCategories(categories);
+        factorsController.newFactorCategories(categories);
 
         // Then
         verify(factorCategoryRepository, times(1)).deleteAll();
@@ -99,146 +99,147 @@ public class QualityFactorsControllerTest {
         categories.remove(1);
 
         // Throw
-        qualityFactorsController.newFactorCategories(categories);
+        factorsController.newFactorCategories(categories);
     }
 
     @Test
     public void getSingleFactorEvaluation() throws IOException {
         // Given
-        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
+        DTOFactorEvaluation dtoFactorEvaluation = domainObjectsBuilder.buildDTOFactor();
         String projectExternalId = "test";
-        when(qmaQualityFactors.SingleCurrentEvaluation(dtoFactor.getId(), projectExternalId)).thenReturn(dtoFactor);
+        when(qmaQualityFactors.SingleCurrentEvaluation(dtoFactorEvaluation.getId(), projectExternalId)).thenReturn(dtoFactorEvaluation);
 
         // When
-        DTOFactor dtoFactorFound = qualityFactorsController.getSingleFactorEvaluation(dtoFactor.getId(), projectExternalId);
+        DTOFactorEvaluation dtoFactorEvaluationFound = factorsController.getSingleFactorEvaluation(dtoFactorEvaluation.getId(), projectExternalId);
 
         // Then
-        assertEquals(dtoFactor, dtoFactorFound);
+        assertEquals(dtoFactorEvaluation, dtoFactorEvaluationFound);
     }
 
     @Test
     public void getAllFactorsEvaluation() throws IOException {
         // Given
-        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
-        List<DTOFactor> dtoFactorList = new ArrayList<>();
-        dtoFactorList.add(dtoFactor);
+        DTOFactorEvaluation dtoFactorEvaluation = domainObjectsBuilder.buildDTOFactor();
+        List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
+        dtoFactorEvaluationList.add(dtoFactorEvaluation);
         String projectExternalId = "test";
-        when(qmaQualityFactors.getAllFactors(projectExternalId)).thenReturn(dtoFactorList);
+        when(qmaQualityFactors.getAllFactors(projectExternalId, null,true)).thenReturn(dtoFactorEvaluationList);
 
         // When
-        List<DTOFactor> dtoFactorListFound = qualityFactorsController.getAllFactorsEvaluation(projectExternalId);
+        List<DTOFactorEvaluation> dtoFactorEvaluationListFound = factorsController.getAllFactorsEvaluation(projectExternalId, null,true);
 
         // Then
-        assertEquals(dtoFactorList.size(), dtoFactorListFound.size());
-        assertEquals(dtoFactor, dtoFactorListFound.get(0));
+        assertEquals(dtoFactorEvaluationList.size(), dtoFactorEvaluationListFound.size());
+        assertEquals(dtoFactorEvaluation, dtoFactorEvaluationListFound.get(0));
     }
 
     @Test
     public void getAllFactorsWithMetricsCurrentEvaluation() throws IOException, ProjectNotFoundException {
         // Given
-        DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
-        List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
-        dtoQualityFactorList.add(dtoQualityFactor);
+        DTODetailedFactorEvaluation dtoDetailedFactorEvaluation = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
+        dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
         String projectExternalId = "test";
+
         String profileId = "null"; // without profile
-        when(qmaQualityFactors.CurrentEvaluation(null, projectExternalId, profileId)).thenReturn(dtoQualityFactorList);
+        when(qmaQualityFactors.CurrentEvaluation(null, projectExternalId, profileId, true)).thenReturn(dtoDetailedFactorEvaluationList);
 
         // When
-        List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, profileId);
-
+        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationListFound = factorsController.getAllFactorsWithMetricsCurrentEvaluation(projectExternalId, profileId, true);
         // Then
-        assertEquals(dtoQualityFactorList.size(), dtoQualityFactorListFound.size());
-        assertEquals(dtoQualityFactor, dtoQualityFactorListFound.get(0));
+        assertEquals(dtoDetailedFactorEvaluationList.size(), dtoDetailedFactorEvaluationListFound.size());
+        assertEquals(dtoDetailedFactorEvaluation, dtoDetailedFactorEvaluationListFound.get(0));
     }
 
     @Test
     public void getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation() throws IOException, ProjectNotFoundException {
         // Given
-        DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
-        List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
-        dtoQualityFactorList.add(dtoQualityFactor);
+        DTODetailedFactorEvaluation dtoDetailedFactorEvaluation = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
+        dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
         String strategicIndicatorId = "processperformance";
         String projectExternalId = "test";
-        when(qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId, null)).thenReturn(dtoQualityFactorList);
 
+        when(qmaQualityFactors.CurrentEvaluation(strategicIndicatorId, projectExternalId, null, true)).thenReturn(dtoDetailedFactorEvaluationList);
         // When
-        List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(strategicIndicatorId, projectExternalId);
+        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationListFound = factorsController.getFactorsWithMetricsForOneStrategicIndicatorCurrentEvaluation(strategicIndicatorId, projectExternalId);
 
         // Then
-        assertEquals(dtoQualityFactorList.size(), dtoQualityFactorListFound.size());
-        assertEquals(dtoQualityFactor, dtoQualityFactorListFound.get(0));
+        assertEquals(dtoDetailedFactorEvaluationList.size(), dtoDetailedFactorEvaluationListFound.size());
+        assertEquals(dtoDetailedFactorEvaluation, dtoDetailedFactorEvaluationListFound.get(0));
     }
 
     @Test
     public void getAllFactorsWithMetricsHistoricalEvaluation() throws IOException, ProjectNotFoundException {
         // Given
-        DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
-        List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
-        dtoQualityFactorList.add(dtoQualityFactor);
+        DTODetailedFactorEvaluation dtoDetailedFactorEvaluation = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
+        dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
         String projectExternalId = "test";
+
         String profileId = "null"; // without profile
-        LocalDate from = dtoQualityFactor.getMetrics().get(0).getDate().minusDays(7);
-        LocalDate to = dtoQualityFactor.getMetrics().get(0).getDate();
-        when(qmaQualityFactors.HistoricalData(null, from, to, projectExternalId, profileId)).thenReturn(dtoQualityFactorList);
+        LocalDate from = dtoDetailedFactorEvaluation.getMetrics().get(0).getDate().minusDays(7);
+        LocalDate to = dtoDetailedFactorEvaluation.getMetrics().get(0).getDate();
+        when(qmaQualityFactors.HistoricalData(null, from, to, projectExternalId, profileId)).thenReturn(dtoDetailedFactorEvaluationList);
 
         // When
-        List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, profileId, from, to);
+        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationListFound = factorsController.getAllFactorsWithMetricsHistoricalEvaluation(projectExternalId, profileId, from, to);
 
         // Then
-        assertEquals(dtoQualityFactorList.size(), dtoQualityFactorListFound.size());
-        assertEquals(dtoQualityFactor, dtoQualityFactorListFound.get(0));
+        assertEquals(dtoDetailedFactorEvaluationList.size(), dtoDetailedFactorEvaluationListFound.size());
+        assertEquals(dtoDetailedFactorEvaluation, dtoDetailedFactorEvaluationListFound.get(0));
     }
 
     @Test
     public void getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation() throws IOException, ProjectNotFoundException {
         // Given
-        DTOQualityFactor dtoQualityFactor = domainObjectsBuilder.buildDTOQualityFactor();
-        List<DTOQualityFactor> dtoQualityFactorList = new ArrayList<>();
-        dtoQualityFactorList.add(dtoQualityFactor);
+        DTODetailedFactorEvaluation dtoDetailedFactorEvaluation = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
+        dtoDetailedFactorEvaluationList.add(dtoDetailedFactorEvaluation);
         String strategicIndicatorId = "processperformance";
         String projectExternalId = "test";
-        LocalDate from = dtoQualityFactor.getMetrics().get(0).getDate().minusDays(7);
-        LocalDate to = dtoQualityFactor.getMetrics().get(0).getDate();
-        when(qmaQualityFactors.HistoricalData(strategicIndicatorId, from, to, projectExternalId, null)).thenReturn(dtoQualityFactorList);
+        LocalDate from =  dtoDetailedFactorEvaluation.getMetrics().get(0).getDate().minusDays(7);
+        LocalDate to =  dtoDetailedFactorEvaluation.getMetrics().get(0).getDate();
+        when(qmaQualityFactors.HistoricalData(strategicIndicatorId, from, to, projectExternalId, null)).thenReturn(dtoDetailedFactorEvaluationList);
 
         // When
-        List<DTOQualityFactor> dtoQualityFactorListFound = qualityFactorsController.getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(strategicIndicatorId, projectExternalId, from, to);
+        List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationListFound = factorsController.getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(strategicIndicatorId, projectExternalId, from, to);
 
         // Then
-        assertEquals(dtoQualityFactorList.size(), dtoQualityFactorListFound.size());
-        assertEquals(dtoQualityFactor, dtoQualityFactorListFound.get(0));
+        assertEquals(dtoDetailedFactorEvaluationList.size(), dtoDetailedFactorEvaluationListFound.size());
+        assertEquals(dtoDetailedFactorEvaluation, dtoDetailedFactorEvaluationListFound.get(0));
     }
 
     @Test
     public void getAllFactorsWithMetricsPrediction() throws IOException {
         // Given
-        DTOQualityFactor dtoQualityFactorCurrentEvaluation = domainObjectsBuilder.buildDTOQualityFactor();
-        List<DTOQualityFactor> currentEvaluation = new ArrayList<>();
-        currentEvaluation.add(dtoQualityFactorCurrentEvaluation);
+        DTODetailedFactorEvaluation dtoDetailedFactorEvaluationCurrentEvaluation = domainObjectsBuilder.buildDTOQualityFactor();
+        List<DTODetailedFactorEvaluation> currentEvaluation = new ArrayList<>();
+        currentEvaluation.add(dtoDetailedFactorEvaluationCurrentEvaluation);
 
-        DTOQualityFactor dtoQualityFactorPrediction = domainObjectsBuilder.buildDTOQualityFactorForPrediction();
-        List<DTOQualityFactor> prediction = new ArrayList<>();
-        prediction.add(dtoQualityFactorPrediction);
+        DTODetailedFactorEvaluation dtoDetailedFactorEvaluationPrediction = domainObjectsBuilder.buildDTOQualityFactorForPrediction();
+        List<DTODetailedFactorEvaluation> prediction = new ArrayList<>();
+        prediction.add(dtoDetailedFactorEvaluationPrediction);
         String technique = "PROPHET";
         String freq = "7";
         String horizon = "7";
         String projectExternalId = "test";
-        when(qmaForecast.ForecastFactor(currentEvaluation, technique, freq, horizon, projectExternalId)).thenReturn(prediction);
+        when(qmaForecast.ForecastDetailedFactor(currentEvaluation, technique, freq, horizon, projectExternalId)).thenReturn(prediction);
 
         // When
-        List<DTOQualityFactor> predictionFound = qualityFactorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, freq, horizon, projectExternalId);
+        List<DTODetailedFactorEvaluation> predictionFound = factorsController.getFactorsWithMetricsPrediction(currentEvaluation, technique, freq, horizon, projectExternalId);
 
         // Then
         assertEquals(prediction.size(), predictionFound.size());
-        assertEquals(dtoQualityFactorPrediction, predictionFound.get(0));
+        assertEquals(dtoDetailedFactorEvaluationPrediction, predictionFound.get(0));
     }
 
     @Test
     public void simulate() throws IOException {
         // Given
-        DTOFactor dtoFactor = domainObjectsBuilder.buildDTOFactor();
-        List<DTOFactor> dtoFactorList = new ArrayList<>();
-        dtoFactorList.add(dtoFactor);
+        DTOFactorEvaluation dtoFactorEvaluation = domainObjectsBuilder.buildDTOFactor();
+        List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
+        dtoFactorEvaluationList.add(dtoFactorEvaluation);
 
         String projectExternalId = "test";
         String metricId = "fasttests";
@@ -253,14 +254,14 @@ public class QualityFactorsControllerTest {
         Map<String, Float> metricsMap = new HashMap<>();
         metricsMap.put(metricId, metricValue);
 
-        when(qmaSimulation.simulateQualityFactors(metricsMap, projectExternalId, date)).thenReturn(dtoFactorList);
+        when(qmaSimulation.simulateQualityFactors(metricsMap, projectExternalId,null, date)).thenReturn(dtoFactorEvaluationList);
 
         // When
-        List<DTOFactor> factorsSimulationList = qualityFactorsController.simulate(metricsMap, projectExternalId, date);
+        List<DTOFactorEvaluation> factorsSimulationList = factorsController.simulate(metricsMap, projectExternalId, null, date);
 
         // Then
-        assertEquals(dtoFactorList.size(), factorsSimulationList.size());
-        assertEquals(dtoFactor, factorsSimulationList.get(0));
+        assertEquals(dtoFactorEvaluationList.size(), factorsSimulationList.size());
+        assertEquals(dtoFactorEvaluation, factorsSimulationList.get(0));
     }
 
     @Test
@@ -272,7 +273,7 @@ public class QualityFactorsControllerTest {
         float value = 0.8f;
 
         // When
-        String label = qualityFactorsController.getFactorLabelFromValue(value);
+        String label = factorsController.getFactorLabelFromValue(value);
 
         // Then
         String expectedLabel = "Good";
@@ -288,7 +289,7 @@ public class QualityFactorsControllerTest {
         float value = 0.5f;
 
         // When
-        String label = qualityFactorsController.getFactorLabelFromValue(value);
+        String label = factorsController.getFactorLabelFromValue(value);
 
         // Then
         String expectedLabel = "Neutral";
@@ -304,7 +305,7 @@ public class QualityFactorsControllerTest {
         float value = 0.2f;
 
         // When
-        String label = qualityFactorsController.getFactorLabelFromValue(value);
+        String label = factorsController.getFactorLabelFromValue(value);
 
         // Then
         String expectedLabel = "Bad";

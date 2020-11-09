@@ -1,5 +1,8 @@
 var isdsi = true;
 var isqf = false;
+var isdqf = false;
+var isSi = false;
+
 console.log("sessionStorage: profile_id");
 console.log(sessionStorage.getItem("profile_id"));
 var profileId = sessionStorage.getItem("profile_id");
@@ -44,6 +47,7 @@ function getData() {
             type: "GET",
             async: true,
             success: function (data) {
+                sortDataAlphabetically(data);
                 //get historical data from API
                 jQuery.ajax({
                     dataType: "json",
@@ -56,6 +60,7 @@ function getData() {
                     type: "GET",
                     async: true,
                     success: function (data_hist) {
+                        sortDataAlphabetically(data_hist);
                         // generate historical serie of values
                         for (var i = 0; i < data_hist.length; ++i) {
                             // order data
@@ -64,7 +69,6 @@ function getData() {
                             if (data_hist[i].factors.length > 0) {
                                 texts.push(data_hist[i].name);
                                 ids.push(data_hist[i].id);
-
                                 value.push([[]]);
                                 last = data_hist[i].factors[0].id;
                                 labels.push([data_hist[i].factors[0].name]);
@@ -143,6 +147,15 @@ function getData() {
             }
         });
     }
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getFactorsCategories () {
