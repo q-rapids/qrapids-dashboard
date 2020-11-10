@@ -5,10 +5,10 @@ var isdqf = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
-    var profileId = sessionStorage.getItem("profile_id");
-    url = parseURLComposed("../api/qualityFactors/metrics/historical?profile="+profileId);
+    url = parseURLComposed("../api/qualityFactors/metrics/historical");
 } else {
-    url = parseURLComposed("../api/metrics/historical");
+    var profileId = sessionStorage.getItem("profile_id");
+    url = parseURLComposed("../api/metrics/historical?profile="+profileId);
 }
 
 //initialize data vectors

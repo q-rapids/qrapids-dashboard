@@ -683,7 +683,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             var url = "../api/qualityFactors/" + id + "/metrics/current"
         }
         else {
-            var url = "../api/metrics/current";
+            var profileId = sessionStorage.getItem("profile_id");
+            var url = "../api/metrics/current?profile="+profileId;
         }
         $http({
             method : "GET",
@@ -713,7 +714,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             var url = "../api/qualityFactors/" + id + "/metrics/historical";
         }
         else {
-            var url = "../api/metrics/historical";
+            var profileId = sessionStorage.getItem("profile_id");
+            var url = "../api/metrics/historical?profile="+profileId;
         }
         $http({
             method : "GET",

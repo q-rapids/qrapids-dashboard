@@ -106,10 +106,10 @@ public class MetricsControllerTest {
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String projectExternalId = "test";
-        when(qmaMetrics.CurrentEvaluation(null, projectExternalId)).thenReturn(dtoMetricEvaluationList);
+        when(qmaMetrics.CurrentEvaluation(null, projectExternalId, null)).thenReturn(dtoMetricEvaluationList);
 
         // When
-        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getAllMetricsCurrentEvaluation(projectExternalId);
+        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getAllMetricsCurrentEvaluation(projectExternalId, null);
 
         // Then
         assertEquals(dtoMetricEvaluationList.size(), dtoMetricEvaluationListFound.size());
@@ -138,7 +138,7 @@ public class MetricsControllerTest {
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
         String projectExternalId = "test";
         String factorId = "testingperformance";
-        when(qmaMetrics.CurrentEvaluation(factorId, projectExternalId)).thenReturn(dtoMetricEvaluationList);
+        when(qmaMetrics.CurrentEvaluation(factorId, projectExternalId, null)).thenReturn(dtoMetricEvaluationList);
 
         // When
         List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getMetricsForQualityFactorCurrentEvaluation(factorId, projectExternalId);
@@ -157,10 +157,10 @@ public class MetricsControllerTest {
         String projectExternalId = "test";
         LocalDate from = LocalDate.parse("2019-08-01");
         LocalDate to = LocalDate.parse("2019-08-31");
-        when(qmaMetrics.SingleHistoricalData(dtoMetricEvaluation.getId(), from, to, projectExternalId)).thenReturn(dtoMetricEvaluationList);
+        when(qmaMetrics.SingleHistoricalData(dtoMetricEvaluation.getId(), from, to, projectExternalId, null)).thenReturn(dtoMetricEvaluationList);
 
         // When
-        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getSingleMetricHistoricalEvaluation(dtoMetricEvaluation.getId(), projectExternalId, from, to);
+        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getSingleMetricHistoricalEvaluation(dtoMetricEvaluation.getId(), projectExternalId, null, from, to);
 
         // Then
         assertEquals(dtoMetricEvaluationList.size(), dtoMetricEvaluationListFound.size());
@@ -176,10 +176,10 @@ public class MetricsControllerTest {
         String projectExternalId = "test";
         LocalDate from = LocalDate.parse("2019-08-01");
         LocalDate to = LocalDate.parse("2019-08-31");
-        when(qmaMetrics.HistoricalData(null, from, to, projectExternalId)).thenReturn(dtoMetricEvaluationList);
+        when(qmaMetrics.HistoricalData(null, from, to, projectExternalId, null)).thenReturn(dtoMetricEvaluationList);
 
         // When
-        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getAllMetricsHistoricalEvaluation(projectExternalId, from, to);
+        List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getAllMetricsHistoricalEvaluation(projectExternalId,null, from, to);
 
         // Then
         assertEquals(dtoMetricEvaluationList.size(), dtoMetricEvaluationListFound.size());
@@ -196,7 +196,7 @@ public class MetricsControllerTest {
         String projectExternalId = "test";
         LocalDate from = LocalDate.parse("2019-08-01");
         LocalDate to = LocalDate.parse("2019-08-31");
-        when(qmaMetrics.HistoricalData(factorId, from, to, projectExternalId)).thenReturn(dtoMetricEvaluationList);
+        when(qmaMetrics.HistoricalData(factorId, from, to, projectExternalId, null)).thenReturn(dtoMetricEvaluationList);
 
         // When
         List<DTOMetricEvaluation> dtoMetricEvaluationListFound = metricsController.getMetricsForQualityFactorHistoricalEvaluation(factorId, projectExternalId, from, to);

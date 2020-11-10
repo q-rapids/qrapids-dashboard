@@ -277,11 +277,7 @@ function clickOnTree(e){
             var allowedSIsP = document.createElement('p');
             allowedSIsP.appendChild(document.createTextNode("Allowed Strategic Indicators: "));
             allowedSIsP.setAttribute('id', 'allowedSIsP');
-            if (inputMetrics.checked) { // put it in grey color if it's METRICS quality level
-                allowedSIsP.setAttribute('style', 'color:grey; font-size: 18px; margin-bottom: 1%');
-            } else {
-                allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
-            }
+            allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
             var selSIsBtn = document.createElement('button');
             selSIsBtn.classList.add("btn");
             selSIsBtn.setAttribute('id', 'selSIsBtn');
@@ -849,32 +845,30 @@ $("#submitProfileProjectSelectSIsModalBtn").click(function () {
 });
 
 function showSIsList() {
-    if (qualityLevel != 'METRICS') {
-        var allowedProjectsBox = document.getElementById("allowedProjectsBox");
-        var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
-        prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
-        if (projectSIs.find(x => x.prj == prjExternalID)) {
-            fillAllowedSIsBox();
-        } else {
-            if (currentProfile) { // saved project from profile
-                if (currentProfile.allSIs.find(x => x.first == prjID) && (currentProfile.allSIs.find(x => x.first == prjID).second)) {
-                    // "all si" = true - show all SIs del project
-                    var url = "/api/strategicIndicators?prj=" + prjExternalID;
-                    fillAllowedSIsBox(url);
-                } else {
-                    // "all si" = false - show only specified SIs del project
-                    var url = "/api/strategicIndicators?prj=" + prjExternalID + "&profile=" + currentProfileID;
-                    fillAllowedSIsBox(url);
-                }
-            } else { // new added project to profile
-                // by default show all si
+    var allowedProjectsBox = document.getElementById("allowedProjectsBox");
+    var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
+    prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
+    if (projectSIs.find(x => x.prj == prjExternalID)) {
+        fillAllowedSIsBox();
+    } else {
+        if (currentProfile) { // saved project from profile
+            if (currentProfile.allSIs.find(x => x.first == prjID) && (currentProfile.allSIs.find(x => x.first == prjID).second)) {
+                // "all si" = true - show all SIs del project
                 var url = "/api/strategicIndicators?prj=" + prjExternalID;
                 fillAllowedSIsBox(url);
+            } else {
+                // "all si" = false - show only specified SIs del project
+                var url = "/api/strategicIndicators?prj=" + prjExternalID + "&profile=" + currentProfileID;
+                fillAllowedSIsBox(url);
             }
+        } else { // new added project to profile
+            // by default show all si
+            var url = "/api/strategicIndicators?prj=" + prjExternalID;
+            fillAllowedSIsBox(url);
         }
-        // able button to edit SIs for project of profile
-        document.getElementById('selSIsBtn').disabled = false;
     }
+    // able button to edit SIs for project of profile
+    document.getElementById('selSIsBtn').disabled = false;
 };
 
 function fillAllowedSIsBox(url){
@@ -947,11 +941,7 @@ function updateQualityLevel() {
     document.getElementById('selSIsBtn').disabled = true;
     // set grey color for title when SI selection is not allowed
     var allowedSIsP = document.getElementById('allowedSIsP');
-    if ($("input[name=qualityLevelForm]:checked").val() == "METRICS") {
-        allowedSIsP.setAttribute('style', 'color: grey; font-size: 18px; margin-bottom: 1%');
-    } else {
-        allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
-    }
+    allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
 }
 
 function moveProjectItemsLeft() {

@@ -216,7 +216,7 @@ public class QMAQualityFactors {
             else found = true; // because we want make fetch
             // only return Detailed Quality Factor if it is in local database
             if (found) {
-                qf.add(new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(qualityFactor.getMetrics())));
+                qf.add(new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(qualityFactor.getMetrics(), project.getExternalId() ,profileId)));
             }
         }
 

@@ -34,7 +34,7 @@ import java.util.Optional;
 @Component
 public class QMADetailedStrategicIndicators {
 
-    // it was made to use qfRep in FactorEvaluationDTOListToDTOFactorList method
+    // it was made to use these variables in FactorEvaluationDTOListToDTOFactorList static method
     private static QualityFactorRepository qfRep;
     private static ProfilesController profilesController;
     private static ProjectRepository prjRep;
@@ -171,6 +171,7 @@ public class QMADetailedStrategicIndicators {
                 }
             }
         }
+        // filter by profile
         Optional<Project> project = prjRep.findById(prjID);
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);

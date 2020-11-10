@@ -313,10 +313,10 @@ public class FactorsController {
         // We need the metrics for an specific day, not the last evaluation
         if (evaluationDate == null) {
             evaluationDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            metricList = metricsController.getAllMetricsCurrentEvaluation(project);
+            metricList = metricsController.getAllMetricsCurrentEvaluation(project, null);
         }
         else
-            metricList = metricsController.getAllMetricsHistoricalEvaluation(project, evaluationDate, evaluationDate);
+            metricList = metricsController.getAllMetricsHistoricalEvaluation(project, null, evaluationDate, evaluationDate);
         metricEvaluationQma.setMetrics(metricList);
 
         return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
@@ -522,7 +522,7 @@ public class FactorsController {
         // We will compute the evaluation values for the QF for THIS CONCRETE component
 
         // 1.- We need to remove old data from metric evaluations in the quality_factors relationship attribute
-        metricEvaluationQma.setMetrics(metricsController.getAllMetricsEvaluation(prj));
+        metricEvaluationQma.setMetrics(metricsController.getAllMetricsEvaluation(prj, null));
         metricEvaluationQma.clearQualityFactorsRelations(qf.getExternalId());
         //metricEvaluationQma.clearQualityFactorsRelations(evaluationDate, qf.getExternalId());
 

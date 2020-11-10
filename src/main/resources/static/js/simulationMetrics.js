@@ -8,8 +8,10 @@ var detailedCharts = [];
 var factorsCharts = [];
 var categories = [];
 
+var profileId = sessionStorage.getItem("profile_id");
+
 function getAllMetrics(){
-    var url = "../api/metrics/current";
+    var url = "../api/metrics/current?profile="+profileId;
     $.ajax({
         url : url,
         type: "GET",
@@ -137,12 +139,7 @@ function showMetricsSliders () {
 }
 
 function getDetailedStrategicIndicators () {
-
-    console.log("sessionStorage: profile_id");
-    console.log(sessionStorage.getItem("profile_id"));
-    var profileId = sessionStorage.getItem("profile_id");
-
-    jQuery.ajax({
+        jQuery.ajax({
         dataType: "json",
         url: "../api/strategicIndicators/qualityFactors/current?profile="+profileId,
         cache: false,
@@ -271,7 +268,6 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
 }
 
 function getFactors () {
-    var profileId = sessionStorage.getItem("profile_id");
     jQuery.ajax({
         dataType: "json",
         url: "../api/qualityFactors/metrics/current?profile="+profileId,
@@ -533,10 +529,6 @@ function simulateSI (qualityFactors) {
 
     var formData = new FormData();
     formData.append("factors", JSON.stringify(qfs));
-
-    console.log("sessionStorage: profile_id");
-    console.log(sessionStorage.getItem("profile_id"));
-    var profileId = sessionStorage.getItem("profile_id");
 
     $.ajax({
         url: "../api/strategicIndicators/simulate?profile="+profileId,

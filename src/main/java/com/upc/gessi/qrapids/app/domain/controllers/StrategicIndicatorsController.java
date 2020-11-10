@@ -295,7 +295,7 @@ public class StrategicIndicatorsController {
 
 
     public void trainForecastModelsSingleProject(String project, String profile, String technique) throws IOException, CategoriesException, ProjectNotFoundException {
-        List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(project);
+        List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(project, profile);
         qmaForecast.trainMetricForecast(metrics, "7", project, technique);
 
         List<DTODetailedFactorEvaluation> factors = factorsController.getAllFactorsWithMetricsCurrentEvaluation(project, profile, false);
