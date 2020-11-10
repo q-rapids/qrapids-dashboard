@@ -1,5 +1,10 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
+import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import org.springframework.data.util.Pair;
+
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -13,6 +18,9 @@ public class DTODetailedFactorEvaluation {
     //class attributes
     private String id;
     private String name;
+    private LocalDate date;
+    private Float value;
+    private String value_description;
     private List<DTOMetricEvaluation> metrics;
 
     /**
@@ -41,6 +49,29 @@ public class DTODetailedFactorEvaluation {
 
     public String getName() {
         return this.name.isEmpty() ? this.id : this.name;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public Float getValue() {
+        return value;
+    }
+
+    public void setValue(Float value) {
+        this.value = value;
+        setValue_description(value);
+    }
+
+    public String getValue_description() { return value_description;}
+
+    private void setValue_description(Float value) {
+        this.value_description = FactorsController.buildDescriptiveLabelAndValue(value);
     }
 
     public List<DTOMetricEvaluation> getMetrics() {

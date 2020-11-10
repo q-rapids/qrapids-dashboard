@@ -36,38 +36,22 @@ function getData() {
             console.log("getData() in QF Current");
             sortDataAlphabetically(data);
             console.log(data);
-            if (id) { // in case we show one detailed factor
-                titles.push(getParameterByName('name'));
-                ids.push(getParameterByName('id'));
+            for (i = 0; i < data.length; ++i) {
+                //for each qf save name to titles vector and id to ids vector
+                titles.push(data[i].name + "<br/>" + data[i].value_description);
+                ids.push(data[i].id);
                 labels.push([]);
                 values.push([]);
-                for (j = 0; j < data.length; ++j) {
+                for (j = 0; j < data[i].metrics.length; ++j) {
                     //for each metric save name to labels vector and value to values vector
-                    if (data[j].name.length < 27)
-                        labels[0].push(data[j].name);
+                    if (data[i].metrics[j].name.length < 27)
+                        labels[i].push(data[i].metrics[j].name);
                     else
-                        labels[0].push(data[j].name.slice(0, 23) + "...");
-                    values[0].push(data[j].value);
+                        labels[i].push(data[i].metrics[j].name.slice(0, 23) + "...");
+                    values[i].push(data[i].metrics[j].value);
                 }
-                getMetricsCategories();
-            } else { // in case we show all detailed factors
-                for (i = 0; i < data.length; ++i) {
-                    //for each qf save name to titles vector and id to ids vector
-                    titles.push(data[i].name);
-                    ids.push(data[i].id);
-                    labels.push([]);
-                    values.push([]);
-                    for (j = 0; j < data[i].metrics.length; ++j) {
-                        //for each metric save name to labels vector and value to values vector
-                        if (data[i].metrics[j].name.length < 27)
-                            labels[i].push(data[i].metrics[j].name);
-                        else
-                            labels[i].push(data[i].metrics[j].name.slice(0, 23) + "...");
-                        values[i].push(data[i].metrics[j].value);
-                    }
-                }
-                getMetricsCategories();
             }
+            getMetricsCategories();
         }
     });
 

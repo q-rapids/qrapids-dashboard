@@ -311,9 +311,16 @@ public class Factors {
 
     @RequestMapping("/api/qualityFactors/{id}/metrics/current")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOMetricEvaluation> getMetricsCurrentEvaluationForQualityFactor(@RequestParam(value = "prj") String prj, @PathVariable String id) {
+    public List<DTODetailedFactorEvaluation> getMetricsCurrentEvaluationForQualityFactor(@RequestParam(value = "prj") String prj, @PathVariable String id) {
         try {
-            return metricsController.getMetricsForQualityFactorCurrentEvaluation(id, prj);
+            List<DTOMetricEvaluation> metrics = metricsController.getMetricsForQualityFactorCurrentEvaluation(id, prj);
+            DTOFactorEvaluation f = factorsController.getSingleFactorEvaluation(id,prj);
+            List<DTODetailedFactorEvaluation> result = new ArrayList<>();
+            DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(id,f.getName(),metrics);
+            df.setValue(f.getValue());
+            df.setDate(f.getDate());
+            result.add(df);
+            return result;
         } catch (ElasticsearchStatusException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);

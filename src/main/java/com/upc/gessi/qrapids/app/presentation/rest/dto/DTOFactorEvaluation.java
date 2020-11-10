@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
@@ -141,7 +142,7 @@ public class DTOFactorEvaluation {
     public String getDescription() {return this.description; }
 
     private void setValue_description(Float value) {
-        value_description = String.format("%.2f",value);
+        this.value_description = FactorsController.buildDescriptiveLabelAndValue(value);
     }
 
     public void setDate(LocalDate date) {
