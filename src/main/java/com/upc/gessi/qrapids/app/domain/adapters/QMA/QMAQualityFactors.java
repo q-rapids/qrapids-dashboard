@@ -220,6 +220,11 @@ public class QMAQualityFactors {
                 EvaluationDTO evaluation = qualityFactor.getEvaluations().get(0);
                 df.setDate(evaluation.getEvaluationDate());
                 df.setValue(evaluation.getValue());
+                df.setMismatchDays(evaluation.getMismatchDays());
+                if (evaluation.getMissingElements() == null)
+                    df.setMissingMetrics(new ArrayList<>());
+                else
+                    df.setMissingMetrics(evaluation.getMissingElements());
                 qf.add(df);
             }
         }

@@ -15,6 +15,7 @@ var titles = [];
 var labels = [];
 var ids = [];
 var values = [];
+var warnings = [];
 var categories = [];
 
 function getData() {
@@ -50,6 +51,37 @@ function getData() {
                         labels[i].push(data[i].metrics[j].name.slice(0, 23) + "...");
                     values[i].push(data[i].metrics[j].value);
                 }
+
+                // Warnings
+                var messages = [];
+
+                var today = new Date();
+                today.setHours(0);
+                today.setMinutes(0);
+                today.setSeconds(0);
+                var millisecondsInOneDay = 86400000;
+                var millisecondsBetweenAssessmentAndToday = today.getTime() - new Date(data[i].date).getTime();
+                var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
+                if (oldAssessment) {
+                    var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
+                    var message = "The assessment is " + daysOld + " days old.";
+                    messages.push(message)
+                }
+
+                var mismatchDays = data[i].mismatchDays;
+                if (mismatchDays > 0) {
+                    var message = "The assessment of the factors and the strategic indicator has a difference of " + mismatchDays + " days.";
+                    messages.push(message);
+                }
+
+                var missingMetrics = data[i].missingMetrics;
+                if (missingMetrics.length > 0) {
+                    var factors = missingMetrics.length === 1 ? missingMetrics[0] : [ missingMetrics.slice(0, -1).join(", "), missingMetrics[missingMetrics.length - 1] ].join(" and ");
+                    var message = "The following metrics were missing when the quality factor was assessed: " + factors + ".";
+                    messages.push(message);
+                }
+
+                warnings.push(messages);
             }
             getMetricsCategories();
         }

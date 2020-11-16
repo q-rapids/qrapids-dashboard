@@ -292,6 +292,10 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
 function drawSimulationNeedle (container, width, height, color) {
     d3.selectAll('.simulation').remove();
     sortDataAlphabetically();
+
+    console.log("drawSimulationNeedle");
+    console.log(data);
+
     for (i = 0; i < data.length; ++i) {
         var divId = container + "DivChart" + i;
         var svg = d3.select('#' + divId).select("svg");
@@ -342,6 +346,8 @@ function drawSimulationNeedle (container, width, height, color) {
         var afterValue = data[i].value.first.toFixed(2);
 
         if (beforeValue < afterValue) {
+            if (beforeValue == 0)
+                beforeValue = 0.001;
             var inc = ((afterValue - beforeValue)/beforeValue)*100;
             svg.append("polygon") // increase icon
                 .attr("class", "simulation")

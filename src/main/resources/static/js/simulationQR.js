@@ -181,6 +181,7 @@ function getFactors () {
         type: "GET",
         async: true,
         success: function (data) {
+            sortMyDataAlphabetically(data);
             var titles = [];
             var ids = [];
             var labels = [];
@@ -616,42 +617,48 @@ $('#apply').click(function () {
     var date = metrics[0].date;
 
     $.ajax({
-        url: "../api/qualityFactors/simulate?date="+date,
+        url: "../api/qualityFactors/simulate?date=" + date + "&profile="+profileId,
         data: JSON.stringify(newMetrics),
         type: "POST",
         contentType: 'application/json',
         success: function(qualityFactors) {
-            for (var i = 0; i < strategicIndicators.length; i++) {
-                var strategicIndicator = strategicIndicators[i];
-                var dataset = {
-                    label: strategicIndicator.name,
-                    backgroundColor: 'rgba(5, 121, 168, 0.2)',
-                    borderColor: simulationColor,
-                    pointBackgroundColor: simulationColor,
-                    pointBorderColor: simulationColor,
-                    data: [],
-                    fill: false
-                };
-                for (var j = 0; j < strategicIndicator.factors.length; j++) {
-                    var factor = strategicIndicator.factors[j];
-                    var newFactor = qualityFactors.find(function (element) {
-                        return element.id === factor.id;
-                    });
-                    if (newFactor)
-                        dataset.data.push(newFactor.value);
-                }
+            // only for METRICS_FACTORS profile: simulate gauge factors
+            if (sessionStorage.getItem("profile_qualitylvl") == "METRICS_FACTORS") {
+                data = qualityFactors;
+                drawSimulationNeedleFactors("gaugeChartFactors", 200, 237, simulationColor);
+            } else {
+                for (var i = 0; i < strategicIndicators.length; i++) {
+                    var strategicIndicator = strategicIndicators[i];
+                    var dataset = {
+                        label: strategicIndicator.name,
+                        backgroundColor: 'rgba(5, 121, 168, 0.2)',
+                        borderColor: simulationColor,
+                        pointBackgroundColor: simulationColor,
+                        pointBorderColor: simulationColor,
+                        data: [],
+                        fill: false
+                    };
+                    for (var j = 0; j < strategicIndicator.factors.length; j++) {
+                        var factor = strategicIndicator.factors[j];
+                        var newFactor = qualityFactors.find(function (element) {
+                            return element.id === factor.id;
+                        });
+                        if (newFactor)
+                            dataset.data.push(newFactor.value);
+                    }
 
-                if (detailedCharts[i].data.datasets.length > 4)
-                    detailedCharts[i].data.datasets[0].data = dataset.data;
-                else {
-                    detailedCharts[i].data.datasets.unshift(dataset);
-                    // change categories fill property (we add simulated data)
-                    detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill +1;
-                    detailedCharts[i].data.datasets[4].fill = detailedCharts[i].data.datasets[4].fill +1;
+                    if (detailedCharts[i].data.datasets.length > 4)
+                        detailedCharts[i].data.datasets[0].data = dataset.data;
+                    else {
+                        detailedCharts[i].data.datasets.unshift(dataset);
+                        // change categories fill property (we add simulated data)
+                        detailedCharts[i].data.datasets[3].fill = detailedCharts[i].data.datasets[3].fill + 1;
+                        detailedCharts[i].data.datasets[4].fill = detailedCharts[i].data.datasets[4].fill + 1;
+                    }
+                    detailedCharts[i].update();
                 }
-                detailedCharts[i].update();
+                simulateSI(qualityFactors);
             }
-            simulateSI(qualityFactors);
         },
         error: function () {
             alert("Metric simulation failed");
@@ -816,16 +823,20 @@ function hexToRgbA(hex,a=1){ // (hex color, opacity)
 window.onload = function () {
     $("#simulationColor").css("background-color", simulationColor);
     $("#simulationColorDetailed").css("background-color", simulationColor);
+    $("#simulationColorDetailedFactors").css("background-color", simulationColor);
     $("#simulationColorFactors").css("background-color", simulationColor);
     $("#currentColor").css("background-color", currentColor);
     $("#currentColorDetailed").css("background-color", currentColor);
+    $("#currentColorDetailedFactors").css("background-color", currentColor);
     $("#currentColorFactors").css("background-color", currentColor);
 
     getFactors();
     if (sessionStorage.getItem("profile_qualitylvl") == "ALL") {
         getDetailedStrategicIndicators();
         getData(200, 237, false, false, currentColor);
+        document.getElementById("gaugeChartFactors").hidden = true;
     } else { // in case of metrics&factors profile quality level we only show factors info
+        getDataFactors(200, 237, false, currentColor);
         document.getElementById("radarDetailed").hidden = true;
         document.getElementById("gaugeChart").hidden = true;
     }

@@ -1,8 +1,6 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
-import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
-import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,6 +19,8 @@ public class DTODetailedFactorEvaluation {
     private LocalDate date;
     private Float value;
     private String value_description;
+    private int mismatchDays;
+    private List<String> missingMetrics;
     private List<DTOMetricEvaluation> metrics;
 
     /**
@@ -72,6 +72,22 @@ public class DTODetailedFactorEvaluation {
 
     private void setValue_description(Float value) {
         this.value_description = FactorsController.buildDescriptiveLabelAndValue(value);
+    }
+
+    public int getMismatchDays() {
+        return mismatchDays;
+    }
+
+    public void setMismatchDays(int mismatchDays) {
+        this.mismatchDays = mismatchDays;
+    }
+
+    public List<String> getMissingMetrics() {
+        return missingMetrics;
+    }
+
+    public void setMissingMetrics(List<String> missingMetrics) {
+        this.missingMetrics = missingMetrics;
     }
 
     public List<DTOMetricEvaluation> getMetrics() {

@@ -15,14 +15,14 @@
 <p th:replace="Fragments/TemplateDashboard :: navLinkQF"></p>
 <br/>
 <br/>
-<div id="gaugeChart" class="container" style="text-align:center;"></div>
+<div id="gaugeChartFactors" class="container" style="text-align:center;"></div>
 <br/>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
-<script type="text/javascript" src="../../static/js/gaugeChart.js" th:src="@{/js/gaugeChartFactor.js}"></script>
+<script type="text/javascript" src="../../static/js/gaugeChartFactor.js" th:src="@{/js/gaugeChartFactor.js}"></script>
 <script>
     window.onload = function() {
-        getData(200, 200, true, true);
+        getDataFactors(200, 200, true, true);
     };
 </script>
 </html>
