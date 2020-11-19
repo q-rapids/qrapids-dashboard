@@ -257,7 +257,27 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
                     ticks: {
                         min: 0,
                         max: 1,
-                        maxTicksLimit: 5
+                        stepSize: 0.2,
+                    }
+                },
+                tooltips: {
+                    filter: function (tooltipItem) {
+                        if ((tooltipItem.datasetIndex === 0) || (tooltipItem.datasetIndex === 1))
+                            return true;
+                    },
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index] || '';
+
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += Math.round(tooltipItem.yLabel * 100) / 100;
+                            return label;
+                        },
+                        title: function(tooltipItem, data) {
+                            return data.datasets[0].label;
+                        }
                     }
                 }
             }
@@ -407,7 +427,27 @@ function showFactors (titles, ids, labels, values) {
                     ticks: {
                         min: 0,
                         max: 1,
-                        maxTicksLimit: 5
+                        stepSize: 0.2,
+                    }
+                },
+                tooltips: {
+                    filter: function (tooltipItem) {
+                        if ((tooltipItem.datasetIndex === 0) || (tooltipItem.datasetIndex === 1))
+                            return true;
+                    },
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index] || '';
+
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += Math.round(tooltipItem.yLabel * 100) / 100;
+                            return label;
+                        },
+                        title: function(tooltipItem, data) {
+                            return data.datasets[0].label;
+                        }
                     }
                 }
             }

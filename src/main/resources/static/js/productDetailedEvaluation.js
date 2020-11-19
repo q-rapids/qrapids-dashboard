@@ -130,7 +130,26 @@ function drawChart() {
                     ticks: {
                         min: 0,
                         max: 1,
-                        maxTicksLimit: 5
+                        stepSize: 0.2,
+                    }
+                },
+                tooltips: {
+                    filter: function (tooltipItem) {
+                        return tooltipItem.datasetIndex === 0;
+                    },
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index] || '';
+
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += Math.round(tooltipItem.yLabel * 100) / 100;
+                            return label;
+                        },
+                        title: function (tooltipItem, data) {
+                            return data.datasets[0].label;
+                        }
                     }
                 }
             }

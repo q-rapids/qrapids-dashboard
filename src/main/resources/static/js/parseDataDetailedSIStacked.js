@@ -5,7 +5,12 @@ if (serverUrl) {
     url = serverUrl + url;
 }
 
+var isdsi = true;
+var colorList = ['rgba(1, 119, 166, 0.6)', 'rgba(255, 153, 51, 0.6)', 'rgba(51, 204, 51, 0.6)', 'rgba(255, 80, 80, 0.6)', 'rgba(204, 201, 53, 0.6)', 'rgba(192, 96, 201, 0.6)'];
+
 //initialize data vectors
+var ids = [];
+var colorsForPolar = [];
 var titles = [];
 var labels = [];
 var weights = [];
@@ -13,11 +18,14 @@ var weightedValues = [];
 var assessmentValues = [];
 
 var categories = [];
+var categoriesForPolar = [];
 
 var metrics = false;
 
 function getData() {
     //empty previous data
+    ids = [];
+    colorsForPolar = [];
     titles = [];
     labels = [];
     weights = [];
@@ -25,6 +33,7 @@ function getData() {
     assessmentValues = [];
 
     getCategories();
+    getFactorsCategories();
 
     //get data from API
     jQuery.ajax({
@@ -42,6 +51,8 @@ function getData() {
             if (!id) { // if all DSI are required
                 for(i = 0; i < data.length; i++) { // while DSI
                     titles.push(data[i].name + ": &nbsp;" + data[i].valueDescription);
+                    ids.push(data[i].id);
+                    colorsForPolar.push([]);
                     labels.push([]);
                     weights.push([]);
                     weightedValues.push([]);
@@ -55,6 +66,7 @@ function getData() {
                         weights[i].push(data[i].factors[j].weight);
                         weightedValues[i].push(data[i].factors[j].weightedValue);
                         assessmentValues[i].push(data[i].factors[j].assessmentValue);
+                        colorsForPolar[i].push(colorList[j%colorList.length]);
                     }
                 }
             } else { // if individual DSI is required
@@ -66,6 +78,8 @@ function getData() {
                     return obj.id === id
                 });
                 titles.push(d.name + ": &nbsp;" + d.valueDescription);
+                ids.push(d.id);
+                colorsForPolar.push([]);
                 labels.push([]);
                 weights.push([]);
                 weightedValues.push([]);
@@ -79,9 +93,21 @@ function getData() {
                     weights[0].push(d.factors[j].weight);
                     weightedValues[0].push(d.factors[j].weightedValue);
                     assessmentValues[0].push(d.factors[j].assessmentValue);
+                    colorsForPolar[0].push(colorList[j%colorList.length]);
                 }
             }
             drawChart();
+        }
+    });
+}
+
+function getFactorsCategories() {
+    jQuery.ajax({
+        url: "../api/qualityFactors/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categoriesForPolar = response;
         }
     });
 }

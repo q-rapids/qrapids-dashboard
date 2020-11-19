@@ -20,6 +20,16 @@ public class DetailedStrategicIndicatorsController {
         return "DetailedStrategicIndicators/CurrentStacked";
     }
 
+    @RequestMapping("/DetailedStrategicIndicators/CurrentChartPolar")
+    public String CurrentChartPolar(){
+        return "DetailedStrategicIndicators/CurrentPolar";
+    }
+
+    @RequestMapping("/DetailedStrategicIndicators/CurrentChartBar")
+    public String CurrentChartBar(){
+        return "DetailedStrategicIndicators/CurrentBar";
+    }
+
     @RequestMapping("/DetailedStrategicIndicators/CurrentTable")
     public String CurrentTable(){
         return "DetailedStrategicIndicators/CurrentTable";

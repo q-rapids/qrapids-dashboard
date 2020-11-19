@@ -5,7 +5,12 @@ if (serverUrl) {
     url = serverUrl + url;
 }
 
+var isdsi = false;
+var colorList = ['rgba(1, 119, 166, 0.6)', 'rgba(255, 153, 51, 0.6)', 'rgba(51, 204, 51, 0.6)', 'rgba(255, 80, 80, 0.6)', 'rgba(204, 201, 53, 0.6)', 'rgba(192, 96, 201, 0.6)'];
+
 //initialize data vectors
+var ids = [];
+var colorsForPolar = [];
 var titles = [];
 var labels = [];
 var weights = [];
@@ -13,11 +18,14 @@ var weightedValues = [];
 var assessmentValues = [];
 
 var categories = [];
+var categoriesForPolar = [];
 
 var metrics = true;
 
 function getData() {
     //empty previous data
+    ids = [];
+    colorsForPolar = [];
     titles = [];
     labels = [];
     weights = [];
@@ -25,6 +33,7 @@ function getData() {
     assessmentValues = [];
 
     getCategories();
+    getMetricsCategories();
 
     //get data from API
     jQuery.ajax({
@@ -44,6 +53,8 @@ function getData() {
                         var t = data[i].factors[j].name + ": &nbsp;" + parseFloat(data[i].factors[j].assessmentValue).toFixed(2);
                         if (!titles.includes(t)) {
                             titles.push(t);
+                            ids.push(data[i].factors[j].id);
+                            var c = colorsForPolar.push([]);
                             var l = labels.push([]);
                             var w = weights.push([]);
                             var wv = weightedValues.push([]);
@@ -56,6 +67,7 @@ function getData() {
                                 weights[w - 1].push(data[i].factors[j].metrics[k].weight);
                                 weightedValues[wv - 1].push(data[i].factors[j].metrics[k].weightedValue);
                                 assessmentValues[av - 1].push(data[i].factors[j].metrics[k].assessmentValue);
+                                colorsForPolar[c - 1].push(colorList[k%colorList.length]);
                             }
                         }
                     }
@@ -69,7 +81,9 @@ function getData() {
                     return obj.id === id
                 });
                 for (i = 0; i < d.factors.length; ++i) {
+                    ids.push(d.factors[i].id);
                     titles.push(d.factors[i].name + ": &nbsp;" + parseFloat(d.factors[i].assessmentValue).toFixed(2));
+                    var c = colorsForPolar.push([]);
                     var l = labels.push([]);
                     var w = weights.push([]);
                     var wv = weightedValues.push([]);
@@ -83,11 +97,23 @@ function getData() {
                         weights[w-1].push(d.factors[i].metrics[j].weight);
                         weightedValues[wv-1].push(d.factors[i].metrics[j].weightedValue);
                         assessmentValues[av-1].push(d.factors[i].metrics[j].assessmentValue);
+                        colorsForPolar[c - 1].push(colorList[j%colorList.length]);
                     }
                 }
 
             }
             drawChart();
+        }
+    });
+}
+
+function getMetricsCategories() {
+    jQuery.ajax({
+        url: "../api/metrics/categories",
+        type: "GET",
+        async: true,
+        success: function (response) {
+            categoriesForPolar = response;
         }
     });
 }
