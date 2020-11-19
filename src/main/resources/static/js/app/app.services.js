@@ -691,7 +691,11 @@ app.controller('TablesCtrl', function($scope, $http) {
             url : url
         }).then(function mySuccess(response) {
             var data = [];
-            response.data.forEach(function (metricEval) {
+            var for_data = response.data;
+            if (id !== "") {
+                for_data = response.data[0].metrics;
+            }
+            for_data.forEach(function (metricEval) {
                 data.push({
                     id: metricEval.id,
                     date: metricEval.date,
@@ -863,7 +867,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                     date: factorEval.date,
                     name: factorEval.name,
                     description: factorEval.description,
-                    value: factorEval.value.toFixed(2).replace(".", ","),
+                    value: factorEval.value_description,
                     rationale: factorEval.rationale
                 })
             });

@@ -53,12 +53,12 @@ function getData() {
                             value[i].push([]);
                         }
                         //push date and value to values vector
-                        if (!isNaN(data[i].factors[j].value))
+                        if (!isNaN(data[i].factors[j].value.first))
                         {
                             value[i][k].push(
                                 {
                                     x: data[i].factors[j].date,
-                                    y: data[i].factors[j].value
+                                    y: data[i].factors[j].value.first
                                 }
                             );
                         }

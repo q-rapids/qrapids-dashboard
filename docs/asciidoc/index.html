@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.8">
-<meta name="author" content="v1.6, 2020-11-09">
+<meta name="author" content="v1.6, 2020-11-12">
 <title>Q-Rapids Dashboard API REST Documentation</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Q-Rapids Dashboard API REST Documentation</h1>
 <div class="details">
-<span id="author" class="author">v1.6, 2020-11-09</span><br>
+<span id="author" class="author">v1.6, 2020-11-12</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -2006,9 +2006,14 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value_description</code></p></td>
@@ -2073,7 +2078,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 804
+Content-Length: 864
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2091,9 +2096,12 @@ Content-Type: application/json;charset=UTF-8
     "id" : "testingperformance",
     "name" : "Testing Performance",
     "description" : "Performance of the tests",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "value" : {
+      "first" : 0.8,
+      "second" : "Good"
+    },
+    "value_description" : "Good (0.80)",
+    "date" : [ 2020, 11, 19 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2101,8 +2109,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-11-09"
+    "formattedDate" : "2020-11-19",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2259,9 +2267,14 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value_description</code></p></td>
@@ -2326,7 +2339,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 804
+Content-Length: 864
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2344,9 +2357,12 @@ Content-Type: application/json;charset=UTF-8
     "id" : "testingperformance",
     "name" : "Testing Performance",
     "description" : "Performance of the tests",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "value" : {
+      "first" : 0.8,
+      "second" : "Good"
+    },
+    "value_description" : "Good (0.80)",
+    "date" : [ 2020, 11, 19 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2354,8 +2370,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-11-09"
+    "formattedDate" : "2020-11-19",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2498,9 +2514,14 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value_description</code></p></td>
@@ -2565,7 +2586,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 804
+Content-Length: 864
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2583,9 +2604,12 @@ Content-Type: application/json;charset=UTF-8
     "id" : "testingperformance",
     "name" : "Testing Performance",
     "description" : "Performance of the tests",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "value" : {
+      "first" : 0.8,
+      "second" : "Good"
+    },
+    "value_description" : "Good (0.80)",
+    "date" : [ 2020, 11, 19 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2593,8 +2617,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-11-09"
+    "formattedDate" : "2020-11-19",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2759,9 +2783,14 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value_description</code></p></td>
@@ -2826,7 +2855,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 804
+Content-Length: 864
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -2844,9 +2873,12 @@ Content-Type: application/json;charset=UTF-8
     "id" : "testingperformance",
     "name" : "Testing Performance",
     "description" : "Performance of the tests",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "value" : {
+      "first" : 0.8,
+      "second" : "Good"
+    },
+    "value_description" : "Good (0.80)",
+    "date" : [ 2020, 11, 19 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -2854,8 +2886,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-11-09"
+    "formattedDate" : "2020-11-19",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -2998,9 +3030,14 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value_description</code></p></td>
@@ -3065,7 +3102,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 787
+Content-Length: 847
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -3083,9 +3120,12 @@ Content-Type: application/json;charset=UTF-8
     "id" : "testingperformance",
     "name" : "Testing Performance",
     "description" : "Performance of the tests",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "value" : {
+      "first" : 0.8,
+      "second" : "Good"
+    },
+    "value_description" : "Good (0.80)",
+    "date" : [ 2020, 11, 19 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : null,
@@ -3093,8 +3133,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-11-09"
+    "formattedDate" : "2020-11-19",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -3251,9 +3291,14 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].factors[].value_description</code></p></td>
@@ -3318,7 +3363,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 787
+Content-Length: 847
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -3336,9 +3381,12 @@ Content-Type: application/json;charset=UTF-8
     "id" : "testingperformance",
     "name" : "Testing Performance",
     "description" : "Performance of the tests",
-    "value" : 0.8,
-    "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "value" : {
+      "first" : 0.8,
+      "second" : "Good"
+    },
+    "value_description" : "Good (0.80)",
+    "date" : [ 2020, 11, 19 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : null,
@@ -3346,8 +3394,8 @@ Content-Type: application/json;charset=UTF-8
     "forecastingError" : null,
     "mismatchDays" : 0,
     "missingMetrics" : null,
-    "strategicIndicators" : [ "processperformance" ],
-    "formattedDate" : "2020-11-09"
+    "formattedDate" : "2020-11-19",
+    "strategicIndicators" : [ "processperformance" ]
   } ]
 } ]</code></pre>
 </div>
@@ -4620,9 +4668,14 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
@@ -4688,15 +4741,18 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 498
+Content-Length: 552
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "description" : "Performance of the tests",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0.80)",
+  "date" : [ 2020, 11, 19 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4704,8 +4760,8 @@ Content-Length: 498
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-11-09"
+  "formattedDate" : "2020-11-19",
+  "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
 </div>
@@ -4812,9 +4868,14 @@ Content-Length: 498
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>value_description</code></p></td>
@@ -4879,16 +4940,19 @@ Content-Length: 498
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 494
+Content-Length: 548
 Content-Type: application/json;charset=UTF-8
 
 {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "description" : "Performance of the tests",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0.80)",
+  "date" : [ 2020, 11, 19 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -4896,8 +4960,8 @@ Content-Type: application/json;charset=UTF-8
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-11-09"
+  "formattedDate" : "2020-11-19",
+  "strategicIndicators" : [ "processperformance" ]
 }</code></pre>
 </div>
 </div>
@@ -4990,9 +5054,14 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
@@ -5058,15 +5127,18 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 498
+Content-Length: 552
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "description" : "Performance of the tests",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0.80)",
+  "date" : [ 2020, 11, 19 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -5074,8 +5146,8 @@ Content-Length: 498
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-11-09"
+  "formattedDate" : "2020-11-19",
+  "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
 </div>
@@ -5168,9 +5240,14 @@ Content-Length: 498
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
@@ -5255,16 +5332,19 @@ Content-Length: 498
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 591
+Content-Length: 645
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "description" : "Performance of the tests",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0.80)",
+  "date" : [ 2020, 11, 19 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -5278,8 +5358,8 @@ Content-Type: application/json;charset=UTF-8
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-11-09"
+  "formattedDate" : "2020-11-19",
+  "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
 </div>
@@ -5359,6 +5439,31 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
@@ -5431,19 +5536,24 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 538
+Content-Length: 658
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
+  "date" : null,
+  "value" : null,
+  "value_description" : null,
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "date" : [ 2020, 11, 19 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -5544,60 +5654,105 @@ Content-Type: application/json;charset=UTF-8
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor identifier</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric description</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric value</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Metric readable value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric identifier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metric readable value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation date</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].datasource</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].datasource</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric source of data</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].rationale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].rationale</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric evaluation rationale</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence80</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence80</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 80% confidence interval</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].confidence95</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].confidence95</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Metric forecasting 95% confidence interval</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].forecastingError</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].forecastingError</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description of forecasting errors</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].qualityFactors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics[].qualityFactors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List of the quality factors that use this metric</p></td>
 </tr>
@@ -5609,22 +5764,34 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Content-Length: 724
 Content-Type: application/json;charset=UTF-8
-Content-Length: 421
 
 [ {
-  "id" : "fasttests",
-  "name" : "Fast Tests",
-  "description" : "Percentage of tests under the testing duration threshold",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
-  "datasource" : null,
-  "rationale" : "parameters: {...}, formula: ...",
-  "confidence80" : null,
-  "confidence95" : null,
-  "forecastingError" : null,
-  "qualityFactors" : [ "testingperformance" ]
+  "id" : "testingperformance",
+  "name" : "Testing Performance",
+  "date" : [ 2020, 11, 19 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0.80)",
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
+  "metrics" : [ {
+    "id" : "fasttests",
+    "name" : "Fast Tests",
+    "description" : "Percentage of tests under the testing duration threshold",
+    "value" : 0.8,
+    "value_description" : "0,80",
+    "date" : [ 2020, 11, 19 ],
+    "datasource" : null,
+    "rationale" : "parameters: {...}, formula: ...",
+    "confidence80" : null,
+    "confidence95" : null,
+    "forecastingError" : null,
+    "qualityFactors" : [ "testingperformance" ]
+  } ]
 } ]</code></pre>
 </div>
 </div>
@@ -5703,7 +5870,7 @@ Content-Length: 421
 <h4 id="_get_detailed_current_evaluation_for_strategic_indicator_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2020-11-02&amp;to=2020-11-09' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/strategicIndicators/processperformance/qualityFactors/metrics/historical?prj=test&amp;from=2020-11-12&amp;to=2020-11-19' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -5732,6 +5899,31 @@ Content-Length: 421
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
@@ -5806,19 +5998,24 @@ Content-Length: 421
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 538
+Content-Length: 658
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
+  "date" : null,
+  "value" : null,
+  "value_description" : null,
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "date" : [ 2020, 11, 19 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -5882,7 +6079,7 @@ Content-Type: application/json;charset=UTF-8
 <h4 id="_get_detailed_historical_evaluation_2_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2020-11-02&amp;to=2020-11-09' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/qualityFactors/metrics/historical?prj=test&amp;from=2020-11-12&amp;to=2020-11-19' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -5911,6 +6108,31 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].name</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
@@ -5985,19 +6207,24 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 538
+Content-Length: 658
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
+  "date" : null,
+  "value" : null,
+  "value_description" : null,
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "date" : [ 2020, 11, 19 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6114,6 +6341,31 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
@@ -6186,19 +6438,24 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 538
+Content-Length: 658
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
+  "date" : null,
+  "value" : null,
+  "value_description" : null,
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "date" : [ 2020, 11, 19 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6307,6 +6564,31 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
@@ -6379,19 +6661,24 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 538
+Content-Length: 658
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
+  "date" : null,
+  "value" : null,
+  "value_description" : null,
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "date" : [ 2020, 11, 19 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -6486,6 +6773,31 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
@@ -6578,19 +6890,24 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 643
 Content-Type: application/json;charset=UTF-8
+Content-Length: 763
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
+  "date" : null,
+  "value" : null,
+  "value_description" : null,
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "date" : [ 2020, 11, 19 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -6713,6 +7030,31 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
@@ -6805,19 +7147,24 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 643
 Content-Type: application/json;charset=UTF-8
+Content-Length: 763
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
+  "date" : null,
+  "value" : null,
+  "value_description" : null,
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "date" : [ 2020, 11, 19 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -6940,6 +7287,31 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
@@ -7032,19 +7404,24 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 643
 Content-Type: application/json;charset=UTF-8
+Content-Length: 763
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
+  "date" : null,
+  "value" : null,
+  "value_description" : null,
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "date" : [ 2020, 11, 19 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -7592,9 +7969,14 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor description</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.first</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor numerical value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value.second</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor category</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
@@ -7660,15 +8042,18 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 498
+Content-Length: 552
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
   "description" : "Performance of the tests",
-  "value" : 0.8,
-  "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
+  "value" : {
+    "first" : 0.8,
+    "second" : "Good"
+  },
+  "value_description" : "Good (0.80)",
+  "date" : [ 2020, 11, 19 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -7676,8 +8061,8 @@ Content-Length: 498
   "forecastingError" : null,
   "mismatchDays" : 0,
   "missingMetrics" : null,
-  "strategicIndicators" : [ "processperformance" ],
-  "formattedDate" : "2020-11-09"
+  "formattedDate" : "2020-11-19",
+  "strategicIndicators" : [ "processperformance" ]
 } ]</code></pre>
 </div>
 </div>
@@ -7991,7 +8376,7 @@ Content-Length: 276
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 421
+Content-Length: 422
 
 [ {
   "id" : "fasttests",
@@ -7999,7 +8384,7 @@ Content-Length: 421
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
+  "date" : [ 2020, 11, 19 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8164,7 +8549,7 @@ Content-Length: 421
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 417
+Content-Length: 418
 Content-Type: application/json;charset=UTF-8
 
 {
@@ -8173,7 +8558,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
+  "date" : [ 2020, 11, 19 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8325,7 +8710,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 421
+Content-Length: 422
 
 [ {
   "id" : "fasttests",
@@ -8333,7 +8718,7 @@ Content-Length: 421
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
+  "date" : [ 2020, 11, 19 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8507,7 +8892,7 @@ Content-Length: 421
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 421
+Content-Length: 422
 
 [ {
   "id" : "fasttests",
@@ -8515,7 +8900,7 @@ Content-Length: 421
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
+  "date" : [ 2020, 11, 19 ],
   "datasource" : null,
   "rationale" : "parameters: {...}, formula: ...",
   "confidence80" : null,
@@ -8631,6 +9016,31 @@ Content-Length: 421
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
@@ -8703,19 +9113,24 @@ Content-Length: 421
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 538
+Content-Length: 658
 Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
+  "date" : null,
+  "value" : null,
+  "value_description" : null,
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "date" : [ 2020, 11, 19 ],
     "datasource" : null,
     "rationale" : "parameters: {...}, formula: ...",
     "confidence80" : null,
@@ -8887,7 +9302,7 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 514
+Content-Length: 515
 Content-Type: application/json;charset=UTF-8
 
 [ {
@@ -8896,7 +9311,7 @@ Content-Type: application/json;charset=UTF-8
   "description" : "Percentage of tests under the testing duration threshold",
   "value" : 0.8,
   "value_description" : "0,80",
-  "date" : [ 2020, 11, 9 ],
+  "date" : [ 2020, 11, 19 ],
   "datasource" : "Forecast",
   "rationale" : "Forecast",
   "confidence80" : {
@@ -9018,6 +9433,31 @@ Content-Type: application/json;charset=UTF-8
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor name</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor evaluation date</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].value_description</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Readable quality factor value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].mismatchDays</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].missingMetrics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Metrics without assessment</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>[].metrics</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">List with all the quality factor metrics</p></td>
@@ -9110,19 +9550,24 @@ Content-Type: application/json;charset=UTF-8
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Content-Length: 643
 Content-Type: application/json;charset=UTF-8
+Content-Length: 763
 
 [ {
   "id" : "testingperformance",
   "name" : "Testing Performance",
+  "date" : null,
+  "value" : null,
+  "value_description" : null,
+  "mismatchDays" : 0,
+  "missingMetrics" : null,
   "metrics" : [ {
     "id" : "fasttests",
     "name" : "Fast Tests",
     "description" : "Percentage of tests under the testing duration threshold",
     "value" : 0.8,
     "value_description" : "0,80",
-    "date" : [ 2020, 11, 9 ],
+    "date" : [ 2020, 11, 19 ],
     "datasource" : "Forecast",
     "rationale" : "Forecast",
     "confidence80" : {
@@ -9435,7 +9880,7 @@ Content-Length: 257
   "value" : 0.4,
   "threshold" : 0.5,
   "category" : "category",
-  "date" : 1604926503330,
+  "date" : 1605794262215,
   "status" : "NEW",
   "reqAssociat" : true,
   "artefacts" : null
@@ -10231,7 +10676,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1604926502856,
+  "date" : 1605794261689,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -10420,7 +10865,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "id" : 3,
-  "date" : 1604926507090,
+  "date" : 1605794266058,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -10435,7 +10880,7 @@ Content-Type: application/json;charset=UTF-8
     "value" : 0.4,
     "threshold" : 0.5,
     "category" : "category",
-    "date" : 1604926507090,
+    "date" : 1605794266058,
     "status" : "NEW",
     "reqAssociat" : true,
     "artefacts" : null
@@ -10579,7 +11024,7 @@ Content-Length: 410
 
 {
   "id" : 3,
-  "date" : 1604926507197,
+  "date" : 1605794266163,
   "requirement" : "The ratio of files without duplications should be at least 0.8",
   "description" : "The ratio of files without duplications should be at least the given value",
   "goal" : "Improve the quality of the source code",
@@ -11102,7 +11547,7 @@ Content-Type: application/json;charset=UTF-8
 [ {
   "id" : 2,
   "type" : "ADD",
-  "date" : 1604926504064,
+  "date" : 1605794262969,
   "author" : null,
   "rationale" : "User comments",
   "patternId" : 100,
@@ -11315,7 +11760,7 @@ Content-Type: application/json;charset=UTF-8
 
 [ {
   "strategicIndicatorId" : 1,
-  "date" : "2020-11-09",
+  "date" : "2020-11-19",
   "author" : null,
   "oldValue" : 0.6,
   "newValue" : 0.75
@@ -13356,7 +13801,7 @@ Content-Length: 26
 <h4 id="_get_project_milestones_curl_request">Curl request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-11-09' -i -X GET</code></pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">$ curl 'http://localhost:8080/api/milestones?prj=test&amp;date=2020-11-19' -i -X GET</code></pre>
 </div>
 </div>
 </div>
@@ -13408,7 +13853,7 @@ Content-Length: 137
 Content-Type: application/json;charset=UTF-8
 
 [ {
-  "date" : "2020-11-12",
+  "date" : "2020-11-22",
   "name" : "Version 1.3",
   "description" : "Version 1.3 adding new features",
   "type" : "Release"
@@ -13500,10 +13945,10 @@ Content-Type: application/json;charset=UTF-8
 Content-Length: 156
 
 [ {
-  "dateFrom" : "2020-10-25",
+  "dateFrom" : "2020-11-04",
   "name" : "Development",
   "description" : "Implementation of project functionalities",
-  "dateTo" : "2020-11-24"
+  "dateTo" : "2020-12-04"
 } ]</code></pre>
 </div>
 </div>
@@ -13514,7 +13959,7 @@ Content-Length: 156
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-11-09 14:01:25 +0100
+Last updated 2020-11-12 13:21:00 +0100
 </div>
 </div>
 </body>

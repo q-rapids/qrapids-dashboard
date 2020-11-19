@@ -82,12 +82,12 @@ function getData() {
                                         value[i].push([]);
                                     }
                                     //push date and value to values vector
-                                    if (!isNaN(data_hist[i].factors[j].value))
+                                    if (!isNaN(data_hist[i].factors[j].value.first))
                                     {
                                         value[i][k].push(
                                             {
                                                 x: data_hist[i].factors[j].date,
-                                                y: data_hist[i].factors[j].value
+                                                y: data_hist[i].factors[j].value.first
                                             }
                                         );
                                     }
@@ -118,12 +118,12 @@ function getData() {
                                         errors[i].push(data[i].factors[j].forecastingError);
                                     }
                                     //push date and value to values vector
-                                    if (!isNaN(data[i].factors[j].value)) {
-                                        if (data[i].factors[j].value !== null) {
+                                    if (!isNaN(data[i].factors[j].value.first)) {
+                                        if (data[i].factors[j].value.first !== null) {
                                             value[i][k].push(
                                                 {
                                                     x: data[i].factors[j].date,
-                                                    y: data[i].factors[j].value
+                                                    y: data[i].factors[j].value.first
                                                 }
                                             );
                                         }

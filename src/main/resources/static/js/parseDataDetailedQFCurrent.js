@@ -75,7 +75,7 @@ function getData() {
                 }
 
                 var missingMetrics = data[i].missingMetrics;
-                if (missingMetrics.length > 0) {
+                if (missingMetrics && missingMetrics.length > 0) {
                     var factors = missingMetrics.length === 1 ? missingMetrics[0] : [ missingMetrics.slice(0, -1).join(", "), missingMetrics[missingMetrics.length - 1] ].join(" and ");
                     var message = "The following metrics were missing when the quality factor was assessed: " + factors + ".";
                     messages.push(message);

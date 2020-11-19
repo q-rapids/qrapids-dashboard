@@ -2,7 +2,6 @@ package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.AssessQF;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
-import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAQualityFactors;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMARelations;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMASimulation;
@@ -10,16 +9,15 @@ import com.upc.gessi.qrapids.app.domain.exceptions.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.models.Factor;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrategicIndicatorsRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorMetricsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -31,24 +29,6 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class FactorsController {
-
-    // it was made to use these variables in static method
-    private static QFCategoryRepository factorCategoryRepository;
-
-    @Autowired
-    public FactorsController(QFCategoryRepository factorCategoryRepository) {
-        FactorsController.factorCategoryRepository = factorCategoryRepository;
-    }
-
-
-    @Autowired
-    private QMAQualityFactors qmaQualityFactors;
-
-    @Autowired
-    private Forecast qmaForecast;
-
-    @Autowired
-    private QMASimulation qmaSimulation;
 
     @Autowired
     private QMARelations qmaRelations;
@@ -80,6 +60,16 @@ public class FactorsController {
     @Autowired
     private QualityFactorMetricsController qualityFactorMetricsController;
 
+    // it was made to use these variables in static method
+    @Autowired
+    private QFCategoryRepository factorCategoryRepository;
+    @Autowired
+    private QMASimulation qmaSimulation;
+    @Autowired
+    private  Forecast qmaForecast;
+    @Autowired
+    private  QMAQualityFactors qmaQualityFactors;
+
     private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
     public List<QFCategory> getFactorCategories () {
@@ -105,11 +95,20 @@ public class FactorsController {
         }
     }
 
-    // TODO new functions
-    public static String buildDescriptiveLabelAndValue(Float value) {
-        String labelAndValue = getFactorLabelFromValue(value);
-        String numeric_value = String.format(Locale.ENGLISH, "%.2f", value);
-        labelAndValue += " (" + numeric_value + ')';
+    // new functions
+    public static String buildDescriptiveLabelAndValue(Pair<Float, String> value) {
+        String labelAndValue;
+
+        String numeric_value = String.format(Locale.ENGLISH, "%.2f", value.getFirst());
+
+        if (value.getSecond().isEmpty())
+            labelAndValue = numeric_value;
+        else{
+            labelAndValue = value.getSecond();
+            if (!numeric_value.isEmpty())
+                labelAndValue += " (" + numeric_value + ')';
+        }
+
         return labelAndValue;
     }
 
@@ -569,7 +568,7 @@ public class FactorsController {
     }
 
     public List<DTODetailedFactorEvaluation> getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(String strategicIndicatorId, String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException, ProjectNotFoundException {
-        // // we are looking for factors of one SI -> profile is already checked by SI Controller
+        // we are looking for factors of one SI -> profile is already checked by SI Controller
         return qmaQualityFactors.HistoricalData(strategicIndicatorId, dateFrom, dateTo, projectExternalId, null);
     }
 
@@ -585,7 +584,17 @@ public class FactorsController {
         qmaQualityFactors.setFactorStrategicIndicatorRelation(factorList, projectExternalId);
     }
 
-    public static String getFactorLabelFromValue(Float f) {
+    /*public static String getFactorLabelFromValue(Float f) {
+        List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
+        if (f != null) {
+            for (QFCategory qfCategory : qfCategoryList) {
+                if (f <= qfCategory.getUpperThreshold())
+                    return qfCategory.getName();
+            }
+        }
+        return "No Category";
+    }*/
+    public String getFactorLabelFromValue (Float f) {
         List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
         if (f != null) {
             for (QFCategory qfCategory : qfCategoryList) {

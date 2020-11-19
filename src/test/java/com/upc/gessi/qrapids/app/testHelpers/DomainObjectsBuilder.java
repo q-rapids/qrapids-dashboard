@@ -1,7 +1,7 @@
 package com.upc.gessi.qrapids.app.testHelpers;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
-import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODecisionQualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
@@ -15,9 +15,8 @@ import qr.models.QualityRequirementPattern;
 import java.time.LocalDate;
 import java.util.*;
 
-public class DomainObjectsBuilder {
 
-    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
+public class DomainObjectsBuilder {
 
     public Project buildProject() {
         Long projectId = 1L;
@@ -470,7 +469,7 @@ public class DomainObjectsBuilder {
         String strategicIndicator = "processperformance";
         List<String> strategicIndicatorsList = new ArrayList<>();
         strategicIndicatorsList.add(strategicIndicator);
-        return new DTOFactorEvaluation(factorId, factorName, factorDescription, factorValue, evaluationDate, null, factorRationale, strategicIndicatorsList);
+        return new DTOFactorEvaluation(factorId, factorName, factorDescription, Pair.of(factorValue,"Good"), evaluationDate, null, factorRationale, strategicIndicatorsList);
     }
 
     public DTOMetricEvaluation buildDTOMetric () {

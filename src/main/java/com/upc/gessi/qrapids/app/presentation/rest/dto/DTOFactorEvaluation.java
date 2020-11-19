@@ -1,7 +1,6 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
-import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
@@ -21,7 +20,7 @@ public class DTOFactorEvaluation {
     private String id;
     private String name;
     private String description;
-    private Float value;
+    private Pair<Float, String> value;
     private String value_description;
     private LocalDate date;
     private String datasource;
@@ -45,7 +44,7 @@ public class DTOFactorEvaluation {
      * @param rationale The parameter describes textually the rationale behind the value
      * @param strategicIndicators The list of strategic indicators IDs using this factor evaluation
      */
-    public DTOFactorEvaluation(String id, String name, String description, Float value, LocalDate date, String datasource,
+    public DTOFactorEvaluation(String id, String name, String description, Pair<Float, String> value, LocalDate date, String datasource,
                                String rationale, List<String> strategicIndicators) {
         setId(id);
         setName(name);
@@ -70,7 +69,7 @@ public class DTOFactorEvaluation {
      * @param confidence80 Upper and lower values respectively for the 80% confidence interval
      * @param confidence95 Upper and lower values respectively for the 95% confidence interval
      */
-    public DTOFactorEvaluation(String id, String name, String description, String datasource, String rationale, LocalDate date, Float value, Pair<Float, Float> confidence80, Pair<Float, Float> confidence95) {
+    public DTOFactorEvaluation(String id, String name, String description, String datasource, String rationale, LocalDate date, Pair<Float, String> value, Pair<Float, Float> confidence80, Pair<Float, Float> confidence95) {
         setId(id);
         setName(name);
         setDescription(description);
@@ -102,7 +101,7 @@ public class DTOFactorEvaluation {
         return this.name.isEmpty() ? this.id : this.name;
     }
 
-    public Float getValue() {
+    public Pair<Float, String> getValue() {
         return value;
     }
 
@@ -134,14 +133,14 @@ public class DTOFactorEvaluation {
         if (description!=null)
             this.description = description;
     }
-    public void setValue(Float value) {
+    public void setValue(Pair<Float, String> value) {
         this.value = value;
         setValue_description(value);
     }
 
     public String getDescription() {return this.description; }
 
-    private void setValue_description(Float value) {
+    public void setValue_description(Pair<Float, String> value) {
         this.value_description = FactorsController.buildDescriptiveLabelAndValue(value);
     }
 

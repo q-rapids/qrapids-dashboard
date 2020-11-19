@@ -361,7 +361,7 @@ public class Forecast {
                             f.getDescription(),
                             f.getDatasource(),
                             f.getRationale(),
-                            LocalDate.now().plusDays((long) j + 1), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                            LocalDate.now().plusDays((long) j + 1), Pair.of(aux,factorsController.getFactorLabelFromValue(aux)), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
                 result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
@@ -642,7 +642,7 @@ public class Forecast {
                     float aux = mean.get(j).getAsFloat();
                     for (Integer index : m.getValue())
                         factorsMatrix.get(index).add(new DTOFactorEvaluation(m.getKey(), factorsNames.get(m.getKey()), "",
-                                FORECAST_SOURCE, FORECAST_SOURCE, current.plusDays((long) j + 1), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                                FORECAST_SOURCE, FORECAST_SOURCE, current.plusDays((long) j + 1), Pair.of(aux, factorsController.getFactorLabelFromValue(aux)), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
                 for (Integer index : m.getValue())
@@ -879,12 +879,12 @@ public class Forecast {
             if (!factorHasForecastingError) factorHasForecastingError = (factor.getForecastingError() != null);
             if (listSIFactors.containsKey(factor.getDate())) {
                 listSIFactors.get(factor.getDate()).add(factor);
-                mapSIFactors.get(factor.getDate()).put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue()));
+                mapSIFactors.get(factor.getDate()).put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue().getFirst()));
             } else {
                 listSIFactors.put(factor.getDate(), new ArrayList<>());
                 listSIFactors.get(factor.getDate()).add(factor);
                 mapSIFactors.put(factor.getDate(), new HashMap<>());
-                mapSIFactors.get(factor.getDate()).put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue()));
+                mapSIFactors.get(factor.getDate()).put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue().getFirst()));
             }
         }
         return factorHasForecastingError;

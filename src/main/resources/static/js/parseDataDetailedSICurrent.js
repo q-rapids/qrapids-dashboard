@@ -50,7 +50,7 @@ function getData() {
                         labels[i].push(data[i].factors[j].name);
                     else
                         labels[i].push(data[i].factors[j].name.slice(0, 23) + "...");
-                    values[i].push(data[i].factors[j].value);
+                    values[i].push(data[i].factors[j].value.first);
                 }
 
                 // Warnings

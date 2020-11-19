@@ -123,10 +123,10 @@ public class FactorEvaluationControllerTest {
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
         String projectExternalId = "test";
-        when(qmaQualityFactors.getAllFactors(projectExternalId, null,true)).thenReturn(dtoFactorEvaluationList);
+        when(qmaQualityFactors.getAllFactors(projectExternalId, null,false)).thenReturn(dtoFactorEvaluationList);
 
         // When
-        List<DTOFactorEvaluation> dtoFactorEvaluationListFound = factorsController.getAllFactorsEvaluation(projectExternalId, null,true);
+        List<DTOFactorEvaluation> dtoFactorEvaluationListFound = factorsController.getAllFactorsEvaluation(projectExternalId, null,false);
 
         // Then
         assertEquals(dtoFactorEvaluationList.size(), dtoFactorEvaluationListFound.size());

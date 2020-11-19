@@ -5,8 +5,8 @@ import DTOs.EvaluationDTO;
 import DTOs.FactorEvaluationDTO;
 import DTOs.StrategicIndicatorFactorEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
+import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
-import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
@@ -57,6 +57,9 @@ public class QMADetailedStrategicIndicators {
 
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
+
+    @Autowired
+    FactorsController factorsController;
 
     public List<DTODetailedStrategicIndicatorEvaluation> CurrentEvaluation(String id, String prj, String profile, boolean filterDB) throws IOException, ProjectNotFoundException {
         List<DTODetailedStrategicIndicatorEvaluation> dsi;
@@ -155,7 +158,7 @@ public class QMADetailedStrategicIndicators {
         }
     }
 
-    public static List<DTOFactorEvaluation> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors, Long prjID, String profileId, boolean filterDB) {
+    public List<DTOFactorEvaluation> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors, Long prjID, String profileId, boolean filterDB) {
         List<DTOFactorEvaluation> listFact = new ArrayList<>();
         //for each factor in the Detailed Strategic Indicator
         for (Iterator<FactorEvaluationDTO> iterFactor = factors.iterator(); iterFactor.hasNext(); ) {
@@ -196,12 +199,12 @@ public class QMADetailedStrategicIndicators {
         }
     }
 
-    static DTOFactorEvaluation FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
+     public DTOFactorEvaluation FactorEvaluationDTOToDTOFactor(FactorEvaluationDTO factor, EvaluationDTO evaluation) {
         DTOFactorEvaluation factorEval = new DTOFactorEvaluation(
                 factor.getID(),
                 factor.getName(),
                 factor.getDescription(),
-                evaluation.getValue(), evaluation.getEvaluationDate(),
+                Pair.of(evaluation.getValue(), factorsController.getFactorLabelFromValue(evaluation.getValue())), evaluation.getEvaluationDate(),
                 evaluation.getDatasource(),evaluation.getRationale(),
                 factor.getStrategicIndicators());
         factorEval.setMismatchDays(evaluation.getMismatchDays());

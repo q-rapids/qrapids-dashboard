@@ -74,7 +74,7 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
         document.getElementById(container).appendChild(div);
 
         //0 to 1 values to angular values
-        angle = factors[i].value * 180 + 90;
+        angle = factors[i].value.first * 180 + 90;
         upperThresh = 0.66 * Math.PI - Math.PI / 2;
         lowThresh = 0.33 * Math.PI - Math.PI / 2;
 
@@ -243,7 +243,7 @@ function drawSimulationNeedleFactors (container, width, height, color) {
     for (i = 0; i < data.length; ++i) {
         var divId = container + "DivChart" + i;
         var svg = d3.select('#' + divId).select("svg");
-        angle = data[i].value * 180 + 90;
+        angle = data[i].value.first * 180 + 90;
 
         //create needle
         var arc2 = d3.arc()
@@ -287,7 +287,7 @@ function drawSimulationNeedleFactors (container, width, height, color) {
         var beforeText = $( "text.text"+i ).text();
         var beforeValue = beforeText.split("(");
         beforeValue = parseFloat(beforeValue[1]);
-        var afterValue = data[i].value.toFixed(2);
+        var afterValue = data[i].value.first.toFixed(2);
 
         if (beforeValue < afterValue) {
             if (beforeValue == 0)

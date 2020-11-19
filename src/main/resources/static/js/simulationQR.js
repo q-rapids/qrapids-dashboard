@@ -77,7 +77,7 @@ function getDetailedStrategicIndicators () {
                         labels[i].push(data[i].factors[j].name);
                     else
                         labels[i].push(data[i].factors[j].name.slice(0, 23) + "...");
-                    values[i].push(data[i].factors[j].value);
+                    values[i].push(data[i].factors[j].value.first);
                     strategicIndicators[i].factors.push({
                         id: data[i].factors[j].id,
                         name: data[i].factors[j].name
@@ -644,7 +644,7 @@ $('#apply').click(function () {
                             return element.id === factor.id;
                         });
                         if (newFactor)
-                            dataset.data.push(newFactor.value);
+                            dataset.data.push(newFactor.value.first);
                     }
 
                     if (detailedCharts[i].data.datasets.length > 4)
@@ -672,7 +672,7 @@ function simulateSI (qualityFactors) {
         qfs.push({
             id: qualityFactors[i].id,
             name: qualityFactors[i].name,
-            value: qualityFactors[i].value
+            value: qualityFactors[i].value.first
         });
     }
 

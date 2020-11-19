@@ -97,10 +97,10 @@ function getData() {
                                 ids.push(data_hist[j].id);
                             }
                             //push date and value to line vector
-                            if (!isNaN(data_hist[j].value)) {
+                            if (!isNaN(data_hist[j].value.first)) {
                                 line_hist.push({
                                     x: data_hist[j].date,
-                                    y: data_hist[j].value
+                                    y: data_hist[j].value.first
                                 });
                             }
                             ++j;
@@ -138,11 +138,11 @@ function getData() {
                                 errors.push([data[j].forecastingError]);
                             }
                             //push date and value to line vector
-                            if (!isNaN(data[j].value)) {
-                                if (data[j].value !== null) {
+                            if (!isNaN(data[j].value.first)) {
+                                if (data[j].value.first !== null) {
                                     line.push({
                                         x: data[j].date,
-                                        y: data[j].value
+                                        y: data[j].value.first
                                     });
                                     line80l.push({
                                         x: data[j].date,

@@ -1,5 +1,6 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+
 import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
@@ -16,10 +17,7 @@ import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.util.Pair;
 
@@ -33,6 +31,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StrategicIndicatorsControllerTest {
@@ -44,6 +43,9 @@ public class StrategicIndicatorsControllerTest {
 
     @Mock
     private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
+
+    @Mock
+    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
 
     @Mock
     private QMAStrategicIndicators qmaStrategicIndicators;
@@ -68,9 +70,6 @@ public class StrategicIndicatorsControllerTest {
 
     @Mock
     private StrategicIndicatorQualityFactorsController strategicIndicatorQualityFactorsController;
-
-    @Mock
-    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
 
     @Mock
     private AssesSI assesSI;
@@ -162,6 +161,7 @@ public class StrategicIndicatorsControllerTest {
         when(strategicIndicatorRepository.findById(strategicIndicator.getId())).thenReturn(Optional.of(strategicIndicator));
 
         List<StrategicIndicatorQualityFactors> qualityFactors = domainObjectsBuilder.buildQualityFactors(strategicIndicator);
+        when(strategicIndicatorQualityFactorsRepository.findByStrategic_indicator(strategicIndicator)).thenReturn(qualityFactors);
         for (StrategicIndicatorQualityFactors qf : qualityFactors) {
             when(factorsController.getQualityFactorById(eq(qf.getFactor().getId()))).thenReturn(qf.getFactor());
             when(strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(eq(qf.getFactor()),eq(qf.getWeight()), any(Strategic_Indicator.class))).thenReturn(qf);
@@ -307,7 +307,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
         DTODetailedStrategicIndicatorEvaluation dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicatorEvaluation(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorEvaluationList);
         dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
-        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue(), "Good"));
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue().getFirst(), "Good"));
 
         List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
@@ -334,7 +334,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
         DTODetailedStrategicIndicatorEvaluation dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicatorEvaluation(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorEvaluationList);
         dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
-        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue(), "Good"));
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue().getFirst(), "Good"));
 
         List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
@@ -383,7 +383,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
         DTODetailedStrategicIndicatorEvaluation dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicatorEvaluation(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorEvaluationList);
         dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
-        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue(), "Good"));
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue().getFirst(), "Good"));
 
         List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
@@ -415,7 +415,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
         DTODetailedStrategicIndicatorEvaluation dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicatorEvaluation(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorEvaluationList);
         dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
-        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue(), "Good"));
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue().getFirst(), "Good"));
 
         List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
@@ -477,7 +477,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
         DTODetailedStrategicIndicatorEvaluation dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicatorEvaluation(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorEvaluationList);
         dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
-        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue(), "Good"));
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue().getFirst(), "Good"));
 
         List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
@@ -511,7 +511,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
-        when(metricsController.getAllMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoMetricEvaluationList);
+        when(metricsController.getAllMetricsCurrentEvaluation(projectExternalId, profileId)).thenReturn(dtoMetricEvaluationList);
 
         DTODetailedFactorEvaluation dtoDetailedFactorEvaluation = domainObjectsBuilder.buildDTOQualityFactor();
         List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
@@ -539,7 +539,7 @@ public class StrategicIndicatorsControllerTest {
         List<DTOMetricEvaluation> dtoMetricEvaluationList = new ArrayList<>();
         dtoMetricEvaluationList.add(dtoMetricEvaluation);
 
-        when(metricsController.getAllMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoMetricEvaluationList);
+        when(metricsController.getAllMetricsCurrentEvaluation(projectExternalId, profileId)).thenReturn(dtoMetricEvaluationList);
 
         DTODetailedFactorEvaluation dtoDetailedFactorEvaluation = domainObjectsBuilder.buildDTOQualityFactor();
         List<DTODetailedFactorEvaluation> dtoDetailedFactorEvaluationList = new ArrayList<>();
@@ -580,7 +580,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluation2.setId(factor2Id);
         dtoFactorEvaluation2.setName(factor2Name);
         dtoFactorEvaluation2.setDescription(factor2Description);
-        dtoFactorEvaluation2.setValue(factor2Value);
+        dtoFactorEvaluation2.setValue(Pair.of(factor2Value,"Good"));
 
         String factor3Id = "softwarestability";
         String factor3Name = "Software Stability";
@@ -590,7 +590,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluation3.setId(factor3Id);
         dtoFactorEvaluation3.setName(factor3Name);
         dtoFactorEvaluation3.setDescription(factor3Description);
-        dtoFactorEvaluation3.setValue(factor3Value);
+        dtoFactorEvaluation3.setValue(Pair.of(factor3Value,"Normal"));
 
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
         dtoFactorEvaluationList.add(dtoFactorEvaluation1);
@@ -658,12 +658,12 @@ public class StrategicIndicatorsControllerTest {
 
         when(strategicIndicatorRepository.findByProject_Id(project.getId())).thenReturn(strategic_indicatorList);
 
-        when(factorsController.getFactorLabelFromValue(dtoFactorEvaluation1.getValue())).thenReturn("Good");
+        when(factorsController.getFactorLabelFromValue(dtoFactorEvaluation1.getValue().getFirst())).thenReturn("Good");
         when(factorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
         when(factorsController.getFactorLabelFromValue(factor3Value)).thenReturn("Neutral");
 
         List<Float> factorValuesList = new ArrayList<>();
-        factorValuesList.add(dtoFactorEvaluation1.getValue());
+        factorValuesList.add(dtoFactorEvaluation1.getValue().getFirst());
         factorValuesList.add(factor2Value);
         factorValuesList.add(factor3Value);
 
@@ -740,7 +740,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluation2.setId(factor2Id);
         dtoFactorEvaluation2.setName(factor2Name);
         dtoFactorEvaluation2.setDescription(factor2Description);
-        dtoFactorEvaluation2.setValue(factor2Value);
+        dtoFactorEvaluation2.setValue(Pair.of(factor2Value,"Good"));
 
         String factor3Id = "softwarestability";
         String factor3Name = "Software Stability";
@@ -750,7 +750,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluation3.setId(factor3Id);
         dtoFactorEvaluation3.setName(factor3Name);
         dtoFactorEvaluation3.setDescription(factor3Description);
-        dtoFactorEvaluation3.setValue(factor3Value);
+        dtoFactorEvaluation3.setValue(Pair.of(factor3Value,"Normal"));
 
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
         dtoFactorEvaluationList.add(dtoFactorEvaluation1);
@@ -818,12 +818,12 @@ public class StrategicIndicatorsControllerTest {
 
         when(strategicIndicatorRepository.findByProject_Id(project.getId())).thenReturn(strategic_indicatorList);
 
-        when(factorsController.getFactorLabelFromValue(dtoFactorEvaluation1.getValue())).thenReturn("Good");
+        when(factorsController.getFactorLabelFromValue(dtoFactorEvaluation1.getValue().getFirst())).thenReturn("Good");
         when(factorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
         when(factorsController.getFactorLabelFromValue(factor3Value)).thenReturn("Neutral");
 
         List<Float> factorValuesList = new ArrayList<>();
-        factorValuesList.add(dtoFactorEvaluation1.getValue());
+        factorValuesList.add(dtoFactorEvaluation1.getValue().getFirst());
         factorValuesList.add(factor2Value);
         factorValuesList.add(factor3Value);
 
@@ -882,7 +882,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluation2.setId(factor2Id);
         dtoFactorEvaluation2.setName(factor2Name);
         dtoFactorEvaluation2.setDescription(factor2Description);
-        dtoFactorEvaluation2.setValue(factor2Value);
+        dtoFactorEvaluation2.setValue(Pair.of(factor2Value,"Good"));
 
         String factor3Id = "softwarestability";
         String factor3Name = "Software Stability";
@@ -892,7 +892,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluation3.setId(factor3Id);
         dtoFactorEvaluation3.setName(factor3Name);
         dtoFactorEvaluation3.setDescription(factor3Description);
-        dtoFactorEvaluation3.setValue(factor3Value);
+        dtoFactorEvaluation3.setValue(Pair.of(factor3Value,"Normal"));
 
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
         dtoFactorEvaluationList.add(dtoFactorEvaluation1);
@@ -957,12 +957,12 @@ public class StrategicIndicatorsControllerTest {
 
         when(strategicIndicatorRepository.findByNameAndProject_Id(strategicIndicatorName, project.getId())).thenReturn(strategicIndicator);
 
-        when(factorsController.getFactorLabelFromValue(dtoFactorEvaluation1.getValue())).thenReturn("Good");
+        when(factorsController.getFactorLabelFromValue(dtoFactorEvaluation1.getValue().getFirst())).thenReturn("Good");
         when(factorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
         when(factorsController.getFactorLabelFromValue(factor3Value)).thenReturn("Neutral");
 
         List<Float> factorValuesList = new ArrayList<>();
-        factorValuesList.add(dtoFactorEvaluation1.getValue());
+        factorValuesList.add(dtoFactorEvaluation1.getValue().getFirst());
         factorValuesList.add(factor2Value);
         factorValuesList.add(factor3Value);
 
@@ -1035,7 +1035,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluation2.setId(factor2Id);
         dtoFactorEvaluation2.setName(factor2Name);
         dtoFactorEvaluation2.setDescription(factor2Description);
-        dtoFactorEvaluation2.setValue(factor2Value);
+        dtoFactorEvaluation2.setValue(Pair.of(factor2Value, "Good"));
 
         String factor3Id = "softwarestability";
         String factor3Name = "Software Stability";
@@ -1045,7 +1045,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluation3.setId(factor3Id);
         dtoFactorEvaluation3.setName(factor3Name);
         dtoFactorEvaluation3.setDescription(factor3Description);
-        dtoFactorEvaluation3.setValue(factor3Value);
+        dtoFactorEvaluation3.setValue(Pair.of(factor3Value,"Normal"));
 
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
         dtoFactorEvaluationList.add(dtoFactorEvaluation1);
@@ -1111,12 +1111,12 @@ public class StrategicIndicatorsControllerTest {
 
         when(strategicIndicatorRepository.findByNameAndProject_Id(strategicIndicatorName, project.getId())).thenReturn(strategicIndicator);
 
-        when(factorsController.getFactorLabelFromValue(dtoFactorEvaluation1.getValue())).thenReturn("Good");
+        when(factorsController.getFactorLabelFromValue(dtoFactorEvaluation1.getValue().getFirst())).thenReturn("Good");
         when(factorsController.getFactorLabelFromValue(factor2Value)).thenReturn("Good");
         when(factorsController.getFactorLabelFromValue(factor3Value)).thenReturn("Neutral");
 
         List<Float> factorValuesList = new ArrayList<>();
-        factorValuesList.add(dtoFactorEvaluation1.getValue());
+        factorValuesList.add(dtoFactorEvaluation1.getValue().getFirst());
         factorValuesList.add(factor2Value);
         factorValuesList.add(factor3Value);
 
@@ -1134,6 +1134,7 @@ public class StrategicIndicatorsControllerTest {
         //when(qmaStrategicIndicators.setStrategicIndicatorValue(eq(project.getExternalId()), eq(strategicIndicator.getExternalId()), eq(strategicIndicatorName), eq(strategicIndicatorDescription), eq(factorsAverageValue.floatValue()), eq(strategicIndicatorRationale), ArgumentMatchers.any(LocalDate.class), isNull(), anyList(), eq(0L))).thenReturn(false);
 
         // When
+
         boolean correct = strategicIndicatorsController.assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
 
         // Then
@@ -1223,7 +1224,7 @@ public class StrategicIndicatorsControllerTest {
     }
 
     @Test
-    public void fetchStrategicIndicators() throws IOException, CategoriesException, ProjectNotFoundException, QualityFactorNotFoundException {
+    public void fetchStrategicIndicators() throws IOException, CategoriesException, ProjectNotFoundException, QualityFactorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         Project project = domainObjectsBuilder.buildProject();
         List<String> projectsList = new ArrayList<>();
         projectsList.add(project.getExternalId());
@@ -1237,7 +1238,7 @@ public class StrategicIndicatorsControllerTest {
         dtoFactorEvaluationList.add(dtoFactorEvaluation);
         DTODetailedStrategicIndicatorEvaluation dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicatorEvaluation(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorEvaluationList);
         dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
-        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue(), "Good"));
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue().getFirst(), "Good"));
         List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicatorList = new ArrayList<>();
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
 
@@ -1281,6 +1282,7 @@ public class StrategicIndicatorsControllerTest {
 
         ArgumentCaptor<Strategic_Indicator> argumentSI = ArgumentCaptor.forClass(Strategic_Indicator.class);
         verify(strategicIndicatorRepository, times(2)).save(argumentSI.capture());
+        verify(strategicIndicatorRepository, times(1)).findByNameAndProject_Id(anyString(),anyLong());
         Strategic_Indicator strategicIndicatorSaved = argumentSI.getValue();
         assertEquals(dtoStrategicIndicatorEvaluation.getName(), strategicIndicatorSaved.getName());
         assertEquals("", strategicIndicatorSaved.getDescription());
@@ -1321,7 +1323,7 @@ public class StrategicIndicatorsControllerTest {
 
         // Verify mock interactions
         verify(factorsController, times(1)).getAllFactorsEvaluation(project.getExternalId(), null,true);
-        verify(factorsController,times(1)).getFactorLabelFromValue(factorSimulatedValue);
+        verify(factorsController, times(2)).getFactorLabelFromValue(anyFloat());
         verifyNoMoreInteractions(factorsController);
         
         verify(strategicIndicatorRepository, times(1)).findByProject_IdOrderByName(project.getId());
@@ -1346,11 +1348,11 @@ public class StrategicIndicatorsControllerTest {
     public void computeStrategicIndicatorValue() {
         // Given
         DTOFactorEvaluation dtoFactorEvaluation1 = domainObjectsBuilder.buildDTOFactor();
-        dtoFactorEvaluation1.setValue(0.7f);
+        dtoFactorEvaluation1.setValue(Pair.of(0.7f,"Good"));
         DTOFactorEvaluation dtoFactorEvaluation2 = domainObjectsBuilder.buildDTOFactor();
-        dtoFactorEvaluation2.setValue(0.8f);
+        dtoFactorEvaluation2.setValue(Pair.of(0.8f,"Good"));
         DTOFactorEvaluation dtoFactorEvaluation3 = domainObjectsBuilder.buildDTOFactor();
-        dtoFactorEvaluation3.setValue(0.9f);
+        dtoFactorEvaluation3.setValue(Pair.of(0.9f,"Good"));
         List<DTOFactorEvaluation> dtoFactorEvaluationList = new ArrayList<>();
         dtoFactorEvaluationList.add(dtoFactorEvaluation1);
         dtoFactorEvaluationList.add(dtoFactorEvaluation2);
@@ -1360,7 +1362,7 @@ public class StrategicIndicatorsControllerTest {
         float value = strategicIndicatorsController.computeStrategicIndicatorValue(dtoFactorEvaluationList);
 
         // Then
-        float expectedValue = (dtoFactorEvaluation1.getValue() + dtoFactorEvaluation2.getValue() + dtoFactorEvaluation3.getValue()) / dtoFactorEvaluationList.size();
+        float expectedValue = (dtoFactorEvaluation1.getValue().getFirst() + dtoFactorEvaluation2.getValue().getFirst() + dtoFactorEvaluation3.getValue().getFirst()) / dtoFactorEvaluationList.size();
         assertEquals(expectedValue, value, 0f);
     }
 
