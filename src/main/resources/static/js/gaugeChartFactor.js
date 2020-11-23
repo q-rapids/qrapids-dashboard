@@ -89,11 +89,11 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
         if (chartHyperlinked){
 
             if (getParameterByName('id').length !== 0) { // we come from DSI
-                urlLink = "../DetailedQualityFactors/CurrentChart" + representationMode + "?id="
+                urlLink = "../DetailedQualityFactors/CurrentChart" + DQFRepresentationMode + "?id="
                     + factors[i].id + "&name=" + factors[i].name
                     + "&siid=" + getParameterByName('id') + "&si=" + getParameterByName('name');
             } else { // we come from factor
-                urlLink = "../DetailedQualityFactors/CurrentChart" + representationMode + "?id="
+                urlLink = "../DetailedQualityFactors/CurrentChart" + DQFRepresentationMode + "?id="
                     + factors[i].id + "&name=" + factors[i].name;
             }
 

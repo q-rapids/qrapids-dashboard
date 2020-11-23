@@ -118,7 +118,7 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         var textColor;
         //create chart svg with hyperlink inide the "container"
         if (chartHyperlinked){
-            urlLink = "../DetailedStrategicIndicators/CurrentChart" + representationMode + "?id="
+            urlLink = "../DetailedStrategicIndicators/CurrentChart" + DSIRepresentationMode + "?id="
                 + data[i].id + "&name=" + data[i].name;
 
             // --> all the chart is hyperlinked

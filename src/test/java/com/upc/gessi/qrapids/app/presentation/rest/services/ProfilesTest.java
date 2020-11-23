@@ -1,10 +1,8 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 
-import com.upc.gessi.qrapids.QrapidsApplication;
 import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProduct;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.data.util.Pair;
@@ -17,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,9 +23,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.File;
-import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,12 +84,15 @@ public class ProfilesTest {
         String profileName = "Test";
         String profileDescription = "Test profile";
         String qualityLevel = "ALL";
+        String dsiView = "Radar";
+        String dqfView = "Radar";
+        String qmView = "Graph";
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
         List<Pair<Long, Boolean>> allSIs = new ArrayList<>();
         allSIs.add(pair);
 
-        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dtoProjectList, allSIs);
+        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, dtoProjectList, allSIs);
         List<DTOProfile> dtoProfileList = new ArrayList<>();
         dtoProfileList.add(dtoProfile);
 
@@ -180,12 +177,15 @@ public class ProfilesTest {
         String profileName = "Test";
         String profileDescription = "Test profile";
         String qualityLevel = "ALL";
+        String dsiView = "Radar";
+        String dqfView = "Radar";
+        String qmView = "Graph";
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
         List<Pair<Long, Boolean>> allSIs = new ArrayList<>();
         allSIs.add(pair);
 
-        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dtoProjectList, allSIs);
+        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, dtoProjectList, allSIs);
 
         when(profilesController.getProfileById(profileId.toString())).thenReturn(dtoProfile);
 
@@ -323,7 +323,7 @@ public class ProfilesTest {
 
         // Verify mock interactions
         verify(profilesController, times(1)).checkProfileByName(profileId, profileName);
-        verify(profilesController, times(1)).updateProfile(profileId, profileName, profileDescription, qualityLevel, projectsInfoMap);
+        verify(profilesController, times(1)).updateProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, projectsInfoMap);
 
         verifyNoMoreInteractions(profilesController);
     }
@@ -456,7 +456,7 @@ public class ProfilesTest {
 
         // Verify mock interactions
         verify(profilesController, times(1)).checkNewProfileByName(profileName);
-        verify(profilesController, times(1)).newProfile(profileName, profileDescription, qualityLevel, projectsInfoMap);
+        verify(profilesController, times(1)).newProfile(profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, projectsInfoMap);
 
         verifyNoMoreInteractions(profilesController);
     }

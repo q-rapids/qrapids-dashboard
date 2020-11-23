@@ -96,6 +96,8 @@ function getData() {
                     colorsForPolar[0].push(colorList[j%colorList.length]);
                 }
             }
+            // TODO make navigation link
+            navTextSimple();
             drawChart();
         }
     });

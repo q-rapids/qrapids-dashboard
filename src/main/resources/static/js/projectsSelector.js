@@ -138,6 +138,10 @@ function showProjectSelector (projects) {
         var profileId = sessionStorage.getItem("profile_id");
         if (!profileId || profileId == "null"){
             sessionStorage.setItem("profile_qualitylvl", "ALL");
+            // TODO if without profile select representationMode and qmMode to default values
+            sessionStorage.setItem("DSIRepresentationMode", "Radar");
+            sessionStorage.setItem("DQFRepresentationMode", "Radar");
+            sessionStorage.setItem("qmMode", "Graph");
         } else {
             jQuery.ajax({
                 dataType: "json",
@@ -146,6 +150,12 @@ function showProjectSelector (projects) {
                 type: "GET",
                 async: false,
                 success: function (data) {
+                    // TODO set mode by profile
+                    //representationMode = data.dsiView;
+                    //qmMode = data.qmView;
+                    sessionStorage.setItem("DSIRepresentationMode", data.dsiView);
+                    sessionStorage.setItem("DQFRepresentationMode", data.dqfView);
+                    sessionStorage.setItem("qmMode", data.qmView);
                     sessionStorage.setItem("profile_qualitylvl", data.qualityLevel);
                     if (data.qualityLevel == "METRICS") {
                         sessionStorage.setItem("prediction", "Metrics");
