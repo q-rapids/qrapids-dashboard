@@ -585,13 +585,6 @@ function profileQualityLevelFilter() {
         type: "GET",
         async: false,
         success: function (data) {
-            // TODO set mode by profile
-            DSIRepresentationMode = data.dsiView;
-            DQFRepresentationMode = data.dqfView;
-            qmMode = data.qmView;
-            sessionStorage.setItem("DSIRepresentationMode", DSIRepresentationMode);
-            sessionStorage.setItem("DQFRepresentationMode", DQFRepresentationMode);
-            sessionStorage.setItem("qmMode", qmMode);
             sessionStorage.setItem("profile_qualitylvl", data.qualityLevel);
             if (data.qualityLevel == "METRICS") { // hide some menu options from navBar
                 $("#Products").hide();

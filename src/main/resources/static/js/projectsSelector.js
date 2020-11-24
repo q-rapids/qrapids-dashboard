@@ -138,7 +138,7 @@ function showProjectSelector (projects) {
         var profileId = sessionStorage.getItem("profile_id");
         if (!profileId || profileId == "null"){
             sessionStorage.setItem("profile_qualitylvl", "ALL");
-            // TODO if without profile select representationMode and qmMode to default values
+            // if without profile select representationMode and qmMode to default values
             sessionStorage.setItem("DSIRepresentationMode", "Radar");
             sessionStorage.setItem("DQFRepresentationMode", "Radar");
             sessionStorage.setItem("qmMode", "Graph");
@@ -150,9 +150,7 @@ function showProjectSelector (projects) {
                 type: "GET",
                 async: false,
                 success: function (data) {
-                    // TODO set mode by profile
-                    //representationMode = data.dsiView;
-                    //qmMode = data.qmView;
+                    // select representationMode and qmMode by profile
                     sessionStorage.setItem("DSIRepresentationMode", data.dsiView);
                     sessionStorage.setItem("DQFRepresentationMode", data.dqfView);
                     sessionStorage.setItem("qmMode", data.qmView);
@@ -178,11 +176,17 @@ function showProjectSelector (projects) {
                         else {
                             url = serverUrl + "/QualityFactors/" + time + viewMode;
                         }
-
                     }
                 }
             });
         }
+        // specific cases: redirect to correct visualization
+        if (currentURL.search("/QualityModel") !== -1) // qm
+            url = serverUrl + "/QualityModel" + sessionStorage.getItem("qmMode");
+        else if (currentURL.search("/DetailedStrategicIndicators/CurrentChart") !== -1) // dsi
+            url = serverUrl + "/DetailedStrategicIndicators/CurrentChart" + sessionStorage.getItem("DSIRepresentationMode");
+        else if (currentURL.search("/DetailedQualityFactors/CurrentChart") !== -1) // dqf
+            url = serverUrl + "/DetailedQualityFactors/CurrentChart" + sessionStorage.getItem("DQFRepresentationMode");
         setProject($this.text(), url);
     });
 
