@@ -12,12 +12,12 @@ import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrat
 import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorMetricsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
-import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorQualityFactorsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -31,22 +31,10 @@ import static java.time.temporal.ChronoUnit.DAYS;
 public class FactorsController {
 
     @Autowired
-    private QMAQualityFactors qmaQualityFactors;
-
-    @Autowired
-    private Forecast qmaForecast;
-
-    @Autowired
-    private QMASimulation qmaSimulation;
-
-    @Autowired
     private QMARelations qmaRelations;
 
     @Autowired
     private AssessQF assessQF;
-
-    @Autowired
-    private QFCategoryRepository factorCategoryRepository;
 
     @Autowired
     private QualityFactorRepository qualityFactorRepository;
@@ -71,6 +59,16 @@ public class FactorsController {
 
     @Autowired
     private QualityFactorMetricsController qualityFactorMetricsController;
+
+    // it was made to use these variables in static method
+    @Autowired
+    private QFCategoryRepository factorCategoryRepository;
+    @Autowired
+    private QMASimulation qmaSimulation;
+    @Autowired
+    private  Forecast qmaForecast;
+    @Autowired
+    private  QMAQualityFactors qmaQualityFactors;
 
     private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
@@ -97,11 +95,20 @@ public class FactorsController {
         }
     }
 
-    // TODO new functions
-    public String buildDescriptiveLabelAndValue(Float value) {
-        String labelAndValue = getFactorLabelFromValue(value);
-        String numeric_value = String.format(Locale.ENGLISH, "%.2f", value);
-        labelAndValue += " (" + numeric_value + ')';
+    // new functions
+    public static String buildDescriptiveLabelAndValue(Pair<Float, String> value) {
+        String labelAndValue;
+
+        String numeric_value = String.format(Locale.ENGLISH, "%.2f", value.getFirst());
+
+        if (value.getSecond().isEmpty())
+            labelAndValue = numeric_value;
+        else{
+            labelAndValue = value.getSecond();
+            if (!numeric_value.isEmpty())
+                labelAndValue += " (" + numeric_value + ')';
+        }
+
         return labelAndValue;
     }
 
@@ -313,10 +320,10 @@ public class FactorsController {
         // We need the metrics for an specific day, not the last evaluation
         if (evaluationDate == null) {
             evaluationDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            metricList = metricsController.getAllMetricsCurrentEvaluation(project);
+            metricList = metricsController.getAllMetricsCurrentEvaluation(project, null);
         }
         else
-            metricList = metricsController.getAllMetricsHistoricalEvaluation(project, evaluationDate, evaluationDate);
+            metricList = metricsController.getAllMetricsHistoricalEvaluation(project, null, evaluationDate, evaluationDate);
         metricEvaluationQma.setMetrics(metricList);
 
         return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
@@ -522,7 +529,7 @@ public class FactorsController {
         // We will compute the evaluation values for the QF for THIS CONCRETE component
 
         // 1.- We need to remove old data from metric evaluations in the quality_factors relationship attribute
-        metricEvaluationQma.setMetrics(metricsController.getAllMetricsEvaluation(prj));
+        metricEvaluationQma.setMetrics(metricsController.getAllMetricsEvaluation(prj, null));
         metricEvaluationQma.clearQualityFactorsRelations(qf.getExternalId());
         //metricEvaluationQma.clearQualityFactorsRelations(evaluationDate, qf.getExternalId());
 
@@ -561,7 +568,7 @@ public class FactorsController {
     }
 
     public List<DTODetailedFactorEvaluation> getFactorsWithMetricsForOneStrategicIndicatorHistoricalEvaluation(String strategicIndicatorId, String projectExternalId, LocalDate dateFrom, LocalDate dateTo) throws IOException, ProjectNotFoundException {
-        // // we are looking for factors of one SI -> profile is already checked by SI Controller
+        // we are looking for factors of one SI -> profile is already checked by SI Controller
         return qmaQualityFactors.HistoricalData(strategicIndicatorId, dateFrom, dateTo, projectExternalId, null);
     }
 
@@ -577,7 +584,17 @@ public class FactorsController {
         qmaQualityFactors.setFactorStrategicIndicatorRelation(factorList, projectExternalId);
     }
 
-    public String getFactorLabelFromValue(Float f) {
+    /*public static String getFactorLabelFromValue(Float f) {
+        List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
+        if (f != null) {
+            for (QFCategory qfCategory : qfCategoryList) {
+                if (f <= qfCategory.getUpperThreshold())
+                    return qfCategory.getName();
+            }
+        }
+        return "No Category";
+    }*/
+    public String getFactorLabelFromValue (Float f) {
         List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
         if (f != null) {
             for (QFCategory qfCategory : qfCategoryList) {

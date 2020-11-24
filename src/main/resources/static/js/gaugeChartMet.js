@@ -6,13 +6,15 @@ var upperThresh;
 var angle;
 var target;
 var tau = Math.PI / 2;
+var id = false;
 
 var url;
 if (getParameterByName('id').length !== 0) {
-    var profileId = sessionStorage.getItem("profile_id");
-    url = parseURLComposed("../api/qualityFactors/metrics/current?profile="+profileId);
+    id = true;
+    url = parseURLComposed("../api/qualityFactors/metrics/current");
 } else {
-    url = parseURLComposed("../api/metrics/current");
+    var profileId = sessionStorage.getItem("profile_id");
+    url = parseURLComposed("../api/metrics/current?profile="+profileId);
 }
 
 var urlLink;
@@ -24,9 +26,9 @@ function getData(width, height) {
         cache: false,
         type: "GET",
         async: true,
-        success: function (metrics) {
-            sortDataAlphabetically(metrics);
-            getMetricsCategories(metrics, width, height);
+        success: function (data) {
+            sortDataAlphabetically(data);
+            getMetricsCategories(data, width, height);
         },
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
@@ -38,13 +40,17 @@ function getData(width, height) {
     });
 }
 
-function getMetricsCategories (metrics, width, height) {
+function getMetricsCategories (data, width, height) {
     jQuery.ajax({
         url: "../api/metrics/categories",
         type: "GET",
         async: true,
         success: function (categories) {
-            drawChart(metrics,"#gaugeChart", width, height, categories);
+            if (id) { // in case we show metrics for one detailed factor
+                drawChart(data[0].metrics, "#gaugeChart", width, height, categories);
+            } else { // in case we show all metrics
+                drawChart(data, "#gaugeChart", width, height, categories);
+            }
         }
     });
 }

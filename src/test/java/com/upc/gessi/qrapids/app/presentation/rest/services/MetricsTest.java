@@ -182,7 +182,7 @@ public class MetricsTest {
     @Test
     public void getMetricsEvaluations() throws Exception {
         // Given
-        when(metricsDomainController.getAllMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoMetricEvaluationList);
+        when(metricsDomainController.getAllMetricsCurrentEvaluation(projectExternalId, null)).thenReturn(dtoMetricEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -240,7 +240,7 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(metricsDomainController, times(1)).getAllMetricsCurrentEvaluation(projectExternalId);
+        verify(metricsDomainController, times(1)).getAllMetricsCurrentEvaluation(projectExternalId, null);
         verifyNoMoreInteractions(metricsDomainController);
     }
 
@@ -317,7 +317,7 @@ public class MetricsTest {
         // Given
         String dateFrom = "2019-07-07";
         String dateTo = "2019-07-15";
-        when(metricsDomainController.getAllMetricsHistoricalEvaluation(projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))).thenReturn(dtoMetricEvaluationList);
+        when(metricsDomainController.getAllMetricsHistoricalEvaluation(projectExternalId, null, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))).thenReturn(dtoMetricEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -381,7 +381,7 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(metricsDomainController, times(1)).getAllMetricsHistoricalEvaluation(projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo));
+        verify(metricsDomainController, times(1)).getAllMetricsHistoricalEvaluation(projectExternalId, null, LocalDate.parse(dateFrom), LocalDate.parse(dateTo));
         verifyNoMoreInteractions(metricsDomainController);
     }
 
@@ -390,7 +390,7 @@ public class MetricsTest {
         // Given
         String dateFrom = "2019-07-07";
         String dateTo = "2019-07-15";
-        when(metricsDomainController.getSingleMetricHistoricalEvaluation(dtoMetricEvaluation.getId(), projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))).thenReturn(dtoMetricEvaluationList);
+        when(metricsDomainController.getSingleMetricHistoricalEvaluation(dtoMetricEvaluation.getId(), projectExternalId, null, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))).thenReturn(dtoMetricEvaluationList);
 
         // Perform request
         RequestBuilder requestBuilder = RestDocumentationRequestBuilders
@@ -457,7 +457,7 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(metricsDomainController, times(1)).getSingleMetricHistoricalEvaluation(dtoMetricEvaluation.getId(), projectExternalId, LocalDate.parse(dateFrom), LocalDate.parse(dateTo));
+        verify(metricsDomainController, times(1)).getSingleMetricHistoricalEvaluation(dtoMetricEvaluation.getId(), projectExternalId, null, LocalDate.parse(dateFrom), LocalDate.parse(dateTo));
         verifyNoMoreInteractions(metricsDomainController);
     }
 
@@ -478,7 +478,7 @@ public class MetricsTest {
         String freq = "7";
         String horizon = "7";
 
-        when(metricsDomainController.getAllMetricsCurrentEvaluation(projectExternalId)).thenReturn(dtoMetricEvaluationList);
+        when(metricsDomainController.getAllMetricsCurrentEvaluation(projectExternalId, null)).thenReturn(dtoMetricEvaluationList);
         when(metricsDomainController.getMetricsPrediction(dtoMetricEvaluationList, projectExternalId, technique, freq, horizon)).thenReturn(dtoMetricEvaluationList);
 
         // Perform request
@@ -553,7 +553,7 @@ public class MetricsTest {
                 ));
 
         // Verify mock interactions
-        verify(metricsDomainController, times(1)).getAllMetricsCurrentEvaluation(projectExternalId);
+        verify(metricsDomainController, times(1)).getAllMetricsCurrentEvaluation(projectExternalId, null);
         verify(metricsDomainController, times(1)).getMetricsPrediction(dtoMetricEvaluationList, projectExternalId, technique, freq, horizon);
         verifyNoMoreInteractions(metricsDomainController);
     }

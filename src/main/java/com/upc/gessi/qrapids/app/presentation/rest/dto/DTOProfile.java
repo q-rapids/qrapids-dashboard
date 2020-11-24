@@ -9,15 +9,22 @@ public class DTOProfile {
     private String name;
     private String description;
     private String qualityLevel;
+    private String dsiView;
+    private String dqfView;
+    private String qmView;
     private List<DTOProject> projects;
     private List<Pair<Long, Boolean>> allSIs;
 
 
-    public DTOProfile(Long id, String name, String description, String qualityLevel, List<DTOProject> projects, List<Pair<Long, Boolean>> allSIs) {
+    public DTOProfile(Long id, String name, String description, String qualityLevel, String dsiview, String dqfview,
+                      String qmview, List<DTOProject> projects, List<Pair<Long, Boolean>> allSIs) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.qualityLevel = qualityLevel;
+        this.dsiView = dsiview;
+        this.dqfView = dqfview;
+        this.qmView = qmview;
         this.projects = projects;
         this.allSIs = allSIs;
     }
@@ -52,6 +59,30 @@ public class DTOProfile {
 
     public void setQualityLevel(String qualityLevel) {
         this.qualityLevel = qualityLevel;
+    }
+
+    public String getDsiView() {
+        return dsiView;
+    }
+
+    public void setDsiView(String dsiView) {
+        this.dsiView = dsiView;
+    }
+
+    public String getDqfView() {
+        return dqfView;
+    }
+
+    public void setDqfView(String dqfView) {
+        this.dqfView = dqfView;
+    }
+
+    public String getQmView() {
+        return qmView;
+    }
+
+    public void setQmView(String qmView) {
+        this.qmView = qmView;
     }
 
     public List<DTOProject> getProjects() {

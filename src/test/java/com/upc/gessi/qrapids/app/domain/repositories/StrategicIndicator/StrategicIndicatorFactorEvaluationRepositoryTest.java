@@ -198,7 +198,6 @@ public class StrategicIndicatorFactorEvaluationRepositoryTest {
     private List<String> convertToString (List<StrategicIndicatorQualityFactors> strategicIndicatorQualityFactorsList) {
         List <String> siqfList = new ArrayList<>();
         for (StrategicIndicatorQualityFactors s : strategicIndicatorQualityFactorsList) {
-            // TODO review if it's ExternalId or Name o DbId
             siqfList.add(s.getFactor().getExternalId());
             siqfList.add(String.valueOf(s.getWeight()));
         }

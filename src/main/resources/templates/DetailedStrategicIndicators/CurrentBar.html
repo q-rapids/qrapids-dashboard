@@ -16,16 +16,14 @@
 <br/>
 <br/>
 <h1 id="title" align="center"></h1>
-<p th:replace="Fragments/TemplateDashboard :: navLinkDetailedQF"></p>
+<p style="margin-left: 20px; font-size: medium; font-family: Arial "><a id="originSIQF" href="../StrategicIndicators/CurrentChart"></a></p>
 <br/>
 <br/>
-<div class="container" style="text-align:center;">
-    <div style="text-align: right; padding-right: 2em;" id="StackedBarChart"></div>
-</div>
+<div id="barChart" style="text-align:center;"></div>
+<br/>
+<p style="position: absolute; bottom: 0px; right: 15px">Assessment date: <span id="assessmentDate"></span></p>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
-<script type="text/javascript" src="../../static/js/parseDataDetailedQFStacked.js" th:src="@{/js/parseDataDetailedQFStacked.js}"></script>
-<!--script src="https://cdn.jsdelivr.net/npm/apexcharts@3.19.2"></script-->
-<script type="text/javascript" th:src="@{/js/lib/apexcharts.min.js}"></script>
-<script type="text/javascript" src="../../static/js/stackedBarChart.js" th:src="@{/js/stackedBarChart.js}"></script>
+<script type="text/javascript" src="../../static/js/parseDataDetailedSICurrent.js" th:src="@{/js/parseDataDetailedSICurrent.js}"></script>
+<script type="text/javascript" src="../../static/js/polarChart.js" th:src="@{/js/barChart.js}"></script>
 </html>

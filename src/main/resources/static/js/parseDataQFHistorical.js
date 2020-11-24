@@ -82,10 +82,10 @@ function getData() {
                     ids.push(data[j].id);
                 }
                 //push date and value to line vector
-                if (!isNaN(data[j].value)) {
+                if (!isNaN(data[j].value.first)) {
                     line.push({
                         x: data[j].date,
-                        y: data[j].value
+                        y: data[j].value.first
                     });
                 }
                 ++j;

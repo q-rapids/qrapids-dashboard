@@ -6,12 +6,12 @@ var isdqf = false;
 var urlpred; // to get prediction data
 var urlhist; // to get historical data
 if (getParameterByName('id').length !== 0) {
-    var profileId = sessionStorage.getItem("profile_id");
-    urlpred = parseURLComposed("../api/qualityFactors/metrics/prediction?profile="+profileId);
-    urlhist = parseURLComposed("../api/qualityFactors/metrics/historical?profile="+profileId);
+    urlpred = parseURLComposed("../api/qualityFactors/metrics/prediction");
+    urlhist = parseURLComposed("../api/qualityFactors/metrics/historical");
 } else {
-    urlpred = parseURLComposed("../api/metrics/prediction");
-    urlhist = parseURLComposed("../api/metrics/historical");
+    var profileId = sessionStorage.getItem("profile_id");
+    urlpred = parseURLComposed("../api/metrics/prediction?profile="+profileId);
+    urlhist = parseURLComposed("../api/metrics/historical?profile="+profileId);
 }
 
 //initialize data vectors

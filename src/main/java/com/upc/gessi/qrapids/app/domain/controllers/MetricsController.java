@@ -76,7 +76,7 @@ public class MetricsController {
     public void importMetricsAndUpdateDatabase() throws IOException, CategoriesException, ProjectNotFoundException {
         List<String> projects = projectController.getAllProjectsExternalID();
         for (String prj : projects) {
-            List<DTOMetricEvaluation> metrics = getAllMetricsCurrentEvaluation(prj);
+            List<DTOMetricEvaluation> metrics = getAllMetricsCurrentEvaluation(prj, null);
             updateDataBaseWithNewMetrics(prj,metrics);
         }
     }
@@ -119,8 +119,8 @@ public class MetricsController {
         qmaMetrics.setMetricQualityFactorRelation(metricList, projectExternalId);
     }
 
-    public List<DTOMetricEvaluation> getAllMetricsCurrentEvaluation (String projectExternalId) throws IOException, ElasticsearchStatusException {
-        return qmaMetrics.CurrentEvaluation(null, projectExternalId);
+    public List<DTOMetricEvaluation> getAllMetricsCurrentEvaluation (String projectExternalId, String profileId) throws IOException, ElasticsearchStatusException {
+        return qmaMetrics.CurrentEvaluation(null, projectExternalId, profileId);
     }
 
     public DTOMetricEvaluation getSingleMetricCurrentEvaluation (String metricId, String projectExternalId) throws IOException, ElasticsearchStatusException {
@@ -128,19 +128,21 @@ public class MetricsController {
     }
 
     public List<DTOMetricEvaluation> getMetricsForQualityFactorCurrentEvaluation (String qualityFactorId, String projectExternalId) throws IOException, ElasticsearchStatusException {
-        return qmaMetrics.CurrentEvaluation(qualityFactorId, projectExternalId);
+        // it's already filtered by quality factor
+        return qmaMetrics.CurrentEvaluation(qualityFactorId, projectExternalId, null);
     }
 
-    public List<DTOMetricEvaluation> getSingleMetricHistoricalEvaluation (String metricId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
-        return qmaMetrics.SingleHistoricalData(metricId, from, to, projectExternalId);
+    public List<DTOMetricEvaluation> getSingleMetricHistoricalEvaluation (String metricId, String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+        return qmaMetrics.SingleHistoricalData(metricId, from, to, projectExternalId, profileId);
     }
 
-    public List<DTOMetricEvaluation> getAllMetricsHistoricalEvaluation (String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
-        return qmaMetrics.HistoricalData(null, from, to, projectExternalId);
+    public List<DTOMetricEvaluation> getAllMetricsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
+        return qmaMetrics.HistoricalData(null, from, to, projectExternalId, profileId);
     }
 
     public List<DTOMetricEvaluation> getMetricsForQualityFactorHistoricalEvaluation (String qualityFactorId, String projectExternalId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException {
-        return qmaMetrics.HistoricalData(qualityFactorId, from, to, projectExternalId);
+        // it's already filtered by quality factor
+        return qmaMetrics.HistoricalData(qualityFactorId, from, to, projectExternalId, null);
     }
 
     public List<DTOMetricEvaluation> getMetricsPrediction (List<DTOMetricEvaluation> currentEvaluation, String projectExternalId, String technique, String freq, String horizon) throws IOException, ElasticsearchStatusException {
@@ -158,7 +160,7 @@ public class MetricsController {
         return "No Category";
     }
 
-    public List<DTOMetricEvaluation> getAllMetricsEvaluation(String projectExternalId) throws IOException {
-        return qmaMetrics.getAllMetrics(projectExternalId);
+    public List<DTOMetricEvaluation> getAllMetricsEvaluation(String projectExternalId, String profileId) throws IOException {
+        return qmaMetrics.getAllMetrics(projectExternalId, profileId);
     }
 }

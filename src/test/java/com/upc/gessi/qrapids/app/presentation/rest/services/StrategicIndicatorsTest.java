@@ -140,7 +140,7 @@ public class StrategicIndicatorsTest {
 
         dtoDetailedStrategicIndicator = new DTODetailedStrategicIndicatorEvaluation(dtoStrategicIndicatorEvaluation.getId(), dtoStrategicIndicatorEvaluation.getName(), dtoFactorList);
         dtoDetailedStrategicIndicator.setDate(dtoStrategicIndicatorEvaluation.getDate());
-        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue(), "Good"));
+        dtoDetailedStrategicIndicator.setValue(Pair.of(dtoFactorEvaluation.getValue().getFirst(), "Good"));
         dtoDetailedStrategicIndicatorList.add(dtoDetailedStrategicIndicator);
     }
 
@@ -652,8 +652,9 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactorEvaluation.getName())))
                 .andExpect(jsonPath("$[0].factors[0].description", is(dtoFactorEvaluation.getDescription())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(getFloatAsDouble(dtoFactorEvaluation.getValue()))))
-                .andExpect(jsonPath("$[0].factors[0].value_description", is(String.format("%.2f", dtoFactorEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].factors[0].value.first", is(getFloatAsDouble(dtoFactorEvaluation.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].factors[0].value.second", is(dtoFactorEvaluation.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].factors[0].value_description", is(dtoFactorEvaluation.getValue_description())))
                 .andExpect(jsonPath("$[0].factors[0].date[0]", is(dtoFactorEvaluation.getDate().getYear())))
                 .andExpect(jsonPath("$[0].factors[0].date[1]", is(dtoFactorEvaluation.getDate().getMonthValue())))
                 .andExpect(jsonPath("$[0].factors[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
@@ -700,8 +701,10 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor name"),
                                 fieldWithPath("[].factors[].description")
                                         .description("Quality factor description"),
-                                fieldWithPath("[].factors[].value")
-                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value.first")
+                                        .description("Quality factor numerical value"),
+                                fieldWithPath("[].factors[].value.second")
+                                        .description("Quality factor category"),
                                 fieldWithPath("[].factors[].value_description")
                                         .description("Readable quality factor value"),
                                 fieldWithPath("[].factors[].date")
@@ -774,8 +777,9 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactorEvaluation.getName())))
                 .andExpect(jsonPath("$[0].factors[0].description", is(dtoFactorEvaluation.getDescription())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(getFloatAsDouble(dtoFactorEvaluation.getValue()))))
-                .andExpect(jsonPath("$[0].factors[0].value_description", is(String.format("%.2f", dtoFactorEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].factors[0].value.first", is(getFloatAsDouble(dtoFactorEvaluation.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].factors[0].value.second", is(dtoFactorEvaluation.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].factors[0].value_description", is(dtoFactorEvaluation.getValue_description())))
                 .andExpect(jsonPath("$[0].factors[0].date[0]", is(dtoFactorEvaluation.getDate().getYear())))
                 .andExpect(jsonPath("$[0].factors[0].date[1]", is(dtoFactorEvaluation.getDate().getMonthValue())))
                 .andExpect(jsonPath("$[0].factors[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
@@ -825,8 +829,10 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor name"),
                                 fieldWithPath("[].factors[].description")
                                         .description("Quality factor description"),
-                                fieldWithPath("[].factors[].value")
-                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value.first")
+                                        .description("Quality factor numerical value"),
+                                fieldWithPath("[].factors[].value.second")
+                                        .description("Quality factor category"),
                                 fieldWithPath("[].factors[].value_description")
                                         .description("Readable quality factor value"),
                                 fieldWithPath("[].factors[].date")
@@ -905,8 +911,9 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactorEvaluation.getName())))
                 .andExpect(jsonPath("$[0].factors[0].description", is(dtoFactorEvaluation.getDescription())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(getFloatAsDouble(dtoFactorEvaluation.getValue()))))
-                .andExpect(jsonPath("$[0].factors[0].value_description", is(String.format("%.2f", dtoFactorEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].factors[0].value.first", is(getFloatAsDouble(dtoFactorEvaluation.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].factors[0].value.second", is(dtoFactorEvaluation.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].factors[0].value_description", is(dtoFactorEvaluation.getValue_description())))
                 .andExpect(jsonPath("$[0].factors[0].date[0]", is(dtoFactorEvaluation.getDate().getYear())))
                 .andExpect(jsonPath("$[0].factors[0].date[1]", is(dtoFactorEvaluation.getDate().getMonthValue())))
                 .andExpect(jsonPath("$[0].factors[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
@@ -957,8 +964,10 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor name"),
                                 fieldWithPath("[].factors[].description")
                                         .description("Quality factor description"),
-                                fieldWithPath("[].factors[].value")
-                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value.first")
+                                        .description("Quality factor numerical value"),
+                                fieldWithPath("[].factors[].value.second")
+                                        .description("Quality factor category"),
                                 fieldWithPath("[].factors[].value_description")
                                         .description("Readable quality factor value"),
                                 fieldWithPath("[].factors[].date")
@@ -1043,8 +1052,9 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactorEvaluation.getName())))
                 .andExpect(jsonPath("$[0].factors[0].description", is(dtoFactorEvaluation.getDescription())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(getFloatAsDouble(dtoFactorEvaluation.getValue()))))
-                .andExpect(jsonPath("$[0].factors[0].value_description", is(String.format("%.2f", dtoFactorEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].factors[0].value.first", is(getFloatAsDouble(dtoFactorEvaluation.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].factors[0].value.second", is(dtoFactorEvaluation.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].factors[0].value_description", is(dtoFactorEvaluation.getValue_description())))
                 .andExpect(jsonPath("$[0].factors[0].date[0]", is(dtoFactorEvaluation.getDate().getYear())))
                 .andExpect(jsonPath("$[0].factors[0].date[1]", is(dtoFactorEvaluation.getDate().getMonthValue())))
                 .andExpect(jsonPath("$[0].factors[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
@@ -1098,8 +1108,10 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor name"),
                                 fieldWithPath("[].factors[].description")
                                         .description("Quality factor description"),
-                                fieldWithPath("[].factors[].value")
-                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value.first")
+                                        .description("Quality factor numerical value"),
+                                fieldWithPath("[].factors[].value.second")
+                                        .description("Quality factor category"),
                                 fieldWithPath("[].factors[].value_description")
                                         .description("Readable quality factor value"),
                                 fieldWithPath("[].factors[].date")
@@ -1186,8 +1198,9 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactorEvaluation.getName())))
                 .andExpect(jsonPath("$[0].factors[0].description", is(dtoFactorEvaluation.getDescription())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(getFloatAsDouble(dtoFactorEvaluation.getValue()))))
-                .andExpect(jsonPath("$[0].factors[0].value_description", is(String.format("%.2f", dtoFactorEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].factors[0].value.first", is(getFloatAsDouble(dtoFactorEvaluation.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].factors[0].value.second", is(dtoFactorEvaluation.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].factors[0].value_description", is(dtoFactorEvaluation.getValue_description())))
                 .andExpect(jsonPath("$[0].factors[0].date[0]", is(dtoFactorEvaluation.getDate().getYear())))
                 .andExpect(jsonPath("$[0].factors[0].date[1]", is(dtoFactorEvaluation.getDate().getMonthValue())))
                 .andExpect(jsonPath("$[0].factors[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
@@ -1238,8 +1251,10 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor name"),
                                 fieldWithPath("[].factors[].description")
                                         .description("Quality factor description"),
-                                fieldWithPath("[].factors[].value")
-                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value.first")
+                                        .description("Quality factor numerical value"),
+                                fieldWithPath("[].factors[].value.second")
+                                        .description("Quality factor category"),
                                 fieldWithPath("[].factors[].value_description")
                                         .description("Readable quality factor value"),
                                 fieldWithPath("[].factors[].date")
@@ -1304,8 +1319,9 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].factors[0].id", is(dtoFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].factors[0].name", is(dtoFactorEvaluation.getName())))
                 .andExpect(jsonPath("$[0].factors[0].description", is(dtoFactorEvaluation.getDescription())))
-                .andExpect(jsonPath("$[0].factors[0].value", is(getFloatAsDouble(dtoFactorEvaluation.getValue()))))
-                .andExpect(jsonPath("$[0].factors[0].value_description", is(String.format("%.2f", dtoFactorEvaluation.getValue()))))
+                .andExpect(jsonPath("$[0].factors[0].value.first", is(getFloatAsDouble(dtoFactorEvaluation.getValue().getFirst()))))
+                .andExpect(jsonPath("$[0].factors[0].value.second", is(dtoFactorEvaluation.getValue().getSecond())))
+                .andExpect(jsonPath("$[0].factors[0].value_description", is(dtoFactorEvaluation.getValue_description())))
                 .andExpect(jsonPath("$[0].factors[0].date[0]", is(dtoFactorEvaluation.getDate().getYear())))
                 .andExpect(jsonPath("$[0].factors[0].date[1]", is(dtoFactorEvaluation.getDate().getMonthValue())))
                 .andExpect(jsonPath("$[0].factors[0].date[2]", is(dtoFactorEvaluation.getDate().getDayOfMonth())))
@@ -1359,8 +1375,10 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor name"),
                                 fieldWithPath("[].factors[].description")
                                         .description("Quality factor description"),
-                                fieldWithPath("[].factors[].value")
-                                        .description("Quality factor value"),
+                                fieldWithPath("[].factors[].value.first")
+                                        .description("Quality factor numerical value"),
+                                fieldWithPath("[].factors[].value.second")
+                                        .description("Quality factor category"),
                                 fieldWithPath("[].factors[].value_description")
                                         .description("Readable quality factor value"),
                                 fieldWithPath("[].factors[].date")
@@ -1563,6 +1581,11 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
+                .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
+                .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getId())))
                 .andExpect(jsonPath("$[0].metrics[0].name", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getName())))
                 .andExpect(jsonPath("$[0].metrics[0].description", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getDescription())))
@@ -1591,6 +1614,16 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics"),
+                                fieldWithPath("[].missingMetrics")
+                                        .description("Metrics without assessment"),
                                 fieldWithPath("[].metrics")
                                         .description("List with all the quality factor metrics"),
                                 fieldWithPath("[].metrics[].id")
@@ -1650,6 +1683,11 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
+                .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
+                .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getId())))
                 .andExpect(jsonPath("$[0].metrics[0].name", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getName())))
                 .andExpect(jsonPath("$[0].metrics[0].description", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getDescription())))
@@ -1682,6 +1720,16 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics"),
+                                fieldWithPath("[].missingMetrics")
+                                        .description("Metrics without assessment"),
                                 fieldWithPath("[].metrics")
                                         .description("List with all the quality factor metrics"),
                                 fieldWithPath("[].metrics[].id")
@@ -1742,6 +1790,11 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(dtoDetailedFactorEvaluation.getId())))
                 .andExpect(jsonPath("$[0].name", is(dtoDetailedFactorEvaluation.getName())))
+                .andExpect(jsonPath("$[0].date", is(dtoDetailedFactorEvaluation.getDate())))
+                .andExpect(jsonPath("$[0].value", is(dtoDetailedFactorEvaluation.getValue())))
+                .andExpect(jsonPath("$[0].value_description", is(dtoDetailedFactorEvaluation.getValue_description())))
+                .andExpect(jsonPath("$[0].mismatchDays", is(0)))
+                .andExpect(jsonPath("$[0].missingMetrics", is(nullValue())))
                 .andExpect(jsonPath("$[0].metrics[0].id", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getId())))
                 .andExpect(jsonPath("$[0].metrics[0].name", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getName())))
                 .andExpect(jsonPath("$[0].metrics[0].description", is(dtoDetailedFactorEvaluation.getMetrics().get(0).getDescription())))
@@ -1776,6 +1829,16 @@ public class StrategicIndicatorsTest {
                                         .description("Quality factor identifier"),
                                 fieldWithPath("[].name")
                                         .description("Quality factor name"),
+                                fieldWithPath("[].date")
+                                        .description("Quality factor evaluation date"),
+                                fieldWithPath("[].value")
+                                        .description("Quality factor value"),
+                                fieldWithPath("[].value_description")
+                                        .description("Readable quality factor value"),
+                                fieldWithPath("[].mismatchDays")
+                                        .description("Maximum difference (in days) when there is difference in the evaluation dates between the quality factor and some metrics"),
+                                fieldWithPath("[].missingMetrics")
+                                        .description("Metrics without assessment"),
                                 fieldWithPath("[].metrics")
                                         .description("List with all the quality factor metrics"),
                                 fieldWithPath("[].metrics[].id")

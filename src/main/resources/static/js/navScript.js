@@ -1,5 +1,5 @@
 var currentURL = window.location.href;
-var viewMode, representationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
+var viewMode, DSIRepresentationMode, DQFRepresentationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -84,8 +84,11 @@ checkPhases();
 if (!(viewMode = sessionStorage.getItem("viewMode"))) {
     viewMode = "Chart";
 }
-if (!(representationMode = sessionStorage.getItem("representationMode"))) {
-    representationMode = "Radar";
+if (!(DSIRepresentationMode = sessionStorage.getItem("DSIRepresentationMode"))) {
+    DSIRepresentationMode = "Radar";
+}
+if (!(DQFRepresentationMode = sessionStorage.getItem("DQFRepresentationMode"))) {
+    DQFRepresentationMode = "Radar";
 }
 if (!(qmMode = sessionStorage.getItem("qmMode"))) {
     qmMode = "Graph";
@@ -111,7 +114,8 @@ if (!(simulation = sessionStorage.getItem("simulation"))) {
 
 //Store state in sessionStorage
 sessionStorage.setItem("viewMode", viewMode);
-sessionStorage.setItem("representationMode", representationMode);
+sessionStorage.setItem("DSIRepresentationMode", DSIRepresentationMode);
+sessionStorage.setItem("DQFRepresentationMode", DQFRepresentationMode);
 sessionStorage.setItem("qmMode", qmMode);
 sessionStorage.setItem("time", time);
 
@@ -130,17 +134,37 @@ if (currentURL.search("/HistoricTable") !== -1) {
 } else if (currentURL.search("/HistoricChart") !== -1) {
     viewMode = "Chart";
     time = "Historic";
-}  else if (currentURL.search("/CurrentChartRadar") !== -1){
+}  else if (currentURL.search("/DetailedStrategicIndicators/CurrentChartRadar") !== -1){
     viewMode = "Chart";
-    representationMode = "Radar";
+    DSIRepresentationMode = "Radar";
     time = "Current";
-} else if (currentURL.search("/CurrentChartStacked") !== -1){
+} else if (currentURL.search("/DetailedStrategicIndicators/CurrentChartStacked") !== -1){
     viewMode = "Chart";
-    representationMode = "Stacked";
+    DSIRepresentationMode = "Stacked";
     time = "Current";
-} else if (currentURL.search("/CurrentChart") !== -1){
+} else if (currentURL.search("/DetailedStrategicIndicators/CurrentChartPolar") !== -1){
     viewMode = "Chart";
-    representationMode = sessionStorage.getItem("representationMode");
+    DSIRepresentationMode = "Polar";
+    time = "Current";
+} else if (currentURL.search("/DetailedStrategicIndicators/CurrentChart") !== -1){
+    viewMode = "Chart";
+    DSIRepresentationMode = sessionStorage.getItem("DSIRepresentationMode");
+    time = "Current";
+} else if (currentURL.search("/DetailedQualityFactors/CurrentChartRadar") !== -1){
+    viewMode = "Chart";
+    DQFRepresentationMode = "Radar";
+    time = "Current";
+} else if (currentURL.search("/DetailedQualityFactors/CurrentChartStacked") !== -1){
+    viewMode = "Chart";
+    DQFRepresentationMode = "Stacked";
+    time = "Current";
+} else if (currentURL.search("/DetailedQualityFactors/CurrentChartPolar") !== -1){
+    viewMode = "Chart";
+    DQFRepresentationMode = "Polar";
+    time = "Current";
+} else if (currentURL.search("/DetailedQualityFactors/CurrentChart") !== -1){
+    viewMode = "Chart";
+    DQFRepresentationMode = sessionStorage.getItem("DQFRepresentationMode");
     time = "Current";
 }
 
@@ -152,13 +176,18 @@ if (currentURL.search("/QualityModelGraph") !== -1) {
 
 //Store state in sessionStorage
 sessionStorage.setItem("viewMode", viewMode);
-sessionStorage.setItem("representationMode", representationMode);
+sessionStorage.setItem("DSIRepresentationMode", DSIRepresentationMode);
+sessionStorage.setItem("DQFRepresentationMode", DQFRepresentationMode);
 sessionStorage.setItem("qmMode", qmMode);
 sessionStorage.setItem("time", time);
 
 // Highlighting the enabled options depending on the View Mode and Time options selected
 $("#" + viewMode).css("background-color", "#ffc380");
-$("#" + representationMode).css("background-color", "#ffc380");
+if (currentURL.search("/DetailedStrategicIndicators/CurrentChart") !== -1) {
+    $("#" + DSIRepresentationMode).css("background-color", "#ffc380");
+} else if(currentURL.search("/DetailedQualityFactors/CurrentChart") !== -1) {
+    $("#" + DQFRepresentationMode).css("background-color", "#ffc380");
+}
 $("#" + qmMode).css("background-color", "#ffc380");
 $("#" + time).css("background-color", "#ffc380");
 
@@ -317,9 +346,15 @@ function disableViewModeAndTimeOption () {
 
 if (assessment === "QualityModel") $("#Assessment").attr("href", serverUrl + "/" + assessment + qmMode);
 else if ( assessment === "Phases" ) $("#Assessment").attr("href", serverUrl + "/" + assessment);
-else if (assessment === "DetailedStrategicIndicators" || assessment === "DetailedQualityFactors" ) {
+else if (assessment === "DetailedStrategicIndicators") {
     if (time == "Current" && viewMode == "Chart") {
-        $("#Assessment").attr("href", serverUrl + "/" + assessment + "/" + time + viewMode + representationMode);
+        $("#Assessment").attr("href", serverUrl + "/" + assessment + "/" + time + viewMode + DSIRepresentationMode);
+    } else {
+        $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
+    }
+} else if (assessment === "DetailedQualityFactors") {
+    if (time == "Current" && viewMode == "Chart") {
+        $("#Assessment").attr("href", serverUrl + "/" + assessment + "/" + time + viewMode + DQFRepresentationMode);
     } else {
         $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
     }
@@ -332,7 +367,8 @@ $("#StrategicIndicatorsAssessment").attr("href", serverUrl + "/StrategicIndicato
 $("#StrategicIndicatorsPrediction").attr("href", serverUrl + "/StrategicIndicators/PredictionChart");
 
 if ((time == "Current") && (viewMode == "Chart")) {
-    $("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode + representationMode);
+    console.log("DSIRepresentationMode " + DSIRepresentationMode);
+    $("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode + DSIRepresentationMode);
 } else {
     $("#DetailedStrategicIndicatorsAssessment").attr("href", serverUrl + "/DetailedStrategicIndicators/" + time + viewMode);
 }
@@ -344,7 +380,8 @@ $("#QualityFactorsAssessment").attr("href", serverUrl + "/QualityFactors/" + tim
 $("#QualityFactorsPrediction").attr("href", serverUrl + "/QualityFactors/PredictionChart");
 
 if ((time == "Current") && (viewMode == "Chart")) {
-    $("#DetailedQualityFactorsAssessment").attr("href", serverUrl + "/DetailedQualityFactors/" + time + viewMode + representationMode);
+    console.log("DQFRepresentationMode " + DQFRepresentationMode);
+    $("#DetailedQualityFactorsAssessment").attr("href", serverUrl + "/DetailedQualityFactors/" + time + viewMode + DQFRepresentationMode);
 } else {
     $("#DetailedQualityFactorsAssessment").attr("href", serverUrl + "/DetailedQualityFactors/" + time + viewMode);}
 
@@ -368,6 +405,7 @@ $("#QualityRequirements").attr("href", serverUrl + "/QualityRequirements");
 
 $("#Decisions").attr("href", serverUrl + "/Decisions");
 
+console.log("qmMode " + qmMode);
 $("#QualityModelAssessment").attr("href", serverUrl + "/QualityModel" + qmMode);
 
 $("#PhasesAssessment").attr("href", serverUrl + "/Phases");
@@ -516,14 +554,14 @@ function navBack(toDetailed, factor) {
     else {
         if (toDetailed)
             if (factor)
-                if (time == "Current" && viewMode == "Chart")
-                    urlNav = "../DetailedQualityFactors/" + time + viewMode + representationMode + "?id=" + id + "&name=" + name;
-                else
+                if (time == "Current" && viewMode == "Chart") {
+                    urlNav = "../DetailedQualityFactors/" + time + viewMode + DQFRepresentationMode + "?id=" + id + "&name=" + name;
+                } else
                     urlNav = "../DetailedQualityFactors/" + time + viewMode + "?id=" + id + "&name=" + name;
             else
-                if (time == "Current" && viewMode == "Chart")
-                    urlNav = "../DetailedStrategicIndicators/" + time + viewMode + representationMode;
-                else
+                if (time == "Current" && viewMode == "Chart") {
+                    urlNav = "../DetailedStrategicIndicators/" + time + viewMode + DSIRepresentationMode;
+                } else
                     urlNav = "../DetailedStrategicIndicators/" + time + viewMode;
         else
             urlNav = "../QualityFactors/" + time + viewMode;

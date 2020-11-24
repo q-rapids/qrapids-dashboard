@@ -3,7 +3,14 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.EvaluationDTO;
 import DTOs.MetricEvaluationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
+import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
+import com.upc.gessi.qrapids.app.domain.models.Profile;
+import com.upc.gessi.qrapids.app.domain.models.ProfileProjectStrategicIndicators;
+import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
+import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrategicIndicatorsRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import evaluation.Factor;
 import evaluation.Metric;
@@ -22,7 +29,19 @@ public class QMAMetrics {
     @Autowired
     private QMAConnection qmacon;
 
-    public List<DTOMetricEvaluation> CurrentEvaluation(String id, String prj) throws IOException {
+    // it was made to use these variables in static method
+    private static ProfilesController profilesController;
+    private static ProjectRepository prjRep;
+    private static ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
+
+    @Autowired
+    public QMAMetrics(ProfilesController profilesController, ProjectRepository prjRep, ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository) {
+        QMAMetrics.profilesController = profilesController;
+        QMAMetrics.prjRep = prjRep;
+        QMAMetrics.profileProjectStrategicIndicatorsRepository = profileProjectStrategicIndicatorsRepository;
+    }
+
+    public List<DTOMetricEvaluation> CurrentEvaluation(String id, String prj, String profile) throws IOException {
         List<DTOMetricEvaluation> result;
 
         List<MetricEvaluationDTO> evals;
@@ -34,7 +53,7 @@ public class QMAMetrics {
         else
             evals = Factor.getMetricsEvaluations(prj, id).getMetrics();
         //Connection.closeConnection();
-        result = MetricEvaluationDTOListToDTOMetricList(evals);
+        result = MetricEvaluationDTOListToDTOMetricList(evals, prj, profile);
 
         return result;
     }
@@ -45,7 +64,7 @@ public class QMAMetrics {
         return MetricEvaluationDTOToDTOMetric(metricEvaluationDTO, metricEvaluationDTO.getEvaluations().get(0));
     }
 
-    public List<DTOMetricEvaluation> HistoricalData(String id, LocalDate from, LocalDate to, String prj) throws IOException {
+    public List<DTOMetricEvaluation> HistoricalData(String id, LocalDate from, LocalDate to, String prj, String profile) throws IOException {
         List<DTOMetricEvaluation> result;
 
         List<MetricEvaluationDTO> evals;
@@ -56,21 +75,21 @@ public class QMAMetrics {
         else
             evals = Factor.getMetricsEvaluations(prj, id, from, to).getMetrics();
         //Connection.closeConnection();
-        result = MetricEvaluationDTOListToDTOMetricList(evals);
+        result = MetricEvaluationDTOListToDTOMetricList(evals, prj, profile);
 
         return result;
     }
 
-    public List<DTOMetricEvaluation> SingleHistoricalData (String metricId, LocalDate from, LocalDate to, String prj) throws IOException {
+    public List<DTOMetricEvaluation> SingleHistoricalData (String metricId, LocalDate from, LocalDate to, String prj, String profile) throws IOException {
         qmacon.initConnexion();
         MetricEvaluationDTO metricEvaluationDTO = Metric.getSingleEvaluation(prj, metricId, from, to);
         List<MetricEvaluationDTO> metricEvaluationDTOList = new ArrayList<>();
         metricEvaluationDTOList.add(metricEvaluationDTO);
-        return MetricEvaluationDTOListToDTOMetricList(metricEvaluationDTOList);
+        return MetricEvaluationDTOListToDTOMetricList(metricEvaluationDTOList, prj, profile);
     }
 
 
-    static List<DTOMetricEvaluation> MetricEvaluationDTOListToDTOMetricList(List<MetricEvaluationDTO> evals) {
+    static List<DTOMetricEvaluation> MetricEvaluationDTOListToDTOMetricList(List<MetricEvaluationDTO> evals, String prj, String profileId) {
         List<DTOMetricEvaluation> m = new ArrayList<>();
         for (Iterator<MetricEvaluationDTO> iterMetrics = evals.iterator(); iterMetrics.hasNext(); ) {
             MetricEvaluationDTO metric = iterMetrics.next();
@@ -81,7 +100,32 @@ public class QMAMetrics {
                 }
             }
         }
-        return m;
+        // filter by profile
+        Project project = prjRep.findByExternalId(prj);
+        if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
+            Profile profile = profilesController.findProfileById(profileId);
+            if (profile.getAllSIByProject(project)) { // if allSI true, return all metrics
+                return m;
+            } else { // if allSI false, return metrics involved in SIs
+                List<ProfileProjectStrategicIndicators> ppsiList =
+                        profileProjectStrategicIndicatorsRepository.findByProfileAndProject(profile,project);
+                List<String> metricsOfSIs = new ArrayList<>();
+                for (ProfileProjectStrategicIndicators ppsi : ppsiList) {
+                    for (StrategicIndicatorQualityFactors siqf : ppsi.getStrategicIndicator().getStrategicIndicatorQualityFactorsList()) {
+                        for (String metric : siqf.getFactor().getMetrics()){ // metrics externalId
+                            metricsOfSIs.add(metric);
+                        }
+                    }
+                }
+                List<DTOMetricEvaluation> reviewM = new ArrayList<>();
+                for (int i = 0; i < m.size(); i++) {
+                    if (metricsOfSIs.contains(m.get(i).getId())) reviewM.add(m.get(i));
+                }
+                return reviewM;
+            }
+        } else { // if profile is null, return all metrics
+            return m;
+        }
     }
 
     private static DTOMetricEvaluation MetricEvaluationDTOToDTOMetric(MetricEvaluationDTO metric, EvaluationDTO evaluation) {
@@ -131,9 +175,9 @@ public class QMAMetrics {
 
     }
 
-    public List<DTOMetricEvaluation> getAllMetrics(String prj) throws IOException {
+    public List<DTOMetricEvaluation> getAllMetrics(String prj, String profile) throws IOException {
         qmacon.initConnexion();
-        return MetricEvaluationDTOListToDTOMetricList(Metric.getEvaluations(prj));
+        return MetricEvaluationDTOListToDTOMetricList(Metric.getEvaluations(prj), prj, profile);
     }
 
 }

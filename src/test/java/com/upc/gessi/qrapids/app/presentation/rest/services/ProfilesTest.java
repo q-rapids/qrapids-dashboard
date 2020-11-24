@@ -1,10 +1,8 @@
 package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 
-import com.upc.gessi.qrapids.QrapidsApplication;
 import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
 import com.upc.gessi.qrapids.app.domain.models.Profile;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProduct;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.data.util.Pair;
@@ -17,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,9 +23,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.File;
-import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,12 +84,15 @@ public class ProfilesTest {
         String profileName = "Test";
         String profileDescription = "Test profile";
         String qualityLevel = "ALL";
+        String dsiView = "Radar";
+        String dqfView = "Radar";
+        String qmView = "Graph";
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
         List<Pair<Long, Boolean>> allSIs = new ArrayList<>();
         allSIs.add(pair);
 
-        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dtoProjectList, allSIs);
+        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, dtoProjectList, allSIs);
         List<DTOProfile> dtoProfileList = new ArrayList<>();
         dtoProfileList.add(dtoProfile);
 
@@ -112,6 +109,9 @@ public class ProfilesTest {
                 .andExpect(jsonPath("$[0].name", is(profileName)))
                 .andExpect(jsonPath("$[0].description", is(profileDescription)))
                 .andExpect(jsonPath("$[0].qualityLevel", is(qualityLevel)))
+                .andExpect(jsonPath("$[0].dsiView", is(dsiView)))
+                .andExpect(jsonPath("$[0].dqfView", is(dqfView)))
+                .andExpect(jsonPath("$[0].qmView", is(qmView)))
                 .andExpect(jsonPath("$[0].projects", hasSize(1)))
                 .andExpect(jsonPath("$[0].projects[0].id", is(projectId.intValue())))
                 .andExpect(jsonPath("$[0].projects[0].externalId", is(projectExternalId)))
@@ -135,6 +135,12 @@ public class ProfilesTest {
                                         .description("Profile description"),
                                 fieldWithPath("[].qualityLevel")
                                         .description("Profile quality level"),
+                                fieldWithPath("[].dsiView")
+                                        .description("Default visualization for Detailed Strategic Indicators view"),
+                                fieldWithPath("[].dqfView")
+                                        .description("Default visualization for Detailed Factors view"),
+                                fieldWithPath("[].qmView")
+                                        .description("Default visualization for Quality Model view"),
                                 fieldWithPath("[].projects")
                                         .description("List of all the projects which compose the profile"),
                                 fieldWithPath("[].projects[].id")
@@ -180,12 +186,15 @@ public class ProfilesTest {
         String profileName = "Test";
         String profileDescription = "Test profile";
         String qualityLevel = "ALL";
+        String dsiView = "Radar";
+        String dqfView = "Radar";
+        String qmView = "Graph";
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
         List<Pair<Long, Boolean>> allSIs = new ArrayList<>();
         allSIs.add(pair);
 
-        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dtoProjectList, allSIs);
+        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, dtoProjectList, allSIs);
 
         when(profilesController.getProfileById(profileId.toString())).thenReturn(dtoProfile);
 
@@ -199,6 +208,9 @@ public class ProfilesTest {
                 .andExpect(jsonPath("$.name", is(profileName)))
                 .andExpect(jsonPath("$.description", is(profileDescription)))
                 .andExpect(jsonPath("$.qualityLevel", is(qualityLevel)))
+                .andExpect(jsonPath("$.dsiView", is(dsiView)))
+                .andExpect(jsonPath("$.dqfView", is(dqfView)))
+                .andExpect(jsonPath("$.qmView", is(qmView)))
                 .andExpect(jsonPath("$.projects", hasSize(1)))
                 .andExpect(jsonPath("$.projects[0].id", is(projectId.intValue())))
                 .andExpect(jsonPath("$.projects[0].externalId", is(projectExternalId)))
@@ -226,6 +238,12 @@ public class ProfilesTest {
                                         .description("Profile description"),
                                 fieldWithPath("qualityLevel")
                                         .description("Profile quality level"),
+                                fieldWithPath("dsiView")
+                                        .description("Default visualization for Detailed Strategic Indicators view"),
+                                fieldWithPath("dqfView")
+                                        .description("Default visualization for Detailed Factors view"),
+                                fieldWithPath("qmView")
+                                        .description("Default visualization for Quality Model view"),
                                 fieldWithPath("projects")
                                         .description("List of all the projects which compose the profile"),
                                 fieldWithPath("projects[].id")
@@ -271,6 +289,9 @@ public class ProfilesTest {
         String profileName = "Test";
         String profileDescription = "Test profile";
         Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf("ALL");
+        Profile.DetailedViews dsiView = Profile.DetailedViews.valueOf("Radar");
+        Profile.DetailedViews dqfView = Profile.DetailedViews.valueOf("Radar");
+        Profile.QualityModelView qmView = Profile.QualityModelView.valueOf("Graph");
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
         List<Pair<Long, Boolean>> allSIs = new ArrayList<>();
@@ -296,6 +317,9 @@ public class ProfilesTest {
                 .param("name", profileName)
                 .param("description", profileDescription)
                 .param("quality_level", qualityLevel.toString())
+                .param("dsi_view", dsiView.toString())
+                .param("dqf_view", dqfView.toString())
+                .param("qm_view", qmView.toString())
                 .param("projects_info", projects_info)
                 .with(new RequestPostProcessor() {
                     @Override
@@ -317,13 +341,19 @@ public class ProfilesTest {
                                         .description("Profile description"),
                                 parameterWithName("quality_level")
                                         .description("One of three possible options: ALL, FACTOR_METRIC, METRICS"),
+                                parameterWithName("dsi_view")
+                                        .description("Value for default Detailed Strategic Indicators view representation: Radar, Stacked or Polar"),
+                                parameterWithName("dqf_view")
+                                        .description("Value for default Detailed Factors view representation: Radar, Stacked or Polar"),
+                                parameterWithName("qm_view")
+                                        .description("Value for default Quality Model view representation: Graph or Sunburst"),
                                 parameterWithName("projects_info")
                                         .description("Array of JSON object { prj: project identifier, all_si: are all strategic indicators shown? , si: list of selected strategic indicators }"))
                 ));
 
         // Verify mock interactions
         verify(profilesController, times(1)).checkProfileByName(profileId, profileName);
-        verify(profilesController, times(1)).updateProfile(profileId, profileName, profileDescription, qualityLevel, projectsInfoMap);
+        verify(profilesController, times(1)).updateProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, projectsInfoMap);
 
         verifyNoMoreInteractions(profilesController);
     }
@@ -344,6 +374,9 @@ public class ProfilesTest {
         String profileName = "Test";
         String profileDescription = "Test profile";
         Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf("ALL");
+        Profile.DetailedViews dsiView = Profile.DetailedViews.valueOf("Radar");
+        Profile.DetailedViews dqfView = Profile.DetailedViews.valueOf("Radar");
+        Profile.QualityModelView qmView = Profile.QualityModelView.valueOf("Graph");
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
         List<Pair<Long, Boolean>> allSIs = new ArrayList<>();
@@ -366,6 +399,9 @@ public class ProfilesTest {
                 .param("name", profileName)
                 .param("description", profileDescription)
                 .param("quality_level", qualityLevel.toString())
+                .param("dsi_view", dsiView.toString())
+                .param("dqf_view", dqfView.toString())
+                .param("qm_view", qmView.toString())
                 .param("projects_info", projects_info)
                 .with(new RequestPostProcessor() {
                     @Override
@@ -387,6 +423,12 @@ public class ProfilesTest {
                                         .description("Profile description"),
                                 parameterWithName("quality_level")
                                         .description("One of three possible options: ALL, FACTOR_METRIC, METRICS"),
+                                parameterWithName("dsi_view")
+                                        .description("Value for default Detailed Strategic Indicators view representation: Radar, Stacked or Polar"),
+                                parameterWithName("dqf_view")
+                                        .description("Value for default Detailed Factors view representation: Radar, Stacked or Polar"),
+                                parameterWithName("qm_view")
+                                        .description("Value for default Quality Model view representation: Graph or Sunburst"),
                                 parameterWithName("projects_info")
                                         .description("Array of JSON object { prj: project identifier, all_si: are all strategic indicators shown? , si: list of selected strategic indicators }"))
                 ));
@@ -411,6 +453,9 @@ public class ProfilesTest {
         String profileName = "Test";
         String profileDescription = "Test profile";
         Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf("ALL");
+        Profile.DetailedViews dsiView = Profile.DetailedViews.valueOf("Radar");
+        Profile.DetailedViews dqfView = Profile.DetailedViews.valueOf("Radar");
+        Profile.QualityModelView qmView = Profile.QualityModelView.valueOf("Graph");
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
         List<Pair<Long, Boolean>> allSIs = new ArrayList<>();
@@ -436,6 +481,9 @@ public class ProfilesTest {
                 .param("name", profileName)
                 .param("description", profileDescription)
                 .param("quality_level", qualityLevel.toString())
+                .param("dsi_view", dsiView.toString())
+                .param("dqf_view", dqfView.toString())
+                .param("qm_view", qmView.toString())
                 .param("projects_info", projects_info);
 
         this.mockMvc.perform(requestBuilder)
@@ -450,13 +498,19 @@ public class ProfilesTest {
                                         .description("Profile description"),
                                 parameterWithName("quality_level")
                                         .description("One of three possible options: ALL, FACTOR_METRIC, METRICS"),
+                                parameterWithName("dsi_view")
+                                        .description("Value for default Detailed Strategic Indicators view representation: Radar, Stacked or Polar"),
+                                parameterWithName("dqf_view")
+                                        .description("Value for default Detailed Factors view representation: Radar, Stacked or Polar"),
+                                parameterWithName("qm_view")
+                                        .description("Value for default Quality Model view representation: Graph or Sunburst"),
                                 parameterWithName("projects_info")
                                         .description("Array of JSON object { prj: project identifier, all_si: are all strategic indicators shown? , si: list of selected strategic indicators }"))
                 ));
 
         // Verify mock interactions
         verify(profilesController, times(1)).checkNewProfileByName(profileName);
-        verify(profilesController, times(1)).newProfile(profileName, profileDescription, qualityLevel, projectsInfoMap);
+        verify(profilesController, times(1)).newProfile(profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, projectsInfoMap);
 
         verifyNoMoreInteractions(profilesController);
     }
@@ -476,6 +530,9 @@ public class ProfilesTest {
         String profileName = "Test";
         String profileDescription = "Test profile";
         Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf("ALL");
+        Profile.DetailedViews dsiView = Profile.DetailedViews.valueOf("Radar");
+        Profile.DetailedViews dqfView = Profile.DetailedViews.valueOf("Radar");
+        Profile.QualityModelView qmView = Profile.QualityModelView.valueOf("Graph");
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
         List<Pair<Long, Boolean>> allSIs = new ArrayList<>();
@@ -498,6 +555,9 @@ public class ProfilesTest {
                 .param("name", profileName)
                 .param("description", profileDescription)
                 .param("quality_level", qualityLevel.toString())
+                .param("dsi_view", dsiView.toString())
+                .param("dqf_view", dqfView.toString())
+                .param("qm_view", qmView.toString())
                 .param("projects_info", projects_info);
 
         this.mockMvc.perform(requestBuilder)

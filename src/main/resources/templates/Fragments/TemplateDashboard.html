@@ -165,7 +165,7 @@
     <script>
         function myFunction() {
             if (time == 'Current' && viewMode == 'Chart') {
-                document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode + representationMode);
+                document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode + DSIRepresentationMode);
             } else {
                 document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode);
             }
@@ -254,6 +254,10 @@
             <button id="Stacked" type="button" onclick="menuNav(time + viewMode + 'Stacked')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment with stacked bar charts">
                 <img class="icons" th:src="@{/icons/stacked_bar_chart.png}"
                      src="../../static/icons/stacked_bar_chart.png" alt="stacked bar chart representation"/>
+            </button>
+            <button id="Polar" type="button" onclick="menuNav(time + viewMode + 'Polar')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment with polar charts">
+                <img class="icons" th:src="@{/icons/polar_chart.png}"
+                     src="../../static/icons/polar_chart.png" alt="polar chart representation"/>
             </button>
         </div>
     </th:block>

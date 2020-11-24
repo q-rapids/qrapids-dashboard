@@ -16,7 +16,7 @@ if (getParameterByName('id').length !== 0) {
 
 var urlLink;
 
-function getData(width, height) {
+function getDataFactors(width, height, chartHyperlinked, color) {
     jQuery.ajax({
         dataType: "json",
         url: url,
@@ -24,7 +24,7 @@ function getData(width, height) {
         type: "GET",
         async: true,
         success: function (data) {
-            getFactorsCategories(data, width, height);
+            getFactorsCat(data, width, height, chartHyperlinked, color);
         },
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
@@ -35,115 +35,23 @@ function getData(width, height) {
     });
 }
 
-function getFactorsCategories (data, width, height) {
+function getFactorsCat (data, width, height, chartHyperlinked, color) {
     jQuery.ajax({
         url: "../api/qualityFactors/categories",
         type: "GET",
         async: true,
         success: function (categories) {
             if (id) { // in case we show factors for one detailed si
-                drawChart(data[0].factors, "gaugeChart", width, height, categories, true);
+                drawChartFactors(data[0].factors, "gaugeChartFactors", width, height, categories, chartHyperlinked, color);
             } else { // in case we show all factors
-                drawChart(data, "gaugeChart", width, height, categories, true);
+                drawChartFactors(data, "gaugeChartFactors", width, height, categories, chartHyperlinked, color);
             }
         }
     });
 }
 
-function drawChart(factors, container, width, height, categories) {
-
-    for (i = 0; i < factors.length; ++i) {
-
-        //0 to 1 values to angular values
-        angle = factors[i].value * 180 + 90;
-        upperThresh = 0.66 * Math.PI - Math.PI / 2;
-        lowThresh = 0.33 * Math.PI - Math.PI / 2;
-
-        var arc = d3.arc()      //create arc starting at -90 degreees
-            .innerRadius(70 * width / 250)
-            .outerRadius(110 * width / 250)
-            .startAngle(-tau);
-
-        //create chart svg with hyperlink
-        var svg = d3.select(container).append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("class", "chart")
-            .append("g")
-            .attr("transform",
-                "translate(" + width / 2 + "," + height / 2 + ")");
-
-        //draw blue background for charts
-        svg.append("path")
-            .datum({endAngle: Math.PI / 2})
-            .style("fill", "#0579A8")
-            .attr("d", arc);
-
-        categories.forEach(function (category) {
-            var threshold = category.upperThreshold * Math.PI - Math.PI / 2;
-            svg.append("path")
-                .datum({endAngle: threshold})
-                .style("fill", category.color)
-                .attr("d", arc);
-        });
-
-        //create needle
-        var arc2 = d3.arc()
-            .innerRadius(0)
-            .outerRadius(100 * width / 250)
-            .startAngle(-0.05)
-            .endAngle(0.05);
-
-        //draw needle in correct position depending on it's angle
-        svg.append("path")
-            .style("fill", "#000")
-            .attr("d", arc2)
-            .attr("transform", "translate(" + -100 * width / 250 * Math.cos((angle - 90) / 180 * Math.PI) + "," + -100 * width / 250 * Math.sin((angle - 90) / 180 * Math.PI) + ") rotate(" + angle + ")");
-
-        //create small circle at needle base
-        var arc3 = d3.arc()
-            .innerRadius(0)
-            .outerRadius(10 * width / 250)
-            .startAngle(0)
-            .endAngle(Math.PI * 2);
-
-        //draw needle base
-        svg.append("path")
-            .style("fill", "#000")
-            .attr("d", arc3);
-
-        //add text under the gauge
-        var name;
-        if (factors[i].name.length > 23) name = factors[i].name.slice(0, 20) + "...";
-        else name = factors[i].name;
-        svg.append("text")
-            .attr("id", "name" + i)
-            .attr("x", 0)
-            .attr("y", 50 * width / 250)
-            .attr("text-anchor", "middle")
-            .attr("title", factors[i].name)
-            .style("font-size", 11 + 8 * width / 250 + "px")
-            .text(name);
-
-        d3.select("#name" + i).append("title").text(factors[i].name);
-
-        //add label under the text
-        var text;
-        if (isNaN(factors[i].value))
-            text = factors[i].value;
-        else text = factors[i].value.toFixed(2);
-        svg.append("text")
-            .attr("x", 0)
-            .attr("y", 50 * width / 250 + 30)
-            .attr("text-anchor", "middle")
-            .style("font-size", 11 + 6 * width / 250 + "px")
-            .text(text);
-
-    }
-}
-
-function drawChart(factors, container, width, height, categories, chartHyperlinked, color) {
-    sortDataAlphabetically(factors);
+function drawChartFactors(factors, container, width, height, categories, chartHyperlinked, color) {
+    sortMyDataAlphabetically(factors);
     console.log("dibuixar en gauge chart");
     console.log(factors);
     if (color == null) {
@@ -166,7 +74,7 @@ function drawChart(factors, container, width, height, categories, chartHyperlink
         document.getElementById(container).appendChild(div);
 
         //0 to 1 values to angular values
-        angle = factors[i].value * 180 + 90;
+        angle = factors[i].value.first * 180 + 90;
         upperThresh = 0.66 * Math.PI - Math.PI / 2;
         lowThresh = 0.33 * Math.PI - Math.PI / 2;
 
@@ -181,11 +89,11 @@ function drawChart(factors, container, width, height, categories, chartHyperlink
         if (chartHyperlinked){
 
             if (getParameterByName('id').length !== 0) { // we come from DSI
-                urlLink = "../DetailedQualityFactors/CurrentChart" + representationMode + "?id="
+                urlLink = "../DetailedQualityFactors/CurrentChart" + DQFRepresentationMode + "?id="
                     + factors[i].id + "&name=" + factors[i].name
                     + "&siid=" + getParameterByName('id') + "&si=" + getParameterByName('name');
             } else { // we come from factor
-                urlLink = "../DetailedQualityFactors/CurrentChart" + representationMode + "?id="
+                urlLink = "../DetailedQualityFactors/CurrentChart" + DQFRepresentationMode + "?id="
                     + factors[i].id + "&name=" + factors[i].name;
             }
 
@@ -282,6 +190,9 @@ function drawChart(factors, container, width, height, categories, chartHyperlink
 
         // Warnings
         if (chartHyperlinked) {
+            var br = document.createElement("br");
+            div.appendChild(br);
+
             var message = "";
 
             var today = new Date();
@@ -322,7 +233,110 @@ function drawChart(factors, container, width, height, categories, chartHyperlink
     $("#assessmentDate").text(assessmentDate.toLocaleDateString());
 }
 
-function sortDataAlphabetically (factors) {
+function drawSimulationNeedleFactors (container, width, height, color) {
+    d3.selectAll('.simulation').remove();
+    sortDataAlphabetically();
+
+    console.log("drawSimulationNeedleFactors");
+    console.log(data);
+
+    for (i = 0; i < data.length; ++i) {
+        var divId = container + "DivChart" + i;
+        var svg = d3.select('#' + divId).select("svg");
+        angle = data[i].value.first * 180 + 90;
+
+        //create needle
+        var arc2 = d3.arc()
+            .innerRadius(0)
+            .outerRadius(100 * width / 250)
+            .startAngle(-0.05)
+            .endAngle(0.05);
+
+        //draw the blue needle in correct position depending on it's angle
+        svg.append("path")
+            .style("fill", color)
+            .attr("class", "simulation")
+            .attr("d", arc2)
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ") translate(" + -100 * width / 250 * Math.cos((angle - 90) / 180 * Math.PI) + "," + -100 * width / 250 * Math.sin((angle - 90) / 180 * Math.PI) + ") rotate(" + angle + ")");
+
+        //create small circle at needle base
+        var arc3 = d3.arc()
+            .innerRadius(0)
+            .outerRadius(10 * width / 250)
+            .startAngle(0)
+            .endAngle(Math.PI * 2);
+
+        //draw the black needle base
+        svg.append("path")
+            .style("fill", color)
+            .attr("class", "simulation")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+            .attr("d", arc3);
+
+        svg.append("text")
+            .attr("class", "simulation")
+            .attr("x", 0)
+            .attr("y", 50 * width / 250 + 50)
+            .attr("text-anchor", "middle")
+            .attr("font-family", "sans-serif")
+            .attr("fill", color)
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+            .style("font-size", "16px")
+            .text(data[i].value_description);
+
+        var beforeText = $( "text.text"+i ).text();
+        var beforeValue = beforeText.split("(");
+        beforeValue = parseFloat(beforeValue[1]);
+        var afterValue = data[i].value.first.toFixed(2);
+
+        if (beforeValue < afterValue) {
+            if (beforeValue == 0)
+                beforeValue = 0.001;
+            var inc = ((afterValue - beforeValue)/beforeValue)*100;
+            svg.append("polygon") // increase icon
+                .attr("class", "simulation")
+                .attr("points", "160,10 150,25 170,25 160,10" )
+                .attr("style", "fill:green;stroke:green;stroke-width:1");
+            svg.append("text")
+                .attr("class", "simulation")
+                .attr("x", 86)
+                .attr("y", -97)
+                .attr("text-anchor", "middle")
+                .attr("font-family", "sans-serif")
+                .attr("fill", "green")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+                .style("font-size", "12px")
+                .text(inc.toFixed(0) + "%");
+        } else if ( beforeValue > afterValue) {
+            var dec = ((beforeValue - afterValue)/beforeValue)*100;
+            svg.append("polygon") // decrease icon
+                .attr("class", "simulation")
+                .attr("points", "160,25 150,10 170,10 160,25" )
+                .attr("style", "fill:darkred;stroke:darkred;stroke-width:1");
+            svg.append("text")
+                .attr("class", "simulation")
+                .attr("x", 86)
+                .attr("y", -97)
+                .attr("text-anchor", "middle")
+                .attr("font-family", "sans-serif")
+                .attr("fill", "darkred")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+                .style("font-size", "12px")
+                .text(dec.toFixed(0) + "%");
+        } else {
+            svg.append("polygon") // steady icon
+                .attr("class", "simulation")
+                .attr("points", "170,11 190,11 190,15 170,15" )
+                .attr("style", "fill:dodgerblue;stroke:steelblue;stroke-width:1");
+            svg.append("polygon") // steady icon
+                .attr("class", "simulation")
+                .attr("points", "170,24 190,24 190,20 170,20" )
+                .attr("style", "fill:dodgerblue;stroke:steelblue;stroke-width:1");
+        }
+    }
+}
+
+function sortMyDataAlphabetically (factors) {
     function compare (a, b) {
         if (a.name < b.name) return -1;
         else if (a.name > b.name) return 1;

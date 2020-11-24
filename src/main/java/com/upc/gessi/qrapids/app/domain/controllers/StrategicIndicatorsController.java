@@ -51,6 +51,9 @@ public class StrategicIndicatorsController {
     private SICategoryRepository strategicIndicatorCategoryRepository;
 
     @Autowired
+    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
+
+    @Autowired
     private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
 
     @Autowired
@@ -73,9 +76,6 @@ public class StrategicIndicatorsController {
 
     @Autowired
     private StrategicIndicatorQualityFactorsController strategicIndicatorQualityFactorsController;
-
-    @Autowired
-    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
 
     private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
@@ -295,7 +295,7 @@ public class StrategicIndicatorsController {
 
 
     public void trainForecastModelsSingleProject(String project, String profile, String technique) throws IOException, CategoriesException, ProjectNotFoundException {
-        List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(project);
+        List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(project, profile);
         qmaForecast.trainMetricForecast(metrics, "7", project, technique);
 
         List<DTODetailedFactorEvaluation> factors = factorsController.getAllFactorsWithMetricsCurrentEvaluation(project, profile, false);
@@ -580,8 +580,8 @@ public class StrategicIndicatorsController {
                 if (factor.getId().equals(qfId)) {
                     factorFound = true;
                     factorList.add(factor);
-                    listFactorsAssessmentValues.add(factor.getValue());
-                    mapSIFactors.put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue()));
+                    listFactorsAssessmentValues.add(factor.getValue().getFirst());
+                    mapSIFactors.put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue().getFirst()));
                     // ToDo using getHardID or not
                     factor.addStrategicIndicator(strategicIndicator.getExternalId());
                     //factor.addStrategicIndicator(StrategicIndicator.getHardID(project, strategicIndicator.getExternalId(), evaluationDate));
@@ -618,11 +618,11 @@ public class StrategicIndicatorsController {
             }
             weights.add(weight);
             if (weight == -1f){
-                values.add(dtoFactorEvaluation.getValue()*1f/factorList.size()); // value for representation (average)
+                values.add(dtoFactorEvaluation.getValue().getFirst()*1f/factorList.size()); // value for representation (average)
             } else {
-                values.add(dtoFactorEvaluation.getValue() * weight); // value of weighted factor
+                values.add(dtoFactorEvaluation.getValue().getFirst() * weight); // value of weighted factor
             }
-            labels.add(factorsController.getFactorLabelFromValue(dtoFactorEvaluation.getValue()));
+            labels.add(factorsController.getFactorLabelFromValue(dtoFactorEvaluation.getValue().getFirst()));
         }
         correct = saveFactorSIRelation(project, factorIds, strategicIndicator.getExternalId(), evaluationDate, weights, values, labels, assessmentValueOrLabel);
         return correct;
@@ -663,7 +663,7 @@ public class StrategicIndicatorsController {
         return (index/siCategoryList.size() + (index+1)/siCategoryList.size())/2.0f;
     }
 
-    public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException, QualityFactorNotFoundException {
+    public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException, QualityFactorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         List<String> projects = projectsController.importProjectsAndUpdateDatabase();
         for(String projectExternalId : projects) {
             List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicators = new ArrayList<>();
@@ -680,7 +680,13 @@ public class StrategicIndicatorsController {
                     factors.add(String.valueOf(factor.getId()));
                     factors.add("-1");
                 }
-                saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
+                // check if si is in data base and update it
+                Strategic_Indicator strategicIndicator = strategicIndicatorRepository.findByNameAndProject_Id(dtoDetailedStrategicIndicator.getName(),project.getId());
+                if (strategicIndicator != null) {
+                    editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), null, factors);
+                } else { // save it if it's new
+                    saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
+                }
             }
         }
     }
@@ -689,7 +695,7 @@ public class StrategicIndicatorsController {
         List<DTOFactorEvaluation> factors = factorsController.getAllFactorsEvaluation(projectExternalId,profileId,true);
         for (DTOFactorEvaluation factor : factors) {
             if (factorsNameValueMap.containsKey(factor.getId())) {
-                factor.setValue(factorsNameValueMap.get(factor.getId()));
+                factor.setValue(Pair.of(factorsNameValueMap.get(factor.getId()),factorsController.getFactorLabelFromValue(factorsNameValueMap.get(factor.getId()))));
             }
         }
         Iterable<Strategic_Indicator> listSI = getStrategicIndicatorsByProjectAndProfile(projectExternalId,profileId);
@@ -739,7 +745,7 @@ public class StrategicIndicatorsController {
         for (String qfId : si.getQuality_factors()) {
             for (DTOFactorEvaluation factor : factors) {
                 if (factor.getId().equals(qfId)) {
-                    mapSIFactors.put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue()));
+                    mapSIFactors.put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue().getFirst()));
                     listSIFactors.add(factor);
                 }
             }
@@ -751,7 +757,7 @@ public class StrategicIndicatorsController {
         int nFactors = 0;
         for (DTOFactorEvaluation f : factors) {
             if (f.getValue() != null) {
-                result += f.getValue();
+                result += f.getValue().getFirst();
                 nFactors++;
             }
         }

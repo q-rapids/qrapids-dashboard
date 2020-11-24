@@ -20,6 +20,11 @@ public class DetailedQualityFactorController {
         return "DetailedQualityFactors/CurrentStacked";
     }
 
+    @RequestMapping("/DetailedQualityFactors/CurrentChartPolar")
+    public String CurrentChartPolar(){
+        return "DetailedQualityFactors/CurrentPolar";
+    }
+
     @RequestMapping("/DetailedQualityFactors/CurrentTable")
     public String CurrentTable(){
         return "DetailedQualityFactors/CurrentTable";
