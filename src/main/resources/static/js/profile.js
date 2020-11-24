@@ -320,7 +320,7 @@ function clickOnTree(e){
             visualizationsCol.setAttribute('style', 'width: 100%');
             // DSI visualization case
             var dsiViewP = document.createElement('p');
-            dsiViewP.appendChild(document.createTextNode("Detailed Strategic Indicators view:   "));
+            dsiViewP.appendChild(document.createTextNode("Detailed Strategic Indicators view: "));
             dsiViewP.setAttribute('id', 'dsiViewP');
             dsiViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
             var dsiViewBtnGroup = document.createElement('div');

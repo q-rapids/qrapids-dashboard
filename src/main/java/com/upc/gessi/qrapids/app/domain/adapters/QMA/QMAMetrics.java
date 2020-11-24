@@ -11,7 +11,6 @@ import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrategicIndicatorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import evaluation.Factor;
 import evaluation.Metric;
@@ -23,7 +22,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class QMAMetrics {
@@ -32,15 +30,12 @@ public class QMAMetrics {
     private QMAConnection qmacon;
 
     // it was made to use these variables in static method
-    private static QualityFactorRepository qfRep;
     private static ProfilesController profilesController;
     private static ProjectRepository prjRep;
     private static ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
 
     @Autowired
-    public QMAMetrics(QualityFactorRepository qfRep, ProfilesController profilesController,
-                                          ProjectRepository prjRep, ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository) {
-        QMAMetrics.qfRep = qfRep;
+    public QMAMetrics(ProfilesController profilesController, ProjectRepository prjRep, ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository) {
         QMAMetrics.profilesController = profilesController;
         QMAMetrics.prjRep = prjRep;
         QMAMetrics.profileProjectStrategicIndicatorsRepository = profileProjectStrategicIndicatorsRepository;
@@ -105,7 +100,7 @@ public class QMAMetrics {
                 }
             }
         }
-        // TODO: filter by profile
+        // filter by profile
         Project project = prjRep.findByExternalId(prj);
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);
