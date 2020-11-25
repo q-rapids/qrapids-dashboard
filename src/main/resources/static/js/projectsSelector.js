@@ -154,6 +154,13 @@ function showProjectSelector (projects) {
                     sessionStorage.setItem("DSIRepresentationMode", data.dsiView);
                     sessionStorage.setItem("DQFRepresentationMode", data.dqfView);
                     sessionStorage.setItem("qmMode", data.qmView);
+                    // specific cases: redirect to correct visualization
+                    if (currentURL.search("/QualityModel") !== -1) // qm
+                        url = serverUrl + "/QualityModel" + sessionStorage.getItem("qmMode");
+                    else if (currentURL.search("/DetailedStrategicIndicators/CurrentChart") !== -1) // dsi
+                        url = serverUrl + "/DetailedStrategicIndicators/CurrentChart" + sessionStorage.getItem("DSIRepresentationMode");
+                    else if (currentURL.search("/DetailedQualityFactors/CurrentChart") !== -1) // dqf
+                        url = serverUrl + "/DetailedQualityFactors/CurrentChart" + sessionStorage.getItem("DQFRepresentationMode");
                     sessionStorage.setItem("profile_qualitylvl", data.qualityLevel);
                     if (data.qualityLevel == "METRICS") {
                         sessionStorage.setItem("prediction", "Metrics");
@@ -180,13 +187,6 @@ function showProjectSelector (projects) {
                 }
             });
         }
-        // specific cases: redirect to correct visualization
-        if (currentURL.search("/QualityModel") !== -1) // qm
-            url = serverUrl + "/QualityModel" + sessionStorage.getItem("qmMode");
-        else if (currentURL.search("/DetailedStrategicIndicators/CurrentChart") !== -1) // dsi
-            url = serverUrl + "/DetailedStrategicIndicators/CurrentChart" + sessionStorage.getItem("DSIRepresentationMode");
-        else if (currentURL.search("/DetailedQualityFactors/CurrentChart") !== -1) // dqf
-            url = serverUrl + "/DetailedQualityFactors/CurrentChart" + sessionStorage.getItem("DQFRepresentationMode");
         setProject($this.text(), url);
     });
 
