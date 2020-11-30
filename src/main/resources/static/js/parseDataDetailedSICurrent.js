@@ -90,6 +90,7 @@ function getData() {
 
                 warnings.push(messages);
             }
+            sessionStorage.setItem("assessmentDate", assessmentDate.toLocaleDateString());
             $("#assessmentDate").text(assessmentDate.toLocaleDateString());
             getFactorsCategories();
         }

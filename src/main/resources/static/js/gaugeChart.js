@@ -285,7 +285,7 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         feedbackBtn.appendChild(document.createTextNode("Feedback"));
         document.getElementById("projectSelectorDiv").appendChild(feedbackBtn);
     }
-
+    sessionStorage.setItem("assessmentDate", assessmentDate.toLocaleDateString());
     $("#assessmentDate").text(assessmentDate.toLocaleDateString());
 }
 

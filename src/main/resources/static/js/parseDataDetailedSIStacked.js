@@ -43,6 +43,7 @@ function getData() {
         type: "GET",
         async: true,
         success: function (data) {
+            sortDataAlphabetically(data);
             console.log(data);
             var url_string = parseURLSimple(window.location.href);
             var url = new URL(url_string);
@@ -98,9 +99,19 @@ function getData() {
             }
             // TODO make navigation link
             navTextSimple();
+            $("#assessmentDate").text(sessionStorage.getItem("assessmentDate"));
             drawChart();
         }
     });
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getFactorsCategories() {
