@@ -383,7 +383,6 @@ public class StrategicIndicatorsController {
         // 3. When all the strategic indicators is calculated, we need to update the factors with the information of
         // the strategic indicators using them
         factorsController.setFactorStrategicIndicatorRelation(factorEvaluationQMA.getFactors(), projectExternalId);
-
         return correct;
     }
 
@@ -481,7 +480,7 @@ public class StrategicIndicatorsController {
         }
 
         // Save relations of factor -> SI
-        if (correct) {
+        if (correct && !assessmentValueOrLabel.isEmpty()) {
             correct = buildAndSaveFactorSIRelation(evaluationDate, project, strategicIndicator, factorList, assessmentValueOrLabel);
         }
 

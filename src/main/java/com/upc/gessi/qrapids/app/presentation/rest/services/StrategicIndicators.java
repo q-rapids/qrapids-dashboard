@@ -399,7 +399,6 @@ public class StrategicIndicators {
     public void assesStrategicIndicatorsLegacy(@RequestParam(value = "prj", required=false) String prj,
                                   @RequestParam(value = "from", required=false) String from,
                                   @RequestParam(value = "train", required = false, defaultValue = "ONE") TrainType trainType) {
-
         assesStrategicIndicators(prj, from, trainType);
     }
 
@@ -412,15 +411,14 @@ public class StrategicIndicators {
         LocalDate dateFrom = null;
 
         try {
-
             if (from != null && !from.isEmpty()) {
-                dateFrom = LocalDate.parse(from, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                dateFrom = LocalDate.parse(from, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             }
             // first assess Factors
             correct = factorsController.assessQualityFactors(prj, dateFrom);
-            if (correct)
+            if (correct) {
                 correct = strategicIndicatorsController.assessStrategicIndicators(prj, dateFrom);
-
+            }
             if(correct) {
                 // Train forecast models
                 if (trainType != TrainType.NONE) {
@@ -444,7 +442,8 @@ public class StrategicIndicators {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.ASSESSMENT_ERROR + e.getMessage());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error in the request parameters");
+            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error in the request parameters");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 

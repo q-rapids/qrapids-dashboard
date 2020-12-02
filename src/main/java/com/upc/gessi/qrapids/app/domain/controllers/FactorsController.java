@@ -355,7 +355,6 @@ public class FactorsController {
         // 3. When all the quality factors is calculated, we need to update the metrics with the information of
         // the quality factors using them
         metricsController.setMetricQualityFactorRelation(metricEvaluationQMA.getMetrics(), projectExternalId);
-
         return correct;
     }
 
@@ -383,7 +382,7 @@ public class FactorsController {
         }
 
         // Save relations of metric -> QF
-        if (correct) {
+        if (correct && !assessmentValueOrLabel.isEmpty()) {
             correct = buildAndSaveMetricQFRelation(evaluationDate, project, qualityFactor, metricList, assessmentValueOrLabel);
         }
 
