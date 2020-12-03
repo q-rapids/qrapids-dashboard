@@ -27,6 +27,8 @@ public class ProductsController {
     private ProductRepository productRep;
     @Autowired
     private QMAStrategicIndicators qmasi;
+	@Autowired
+	private StrategicIndicatorsController strategicIndicatorsController;
 	
 	public List<DTOProduct> getProducts() throws Exception {
 		Iterable<Product> productIterable = productRep.findAll();
@@ -126,7 +128,8 @@ public class ProductsController {
 			buildAverageEvaluations(average, evaluations);
 			for (int i = 0; i < average.size(); i++) {
 				Pair<Float, String> pair = average.get(i).getValue();
-				average.get(i).setValue(Pair.of(pair.getFirst() / evaluations.size(), ""));
+				Float value = pair.getFirst() / evaluations.size();
+				average.get(i).setValue(Pair.of(value, strategicIndicatorsController.getLabel(value)));
 			}
 		}
 		return average;
