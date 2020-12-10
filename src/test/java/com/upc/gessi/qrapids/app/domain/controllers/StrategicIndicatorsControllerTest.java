@@ -1160,7 +1160,7 @@ public class StrategicIndicatorsControllerTest {
     @Test
     public void getValueAndLabelFromCategories() {
         // Given
-        List<DTOSIAssessment> dtoSIAssessmentList = domainObjectsBuilder.buildDTOSIAssessmentList();
+        List<DTOAssessment> dtoSIAssessmentList = domainObjectsBuilder.buildDTOSIAssessmentList();
 
         List<SICategory> categoryList = domainObjectsBuilder.buildSICategoryList();
         when(siCategoryRepository.findAll()).thenReturn(categoryList);
@@ -1424,25 +1424,25 @@ public class StrategicIndicatorsControllerTest {
         when(siCategoryRepository.findAll()).thenReturn(siCategoryList);
 
         // When
-        List<DTOSIAssessment> dtoSIAssessmentList = strategicIndicatorsController.getCategories();
+        List<DTOAssessment> dtoSIAssessmentList = strategicIndicatorsController.getCategories();
 
         // Then
         int expectedNumberOfElements = 3;
         assertEquals(expectedNumberOfElements, dtoSIAssessmentList.size());
 
-        DTOSIAssessment dtoSIAssessment1 = dtoSIAssessmentList.get(0);
+        DTOAssessment dtoSIAssessment1 = dtoSIAssessmentList.get(0);
         assertEquals(siCategoryList.get(0).getId(), dtoSIAssessment1.getId());
         assertEquals(siCategoryList.get(0).getName(), dtoSIAssessment1.getLabel());
         assertEquals(siCategoryList.get(0).getColor(), dtoSIAssessment1.getColor());
         assertEquals(1f, dtoSIAssessment1.getUpperThreshold(), 0f);
 
-        DTOSIAssessment dtoSIAssessment2 = dtoSIAssessmentList.get(1);
+        DTOAssessment dtoSIAssessment2 = dtoSIAssessmentList.get(1);
         assertEquals(siCategoryList.get(1).getId(), dtoSIAssessment2.getId());
         assertEquals(siCategoryList.get(1).getName(), dtoSIAssessment2.getLabel());
         assertEquals(siCategoryList.get(1).getColor(), dtoSIAssessment2.getColor());
         assertEquals(0.66f, dtoSIAssessment2.getUpperThreshold(), 0.01f);
 
-        DTOSIAssessment dtoSIAssessment3 = dtoSIAssessmentList.get(2);
+        DTOAssessment dtoSIAssessment3 = dtoSIAssessmentList.get(2);
         assertEquals(siCategoryList.get(2).getId(), dtoSIAssessment3.getId());
         assertEquals(siCategoryList.get(2).getName(), dtoSIAssessment3.getLabel());
         assertEquals(siCategoryList.get(2).getColor(), dtoSIAssessment3.getColor());

@@ -2,7 +2,7 @@ package com.upc.gessi.qrapids.app.domain.adapters;
 
 import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAssessment;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.assessmentSI.DTOAssessmentSI;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.assessmentSI.DTOCategorySI;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class AssesSI {
     @Value("${assessSI.url}")
     private String url;
 
-    public List<DTOSIAssessment> assesSI(String siId, Map<String, String> mapFactors, File network) {
+    public List<DTOAssessment> assesSI(String siId, Map<String, String> mapFactors, File network) {
 
         mapFactors = new LinkedHashMap<>(mapFactors);
 
@@ -62,7 +62,7 @@ public class AssesSI {
             ResponseEntity<String> responseEntity = restTemplate.postForEntity(builder.build().encode().toUri(), requestEntity, String.class);
 
             HttpStatus statusCode = responseEntity.getStatusCode();
-            List<DTOSIAssessment> dtoSiAssessment;
+            List<DTOAssessment> dtoSiAssessment;
             if (statusCode == HttpStatus.OK) {
                 Gson gson = new Gson();
                 DTOAssessmentSI assessmentSI = gson.fromJson(responseEntity.getBody(), DTOAssessmentSI.class);
@@ -98,11 +98,11 @@ public class AssesSI {
         }
     }
 
-    public List<DTOSIAssessment> dtoAssessmentSItoDTOSIAssessment(List<DTOCategorySI> catsEstimation) {
-        List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
+    public List<DTOAssessment> dtoAssessmentSItoDTOSIAssessment(List<DTOCategorySI> catsEstimation) {
+        List<DTOAssessment> categories = strategicIndicatorsController.getCategories();
         if (catsEstimation.size() == categories.size()) {
             int i = 0;
-            for (DTOSIAssessment assessment : categories) {
+            for (DTOAssessment assessment : categories) {
                 if (assessment.getLabel().equals(catsEstimation.get(catsEstimation.size() - 1 - i).getIdSICategory())) {
                     assessment.setValue(catsEstimation.get(catsEstimation.size() - 1 - i).getProbSICategory());
                 }

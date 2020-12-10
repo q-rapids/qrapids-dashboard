@@ -1,7 +1,6 @@
 package com.upc.gessi.qrapids.app.testHelpers;
 
 import com.upc.gessi.qrapids.app.domain.models.*;
-import com.upc.gessi.qrapids.app.domain.repositories.QFCategory.QFCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODecisionQualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
@@ -300,14 +299,14 @@ public class DomainObjectsBuilder {
     }
 
     public DTOStrategicIndicatorEvaluation buildDtoStrategicIndicatorEvaluation (Strategic_Indicator strategicIndicator) {
-        List<DTOSIAssessment> dtoSIAssessmentList = new ArrayList<>();
+        List<DTOAssessment> dtoSIAssessmentList = new ArrayList<>();
 
         Long assessment1Id = 10L;
         String assessment1Label = "Good";
         Float assessment1Value = null;
         String assessment1Color = "#00ff00";
         Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssessment dtoSIAssessment1 = new DTOSIAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+        DTOAssessment dtoSIAssessment1 = new DTOAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment1);
 
         Long assessment2Id = 11L;
@@ -315,7 +314,7 @@ public class DomainObjectsBuilder {
         Float assessment2Value = null;
         String assessment2Color = "#ff8000";
         Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssessment dtoSIAssessment2 = new DTOSIAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+        DTOAssessment dtoSIAssessment2 = new DTOAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment2);
 
         Long assessment3Id = 11L;
@@ -323,7 +322,7 @@ public class DomainObjectsBuilder {
         Float assessment3Value = null;
         String assessment3Color = "#ff0000";
         Float assessment3UpperThreshold = 0f;
-        DTOSIAssessment dtoSIAssessment3 = new DTOSIAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+        DTOAssessment dtoSIAssessment3 = new DTOAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment3);
 
         Float strategicIndicatorValue = 0.7f;
@@ -486,14 +485,14 @@ public class DomainObjectsBuilder {
     }
 
     public DTOStrategicIndicatorEvaluation buildDTOStrategicIndicatorEvaluation () {
-        List<DTOSIAssessment> dtoSIAssessmentList = new ArrayList<>();
+        List<DTOAssessment> dtoSIAssessmentList = new ArrayList<>();
 
         Long assessment1Id = 10L;
         String assessment1Label = "Good";
         Float assessment1Value = null;
         String assessment1Color = "#00ff00";
         Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssessment dtoSIAssessment1 = new DTOSIAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+        DTOAssessment dtoSIAssessment1 = new DTOAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment1);
 
         Long assessment2Id = 11L;
@@ -501,7 +500,7 @@ public class DomainObjectsBuilder {
         Float assessment2Value = null;
         String assessment2Color = "#ff8000";
         Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssessment dtoSIAssessment2 = new DTOSIAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+        DTOAssessment dtoSIAssessment2 = new DTOAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment2);
 
         Long assessment3Id = 11L;
@@ -509,7 +508,7 @@ public class DomainObjectsBuilder {
         Float assessment3Value = null;
         String assessment3Color = "#ff0000";
         Float assessment3UpperThreshold = 0f;
-        DTOSIAssessment dtoSIAssessment3 = new DTOSIAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+        DTOAssessment dtoSIAssessment3 = new DTOAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment3);
 
         String strategicIndicatorId = "processperformance";
@@ -710,15 +709,15 @@ public class DomainObjectsBuilder {
         return metricCategoriesList;
     }
 
-    public List<DTOSIAssessment> buildDTOSIAssessmentList () {
-        List<DTOSIAssessment> dtoSIAssessmentList = new ArrayList<>();
+    public List<DTOAssessment> buildDTOSIAssessmentList () {
+        List<DTOAssessment> dtoSIAssessmentList = new ArrayList<>();
 
         Long assessment1Id = 10L;
         String assessment1Label = "Good";
         Float assessment1Value = 0.5f;
         String assessment1Color = "#00ff00";
         Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssessment dtoSIAssessment1 = new DTOSIAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+        DTOAssessment dtoSIAssessment1 = new DTOAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment1);
 
         Long assessment2Id = 11L;
@@ -726,7 +725,7 @@ public class DomainObjectsBuilder {
         Float assessment2Value = 0.3f;
         String assessment2Color = "#ff8000";
         Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssessment dtoSIAssessment2 = new DTOSIAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+        DTOAssessment dtoSIAssessment2 = new DTOAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment2);
 
         Long assessment3Id = 11L;
@@ -734,7 +733,7 @@ public class DomainObjectsBuilder {
         Float assessment3Value = 0.2f;
         String assessment3Color = "#ff0000";
         Float assessment3UpperThreshold = 0f;
-        DTOSIAssessment dtoSIAssessment3 = new DTOSIAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+        DTOAssessment dtoSIAssessment3 = new DTOAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment3);
 
         return dtoSIAssessmentList;
@@ -797,14 +796,14 @@ public class DomainObjectsBuilder {
     }
 
     public DTOSICurrentHistoricEvaluation buildDTOSICurrentHistoricEvaluation() {
-        List<DTOSIAssessment> dtoSIAssessmentList = new ArrayList<>();
+        List<DTOAssessment> dtoSIAssessmentList = new ArrayList<>();
 
         Long assessment1Id = 10L;
         String assessment1Label = "Good";
         Float assessment1Value = null;
         String assessment1Color = "#00ff00";
         Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssessment dtoSIAssessment1 = new DTOSIAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+        DTOAssessment dtoSIAssessment1 = new DTOAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment1);
 
         Long assessment2Id = 11L;
@@ -812,7 +811,7 @@ public class DomainObjectsBuilder {
         Float assessment2Value = null;
         String assessment2Color = "#ff8000";
         Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssessment dtoSIAssessment2 = new DTOSIAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+        DTOAssessment dtoSIAssessment2 = new DTOAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment2);
 
         Long assessment3Id = 11L;
@@ -820,7 +819,7 @@ public class DomainObjectsBuilder {
         Float assessment3Value = null;
         String assessment3Color = "#ff0000";
         Float assessment3UpperThreshold = 0f;
-        DTOSIAssessment dtoSIAssessment3 = new DTOSIAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+        DTOAssessment dtoSIAssessment3 = new DTOAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment3);
 
         String strategicIndicatorId = "processperformance";

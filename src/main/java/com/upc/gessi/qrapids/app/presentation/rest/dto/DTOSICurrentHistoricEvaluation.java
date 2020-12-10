@@ -17,7 +17,7 @@ public class DTOSICurrentHistoricEvaluation {
     private String currentValueDescription;
     private String currentRationale;
     private LocalDate currentDate;
-    private List<DTOSIAssessment> probabilities;
+    private List<DTOAssessment> probabilities;
     private List<DTOHistoricalData> historicalDataList;
 
     public static class DTOHistoricalData {
@@ -67,7 +67,7 @@ public class DTOSICurrentHistoricEvaluation {
     }
 
     public DTOSICurrentHistoricEvaluation(String id, String prjName, String name, String description, Pair<Float, String> value, Long dbId,
-                                          String rationale, List<DTOSIAssessment> probabilities, LocalDate date) {
+                                          String rationale, List<DTOAssessment> probabilities, LocalDate date) {
         setId(id);
         setPrjName(prjName);
         setName(name);
@@ -143,11 +143,11 @@ public class DTOSICurrentHistoricEvaluation {
         return currentRationale;
     }
 
-    public List<DTOSIAssessment> getProbabilities() {
+    public List<DTOAssessment> getProbabilities() {
         return probabilities;
     }
 
-    public void setProbabilities(List<DTOSIAssessment> probabilities) {
+    public void setProbabilities(List<DTOAssessment> probabilities) {
         this.probabilities = probabilities;
     }
 

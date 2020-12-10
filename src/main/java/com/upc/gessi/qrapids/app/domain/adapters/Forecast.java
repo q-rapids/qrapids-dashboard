@@ -546,7 +546,7 @@ public class Forecast {
         buildFactorsForStrategicIndicator(dsi, factors, factorsNames);
 
         for(Map.Entry<String, ArrayList<Integer>> m : factors.entrySet()) {
-            urlString.append("&factor=").append(URLEncoder.encode(m.getKey(), UTF_8));
+            urlString.append(FACTOR_QUERY).append(URLEncoder.encode(m.getKey(), UTF_8));
         }
         urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
         urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
@@ -858,7 +858,7 @@ public class Forecast {
             try(FileOutputStream fos = new FileOutputStream(tempFile)) {
                 fos.write(si.getNetwork());
             }
-            List<DTOSIAssessment> assessment = assesSI.assesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
+            List<DTOAssessment> assessment = assesSI.assesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
             float value = strategicIndicatorsController.getValueAndLabelFromCategories(assessment).getFirst();
             result.add(new DTOStrategicIndicatorEvaluation(dsi.getId(),
                     si.getName(),
