@@ -72,7 +72,7 @@ public class QMAQualityFactors {
                                          Float value,
                                          String info,
                                          LocalDate date,
-                                         List<DTOQFAssessment> assessment,
+                                         List<DTOAssessment> assessment,
                                          List<String> missingMetrics,
                                          long dates_mismatch,
                                          List<String> indicators
@@ -110,9 +110,9 @@ public class QMAQualityFactors {
         return status.equals(RestStatus.OK) || status.equals(RestStatus.CREATED);
     }
 
-    private EstimationEvaluationDTO listDTOQFAssessmentToEstimationEvaluationDTO(List<DTOQFAssessment> assessment) {
+    private EstimationEvaluationDTO listDTOQFAssessmentToEstimationEvaluationDTO(List<DTOAssessment> assessment) {
         List<QuadrupletDTO<Integer, String, Float, Float>> estimation = new ArrayList<>();
-        for (DTOQFAssessment dsa : assessment) {
+        for (DTOAssessment dsa : assessment) {
             estimation.add(new QuadrupletDTO<Integer, String, Float, Float>(dsa.getId() != null ? dsa.getId().intValue() : null, dsa.getLabel(), dsa.getValue(), dsa.getUpperThreshold()));
         }
         return new EstimationEvaluationDTO(estimation);

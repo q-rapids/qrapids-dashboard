@@ -858,7 +858,7 @@ public class Forecast {
             try(FileOutputStream fos = new FileOutputStream(tempFile)) {
                 fos.write(si.getNetwork());
             }
-            List<DTOSIAssessment> assessment = assesSI.assesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
+            List<DTOAssessment> assessment = assesSI.assesSI(si.getName().replaceAll("\\s+", "").toLowerCase(), m.getValue(), tempFile);
             float value = strategicIndicatorsController.getValueAndLabelFromCategories(assessment).getFirst();
             result.add(new DTOStrategicIndicatorEvaluation(dsi.getId(),
                     si.getName(),

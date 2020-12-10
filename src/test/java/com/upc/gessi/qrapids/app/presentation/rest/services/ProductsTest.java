@@ -4,12 +4,11 @@ import com.upc.gessi.qrapids.QrapidsApplication;
 import com.upc.gessi.qrapids.app.domain.controllers.ProductsController;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProduct;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOProject;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAssessment;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -455,14 +454,14 @@ public class ProductsTest {
     public void getProductEvaluation() throws Exception {
         Long productId = 1L;
 
-        List<DTOSIAssessment> dtoSIAssessmentList = new ArrayList<>();
+        List<DTOAssessment> dtoSIAssessmentList = new ArrayList<>();
 
         Long assessment1Id = 10L;
         String assessment1Label = "Good";
         Float assessment1Value = null;
         String assessment1Color = "#00ff00";
         Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssessment dtoSIAssessment1 = new DTOSIAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+        DTOAssessment dtoSIAssessment1 = new DTOAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment1);
 
         Long assessment2Id = 11L;
@@ -470,7 +469,7 @@ public class ProductsTest {
         Float assessment2Value = null;
         String assessment2Color = "#ff8000";
         Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssessment dtoSIAssessment2 = new DTOSIAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+        DTOAssessment dtoSIAssessment2 = new DTOAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment2);
 
         Long assessment3Id = 11L;
@@ -478,7 +477,7 @@ public class ProductsTest {
         Float assessment3Value = null;
         String assessment3Color = "#ff0000";
         Float assessment3UpperThreshold = 0f;
-        DTOSIAssessment dtoSIAssessment3 = new DTOSIAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+        DTOAssessment dtoSIAssessment3 = new DTOAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment3);
 
         String strategicIndicatorId = "blocking";
@@ -611,14 +610,14 @@ public class ProductsTest {
         Long productId = 1L;
         String projectName = "test";
 
-        List<DTOSIAssessment> dtoSIAssessmentList = new ArrayList<>();
+        List<DTOAssessment> dtoSIAssessmentList = new ArrayList<>();
 
         Long assessment1Id = 10L;
         String assessment1Label = "Good";
         Float assessment1Value = null;
         String assessment1Color = "#00ff00";
         Float assessment1UpperThreshold = 0.66f;
-        DTOSIAssessment dtoSIAssessment1 = new DTOSIAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
+        DTOAssessment dtoSIAssessment1 = new DTOAssessment(assessment1Id, assessment1Label, assessment1Value, assessment1Color, assessment1UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment1);
 
         Long assessment2Id = 11L;
@@ -626,7 +625,7 @@ public class ProductsTest {
         Float assessment2Value = null;
         String assessment2Color = "#ff8000";
         Float assessment2UpperThreshold = 0.33f;
-        DTOSIAssessment dtoSIAssessment2 = new DTOSIAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
+        DTOAssessment dtoSIAssessment2 = new DTOAssessment(assessment2Id, assessment2Label, assessment2Value, assessment2Color, assessment2UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment2);
 
         Long assessment3Id = 11L;
@@ -634,7 +633,7 @@ public class ProductsTest {
         Float assessment3Value = null;
         String assessment3Color = "#ff0000";
         Float assessment3UpperThreshold = 0f;
-        DTOSIAssessment dtoSIAssessment3 = new DTOSIAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
+        DTOAssessment dtoSIAssessment3 = new DTOAssessment(assessment3Id, assessment3Label, assessment3Value, assessment3Color, assessment3UpperThreshold);
         dtoSIAssessmentList.add(dtoSIAssessment3);
 
         String strategicIndicatorId = "blocking";

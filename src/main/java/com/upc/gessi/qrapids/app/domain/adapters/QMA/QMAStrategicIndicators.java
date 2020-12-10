@@ -13,7 +13,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.Feedback.FeedbackRepository
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.SICategory.SICategoryRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAssessment;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import evaluation.StrategicIndicator;
@@ -104,7 +104,7 @@ public class QMAStrategicIndicators {
                                               Float value,
                                               String info,
                                               LocalDate date,
-                                              List<DTOSIAssessment> assessment,
+                                              List<DTOAssessment> assessment,
                                               List<String> missingFactors,
                                               long dates_mismatch
                                               ) throws IOException {
@@ -172,7 +172,7 @@ public class QMAStrategicIndicators {
             // only return Strategic Indicator if it is in local database
             if (found) {
                 //get categories
-                List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
+                List<DTOAssessment> categories = strategicIndicatorsController.getCategories();
 
                 //bool that determines if the current SI has the estimation parameter
                 if (element.getEstimation() == null || element.getEstimation().size() != element.getEvaluations().size())
@@ -184,7 +184,7 @@ public class QMAStrategicIndicators {
         return si;
     }
 
-    private void buildDTOStrategicIndicatorEvaluationList(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOSIAssessment> categories) throws CategoriesException {
+    private void buildDTOStrategicIndicatorEvaluationList(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOAssessment> categories) throws CategoriesException {
         Iterator<EstimationEvaluationDTO> iterSIEst = element.getEstimation().iterator();
 
         for (EvaluationDTO evaluation : element.getEvaluations()) {
@@ -206,7 +206,7 @@ public class QMAStrategicIndicators {
         }
     }
 
-    private void buildDTOStrategicIndicatorEvaluationWithoutEstimation(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOSIAssessment> categories, EvaluationDTO evaluation, Float value) {
+    private void buildDTOStrategicIndicatorEvaluationWithoutEstimation(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOAssessment> categories, EvaluationDTO evaluation, Float value) {
         DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = new DTOStrategicIndicatorEvaluation(element.getID(),
                 element.getName(),
                 element.getDescription(),
@@ -224,15 +224,15 @@ public class QMAStrategicIndicators {
         si.add(dtoStrategicIndicatorEvaluation);
     }
 
-    private void buildDTOStrategicIndicatorEvaluationWithEstimation(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOSIAssessment> categories, EvaluationDTO evaluation) {
+    private void buildDTOStrategicIndicatorEvaluationWithEstimation(List<DTOStrategicIndicatorEvaluation> si, StrategicIndicatorEvaluationDTO element, Long id, boolean hasBN, boolean hasFeedback, List<DTOAssessment> categories, EvaluationDTO evaluation) {
         Float value = strategicIndicatorsController.getValueAndLabelFromCategories(categories).getFirst();
         buildDTOStrategicIndicatorEvaluationWithoutEstimation(si, element, id, hasBN, hasFeedback, categories, evaluation, value);
     }
 
-    private void setValueAndThresholdForCategories(List<DTOSIAssessment> categories, EstimationEvaluationDTO estimation) throws CategoriesException {
+    private void setValueAndThresholdForCategories(List<DTOAssessment> categories, EstimationEvaluationDTO estimation) throws CategoriesException {
         int changed = 0;
         int i = 0;
-        for (DTOSIAssessment d : categories) {
+        for (DTOAssessment d : categories) {
             if (d.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
                 d.setValue(estimation.getEstimation().get(i).getThird());
                 d.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
@@ -244,9 +244,9 @@ public class QMAStrategicIndicators {
             throw new CategoriesException();
     }
 
-    private EstimationEvaluationDTO listDTOSIAssessmentToEstimationEvaluationDTO(List<DTOSIAssessment> assessment) {
+    private EstimationEvaluationDTO listDTOSIAssessmentToEstimationEvaluationDTO(List<DTOAssessment> assessment) {
         List<QuadrupletDTO<Integer, String, Float, Float>> estimation = new ArrayList<>();
-        for (DTOSIAssessment dsa : assessment) {
+        for (DTOAssessment dsa : assessment) {
             estimation.add(new QuadrupletDTO<Integer, String, Float, Float>(dsa.getId() != null ? dsa.getId().intValue() : null, dsa.getLabel(), dsa.getValue(), dsa.getUpperThreshold()));
         }
         return new EstimationEvaluationDTO(estimation);

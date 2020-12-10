@@ -14,7 +14,6 @@ import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.Strategi
 import com.upc.gessi.qrapids.app.domain.models.StrategicIndicatorQualityFactors;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
-import evaluation.StrategicIndicator;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -538,7 +537,7 @@ public class StrategicIndicatorsController {
         try (FileOutputStream fos = new FileOutputStream(tempFile)) {
             fos.write(strategicIndicator.getNetwork());
         }
-        List<DTOSIAssessment> assessment = assesSI.assesSI(strategicIndicator.getExternalId(), mapSIFactors, tempFile);
+        List<DTOAssessment> assessment = assesSI.assesSI(strategicIndicator.getExternalId(), mapSIFactors, tempFile);
         Pair<Float, String> valueAndLabel = getValueAndLabelFromCategories(assessment);
         if (!valueAndLabel.getFirst().isNaN()) {
             assessmentValueOrLabel = valueAndLabel.getSecond();
@@ -631,11 +630,11 @@ public class StrategicIndicatorsController {
         return qmaRelations.setStrategicIndicatorFactorRelation(prj, factorIds, si, evaluationDate, weights, factorValues, factorLabels, siValueOrLabel);
     }
 
-    public Pair<Float,String> getValueAndLabelFromCategories(final List<DTOSIAssessment> assessments) {
+    public Pair<Float,String> getValueAndLabelFromCategories(final List<DTOAssessment> assessments) {
         Float max = -1.0f;
         Float maxIndex = -1.f;
         for (Float i = 0.f; i < assessments.size(); i++) {
-            DTOSIAssessment assessment = assessments.get(i.intValue());
+            DTOAssessment assessment = assessments.get(i.intValue());
             if (max < assessment.getValue()) {
                 max = assessment.getValue();
                 maxIndex = i;
@@ -708,7 +707,7 @@ public class StrategicIndicatorsController {
                 try(FileOutputStream fos = new FileOutputStream(tempFile)) {
                     fos.write(si.getNetwork());
                 }
-                List<DTOSIAssessment> assessment = assesSI.assesSI(si.getName().replaceAll("\\s+","").toLowerCase(), mapSIFactors, tempFile);
+                List<DTOAssessment> assessment = assesSI.assesSI(si.getName().replaceAll("\\s+","").toLowerCase(), mapSIFactors, tempFile);
                 float value = getValueAndLabelFromCategories(assessment).getFirst();
                 result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+","").toLowerCase(),
                         si.getName(),
@@ -776,15 +775,15 @@ public class StrategicIndicatorsController {
         } else return "No Category";
     }
 
-    public List<DTOSIAssessment> getCategories() {
+    public List<DTOAssessment> getCategories() {
         Iterable<SICategory> siCategoryIterable = strategicIndicatorCategoryRepository.findAll();
         List<SICategory> siCategoryList = new ArrayList<>();
         siCategoryIterable.forEach(siCategoryList::add);
-        List<DTOSIAssessment> result = new ArrayList<>();
+        List<DTOAssessment> result = new ArrayList<>();
         float thresholdsInterval = 1.0f/(float)siCategoryList.size();
         float upperThreshold=1;
         for (SICategory c : siCategoryIterable) {
-            result.add(new DTOSIAssessment(c.getId(), c.getName(), null, c.getColor(), abs((float)upperThreshold)));
+            result.add(new DTOAssessment(c.getId(), c.getName(), null, c.getColor(), abs((float)upperThreshold)));
             upperThreshold -=  thresholdsInterval;
         }
         return result;

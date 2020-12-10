@@ -18,7 +18,7 @@ import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactor
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOSIAssessment;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAssessment;
 import evaluation.StrategicIndicator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -123,7 +123,7 @@ public class QMADetailedStrategicIndicators {
                 d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors(),prjRep.findByExternalId(prj).getId(), profile, false));
 
                 // Get value
-                List<DTOSIAssessment> categories = strategicIndicatorsController.getCategories();
+                List<DTOAssessment> categories = strategicIndicatorsController.getCategories();
                 EstimationEvaluationDTO estimation = element.getEstimation().get(0);
 
                 boolean hasEstimation = true;
@@ -147,9 +147,9 @@ public class QMADetailedStrategicIndicators {
         return dsi;
     }
 
-    private void setValueAndThresholdToCategories(List<DTOSIAssessment> categories, EstimationEvaluationDTO estimation) {
+    private void setValueAndThresholdToCategories(List<DTOAssessment> categories, EstimationEvaluationDTO estimation) {
         int i = 0;
-        for (DTOSIAssessment c : categories) {
+        for (DTOAssessment c : categories) {
             if (c.getLabel().equals(estimation.getEstimation().get(i).getSecond())) {
                 c.setValue(estimation.getEstimation().get(i).getThird());
                 c.setUpperThreshold(estimation.getEstimation().get(i).getFourth());
