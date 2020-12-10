@@ -5,10 +5,10 @@ function drawChart() {
         if (titles[i].indexOf('<') > -1)
             title = titles[i].substr(0, titles[i].indexOf('<'));
         if (isdsi) { //if it is a radar chart for Detailed Strategic Indicators
-            var urlLink = "../QualityFactors/CurrentChart" + representationMode+ "?id=" + ids[i] + "&name=" + title;
+            var urlLink = "../QualityFactors/CurrentChart" + "?id=" + ids[i] + "&name=" + title;
         } else { //if it is a radar chart for Quality Factors
-            var name = getParameterByName('name');
-            var id = getParameterByName('id');
+            var name = getParameterByName('si');
+            var id = getParameterByName('siid');
             if (name.length != 0) //if we know from which Detailed Strategic Indicator we are coming
                 var urlLink = "../Metrics/CurrentChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + title;
             else
@@ -36,9 +36,8 @@ function drawChart() {
             labels[i].push(null);
         }
         var dataset = [];
-        var t = titles[i].split("<br/>");
         dataset.push({ // data
-            label: t[0],
+            label: titles[i],
             backgroundColor: 'rgba(1, 119, 166, 0.2)',
             borderColor: 'rgb(1, 119, 166)',
             pointBackgroundColor: 'rgb(1, 119, 166)',
@@ -65,6 +64,7 @@ function drawChart() {
                 fill: fill
             })
         }
+        console.log("dataset");
         console.log(dataset);
         window.myLine = new Chart(ctx, {    //draw chart with the following config
             type: 'radar',
@@ -86,12 +86,27 @@ function drawChart() {
                     ticks: {
                         min: 0,
                         max: 1,
-                        maxTicksLimit: 5
+                        stepSize: 0.2
                     }
                 },
                 tooltips: {
                     filter: function (tooltipItem) {
                         return tooltipItem.datasetIndex === 0;
+                    },
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index] || '';
+
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += Math.round(tooltipItem.yLabel * 100) / 100;
+                            return label;
+                        },
+                        title: function (tooltipItem, data) {
+                            var title = data.datasets[0].label.split("<br/>");
+                            return title[0] + ": " + title[1];
+                        }
                     }
                 }
             }

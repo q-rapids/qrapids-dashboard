@@ -33,6 +33,7 @@ function getData() {
         type: "GET",
         async: true,
         success: function (data) {
+            sortDataAlphabetically(data);
             for (var i = 0; i < data.length; ++i) {
                 //for each dsi save name to texts vector and id to ids vector
                 if (data[i].factors.length > 0) {
@@ -52,12 +53,12 @@ function getData() {
                             value[i].push([]);
                         }
                         //push date and value to values vector
-                        if (!isNaN(data[i].factors[j].value))
+                        if (!isNaN(data[i].factors[j].value.first))
                         {
                             value[i][k].push(
                                 {
                                     x: data[i].factors[j].date,
-                                    y: data[i].factors[j].value
+                                    y: data[i].factors[j].value.first
                                 }
                             );
                         }
@@ -136,6 +137,15 @@ function buildDecisionVectors (decisionsAdd, decisionsIgnore, strategicIndicator
             }
         });
     }
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getFactorsCategories () {

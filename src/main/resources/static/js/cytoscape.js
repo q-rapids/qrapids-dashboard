@@ -2806,7 +2806,7 @@ var ObjectSet = function () {
   return ObjectSet;
 }();
 
-// TODO use the stdlib Set in future...
+// ToDo use the stdlib Set in future...
 // module.exports = typeof Set !== undef ? Set : ObjectSet;
 
 
@@ -5397,7 +5397,7 @@ p.get = function (key) {
   return this._obj[key];
 };
 
-// TODO use the stdlib Map in future...
+// ToDo use the stdlib Map in future...
 // module.exports = typeof Map !== 'undefined' ? Map : ObjectMap;
 module.exports = ObjectMap;
 

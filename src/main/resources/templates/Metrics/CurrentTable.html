@@ -21,6 +21,12 @@
         <table class="table table-hover">
             <thead>
             <tr style="white-space: nowrap">
+                <th ng-click="sortBy('date')">Date
+                    <span ng-show="sortType == 'date' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'date' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
                 <th ng-click="sortBy('name')">Metric
                     <span ng-show="sortType == 'name' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'name' &amp;&amp; !sortReverse" class="dropup">
@@ -49,6 +55,7 @@
             </thead>
             <tbody>
             <tr ng-repeat="d in data | filter:f | orderBy:sortType:sortReverse">
+                <td id="date">{{d.date}}</td>
                 <td>{{d.name}}</td>
                 <td>{{d.description}}</td>
                 <td>{{d.value}}</td>

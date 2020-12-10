@@ -1,5 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
@@ -17,10 +19,30 @@ public class Profile {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private QualityLevel qualityLevel;
+    private QualityLevel qualityLevel = QualityLevel.ALL;
 
     public enum QualityLevel {
         ALL, METRICS_FACTORS, METRICS
+    }
+
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'Radar'")
+    private DetailedViews dsiView = DetailedViews.Radar;
+
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'Radar'")
+    private DetailedViews dqfView = DetailedViews.Radar;
+
+    public enum DetailedViews {
+        Radar, Stacked, Polar
+    }
+
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'Graph'")
+    private QualityModelView qmView = QualityModelView.Graph;
+
+    public enum QualityModelView {
+        Graph, Sunburst
     }
 
     @OneToMany (cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
@@ -37,6 +59,15 @@ public class Profile {
         this.name = name;
         this.description = description;
         this.qualityLevel = qualityLevel;
+    }
+
+    public Profile(String name, String description, QualityLevel qualityLevel, DetailedViews dsiview, DetailedViews dqfview, QualityModelView qmview) {
+        this.name = name;
+        this.description = description;
+        this.qualityLevel = qualityLevel;
+        this.dsiView = dsiview;
+        this.dqfView = dqfview;
+        this.qmView = qmview;
     }
 
     public Long getId() {
@@ -69,6 +100,30 @@ public class Profile {
 
     public void setQualityLevel(QualityLevel qualityLevel) {
         this.qualityLevel = qualityLevel;
+    }
+
+    public DetailedViews getDsiView() {
+        return dsiView;
+    }
+
+    public void setDsiView(DetailedViews dsiView) {
+        this.dsiView = dsiView;
+    }
+
+    public DetailedViews getDqfView() {
+        return dqfView;
+    }
+
+    public void setDqfView(DetailedViews dqfView) {
+        this.dqfView = dqfView;
+    }
+
+    public QualityModelView getQmView() {
+        return qmView;
+    }
+
+    public void setQmView(QualityModelView qmView) {
+        this.qmView = qmView;
     }
 
     public List<Project> getProjects() {

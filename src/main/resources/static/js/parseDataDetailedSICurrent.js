@@ -5,11 +5,14 @@ var url = parseURLSimple("../api/strategicIndicators/qualityFactors/current?prof
 
 var isdsi = true;
 
+var colorList = ['rgba(1, 119, 166, 0.6)', 'rgba(255, 153, 51, 0.6)', 'rgba(51, 204, 51, 0.6)', 'rgba(255, 80, 80, 0.6)', 'rgba(204, 201, 53, 0.6)', 'rgba(192, 96, 201, 0.6)'];
+
 //initialize data vectors
 var titles = [];
 var ids = [];
 var labels = [];
 var values = [];
+var colors = [];
 var warnings = [];
 
 var categories = [];
@@ -20,6 +23,7 @@ function getData() {
     ids = [];
     labels = [];
     values = [];
+    colors = [];
     categories = [];
 
     //get data from API
@@ -30,6 +34,7 @@ function getData() {
         type: "GET",
         async: true,
         success: function (data) {
+            sortDataAlphabetically(data);
             var assessmentDate;
             for (i = 0; i < data.length; ++i) {
                 //for each dsi save name to titles vector and id to ids vector
@@ -43,13 +48,15 @@ function getData() {
                 ids.push(data[i].id);
                 labels.push([]);
                 values.push([]);
+                colors.push([]);
                 for (j = 0; j < data[i].factors.length; ++j) {
                     //for each factor save name to labels vector and value to values vector
                     if (data[i].factors[j].name.length < 27)
                         labels[i].push(data[i].factors[j].name);
                     else
                         labels[i].push(data[i].factors[j].name.slice(0, 23) + "...");
-                    values[i].push(data[i].factors[j].value);
+                    values[i].push(data[i].factors[j].value.first);
+                    colors[i].push(colorList[j%colorList.length]);
                 }
 
                 // Warnings
@@ -83,10 +90,20 @@ function getData() {
 
                 warnings.push(messages);
             }
+            sessionStorage.setItem("assessmentDate", assessmentDate.toLocaleDateString());
             $("#assessmentDate").text(assessmentDate.toLocaleDateString());
             getFactorsCategories();
         }
     });
+}
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
 }
 
 function getFactorsCategories() {

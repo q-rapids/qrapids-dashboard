@@ -31,6 +31,7 @@
 <div id="legend"></div>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
-<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<!--script src='https://cdn.plot.ly/plotly-latest.min.js'></script-->
+<script type="text/javascript" th:src="@{/js/lib/plotly-latest.min.js}"></script>
 <script type="text/javascript" src="../../static/js/sunburstChart.js" th:src="@{/js/sunburstChart.js}"></script>
 </html>

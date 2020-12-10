@@ -1,9 +1,6 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 /**
- * This class define objects with all the information about a Strategic Indicator, which includes the Factor id, name and a
- * set of Metrics
- *
- * @author Oriol M./Lidia L.
+ * @author Oriol M.
  */
 
 public class DTOSIAssessment {

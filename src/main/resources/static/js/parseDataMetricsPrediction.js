@@ -1,16 +1,17 @@
 var isSi = false;
 var isdsi = false;
 var isqf = false;
+var isdqf = false;
 
 var urlpred; // to get prediction data
 var urlhist; // to get historical data
 if (getParameterByName('id').length !== 0) {
-    var profileId = sessionStorage.getItem("profile_id");
-    urlpred = parseURLMetrics("../api/qualityFactors/metrics/prediction?profile="+profileId);
-    urlhist = parseURLMetrics("../api/qualityFactors/metrics/historical?profile="+profileId);
+    urlpred = parseURLComposed("../api/qualityFactors/metrics/prediction");
+    urlhist = parseURLComposed("../api/qualityFactors/metrics/historical");
 } else {
-    urlpred = parseURLMetrics("../api/metrics/prediction");
-    urlhist = parseURLMetrics("../api/metrics/historical");
+    var profileId = sessionStorage.getItem("profile_id");
+    urlpred = parseURLComposed("../api/metrics/prediction?profile="+profileId);
+    urlhist = parseURLComposed("../api/metrics/historical?profile="+profileId);
 }
 
 //initialize data vectors
@@ -48,7 +49,12 @@ function getData() {
             cache: false,
             type: "GET",
             async: true,
-            success: function (data) {
+            success: function (response) {
+                var data = response;
+                if (getParameterByName('id').length !== 0) {
+                    data = response[0].metrics;
+                }
+                sortDataAlphabetically(data);
                 //get historical data from API
                 jQuery.ajax({
                     dataType: "json",
@@ -60,7 +66,12 @@ function getData() {
                     cache: false,
                     type: "GET",
                     async: true,
-                    success: function (data_hist) {
+                    success: function (response) {
+                        var data_hist = response;
+                        if (getParameterByName('id').length !== 0) {
+                            data_hist = response[0].metrics;
+                        }
+                        sortDataAlphabetically(data_hist);
                         j = 0;
                         var line_hist = [];
                         // generate historical serie of values
@@ -166,6 +177,15 @@ function getData() {
             });
         }
     }
+
+function sortDataAlphabetically (data) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    data.sort(compare);
+}
 
 function getMetricsCategories () {
     jQuery.ajax({

@@ -47,13 +47,14 @@ public class RoutesFirstLoad {
         routes.add( new Route( "Strategic Indicators - Historic Table", "/StrategicIndicators/HistoricTable") );
         routes.add( new Route( "Strategic Indicators - Historic Chart", "/StrategicIndicators/HistoricChart") );
 
-        // Quality Factor
-        routes.add( new Route( "Quality Factor - Current Chart", "/QualityFactor/CurrentChart") );
-        routes.add( new Route( "Quality Factor - Current Stacked", "/QualityFactor/CurrentStacked") );
-        routes.add( new Route( "Quality Factor - Current Table", "/QualityFactor/CurrentTable") );
+        // Detailed Quality Factor
+        routes.add( new Route( "Detailed Quality Factor - Current Chart", "/DetailedQualityFactor/CurrentChart") );
+        routes.add( new Route( "Detailed Quality Factor - Current Stacked", "/DetailedQualityFactor/CurrentStacked") );
+        routes.add( new Route( "Detailed Quality Factor - Current Polar", "/DetailedQualityFactor/CurrentPolar") );
+        routes.add( new Route( "Detailed Quality Factor - Current Table", "/DetailedQualityFactor/CurrentTable") );
 
-        routes.add( new Route( "Quality Factor - Historic Table", "/QualityFactor/HistoricTable") );
-        routes.add( new Route( "Quality Factor - Historic Chart", "/QualityFactor/HistoricChart") );
+        routes.add( new Route( "Detailed Quality Factor - Historic Table", "/DetailedQualityFactor/HistoricTable") );
+        routes.add( new Route( "Detailed Quality Factor - Historic Chart", "/DetailedQualityFactor/HistoricChart") );
 
         // Metrics
         routes.add( new Route( "Metrics - Current Table", "/Metrics/CurrentTable") );
@@ -64,6 +65,8 @@ public class RoutesFirstLoad {
         // Detailed Strategic Indicators
         routes.add( new Route( "Detailed Strategic Indicators - Current Chart", "/DetailedStrategicIndicators/CurrentChart") );
         routes.add( new Route( "Detailed Strategic Indicators - Current Stacked", "/DetailedStrategicIndicators/CurrentStacked") );
+        routes.add( new Route( "Detailed Strategic Indicators - Current Polar", "/DetailedStrategicIndicators/CurrentPolar") );
+        routes.add( new Route( "Detailed Strategic Indicators - Current Bar", "/DetailedStrategicIndicators/CurrentBar") );
         routes.add( new Route( "Detailed Strategic Indicators - Current Table", "/DetailedStrategicIndicators/CurrentTable") );
 
         routes.add( new Route( "Detailed Strategic Indicators - Historic Table", "/DetailedStrategicIndicators/HistoricTable") );

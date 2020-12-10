@@ -39,8 +39,8 @@ public class ProfilesController {
         return (pr == null);
     }
 
-    public void newProfile(String name, String description, Profile.QualityLevel qualityLevel, Map<String, org.springframework.data.util.Pair<Boolean,List<String>>> projectInfo) {
-        Profile profile = new Profile(name, description, qualityLevel);
+    public void newProfile(String name, String description, Profile.QualityLevel qualityLevel, Profile.DetailedViews dsiView, Profile.DetailedViews dqfView, Profile.QualityModelView qmView, Map<String, Pair<Boolean, List<String>>> projectInfo) {
+        Profile profile = new Profile(name, description, qualityLevel, dsiView, dqfView, qmView);
         List<ProfileProjects> ppList = new ArrayList<>(); // prepare list of profile projects
         List<ProfileProjectStrategicIndicators> ppsiList = new ArrayList<>();
         for ( Map.Entry<String, org.springframework.data.util.Pair<Boolean, List<String>>> project : projectInfo.entrySet()) {
@@ -82,7 +82,8 @@ public class ProfilesController {
                         return o1.getName().compareTo(o2.getName());
                     }
                 });
-                return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), String.valueOf(profile.getQualityLevel()), relatedProjects, relatedAllSIs);
+                return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), String.valueOf(profile.getQualityLevel()),
+                        String.valueOf(profile.getDsiView()), String.valueOf(profile.getDqfView()), String.valueOf(profile.getQmView()), relatedProjects, relatedAllSIs);
             }
         }
         return null;
@@ -109,7 +110,8 @@ public class ProfilesController {
                     return o1.getName().compareTo(o2.getName());
                 }
             });
-            DTOProfile profile = new DTOProfile(pr.getId(), pr.getName(), pr.getDescription(), String.valueOf(pr.getQualityLevel()), relatedProjects, relatedAllSIs);
+            DTOProfile profile = new DTOProfile(pr.getId(), pr.getName(), pr.getDescription(), String.valueOf(pr.getQualityLevel()),
+                    String.valueOf(pr.getDsiView()), String.valueOf(pr.getDqfView()), String.valueOf(pr.getQmView()), relatedProjects, relatedAllSIs);
             profiles.add(profile);
         }
         Collections.sort(profiles, new Comparator<DTOProfile>() {
@@ -128,13 +130,16 @@ public class ProfilesController {
         return (pr == null || pr.getId() == id);
     }
 
-    public void updateProfile(Long id, String name, String description, Profile.QualityLevel qualityLevel, Map<String, org.springframework.data.util.Pair<Boolean,List<String>>> projectInfo) throws ProfileProjectsNotFoundException {
+    public void updateProfile(Long id, String name, String description, Profile.QualityLevel qualityLevel, Profile.DetailedViews dsiView, Profile.DetailedViews dqfView, Profile.QualityModelView qmView, Map<String, Pair<Boolean, List<String>>> projectInfo) throws ProfileProjectsNotFoundException {
         Optional<Profile> profileOptional = profileRep.findById(id);
         Profile profile = profileOptional.get();
         // update profile information
         profile.setName(name);
         profile.setDescription(description);
         profile.setQualityLevel(qualityLevel);
+        profile.setDsiView(dsiView);
+        profile.setDqfView(dqfView);
+        profile.setQmView(qmView);
         // delete old ProfileProjects List
         List<ProfileProjects> oldProfileProjectsList = profile.getProfileProjectsList();
         profile.setProfileProjectsList(null);

@@ -6,6 +6,9 @@ var allprojectSIs; // all si of selected project
 var projectSIs = []; // pairs <prj, si> for all profile projects
 var prjExternalID;
 var qualityLevel = ""; // specify (ALL, METRICS_FACTORS, METRICS)
+var dsiView = ""; // specify (Radar, Stacked, Polar)
+var dqfView = ""; // specify (Radar, Stacked, Polar)
+var qmView = ""; // specify (Graph, Sunburst)
 
 function getProjects() {
     var url = "/api/projects";
@@ -277,11 +280,7 @@ function clickOnTree(e){
             var allowedSIsP = document.createElement('p');
             allowedSIsP.appendChild(document.createTextNode("Allowed Strategic Indicators: "));
             allowedSIsP.setAttribute('id', 'allowedSIsP');
-            if (inputMetrics.checked) { // put it in grey color if it's METRICS quality level
-                allowedSIsP.setAttribute('style', 'color:grey; font-size: 18px; margin-bottom: 1%');
-            } else {
-                allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
-            }
+            allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
             var selSIsBtn = document.createElement('button');
             selSIsBtn.classList.add("btn");
             selSIsBtn.setAttribute('id', 'selSIsBtn');
@@ -303,6 +302,216 @@ function clickOnTree(e){
             allowedRow.appendChild(allowedProjectsCol);
             allowedRow.appendChild(allowedSIsCol);
             profileForm.appendChild(allowedRow);
+
+            // TODO
+            var title3Row = document.createElement('div');
+            title3Row.classList.add("profileInfoRow");
+            var title3P = document.createElement('p');
+            title3P.appendChild(document.createTextNode("Profile Default Visualizations"));
+            title3P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
+            title3Row.appendChild(title3P);
+            profileForm.appendChild(title3Row)
+
+            var visualizationsRow = document.createElement('div');
+            visualizationsRow.classList.add("profileInfoRow");
+            visualizationsRow.setAttribute('style', 'margin-bottom: 1%');
+            var visualizationsCol = document.createElement('div');
+            visualizationsCol.classList.add("selectionColumn");
+            visualizationsCol.setAttribute('style', 'width: 100%');
+            // DSI visualization case
+            var dsiViewP = document.createElement('p');
+            dsiViewP.appendChild(document.createTextNode("Detailed Strategic Indicators view: "));
+            dsiViewP.setAttribute('id', 'dsiViewP');
+            dsiViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+            var dsiViewBtnGroup = document.createElement('div');
+            dsiViewBtnGroup.classList.add("btn-group");
+            dsiViewBtnGroup.setAttribute('id', 'dsiViewBtnGroup');
+            // Radar case
+            var dsiViewRadarBtn = document.createElement('button');
+            dsiViewRadarBtn.classList.add("btn");
+            dsiViewRadarBtn.classList.add("btn-primary");
+            dsiViewRadarBtn.setAttribute('id', 'dsiView_Radar');
+            dsiViewRadarBtn.setAttribute('type', 'button');
+            dsiViewRadarBtn.setAttribute('style', 'background-color: #ffffff');
+            dsiViewRadarBtn.setAttribute('value', 'Radar');
+            dsiViewRadarBtn.onclick = dsiViewUpdate;
+            var imgRadar = document.createElement('img');
+            imgRadar.setAttribute('class', 'icons');
+            imgRadar.setAttribute('src', '../icons/radar_chart.png');
+            dsiViewRadarBtn.appendChild(imgRadar);
+            // Stacked case
+            var dsiViewStackedBtn = document.createElement('button');
+            dsiViewStackedBtn.classList.add("btn");
+            dsiViewStackedBtn.classList.add("btn-primary");
+            dsiViewStackedBtn.setAttribute('id', 'dsiView_Stacked');
+            dsiViewStackedBtn.setAttribute('type', 'button');
+            dsiViewStackedBtn.setAttribute('style', 'background-color: #ffffff');
+            dsiViewStackedBtn.setAttribute('value', 'Stacked');
+            dsiViewStackedBtn.onclick = dsiViewUpdate;
+            var imgStacked = document.createElement('img');
+            imgStacked.setAttribute('class', 'icons');
+            imgStacked.setAttribute('src', '../icons/stacked_bar_chart.png');
+            dsiViewStackedBtn.appendChild(imgStacked);
+            // Polar case
+            var dsiViewPolarBtn = document.createElement('button');
+            dsiViewPolarBtn.classList.add("btn");
+            dsiViewPolarBtn.classList.add("btn-primary");
+            dsiViewPolarBtn.setAttribute('id', 'dsiView_Polar');
+            dsiViewPolarBtn.setAttribute('type', 'button');
+            dsiViewPolarBtn.setAttribute('style', 'background-color: #ffffff');
+            dsiViewPolarBtn.setAttribute('value', 'Polar');
+            dsiViewPolarBtn.onclick = dsiViewUpdate;
+            var imgPolar = document.createElement('img');
+            imgPolar.setAttribute('class', 'icons');
+            imgPolar.setAttribute('src', '../icons/polar_chart.png');
+            dsiViewPolarBtn.appendChild(imgPolar);
+
+            // update DSI view visualizations and check the correct button
+            dsiView = data.dsiView;
+            if (dsiView == "Radar")
+                dsiViewRadarBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+            else if (dsiView == "Stacked")
+                dsiViewStackedBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+            else if (dsiView == "Polar")
+                dsiViewPolarBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+
+            // add buttons to BtnGroup
+            dsiViewBtnGroup.appendChild(dsiViewRadarBtn);
+            dsiViewBtnGroup.appendChild(dsiViewStackedBtn);
+            dsiViewBtnGroup.appendChild(dsiViewPolarBtn);
+            // add BtnGroup to text paragraph
+            dsiViewP.appendChild(dsiViewBtnGroup);
+
+            // DQF visualizations case
+            var dqfViewP = document.createElement('p');
+            dqfViewP.appendChild(document.createTextNode("Detailed Factors view:   "));
+            dqfViewP.setAttribute('id', 'dqfViewP');
+            dqfViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+            var dqfViewBtnGroup = document.createElement('div');
+            dqfViewBtnGroup.classList.add("btn-group");
+            dqfViewBtnGroup.setAttribute('id', 'dqfViewBtnGroup');
+            // Radar case
+            var dqfViewRadarBtn = document.createElement('button');
+            dqfViewRadarBtn.classList.add("btn");
+            dqfViewRadarBtn.classList.add("btn-primary");
+            dqfViewRadarBtn.setAttribute('id', 'dqfView_Radar');
+            dqfViewRadarBtn.setAttribute('type', 'button');
+            dqfViewRadarBtn.setAttribute('style', 'background-color: #ffffff');
+            dqfViewRadarBtn.setAttribute('value', 'Radar');
+            dqfViewRadarBtn.onclick = dqfViewUpdate;
+            var imgRadar = document.createElement('img');
+            imgRadar.setAttribute('class', 'icons');
+            imgRadar.setAttribute('src', '../icons/radar_chart.png');
+            dqfViewRadarBtn.appendChild(imgRadar);
+            // Stacked case
+            var dqfViewStackedBtn = document.createElement('button');
+            dqfViewStackedBtn.classList.add("btn");
+            dqfViewStackedBtn.classList.add("btn-primary");
+            dqfViewStackedBtn.setAttribute('id', 'dqfView_Stacked');
+            dqfViewStackedBtn.setAttribute('type', 'button');
+            dqfViewStackedBtn.setAttribute('style', 'background-color: #ffffff');
+            dqfViewStackedBtn.setAttribute('value', 'Stacked');
+            dqfViewStackedBtn.onclick = dqfViewUpdate;
+            var imgStacked = document.createElement('img');
+            imgStacked.setAttribute('class', 'icons');
+            imgStacked.setAttribute('src', '../icons/stacked_bar_chart.png');
+            dqfViewStackedBtn.appendChild(imgStacked);
+            // Polar case
+            var dqfViewPolarBtn = document.createElement('button');
+            dqfViewPolarBtn.classList.add("btn");
+            dqfViewPolarBtn.classList.add("btn-primary");
+            dqfViewPolarBtn.setAttribute('id', 'dqfView_Polar');
+            dqfViewPolarBtn.setAttribute('type', 'button');
+            dqfViewPolarBtn.setAttribute('style', 'background-color: #ffffff');
+            dqfViewPolarBtn.setAttribute('value', 'Polar');
+            dqfViewPolarBtn.onclick = dqfViewUpdate;
+            var imgPolar = document.createElement('img');
+            imgPolar.setAttribute('class', 'icons');
+            imgPolar.setAttribute('src', '../icons/polar_chart.png');
+            dqfViewPolarBtn.appendChild(imgPolar);
+
+            // update DQF view visualizations and check the correct button
+            dqfView = data.dqfView;
+            if (dqfView == "Radar")
+                dqfViewRadarBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+            else if (dqfView == "Stacked")
+                dqfViewStackedBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+            else if (dqfView == "Polar")
+                dqfViewPolarBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+
+            // add buttons to BtnGroup
+            dqfViewBtnGroup.appendChild(dqfViewRadarBtn);
+            dqfViewBtnGroup.appendChild(dqfViewStackedBtn);
+            dqfViewBtnGroup.appendChild(dqfViewPolarBtn);
+            // add BtnGroup to text paragraph
+            dqfViewP.appendChild(dqfViewBtnGroup);
+
+            // QM visualization case
+            var qmViewP = document.createElement('p');
+            qmViewP.appendChild(document.createTextNode("Quality Model view:   "));
+            qmViewP.setAttribute('id', 'qmViewP');
+            qmViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+            var qmViewBtnGroup = document.createElement('div');
+            qmViewBtnGroup.classList.add("btn-group");
+            qmViewBtnGroup.setAttribute('id', 'qmViewBtnGroup');
+            // Graph case
+            var qmViewGraphBtn = document.createElement('button');
+            qmViewGraphBtn.classList.add("btn");
+            qmViewGraphBtn.classList.add("btn-primary");
+            qmViewGraphBtn.setAttribute('id', 'qmView_Graph');
+            qmViewGraphBtn.setAttribute('type', 'button');
+            qmViewGraphBtn.setAttribute('style', 'background-color: #ffffff');
+            qmViewGraphBtn.setAttribute('value', 'Graph');
+            qmViewGraphBtn.onclick = qmViewUpdate;
+            var imgGraph = document.createElement('img');
+            imgGraph.setAttribute('class', 'icons');
+            imgGraph.setAttribute('src', '../icons/tree_chart.png');
+            qmViewGraphBtn.appendChild(imgGraph);
+            // Sunburst case
+            var qmViewSunburstBtn = document.createElement('button');
+            qmViewSunburstBtn.classList.add("btn");
+            qmViewSunburstBtn.classList.add("btn-primary");
+            qmViewSunburstBtn.setAttribute('id', 'qmView_Sunburst');
+            qmViewSunburstBtn.setAttribute('type', 'button');
+            qmViewSunburstBtn.setAttribute('style', 'background-color: #ffffff');
+            qmViewSunburstBtn.setAttribute('value', 'Sunburst');
+            qmViewSunburstBtn.onclick = qmViewUpdate;
+            var imgSunburst = document.createElement('img');
+            imgSunburst.setAttribute('class', 'icons');
+            imgSunburst.setAttribute('src', '../icons/sunburst_chart.png');
+            qmViewSunburstBtn.appendChild(imgSunburst);
+
+            // update QM view visualizations and check the correct button
+            qmView = data.qmView;
+            if (qmView == "Graph")
+                qmViewGraphBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+            else if (qmView == "Sunburst")
+                qmViewSunburstBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+
+            // add buttons to BtnGroup
+            qmViewBtnGroup.appendChild(qmViewGraphBtn);
+            qmViewBtnGroup.appendChild(qmViewSunburstBtn);
+            // add BtnGroup to text paragraph
+            qmViewP.appendChild(qmViewBtnGroup);
+
+            if (qualityLevel == 'METRICS_FACTORS') {
+                qmViewSunburstBtn.disabled = true;
+                dsiViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%; color: gray');
+                setAttribute(dsiViewBtnGroup, 'Radar');
+            } else if (qualityLevel == 'METRICS') {
+                dsiViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%; color: gray');
+                setAttribute(dsiViewBtnGroup, 'Radar');
+                dqfViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%; color: gray');
+                setAttribute(dqfViewBtnGroup, 'Radar');
+                qmViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%; color: gray');
+                setAttribute(qmViewBtnGroup, 'Graph');
+            }
+
+            visualizationsCol.appendChild(dsiViewP);
+            visualizationsCol.appendChild(dqfViewP);
+            visualizationsCol.appendChild(qmViewP);
+            visualizationsRow.appendChild(visualizationsCol);
+            profileForm.appendChild(visualizationsRow);
 
             var saveBtnRow = document.createElement('div');
             saveBtnRow.classList.add("profileInfoRow");
@@ -330,6 +539,44 @@ function clickOnTree(e){
             document.getElementById('profileInfo').appendChild(profileForm);
         }
     });
+}
+
+function dsiViewUpdate() {
+    // TODO
+    console.log("Button clicked, id "+this.value);
+    dsiView = this.value;
+    var dsiViewBtnGroup = document.getElementById('dsiViewBtnGroup');
+    for (var j = 0; j < dsiViewBtnGroup.children.length; j++) {
+        if (dsiViewBtnGroup.children[j].id == this.id)
+            dsiViewBtnGroup.children[j].setAttribute('style', 'background-color: rgb(255, 195, 128)');
+        else
+            dsiViewBtnGroup.children[j].setAttribute('style', 'background-color: #ffffff');
+    }
+}
+
+function dqfViewUpdate() {
+    // TODO
+    console.log("Button clicked, value " + this.value);
+    dqfView = this.value;
+    var dqfViewBtnGroup = document.getElementById('dqfViewBtnGroup');
+    for (var j = 0; j < dqfViewBtnGroup.children.length; j++) {
+        if (dqfViewBtnGroup.children[j].id == this.id)
+            dqfViewBtnGroup.children[j].setAttribute('style', 'background-color: rgb(255, 195, 128)');
+        else
+            dqfViewBtnGroup.children[j].setAttribute('style', 'background-color: #ffffff');
+    }
+}
+
+function qmViewUpdate() {
+    console.log("Button clicked, value " + this.value);
+    qmView = this.value;
+    var qmViewBtnGroup = document.getElementById('qmViewBtnGroup');
+    for (var j = 0; j < qmViewBtnGroup.children.length; j++) {
+        if (qmViewBtnGroup.children[j].id == this.id)
+            qmViewBtnGroup.children[j].setAttribute('style', 'background-color: rgb(255, 195, 128)');
+        else
+            qmViewBtnGroup.children[j].setAttribute('style', 'background-color: #ffffff');
+    }
 }
 
 function newProfile() {
@@ -517,6 +764,178 @@ function newProfile() {
     allowedRow.appendChild(allowedProjectsCol);
     allowedRow.appendChild(allowedSIsCol);
     profileForm.appendChild(allowedRow);
+
+    // TODO
+    var title3Row = document.createElement('div');
+    title3Row.classList.add("profileInfoRow");
+    var title3P = document.createElement('p');
+    title3P.appendChild(document.createTextNode("Step 3 - Select the profile default visualizations"));
+    title3P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
+    title3Row.appendChild(title3P);
+    profileForm.appendChild(title3Row)
+
+    var visualizationsRow = document.createElement('div');
+    visualizationsRow.classList.add("profileInfoRow");
+    visualizationsRow.setAttribute('style', 'margin-bottom: 1%');
+    var visualizationsCol = document.createElement('div');
+    visualizationsCol.classList.add("selectionColumn");
+    visualizationsCol.setAttribute('style', 'width: 100%');
+    // DSI visualization case
+    var dsiViewP = document.createElement('p');
+    dsiViewP.appendChild(document.createTextNode("Step 3.1 - Detailed Strategic Indicators view:   "));
+    dsiViewP.setAttribute('id', 'dsiViewP');
+    dsiViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+    var dsiViewBtnGroup = document.createElement('div');
+    dsiViewBtnGroup.classList.add("btn-group");
+    dsiViewBtnGroup.setAttribute('id', 'dsiViewBtnGroup');
+    // Radar case DEFAULT
+    var dsiViewRadarBtn = document.createElement('button');
+    dsiViewRadarBtn.classList.add("btn");
+    dsiViewRadarBtn.classList.add("btn-primary");
+    dsiViewRadarBtn.setAttribute('id', 'dsiView_Radar');
+    dsiViewRadarBtn.setAttribute('type', 'button');
+    dsiViewRadarBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+    dsiViewRadarBtn.setAttribute('value', 'Radar');
+    dsiView = "Radar";
+    dsiViewRadarBtn.onclick = dsiViewUpdate;
+    var imgRadar = document.createElement('img');
+    imgRadar.setAttribute('class', 'icons');
+    imgRadar.setAttribute('src', '../icons/radar_chart.png');
+    dsiViewRadarBtn.appendChild(imgRadar);
+    // Stacked case
+    var dsiViewStackedBtn = document.createElement('button');
+    dsiViewStackedBtn.classList.add("btn");
+    dsiViewStackedBtn.classList.add("btn-primary");
+    dsiViewStackedBtn.setAttribute('id', 'dsiView_Stacked');
+    dsiViewStackedBtn.setAttribute('type', 'button');
+    dsiViewStackedBtn.setAttribute('style', 'background-color: #ffffff');
+    dsiViewStackedBtn.setAttribute('value', 'Stacked');
+    dsiViewStackedBtn.onclick = dsiViewUpdate;
+    var imgStacked = document.createElement('img');
+    imgStacked.setAttribute('class', 'icons');
+    imgStacked.setAttribute('src', '../icons/stacked_bar_chart.png');
+    dsiViewStackedBtn.appendChild(imgStacked);
+    // Polar case
+    var dsiViewPolarBtn = document.createElement('button');
+    dsiViewPolarBtn.classList.add("btn");
+    dsiViewPolarBtn.classList.add("btn-primary");
+    dsiViewPolarBtn.setAttribute('id', 'dsiView_Polar');
+    dsiViewPolarBtn.setAttribute('type', 'button');
+    dsiViewPolarBtn.setAttribute('style', 'background-color: #ffffff');
+    dsiViewPolarBtn.setAttribute('value', 'Polar');
+    dsiViewPolarBtn.onclick = dsiViewUpdate;
+    var imgPolar = document.createElement('img');
+    imgPolar.setAttribute('class', 'icons');
+    imgPolar.setAttribute('src', '../icons/polar_chart.png');
+    dsiViewPolarBtn.appendChild(imgPolar);
+    // add buttons to BtnGroup
+    dsiViewBtnGroup.appendChild(dsiViewRadarBtn);
+    dsiViewBtnGroup.appendChild(dsiViewStackedBtn);
+    dsiViewBtnGroup.appendChild(dsiViewPolarBtn);
+    // add BtnGroup to "Step 3.1 - ..."
+    dsiViewP.appendChild(dsiViewBtnGroup);
+
+    // DQF visualizations case
+    var dqfViewP = document.createElement('p');
+    dqfViewP.appendChild(document.createTextNode("Step 3.2 - Detailed Factors view:   "));
+    dqfViewP.setAttribute('id', 'dqfViewP');
+    dqfViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+    var dqfViewBtnGroup = document.createElement('div');
+    dqfViewBtnGroup.classList.add("btn-group");
+    dqfViewBtnGroup.setAttribute('id', 'dqfViewBtnGroup');
+    // Radar case DEFAULT
+    var dqfViewRadarBtn = document.createElement('button');
+    dqfViewRadarBtn.classList.add("btn");
+    dqfViewRadarBtn.classList.add("btn-primary");
+    dqfViewRadarBtn.setAttribute('id', 'dqfView_Radar');
+    dqfViewRadarBtn.setAttribute('type', 'button');
+    dqfViewRadarBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+    dqfViewRadarBtn.setAttribute('value', 'Radar');
+    dqfView = "Radar";
+    dqfViewRadarBtn.onclick = dqfViewUpdate;
+    var imgRadar = document.createElement('img');
+    imgRadar.setAttribute('class', 'icons');
+    imgRadar.setAttribute('src', '../icons/radar_chart.png');
+    dqfViewRadarBtn.appendChild(imgRadar);
+    // Stacked case
+    var dqfViewStackedBtn = document.createElement('button');
+    dqfViewStackedBtn.classList.add("btn");
+    dqfViewStackedBtn.classList.add("btn-primary");
+    dqfViewStackedBtn.setAttribute('id', 'dqfView_Stacked');
+    dqfViewStackedBtn.setAttribute('type', 'button');
+    dqfViewStackedBtn.setAttribute('style', 'background-color: #ffffff');
+    dqfViewStackedBtn.setAttribute('value', 'Stacked');
+    dqfViewStackedBtn.onclick = dqfViewUpdate;
+    var imgStacked = document.createElement('img');
+    imgStacked.setAttribute('class', 'icons');
+    imgStacked.setAttribute('src', '../icons/stacked_bar_chart.png');
+    dqfViewStackedBtn.appendChild(imgStacked);
+    // Polar case
+    var dqfViewPolarBtn = document.createElement('button');
+    dqfViewPolarBtn.classList.add("btn");
+    dqfViewPolarBtn.classList.add("btn-primary");
+    dqfViewPolarBtn.setAttribute('id', 'dqfView_Polar');
+    dqfViewPolarBtn.setAttribute('type', 'button');
+    dqfViewPolarBtn.setAttribute('style', 'background-color: #ffffff');
+    dqfViewPolarBtn.setAttribute('value', 'Polar');
+    dqfViewPolarBtn.onclick = dqfViewUpdate;
+    var imgPolar = document.createElement('img');
+    imgPolar.setAttribute('class', 'icons');
+    imgPolar.setAttribute('src', '../icons/polar_chart.png');
+    dqfViewPolarBtn.appendChild(imgPolar);
+    // add buttons to BtnGroup
+    dqfViewBtnGroup.appendChild(dqfViewRadarBtn);
+    dqfViewBtnGroup.appendChild(dqfViewStackedBtn);
+    dqfViewBtnGroup.appendChild(dqfViewPolarBtn);
+    // add BtnGroup to "Step 3.2 - ..."
+    dqfViewP.appendChild(dqfViewBtnGroup);
+
+    // QM visualization case
+    var qmViewP = document.createElement('p');
+    qmViewP.appendChild(document.createTextNode("Step 3.3 - Quality Model view:   "));
+    qmViewP.setAttribute('id', 'qmViewP');
+    qmViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+    var qmViewBtnGroup = document.createElement('div');
+    qmViewBtnGroup.classList.add("btn-group");
+    qmViewBtnGroup.setAttribute('id', 'qmViewBtnGroup');
+    // Graph case DEFAULT
+    var qmViewGraphBtn = document.createElement('button');
+    qmViewGraphBtn.classList.add("btn");
+    qmViewGraphBtn.classList.add("btn-primary");
+    qmViewGraphBtn.setAttribute('id', 'qmView_Graph');
+    qmViewGraphBtn.setAttribute('type', 'button');
+    qmViewGraphBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+    qmViewGraphBtn.setAttribute('value', 'Graph');
+    qmView = "Graph";
+    qmViewGraphBtn.onclick = qmViewUpdate;
+    var imgGraph = document.createElement('img');
+    imgGraph.setAttribute('class', 'icons');
+    imgGraph.setAttribute('src', '../icons/tree_chart.png');
+    qmViewGraphBtn.appendChild(imgGraph);
+    // Sunburst case
+    var qmViewSunburstBtn = document.createElement('button');
+    qmViewSunburstBtn.classList.add("btn");
+    qmViewSunburstBtn.classList.add("btn-primary");
+    qmViewSunburstBtn.setAttribute('id', 'qmView_Sunburst');
+    qmViewSunburstBtn.setAttribute('type', 'button');
+    qmViewSunburstBtn.setAttribute('style', 'background-color: #ffffff');
+    qmViewSunburstBtn.setAttribute('value', 'Sunburst');
+    qmViewSunburstBtn.onclick = qmViewUpdate;
+    var imgSunburst = document.createElement('img');
+    imgSunburst.setAttribute('class', 'icons');
+    imgSunburst.setAttribute('src', '../icons/sunburst_chart.png');
+    qmViewSunburstBtn.appendChild(imgSunburst);
+    // add buttons to BtnGroup
+    qmViewBtnGroup.appendChild(qmViewGraphBtn);
+    qmViewBtnGroup.appendChild(qmViewSunburstBtn);
+    // add BtnGroup to "Step 3.3 - ..."
+    qmViewP.appendChild(qmViewBtnGroup);
+
+    visualizationsCol.appendChild(dsiViewP);
+    visualizationsCol.appendChild(dqfViewP);
+    visualizationsCol.appendChild(qmViewP);
+    visualizationsRow.appendChild(visualizationsCol);
+    profileForm.appendChild(visualizationsRow);
 
     var saveBtnRow = document.createElement('div');
     saveBtnRow.classList.add("profileInfoRow");
@@ -849,32 +1268,30 @@ $("#submitProfileProjectSelectSIsModalBtn").click(function () {
 });
 
 function showSIsList() {
-    if (qualityLevel != 'METRICS') {
-        var allowedProjectsBox = document.getElementById("allowedProjectsBox");
-        var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
-        prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
-        if (projectSIs.find(x => x.prj == prjExternalID)) {
-            fillAllowedSIsBox();
-        } else {
-            if (currentProfile) { // saved project from profile
-                if (currentProfile.allSIs.find(x => x.first == prjID) && (currentProfile.allSIs.find(x => x.first == prjID).second)) {
-                    // "all si" = true - show all SIs del project
-                    var url = "/api/strategicIndicators?prj=" + prjExternalID;
-                    fillAllowedSIsBox(url);
-                } else {
-                    // "all si" = false - show only specified SIs del project
-                    var url = "/api/strategicIndicators?prj=" + prjExternalID + "&profile=" + currentProfileID;
-                    fillAllowedSIsBox(url);
-                }
-            } else { // new added project to profile
-                // by default show all si
+    var allowedProjectsBox = document.getElementById("allowedProjectsBox");
+    var prjID = allowedProjectsBox.options[allowedProjectsBox.selectedIndex].value;
+    prjExternalID = profileProjects.find(x => x.id == prjID).externalId;
+    if (projectSIs.find(x => x.prj == prjExternalID)) {
+        fillAllowedSIsBox();
+    } else {
+        if (currentProfile) { // saved project from profile
+            if (currentProfile.allSIs.find(x => x.first == prjID) && (currentProfile.allSIs.find(x => x.first == prjID).second)) {
+                // "all si" = true - show all SIs del project
                 var url = "/api/strategicIndicators?prj=" + prjExternalID;
                 fillAllowedSIsBox(url);
+            } else {
+                // "all si" = false - show only specified SIs del project
+                var url = "/api/strategicIndicators?prj=" + prjExternalID + "&profile=" + currentProfileID;
+                fillAllowedSIsBox(url);
             }
+        } else { // new added project to profile
+            // by default show all si
+            var url = "/api/strategicIndicators?prj=" + prjExternalID;
+            fillAllowedSIsBox(url);
         }
-        // able button to edit SIs for project of profile
-        document.getElementById('selSIsBtn').disabled = false;
     }
+    // able button to edit SIs for project of profile
+    document.getElementById('selSIsBtn').disabled = false;
 };
 
 function fillAllowedSIsBox(url){
@@ -945,12 +1362,61 @@ function updateQualityLevel() {
     projectSIs = [];
     // disable button to edit SIs for project of profile
     document.getElementById('selSIsBtn').disabled = true;
-    // set grey color for title when SI selection is not allowed
-    var allowedSIsP = document.getElementById('allowedSIsP');
-    if ($("input[name=qualityLevelForm]:checked").val() == "METRICS") {
-        allowedSIsP.setAttribute('style', 'color: grey; font-size: 18px; margin-bottom: 1%');
+
+    var qmViewSunburstBtn = document.getElementById('qmView_Sunburst');
+    var dsiViewP = document.getElementById('dsiViewP');
+    var dqfViewP = document.getElementById('dqfViewP');
+    var qmViewP = document.getElementById('qmViewP');
+    var dsiViewBtnGroup = document.getElementById('dsiViewBtnGroup');
+    var dqfViewBtnGroup = document.getElementById('dqfViewBtnGroup');
+    var qmViewBtnGroup = document.getElementById('qmViewBtnGroup');
+    // disable Quality Model Sunburst button when METRICS_FACTORS profile and set Graph Representation
+    if (qualityLevel == 'METRICS_FACTORS') {
+        qmView = "Graph";
+        var qmViewGraphBtn = document.getElementById('qmView_Graph');
+        qmViewGraphBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+        dsiViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%; color: gray');
+        dsiView = "Radar";
+        setAttribute(dsiViewBtnGroup, 'Radar');
+        dqfViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+        removeAttribute(dqfViewBtnGroup);
+        qmViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+        removeAttribute(qmViewBtnGroup);
+        qmViewSunburstBtn.disabled = true;
+        qmViewSunburstBtn.setAttribute('style', 'background-color: #ffffff');
+    } else if (qualityLevel == 'METRICS') { // disable all step 3 for only metrics profile
+        dsiViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%; color: gray');
+        dsiView = "Radar";
+        setAttribute(dsiViewBtnGroup, 'Radar');
+        dqfViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%; color: gray');
+        dqfView = "Radar";
+        setAttribute(dqfViewBtnGroup, 'Radar');
+        qmViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%; color: gray');
+        qmView = "Graph";
+        setAttribute(qmViewBtnGroup, 'Graph');
     } else {
-        allowedSIsP.setAttribute('style', 'font-size: 18px; margin-bottom: 1%');
+        dsiViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+        removeAttribute(dsiViewBtnGroup);
+        dqfViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+        removeAttribute(dqfViewBtnGroup);
+        qmViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+        removeAttribute(qmViewBtnGroup);
+    }
+}
+
+function setAttribute(BtnGroup, view) {
+    for (var j = 0; j < BtnGroup.children.length; j++) {
+        if (BtnGroup.children[j].value == view)
+            BtnGroup.children[j].setAttribute('style', 'background-color: rgb(255, 195, 128)');
+        else
+            BtnGroup.children[j].setAttribute('style', 'background-color: #ffffff');
+        BtnGroup.children[j].setAttribute('disabled', 'true');
+    }
+}
+
+function removeAttribute (BtnGroup) {
+    for (var j = 0; j < BtnGroup.children.length; j++) {
+        BtnGroup.children[j].removeAttribute('disabled');
     }
 }
 
@@ -1028,11 +1494,18 @@ function saveNewProfile() {
     console.log("SAVE: allowedProjects");
     console.log(allowedProjects);
 
+    console.log(dsiView);
+    console.log(dqfView);
+    console.log(qmView);
+
     if ($('#profileName').val() != "" && allowedProjects.length > 0) {
         var formData = new FormData();
         formData.append("name", $('#profileName').val());
         formData.append("description", $('#profileDescription').val());
         formData.append("quality_level", qualityLevel);
+        formData.append("dsi_view", dsiView);
+        formData.append("dqf_view", dqfView);
+        formData.append("qm_view", qmView);
         formData.append("projects_info", JSON.stringify(allowedProjects));
 
         var url = "/api/profiles";
@@ -1128,11 +1601,18 @@ function saveProfile() {
     console.log("SAVE: allowedProjects");
     console.log(allowedProjects);
 
+    console.log(dsiView);
+    console.log(dqfView);
+    console.log(qmView);
+
     if ($('#profileName').val() != "" && allowedProjects.length > 0) {
         var formData = new FormData();
         formData.append("name", $('#profileName').val());
         formData.append("description", $('#profileDescription').val());
         formData.append("quality_level", qualityLevel);
+        formData.append("dsi_view", dsiView);
+        formData.append("dqf_view", dqfView);
+        formData.append("qm_view", qmView);
         formData.append("projects_info", JSON.stringify(allowedProjects));
 
         var url = "/api/profiles/" + currentProfileID;

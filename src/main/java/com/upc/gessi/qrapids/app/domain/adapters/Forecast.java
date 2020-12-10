@@ -2,7 +2,7 @@ package com.upc.gessi.qrapids.app.domain.adapters;
 
 import com.google.gson.Gson;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMADetailedStrategicIndicators;
-import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -35,6 +35,7 @@ public class Forecast {
     private static final String HORIZON_QUERY = "&horizon=";
     private static final String TECHNIQUE_QUERY = "&technique=";
     private static final String METRIC_QUERY = "&metric=";
+    private static final String FACTOR_QUERY = "&factor=";
     private static final String STRATEGIC_INDICATOR_QUERY = "&strategic_indicator=";
     private static final String HOST_QUERY = "&host=";
     private static final String PORT_QUERY = "&port=";
@@ -71,7 +72,7 @@ public class Forecast {
     private QMADetailedStrategicIndicators qmadsi;
 
     @Autowired
-    private QualityFactorsController qualityFactorsController;
+    private FactorsController factorsController;
 
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
@@ -104,17 +105,17 @@ public class Forecast {
         return techniques;
     }
 
-    public void trainMetricForecast(List<DTOMetric> metrics, String freq, String prj, String technique) {
+    public void trainMetricForecast(List<DTOMetricEvaluation> metrics, String freq, String prj, String technique) {
         List<String> elements = new ArrayList<>();
-        for (DTOMetric metric : metrics) {
+        for (DTOMetricEvaluation metric : metrics) {
             elements.add(metric.getId());
         }
         trainForecastRequest(elements, Constants.INDEX_METRICS, freq, prj, technique);
     }
 
-    public void trainFactorForecast(List<DTOQualityFactor> factors, String freq, String prj, String technique) {
+    public void trainFactorForecast(List<DTODetailedFactorEvaluation> factors, String freq, String prj, String technique) {
         List<String> elements = new ArrayList<>();
-        for (DTOQualityFactor factor : factors) {
+        for (DTODetailedFactorEvaluation factor : factors) {
             elements.add(factor.getId());
         }
         trainForecastRequest(elements, Constants.INDEX_FACTORS, freq, prj, technique);
@@ -150,13 +151,13 @@ public class Forecast {
         HttpStatus statusCode = responseEntity.getStatusCode();
     }
 
-    public List<DTOMetric> ForecastMetric(List<DTOMetric> metric, String technique, String freq, String horizon, String prj) throws IOException {
+    public List<DTOMetricEvaluation> ForecastMetric(List<DTOMetricEvaluation> metric, String technique, String freq, String horizon, String prj) throws IOException {
         StringBuffer urlString = new StringBuffer(url + "/api/Metrics/Forecast?index_metrics=");
         if (prefix == null) prefix = "";
         urlString.append(URLEncoder.encode(prefix + Constants.INDEX_METRICS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
         urlString.append(HORIZON_QUERY).append(URLEncoder.encode(horizon, UTF_8));
         urlString.append(TECHNIQUE_QUERY).append(URLEncoder.encode(technique, UTF_8));
-        for(DTOMetric m : metric) {
+        for(DTOMetricEvaluation m : metric) {
             urlString.append(METRIC_QUERY).append(URLEncoder.encode(m.getId(), UTF_8));
         }
         urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
@@ -177,7 +178,7 @@ public class Forecast {
         return null;
     }
 
-    private List<DTOMetric> getDtoMetrics(List<DTOMetric> metric, HttpURLConnection con) throws IOException {
+    private List<DTOMetricEvaluation> getDtoMetrics(List<DTOMetricEvaluation> metric, HttpURLConnection con) throws IOException {
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
         String inputLine;
@@ -188,7 +189,7 @@ public class Forecast {
         in.close();
         con.disconnect();
 
-        List<DTOMetric> result = new ArrayList<>();
+        List<DTOMetricEvaluation> result = new ArrayList<>();
 
         JsonParser parser = new JsonParser();
         JsonArray data = parser.parse(content.toString()).getAsJsonArray();
@@ -206,7 +207,7 @@ public class Forecast {
         return result;
     }
 
-    private void getMetrics(List<DTOMetric> metric, List<DTOMetric> result, JsonObject object) {
+    private void getMetrics(List<DTOMetricEvaluation> metric, List<DTOMetricEvaluation> result, JsonObject object) {
         //check if json values are null
         JsonArray lower80;
         if (!object.get(LOWER_80).isJsonNull()) lower80 = object.getAsJsonArray(LOWER_80);
@@ -230,24 +231,24 @@ public class Forecast {
 
         String id = object.get(ID).getAsString();
 
-        for (DTOMetric m : metric) {
+        for (DTOMetricEvaluation m : metric) {
             buildMetric(result, lower80, upper80, lower95, upper95, mean, id, m);
         }
     }
 
-    private void buildMetric(List<DTOMetric> result, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, DTOMetric m) {
+    private void buildMetric(List<DTOMetricEvaluation> result, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, DTOMetricEvaluation m) {
         if (m.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
                     float aux = mean.get(j).getAsFloat();
-                    result.add(new DTOMetric(m.getId(), m.getName(),
+                    result.add(new DTOMetricEvaluation(m.getId(), m.getName(),
                             m.getDescription(),
                             m.getDatasource(),
                             m.getRationale(),
                             m.getDate().plusDays((long) j + 1), aux, Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
-                result.add(new DTOMetric(m.getId(), m.getName(),
+                result.add(new DTOMetricEvaluation(m.getId(), m.getName(),
                         m.getDescription(),
                         m.getDatasource(),
                         m.getRationale(),
@@ -256,17 +257,133 @@ public class Forecast {
         }
     }
 
-    private void getMetricWithError(List<DTOMetric> metric, List<DTOMetric> result, JsonObject object) {
+    private void getMetricWithError(List<DTOMetricEvaluation> metric, List<DTOMetricEvaluation> result, JsonObject object) {
         String error = object.get(ERROR).getAsString();
         String id = object.get(ID).getAsString();
-        for (DTOMetric m : metric) {
+        for (DTOMetricEvaluation m : metric) {
             if (m.getId().equals(id)) {
-                result.add(new DTOMetric(id, m.getName(), error));
+                result.add(new DTOMetricEvaluation(id, m.getName(), error));
             }
         }
     }
 
-    public List<DTOQualityFactor> ForecastFactor(List<DTOQualityFactor> factor, String technique, String freq, String horizon, String prj) throws IOException {
+    public List<DTOFactorEvaluation> ForecastFactor(List<DTOFactorEvaluation> factor, String technique, String freq, String horizon, String prj) throws IOException {
+        StringBuffer urlString = new StringBuffer(url + "/api/QualityFactors/Forecast?index_factors=");
+        if (prefix == null) prefix = "";
+        urlString.append(URLEncoder.encode(prefix + Constants.INDEX_FACTORS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
+        urlString.append(HORIZON_QUERY).append(URLEncoder.encode(horizon, UTF_8));
+        urlString.append(TECHNIQUE_QUERY).append(URLEncoder.encode(technique, UTF_8));
+        for(DTOFactorEvaluation f : factor) {
+            urlString.append(FACTOR_QUERY).append(URLEncoder.encode(f.getId(), UTF_8));
+        }
+        urlString.append(HOST_QUERY).append(URLEncoder.encode(connection.getIp(), UTF_8));
+        urlString.append(PORT_QUERY).append(URLEncoder.encode(String.valueOf(connection.getPort()), UTF_8));
+        urlString.append(PATH_QUERY).append(URLEncoder.encode(path, UTF_8));
+        urlString.append(USER_QUERY).append(URLEncoder.encode(connection.getUsername(), UTF_8));
+        urlString.append(PWD_QUERY).append(URLEncoder.encode(connection.getPassword(), UTF_8));
+        URL url = new URL(urlString.toString());
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod(GET);
+
+        con.setRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
+
+        int status = con.getResponseCode();
+        if (status == 200) {
+            return getDtoFactors(factor, con);
+        }
+        return null;
+    }
+
+    private List<DTOFactorEvaluation> getDtoFactors(List<DTOFactorEvaluation> factor, HttpURLConnection con) throws IOException {
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer content = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        con.disconnect();
+
+        List<DTOFactorEvaluation> result = new ArrayList<>();
+
+        JsonParser parser = new JsonParser();
+        JsonArray data = parser.parse(content.toString()).getAsJsonArray();
+        for (int i = 0; i < data.size(); ++i) {
+            JsonObject object = data.get(i).getAsJsonObject();
+
+            //check if error occurred
+            if (!object.get(ERROR).isJsonNull()) {
+                getFactorWithError(factor, result, object);
+            }
+            else {
+                getFactors(factor, result, object);
+            }
+        }
+        return result;
+    }
+
+    private void getFactors(List<DTOFactorEvaluation> factor, List<DTOFactorEvaluation> result, JsonObject object) {
+        //check if json values are null
+        JsonArray lower80;
+        if (!object.get(LOWER_80).isJsonNull()) lower80 = object.getAsJsonArray(LOWER_80);
+        else lower80 = new JsonArray();
+
+        JsonArray upper80;
+        if (!object.get(UPPER_80).isJsonNull()) upper80 = object.getAsJsonArray(UPPER_80);
+        else upper80 = new JsonArray();
+
+        JsonArray lower95;
+        if (!object.get(LOWER_95).isJsonNull()) lower95 = object.getAsJsonArray(LOWER_95);
+        else lower95 = new JsonArray();
+
+        JsonArray upper95;
+        if (!object.get(UPPER_95).isJsonNull()) upper95 = object.getAsJsonArray(UPPER_95);
+        else upper95 = new JsonArray();
+
+        JsonArray mean;
+        if (!object.get(MEAN).isJsonNull()) mean = object.getAsJsonArray(MEAN);
+        else mean = new JsonArray();
+
+        String id = object.get(ID).getAsString();
+
+        for (DTOFactorEvaluation f : factor) {
+            buildFactor(result, lower80, upper80, lower95, upper95, mean, id, f);
+        }
+    }
+
+    private void buildFactor(List<DTOFactorEvaluation> result, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, DTOFactorEvaluation f) {
+        if (f.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
+            if (lower80.size() > 0) {
+                for (int j = 0; j < lower80.size(); ++j) {
+                    float aux = mean.get(j).getAsFloat();
+                    result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
+                            f.getDescription(),
+                            f.getDatasource(),
+                            f.getRationale(),
+                            LocalDate.now().plusDays((long) j + 1), Pair.of(aux,factorsController.getFactorLabelFromValue(aux)), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                }
+            } else {
+                result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
+                        f.getDescription(),
+                        f.getDatasource(),
+                        f.getRationale(),
+                        LocalDate.now().plusDays((long) 1), null, null, null));
+            }
+        }
+    }
+
+    private void getFactorWithError(List<DTOFactorEvaluation> factor, List<DTOFactorEvaluation> result, JsonObject object) {
+        String error = object.get(ERROR).getAsString();
+        String id = object.get(ID).getAsString();
+        for (DTOFactorEvaluation f : factor) {
+            if (f.getId().equals(id)) {
+                result.add(new DTOFactorEvaluation(id, f.getName(), error));
+            }
+        }
+    }
+
+    public List<DTODetailedFactorEvaluation> ForecastDetailedFactor(List<DTODetailedFactorEvaluation> factor, String technique, String freq, String horizon, String prj) throws IOException {
         StringBuffer urlString = new StringBuffer(url + "/api/Metrics/Forecast?index_metrics=");
         if (prefix == null) prefix = "";
         urlString.append(URLEncoder.encode(prefix + Constants.INDEX_METRICS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
@@ -298,7 +415,7 @@ public class Forecast {
         return null;
     }
 
-    private List<DTOQualityFactor> getDtoQualityFactors(List<DTOQualityFactor> factor, Map<String, ArrayList<Integer>> metrics, Map<String, String> metricsNames, HttpURLConnection con) throws IOException {
+    private List<DTODetailedFactorEvaluation> getDtoQualityFactors(List<DTODetailedFactorEvaluation> factor, Map<String, ArrayList<Integer>> metrics, Map<String, String> metricsNames, HttpURLConnection con) throws IOException {
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
         String inputLine;
@@ -309,7 +426,7 @@ public class Forecast {
         in.close();
         con.disconnect();
 
-        List<List<DTOMetric>> metricsMatrix = new ArrayList<>();
+        List<List<DTOMetricEvaluation>> metricsMatrix = new ArrayList<>();
         for (int x = 0; x < factor.size(); ++x) {
             metricsMatrix.add(new ArrayList<>());
         }
@@ -336,7 +453,7 @@ public class Forecast {
         return factor;
     }
 
-    private void getMetricsForFactors(LocalDate current, Map<String, ArrayList<Integer>> metrics, Map<String, String> metricsNames, List<List<DTOMetric>> metricsMatrix, JsonObject object) {
+    private void getMetricsForFactors(LocalDate current, Map<String, ArrayList<Integer>> metrics, Map<String, String> metricsNames, List<List<DTOMetricEvaluation>> metricsMatrix, JsonObject object) {
         //check if json values are null
         JsonArray lower80;
         if (!object.get(LOWER_80).isJsonNull()) lower80 = object.getAsJsonArray(LOWER_80);
@@ -365,13 +482,14 @@ public class Forecast {
         }
     }
 
-    private void buildMetricForFactor(Map<String, String> metricsNames, List<List<DTOMetric>> metricsMatrix, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, Map.Entry<String, ArrayList<Integer>> m, LocalDate current) {
+
+    private void buildMetricForFactor(Map<String, String> metricsNames, List<List<DTOMetricEvaluation>> metricsMatrix, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, Map.Entry<String, ArrayList<Integer>> m, LocalDate current) {
         if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
                     float aux = mean.get(j).getAsFloat();
                     for (Integer index : m.getValue())
-                        metricsMatrix.get(index).add(new DTOMetric(m.getKey(),
+                        metricsMatrix.get(index).add(new DTOMetricEvaluation(m.getKey(),
                                 metricsNames.get(m.getKey()),
                                 "",
                                 FORECAST_SOURCE,
@@ -380,7 +498,7 @@ public class Forecast {
                 }
             } else {
                 for (Integer index : m.getValue())
-                    metricsMatrix.get(index).add(new DTOMetric(m.getKey(),
+                    metricsMatrix.get(index).add(new DTOMetricEvaluation(m.getKey(),
                             metricsNames.get(m.getKey()),
                             "",
                             FORECAST_SOURCE,
@@ -390,18 +508,18 @@ public class Forecast {
         }
     }
 
-    private void getMetricForFactorWithError(Map<String, ArrayList<Integer>> metrics, Map<String, String> metricsNames, List<List<DTOMetric>> metricsMatrix, JsonObject object) {
+    private void getMetricForFactorWithError(Map<String, ArrayList<Integer>> metrics, Map<String, String> metricsNames, List<List<DTOMetricEvaluation>> metricsMatrix, JsonObject object) {
         String error = object.get(ERROR).getAsString();
         String id = object.get(ID).getAsString();
         for (Map.Entry<String, ArrayList<Integer>> m : metrics.entrySet()) {
             if (m.getKey().equals(id)) {
                 for (Integer index : m.getValue())
-                    metricsMatrix.get(index).add(new DTOMetric(id, metricsNames.get(m.getKey()), error));
+                    metricsMatrix.get(index).add(new DTOMetricEvaluation(id, metricsNames.get(m.getKey()), error));
             }
         }
     }
 
-    private void buildMetricsForFactors(List<DTOQualityFactor> factor, Map<String, ArrayList<Integer>> metrics, Map<String, String> metricsNames) {
+    private void buildMetricsForFactors(List<DTODetailedFactorEvaluation> factor, Map<String, ArrayList<Integer>> metrics, Map<String, String> metricsNames) {
         for (int i = 0; i < factor.size(); ++i) {
             for (int j = 0; j < factor.get(i).getMetrics().size(); ++j) {
                 if (metrics.containsKey(factor.get(i).getMetrics().get(j).getId())) {
@@ -416,7 +534,7 @@ public class Forecast {
         }
     }
 
-    public List<DTODetailedStrategicIndicator> ForecastDSI(List<DTODetailedStrategicIndicator> dsi, String technique, String freq, String horizon, String prj) throws IOException {
+    public List<DTODetailedStrategicIndicatorEvaluation> ForecastDSI(List<DTODetailedStrategicIndicatorEvaluation> dsi, String technique, String freq, String horizon, String prj) throws IOException {
         StringBuffer urlString = new StringBuffer(url + "/api/QualityFactors/Forecast?index_factors=");
         if (prefix == null) prefix = "";
         urlString.append(URLEncoder.encode(prefix + Constants.INDEX_FACTORS + "." + prj, UTF_8)).append(FREQUENCY_QUERY).append(URLEncoder.encode(freq, UTF_8));
@@ -448,7 +566,7 @@ public class Forecast {
         return null;
     }
 
-    private List<DTODetailedStrategicIndicator> getDtoDetailedStrategicIndicators(List<DTODetailedStrategicIndicator> dsi, Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, HttpURLConnection con) throws IOException {
+    private List<DTODetailedStrategicIndicatorEvaluation> getDtoDetailedStrategicIndicators(List<DTODetailedStrategicIndicatorEvaluation> dsi, Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, HttpURLConnection con) throws IOException {
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
         String inputLine;
@@ -459,7 +577,7 @@ public class Forecast {
         in.close();
         con.disconnect();
 
-        List<List<DTOFactor>> factorsMatrix = new ArrayList<>();
+        List<List<DTOFactorEvaluation>> factorsMatrix = new ArrayList<>();
         for (int x = 0; x < dsi.size(); ++x) {
             factorsMatrix.add(new ArrayList<>());
         }
@@ -486,7 +604,8 @@ public class Forecast {
         return dsi;
     }
 
-    private void getFactors(LocalDate current, Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, List<List<DTOFactor>> factorsMatrix, JsonObject object) {
+    // get factors for Detailed Strategic Indicator forecast
+    private void getFactors(LocalDate current, Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, List<List<DTOFactorEvaluation>> factorsMatrix, JsonObject object) {
         //check if json values are null
         JsonArray lower80;
         if (!object.get(LOWER_80).isJsonNull()) lower80 = object.getAsJsonArray(LOWER_80);
@@ -515,35 +634,37 @@ public class Forecast {
         }
     }
 
-    private void buildFactor(Map<String, String> factorsNames, List<List<DTOFactor>> factorsMatrix, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, Map.Entry<String, ArrayList<Integer>> m, LocalDate current) {
+    // build factor for Detailed Strategic Indicator forecast
+    private void buildFactor(Map<String, String> factorsNames, List<List<DTOFactorEvaluation>> factorsMatrix, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, Map.Entry<String, ArrayList<Integer>> m, LocalDate current) {
         if (m.getKey().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
                     float aux = mean.get(j).getAsFloat();
                     for (Integer index : m.getValue())
-                        factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
-                                aux, current.plusDays((long) j + 1), FORECAST_SOURCE, FORECAST_SOURCE, null));
+                        factorsMatrix.get(index).add(new DTOFactorEvaluation(m.getKey(), factorsNames.get(m.getKey()), "",
+                                FORECAST_SOURCE, FORECAST_SOURCE, current.plusDays((long) j + 1), Pair.of(aux, factorsController.getFactorLabelFromValue(aux)), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
                 for (Integer index : m.getValue())
-                    factorsMatrix.get(index).add(new DTOFactor(m.getKey(), factorsNames.get(m.getKey()), "",
-                            null, current.plusDays((long) 1), FORECAST_SOURCE, FORECAST_SOURCE, null));
+                    factorsMatrix.get(index).add(new DTOFactorEvaluation(m.getKey(), factorsNames.get(m.getKey()), "",
+                            FORECAST_SOURCE,FORECAST_SOURCE,current.plusDays((long) 1), null,null,null));
             }
         }
     }
 
-    private void getFactorWithError(Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, List<List<DTOFactor>> factorsMatrix, JsonObject object) {
+    // get factors for for Detailed Strategic Indicator forecast
+    private void getFactorWithError(Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames, List<List<DTOFactorEvaluation>> factorsMatrix, JsonObject object) {
         String error = object.get(ERROR).getAsString();
         String id = object.get(ID).getAsString();
         for (Map.Entry<String, ArrayList<Integer>> f : factors.entrySet()) {
             if (f.getKey().equals(id)) {
                 for (Integer index : f.getValue())
-                    factorsMatrix.get(index).add(new DTOFactor(id, factorsNames.get(f.getKey()), error));
+                    factorsMatrix.get(index).add(new DTOFactorEvaluation(id, factorsNames.get(f.getKey()), error));
             }
         }
     }
 
-    private void buildFactorsForStrategicIndicator(List<DTODetailedStrategicIndicator> dsi, Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames) {
+    private void buildFactorsForStrategicIndicator(List<DTODetailedStrategicIndicatorEvaluation> dsi, Map<String, ArrayList<Integer>> factors, Map<String, String> factorsNames) {
         for (int i = 0; i < dsi.size(); ++i) {
             for (int j = 0; j < dsi.get(i).getFactors().size(); ++j) {
                 if (factors.containsKey(dsi.get(i).getFactors().get(j).getId())) {
@@ -691,11 +812,11 @@ public class Forecast {
     }
 
     public List<DTOStrategicIndicatorEvaluation> ForecastSIDeprecated(String technique, String freq, String horizon, String prj) throws IOException, ProjectNotFoundException {
-        List<DTODetailedStrategicIndicator> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj, null, true), technique, freq, horizon, prj);
+        List<DTODetailedStrategicIndicatorEvaluation> dsis = ForecastDSI(qmadsi.CurrentEvaluation(null, prj, null, true), technique, freq, horizon, prj);
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
         String categoriesDescription = strategicIndicatorsController.getCategories().toString();
-        for (DTODetailedStrategicIndicator dsi : dsis) {
-            Map<LocalDate, List<DTOFactor>> listSIFactors = new HashMap<>();
+        for (DTODetailedStrategicIndicatorEvaluation dsi : dsis) {
+            Map<LocalDate, List<DTOFactorEvaluation>> listSIFactors = new HashMap<>();
             Map<LocalDate,Map<String,String>> mapSIFactors = new HashMap<>();
             boolean factorHasForecastingError = factorHasForecastingError(dsi, listSIFactors, mapSIFactors);
             Strategic_Indicator si = null;
@@ -715,8 +836,8 @@ public class Forecast {
         return result;
     }
 
-    private void getAndBuildDTOStrategicIndicatorEvaluation(List<DTOStrategicIndicatorEvaluation> result, String categoriesDescription, Map<LocalDate, List<DTOFactor>> listSIFactors, Strategic_Indicator si) {
-        for(Map.Entry<LocalDate,List<DTOFactor>> l : listSIFactors.entrySet()) {
+    private void getAndBuildDTOStrategicIndicatorEvaluation(List<DTOStrategicIndicatorEvaluation> result, String categoriesDescription, Map<LocalDate, List<DTOFactorEvaluation>> listSIFactors, Strategic_Indicator si) {
+        for(Map.Entry<LocalDate,List<DTOFactorEvaluation>> l : listSIFactors.entrySet()) {
             float value = strategicIndicatorsController.computeStrategicIndicatorValue(l.getValue());
             result.add(new DTOStrategicIndicatorEvaluation(si.getName().replaceAll("\\s+", "").toLowerCase(),
                     si.getName(),
@@ -731,7 +852,7 @@ public class Forecast {
         }
     }
 
-    private void getAndBuildDTOStrategicIndicatorEvaluationWithBayesianNetwork(List<DTOStrategicIndicatorEvaluation> result, String categoriesDescription, DTODetailedStrategicIndicator dsi, Map<LocalDate, Map<String, String>> mapSIFactors, Strategic_Indicator si) throws IOException {
+    private void getAndBuildDTOStrategicIndicatorEvaluationWithBayesianNetwork(List<DTOStrategicIndicatorEvaluation> result, String categoriesDescription, DTODetailedStrategicIndicatorEvaluation dsi, Map<LocalDate, Map<String, String>> mapSIFactors, Strategic_Indicator si) throws IOException {
         for(Map.Entry<LocalDate,Map<String,String>> m : mapSIFactors.entrySet()) {
             File tempFile = File.createTempFile("network", ".dne", null);
             try(FileOutputStream fos = new FileOutputStream(tempFile)) {
@@ -752,18 +873,18 @@ public class Forecast {
         }
     }
 
-    private boolean factorHasForecastingError(DTODetailedStrategicIndicator dsi, Map<LocalDate, List<DTOFactor>> listSIFactors, Map<LocalDate, Map<String, String>> mapSIFactors) {
+    private boolean factorHasForecastingError(DTODetailedStrategicIndicatorEvaluation dsi, Map<LocalDate, List<DTOFactorEvaluation>> listSIFactors, Map<LocalDate, Map<String, String>> mapSIFactors) {
         boolean factorHasForecastingError = false;
-        for (DTOFactor factor : dsi.getFactors()) {
+        for (DTOFactorEvaluation factor : dsi.getFactors()) {
             if (!factorHasForecastingError) factorHasForecastingError = (factor.getForecastingError() != null);
             if (listSIFactors.containsKey(factor.getDate())) {
                 listSIFactors.get(factor.getDate()).add(factor);
-                mapSIFactors.get(factor.getDate()).put(factor.getId(), qualityFactorsController.getFactorLabelFromValue(factor.getValue()));
+                mapSIFactors.get(factor.getDate()).put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue().getFirst()));
             } else {
                 listSIFactors.put(factor.getDate(), new ArrayList<>());
                 listSIFactors.get(factor.getDate()).add(factor);
                 mapSIFactors.put(factor.getDate(), new HashMap<>());
-                mapSIFactors.get(factor.getDate()).put(factor.getId(), qualityFactorsController.getFactorLabelFromValue(factor.getValue()));
+                mapSIFactors.get(factor.getDate()).put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue().getFirst()));
             }
         }
         return factorHasForecastingError;

@@ -58,6 +58,8 @@
                 <p> Software licensed under the <a style=" line-height: initial; float: initial; display: initial; color: #2e6da4; text-decoration: underline; background-color: initial; font-size: 12px; padding: initial" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a> </p>
                 <span> Q-Rapids Dashboard </span>
                 <span> (Open Source Software, available at <a style=" line-height: initial; float: initial; display: initial; color: #2e6da4; text-decoration: underline; background-color: initial; font-size: 12px; padding: initial" href="https://github.com/q-rapids/qrapids-dashboard">GitHub</a>)</span>
+                <p></p>
+                <span> Icons made by <a style=" line-height: initial; float: initial; display: initial; color: #2e6da4; text-decoration: underline; background-color: initial; font-size: 12px; padding: initial" href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a style=" line-height: initial; float: initial; display: initial; color: #2e6da4; text-decoration: underline; background-color: initial; font-size: 12px; padding: initial" href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></span>
             </h6>
         </div>
         <div class="modal-footer">
@@ -314,12 +316,12 @@
         </div>
     </th:block>
 
-    <th:block th:fragment="weightsModal">
-        <div class="modal fade" id="weightsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+    <th:block th:fragment="SIweightsModal">
+        <div class="modal fade" id="SIweightsModal" role="dialog" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <!--button type="button" class="close" data-dismiss="modal">&times;</button-->
                         <h4 class="modal-title">Weighted average</h4>
                     </div>
                     <div class="modal-body">
@@ -327,20 +329,54 @@
                         <p>(Remember that the total sum of the weights has to be 100%)</p>
                     </div>
                     <div class="modal-body">
-                        <table id="weightsTable" class="weightsTable">
+                        <table id="SIweightsTable" class="weightsTable">
                             <thead>
                             <tr class="weightItem">
                                 <th>Selected Factors</th>
                                 <th>Weight (%)</th>
                             </tr>
                             </thead>
-                            <tbody id = "weightsItems">
+                            <tbody id = "SIweightsItems">
                             </tbody>
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button id="submitWeightsButton" type="button" class="btn btn-primary pull-right">Accept</button>
-                        <button id="closeWeightsButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                        <button id="SIsubmitWeightsButton" type="button" class="btn btn-primary pull-right">Accept</button>
+                        <button id="SIcloseWeightsButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="QFweightsModal">
+        <div class="modal fade" id="QFweightsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!--button type="button" class="close" data-dismiss="modal">&times;</button-->
+                        <h4 class="modal-title">Weighted average</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p> You have chosen the weighted average option, complete the weights for each metric.</p>
+                        <p>(Remember that the total sum of the weights has to be 100%)</p>
+                    </div>
+                    <div class="modal-body">
+                        <table id="QFweightsTable" class="weightsTable">
+                            <thead>
+                            <tr class="weightItem">
+                                <th>Selected Metrics</th>
+                                <th>Weight (%)</th>
+                            </tr>
+                            </thead>
+                            <tbody id = "QFweightsItems">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="QFsubmitWeightsButton" type="button" class="btn btn-primary pull-right">Accept</button>
+                        <button id="QFcloseWeightsButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
 

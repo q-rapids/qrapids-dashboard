@@ -4,12 +4,13 @@ import DTOs.Relations.RelationDTO;
 import DTOs.Relations.SourceRelationDTO;
 import DTOs.Relations.TargetRelationDTO;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
-import com.upc.gessi.qrapids.app.domain.controllers.QualityFactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
 import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetric;
-import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityFactor;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTODetailedFactorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEvaluation;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFactor;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMetric;
@@ -36,7 +37,7 @@ public class QMARelations {
     private StrategicIndicatorsController strategicIndicatorsController;
 
     @Autowired
-    private QualityFactorsController qualityFactorsController;
+    private FactorsController factorsController;
 
     private static final String SI_TYPE = "strategic_indicators";
     private static final String FACTORS_TYPE = "factors";
@@ -61,6 +62,25 @@ public class QMARelations {
                 strategicIndicatorValue);
     }
 
+    public boolean setQualityFactorMetricRelation(String projectId,
+                                                       List<String> metricsIds,
+                                                       String qualityFactorId,
+                                                       LocalDate evaluationDate,
+                                                       List<Float> weights,
+                                                       List<Float> metricValues,
+                                                       List<String> metricLabels,
+                                                       String qualityFactorValue) throws IOException {
+        return Relations.setQualityFactorMetricRelation(
+                projectId,
+                metricsIds.toArray(new String[0]),
+                qualityFactorId,
+                evaluationDate,
+                convertFloatListToDoubleArray(weights),
+                convertFloatListToDoubleArray(metricValues),
+                metricLabels.toArray(new String[0]),
+                qualityFactorValue);
+    }
+
     private double[] convertFloatListToDoubleArray(List<Float> floatList) {
         double[] doubleArray = new double[floatList.size()];
         for (int i = 0; i < floatList.size(); i++) {
@@ -68,6 +88,7 @@ public class QMARelations {
         }
         return doubleArray;
     }
+
 
     public List<DTORelationsSI> getRelations (String prj, String profile, LocalDate date) throws IOException, CategoriesException, ProjectNotFoundException {
         qmacon.initConnexion();
@@ -78,12 +99,12 @@ public class QMARelations {
         else
             relationDTOS = Relations.getRelations(prj, date);
         // get current evaluations for SI and Quality Factors
-        List<DTOStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllStrategicIndicatorsCurrentEvaluation(prj,profile);
-        List<DTOQualityFactor> qfEval = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile);
+        List<DTODetailedStrategicIndicatorEvaluation> siEval = strategicIndicatorsController.getAllDetailedStrategicIndicatorsCurrentEvaluation(prj, profile,true);
+        List<DTODetailedFactorEvaluation> qfEval = factorsController.getAllFactorsWithMetricsCurrentEvaluation(prj, profile,true);
         return RelationDTOToDTORelationSI(relationDTOS, siEval, qfEval);
     }
 
-    private List<DTORelationsSI> RelationDTOToDTORelationSI (List<RelationDTO> relationDTOS, List<DTOStrategicIndicatorEvaluation> siEval, List<DTOQualityFactor> qfEval) throws ArithmeticException {
+    private List<DTORelationsSI> RelationDTOToDTORelationSI (List<RelationDTO> relationDTOS, List<DTODetailedStrategicIndicatorEvaluation> siEval, List<DTODetailedFactorEvaluation> qfEval) throws ArithmeticException {
         Map<String, DTORelationsSI> strategicIndicatorsMap = new HashMap<>();
         Map<String, DTORelationsFactor> factorsMap = new HashMap<>();
         Map<String, DTORelationsMetric> metricsMap = new HashMap<>();
@@ -115,7 +136,6 @@ public class QMARelations {
                 }
                 float sum = sumMetricsWeights(f.getMetrics());
                 for (DTORelationsMetric m : f.getMetrics()) {
-                    // Define weight percentage & weightedValue for metrics
                     if (sum != 0) {
                         m.setWeight(String.valueOf((Float.parseFloat(m.getWeight())/sum)));
                         m.setWeightedValue(String.valueOf(Float.parseFloat(m.getAssessmentValue())*Float.parseFloat(m.getWeight())));
@@ -136,9 +156,9 @@ public class QMARelations {
         return totalWeight;
     }
 
-    private void buildSIFactorRelation(Map<String, DTORelationsSI> strategicIndicatorsMap, Map<String, DTORelationsFactor> factorsMap, String weight, SourceRelationDTO source, TargetRelationDTO target, List<DTOStrategicIndicatorEvaluation> siEval, List<DTOQualityFactor> qfEval) {
+    private void buildSIFactorRelation(Map<String, DTORelationsSI> strategicIndicatorsMap, Map<String, DTORelationsFactor> factorsMap, String weight, SourceRelationDTO source, TargetRelationDTO target, List<DTODetailedStrategicIndicatorEvaluation> siEval, List<DTODetailedFactorEvaluation> qfEval) {
         DTORelationsSI strategicIndicator;
-        DTOStrategicIndicatorEvaluation thisSI = siEval.stream()
+        DTODetailedStrategicIndicatorEvaluation thisSI = siEval.stream()
                 .filter(si -> target.getID().equals(si.getId()))
                 .findAny()
                 .orElse(null);
@@ -166,35 +186,39 @@ public class QMARelations {
             }
 
             DTORelationsFactor factor;
-            DTOQualityFactor thisFactor = qfEval.stream()
+            List<DTOFactorEvaluation> factors = thisSI.getFactors();
+            DTOFactorEvaluation thisFactor = factors.stream()
                     .filter(qf -> source.getID().equals(qf.getId()))
                     .findAny()
                     .orElse(null);
-            if (factorsMap.containsKey(source.getID())) {
-                factor = factorsMap.get(source.getID());
-            } else {
-                factor = new DTORelationsFactor(source.getID());
-                factor.setName(thisFactor.getName());
-                factorsMap.put(source.getID(), factor);
-            }
-            // Special cases
-            if (Float.parseFloat(weight) == 0f || Float.parseFloat(weight) == 1f || Float.parseFloat(weight) == -1f) {
-                factor.setWeight(weight);
-                factor.setWeightedValue(source.getValue());
-                factor.setAssessmentValue(source.getValue());
-            } else {
-                factor.setWeight(weight);
-                factor.setWeightedValue(source.getValue());
-                factor.setAssessmentValue(String.valueOf(Float.parseFloat(source.getValue()) / Float.parseFloat(weight)));
-            }
+            // if thisFactor is null it means that it's an old relation (now this factor isn't included in si composition)
+            if (thisFactor != null) {
+                if (factorsMap.containsKey(source.getID())) {
+                    factor = factorsMap.get(source.getID());
+                } else {
+                    factor = new DTORelationsFactor(source.getID());
+                    factor.setName(thisFactor.getName());
+                    factorsMap.put(source.getID(), factor);
+                }
+                // Special cases
+                if (Float.parseFloat(weight) == 0f || Float.parseFloat(weight) == 1f || Float.parseFloat(weight) == -1f) {
+                    factor.setWeight(weight);
+                    factor.setWeightedValue(source.getValue());
+                    factor.setAssessmentValue(source.getValue());
+                } else {
+                    factor.setWeight(weight);
+                    factor.setWeightedValue(source.getValue());
+                    factor.setAssessmentValue(String.valueOf(Float.parseFloat(source.getValue()) / Float.parseFloat(weight)));
+                }
 
-            strategicIndicator.setFactor(new DTORelationsFactor(factor));
+                strategicIndicator.setFactor(new DTORelationsFactor(factor));
+            }
         }
     }
 
-    private void buildFactorMetricRelation(Map<String, DTORelationsFactor> factorsMap, Map<String, DTORelationsMetric> metricsMap, String weight, SourceRelationDTO source, TargetRelationDTO target, List<DTOQualityFactor> qfEval) {
+    private void buildFactorMetricRelation(Map<String, DTORelationsFactor> factorsMap, Map<String, DTORelationsMetric> metricsMap, String weight, SourceRelationDTO source, TargetRelationDTO target, List<DTODetailedFactorEvaluation> qfEval) {
         DTORelationsFactor factor;
-        DTOQualityFactor thisFactor = qfEval.stream()
+        DTODetailedFactorEvaluation thisFactor = qfEval.stream()
                 .filter(qf -> target.getID().equals(qf.getId()))
                 .findAny()
                 .orElse(null);
@@ -208,23 +232,26 @@ public class QMARelations {
             }
 
             DTORelationsMetric metric;
-            List<DTOMetric> metrics = thisFactor.getMetrics();
-            DTOMetric thisMetric = metrics.stream()
+            List<DTOMetricEvaluation> metrics = thisFactor.getMetrics();
+            DTOMetricEvaluation thisMetric = metrics.stream()
                     .filter(m -> source.getID().equals(m.getId()))
                     .findAny()
                     .orElse(null);
-            if (metricsMap.containsKey(source.getID())) {
-                metric = metricsMap.get(source.getID());
-            } else {
-                metric = new DTORelationsMetric(source.getID());
-                metric.setName(thisMetric.getName());
-                metricsMap.put(source.getID(), metric);
-            }
-            metric.setWeight(weight);
-            metric.setWeightedValue(source.getValue());
-            metric.setAssessmentValue(thisMetric.getValue().toString());
+            // if thisMetric is null it means that it's an old relation (now this metric isn't included in factor composition)
+            if (thisMetric != null) {
+                if (metricsMap.containsKey(source.getID())) {
+                    metric = metricsMap.get(source.getID());
+                } else {
+                    metric = new DTORelationsMetric(source.getID());
+                    metric.setName(thisMetric.getName());
+                    metricsMap.put(source.getID(), metric);
+                }
+                metric.setWeight(weight);
+                metric.setWeightedValue(source.getValue());
+                metric.setAssessmentValue(thisMetric.getValue().toString());
 
-            factor.setMetric(new DTORelationsMetric(metric));
+                factor.setMetric(new DTORelationsMetric(metric));
+            }
         }
     }
 }

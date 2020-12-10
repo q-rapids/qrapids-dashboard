@@ -16,7 +16,7 @@
 <br/>
 <br/>
 <h1 id="title" align="center"></h1>
-<p th:replace="Fragments/TemplateDashboard :: navLinkQF"></p>
+<p th:replace="Fragments/TemplateDashboard :: navLinkDetailedQF"></p>
 <br/>
 <br/>
 <div class="container" style="text-align:center;">
@@ -24,7 +24,7 @@
 </div>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
-<script type="text/javascript" src="../../static/js/parseDataDetailedSICurrent.js" th:src="@{/js/parseDataQFStacked.js}"></script>
+<script type="text/javascript" src="../../static/js/parseDataDetailedQFStacked.js" th:src="@{/js/parseDataDetailedQFStacked.js}"></script>
 <!--script src="https://cdn.jsdelivr.net/npm/apexcharts@3.19.2"></script-->
 <script type="text/javascript" th:src="@{/js/lib/apexcharts.min.js}"></script>
 <script type="text/javascript" src="../../static/js/stackedBarChart.js" th:src="@{/js/stackedBarChart.js}"></script>

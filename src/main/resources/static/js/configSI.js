@@ -22,6 +22,8 @@ function buildSIList() {
         type: "GET",
         async: true,
         success: function (data) {
+            console.log("buildSIList");
+            console.log(data);
             var SIList = document.getElementById('SIList');
             for (var i = 0; i < data.length; i++) {
                 var SI = document.createElement('li');
@@ -82,16 +84,21 @@ function clickOnTree(e){
             console.log(si.qualityFactorsWeights);
             if (si.weighted) weightsForFactors = si.qualityFactorsWeights;
             else weightsForFactors = [];
+            console.log("clickOnTree: weightsForFactors");
+            console.log(weightsForFactors);
         }
     });
 }
 
 function newSI() {
+    // clean temporal var and remove active list item
+    weightsForFactors = [];
+    httpMethod = "POST";
     // clean selected items on SI list
     $(".SI").each(function () {
         $(this).removeClass("active");
     });
-
+    // make new Strategic Indicator form
     $("#SIInfo").show();
     $("#SIInfoTitle").text("Step 1 - Fill the strategic indicator information");
     $("div.SIInfoRowID").hide();
@@ -126,11 +133,14 @@ function showFactors () {
 }
 
 function loadFactors (show) {
+    // get factors from DB
     $.ajax({
         url: "../api/qualityFactors",
         type: "GET",
         async: true,
         success: function(data) {
+            console.log("loadFactors");
+            console.log(data);
             data.forEach(function (factor) {
                 factors.push(factor);
             });
@@ -163,7 +173,7 @@ function validaCheckbox(){
     if(checked){
         var qualityFactors = getSelectedFactors(false);
         if (qualityFactors.length > 0) {
-            $("#weightsItems").empty();
+            $("#SIweightsItems").empty();
             var i = 0;
             qualityFactors.forEach(function (qf) {
                 var selectedFactor;
@@ -171,18 +181,19 @@ function validaCheckbox(){
                 var j = 0;
                 while (j < factors.length && !found) {
                     if (factors[j].id == qf) {
+                        found = true;
                         selectedFactor = factors[j].name;
                     }
                     j++;
                 }
                 var id = "editor"+i;
-                $("#weightsItems").append('<tr class="weightItem"><td>' + selectedFactor + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
+                $("#SIweightsItems").append('<tr class="weightItem"><td>' + selectedFactor + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
                 // add listeners which control if we try to input letters, floats, negative values or zero
                 var cell = document.getElementById(id);
                 cell.addEventListener('keydown', onlyNumbers);
                 i++;
             });
-            $("#weightsModal").modal();
+            $("#SIweightsModal").modal();
         } else {
             alert('You have no selected factors.');
             document.getElementById('weightCheckbox').checked = false;
@@ -190,7 +201,7 @@ function validaCheckbox(){
     }
     if (!checked) {
         if (weightsForFactors.length > 0) {
-            var c = confirm('You will lose the values of weights for Strategic Indicators. Do you want to continue?');
+            var c = confirm('You will lose the values of factors weights for this Strategic Indicator. Do you want to continue?');
             if (c) {
                 weightsForFactors = [];
             } else {
@@ -218,7 +229,7 @@ $("#weightEditButton").click(function () {
     var wff = String(weightsForFactors).split(",");
     var selector = getSelectedFactors(false);
     if (selector.length > 0) {
-        $("#weightsItems").empty();
+        $("#SIweightsItems").empty();
         var i = 0;
         selector.forEach(function (qf) {
             var id = "editor"+i;
@@ -227,21 +238,22 @@ $("#weightEditButton").click(function () {
             var j = 0;
             while (j < factors.length && !found) {
                 if (factors[j].id == qf) {
+                    found = true;
                     selectedFactor = factors[j].name;
                 }
                 j++;
             }
             if (wff.includes(qf)) {
-                $("#weightsItems").append('<tr class="weightItem"><td>' + selectedFactor + '</td><td id="' + id + '" contenteditable="true">' + Math.floor(wff[wff.indexOf(qf)+1]) +'</tdid>');
+                $("#SIweightsItems").append('<tr class="weightItem"><td>' + selectedFactor + '</td><td id="' + id + '" contenteditable="true">' + Math.floor(wff[wff.indexOf(qf)+1]) +'</tdid>');
             } else {
-                $("#weightsItems").append('<tr class="weightItem"><td>' + selectedFactor + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
+                $("#SIweightsItems").append('<tr class="weightItem"><td>' + selectedFactor + '</td><td id="' + id + '" contenteditable="true">' + " " +'</tdid>');
             }
             // add listeners which control if we try to input letters, floats, negative values or zero
             var cell = document.getElementById(id);
             cell.addEventListener('keydown', onlyNumbers);
             i++;
         });
-        $("#weightsModal").modal();
+        $("#SIweightsModal").modal();
     } else {
         alert('You have no selected factors.');
         document.getElementById('weightCheckbox').checked = false;
@@ -250,7 +262,7 @@ $("#weightEditButton").click(function () {
     return false;
 });
 
-$("#submitWeightsButton").click(function () {
+$("#SIsubmitWeightsButton").click(function () {
     var qualityFactors = getSelectedFactors(false);
     var i = 0;
     var totalSum = 0;
@@ -265,7 +277,7 @@ $("#submitWeightsButton").click(function () {
             ok = false;
         } else {
             totalSum += weightValue;
-            aux.push([qualityFactors[i], weightValue]);
+            aux.push(qualityFactors[i], weightValue);
         }
         i++;
     }
@@ -276,17 +288,17 @@ $("#submitWeightsButton").click(function () {
         if (totalSum != 100) alert("Total sum is not equals to 100.");
         else {
             weightsForFactors = aux;
-            $("#weightsModal").modal('hide');
+            $("#SIweightsModal").modal('hide');
         }
     }
 });
 
-$("#closeWeightsButton").click(function () {
+$("#SIcloseWeightsButton").click(function () {
     if (!weightsForFactors.length) {
         document.getElementById('weightCheckbox').checked = false;
         document.getElementById('weightEditButton').disabled = true;
     }
-    $("#weightsModal").modal('hide');
+    $("#SIweightsModal").modal('hide');
 });
 
 function getSelectedFactors(final) {
@@ -294,7 +306,7 @@ function getSelectedFactors(final) {
 
     if (final) {
         $('#selFactorsBox').children().each (function (i, option) {
-            qualityFactors.push([option.value, -1]);
+            qualityFactors.push(option.value, -1);
         });
     } else {
         $('#selFactorsBox').children().each (function (i, option) {
@@ -376,7 +388,7 @@ $("#saveSI").click(function () {
 });
 
 $("#deleteSI").click(function () {
-    if (confirm("Are you sure you want to delete this Strategic Indicator?")) {
+    if (confirm("\t\t This operation cannot be undone. \t\n Are you sure you want to delete this strategic indicator?")) {
         jQuery.ajax({
             url: deleteUrl,
             cache: false,

@@ -118,7 +118,7 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         var textColor;
         //create chart svg with hyperlink inide the "container"
         if (chartHyperlinked){
-            urlLink = "../DetailedStrategicIndicators/CurrentChart" + representationMode + "?id="
+            urlLink = "../DetailedStrategicIndicators/CurrentChart" + DSIRepresentationMode + "?id="
                 + data[i].id + "&name=" + data[i].name;
 
             // --> all the chart is hyperlinked
@@ -285,13 +285,17 @@ function drawChart(container, width, height, showButtons, chartHyperlinked, colo
         feedbackBtn.appendChild(document.createTextNode("Feedback"));
         document.getElementById("projectSelectorDiv").appendChild(feedbackBtn);
     }
-
+    sessionStorage.setItem("assessmentDate", assessmentDate.toLocaleDateString());
     $("#assessmentDate").text(assessmentDate.toLocaleDateString());
 }
 
 function drawSimulationNeedle (container, width, height, color) {
     d3.selectAll('.simulation').remove();
     sortDataAlphabetically();
+
+    console.log("drawSimulationNeedle");
+    console.log(data);
+
     for (i = 0; i < data.length; ++i) {
         var divId = container + "DivChart" + i;
         var svg = d3.select('#' + divId).select("svg");
@@ -342,6 +346,8 @@ function drawSimulationNeedle (container, width, height, color) {
         var afterValue = data[i].value.first.toFixed(2);
 
         if (beforeValue < afterValue) {
+            if (beforeValue == 0)
+                beforeValue = 0.001;
             var inc = ((afterValue - beforeValue)/beforeValue)*100;
             svg.append("polygon") // increase icon
                 .attr("class", "simulation")
@@ -388,8 +394,8 @@ function drawSimulationNeedle (container, width, height, color) {
 
 function sortDataAlphabetically () {
     function compare (a, b) {
-        if (a.id < b.id) return -1;
-        else if (a.id > b.id) return 1;
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
         else return 0;
     }
     data.sort(compare);

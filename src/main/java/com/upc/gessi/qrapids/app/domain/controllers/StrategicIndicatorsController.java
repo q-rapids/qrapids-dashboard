@@ -51,16 +51,19 @@ public class StrategicIndicatorsController {
     private SICategoryRepository strategicIndicatorCategoryRepository;
 
     @Autowired
+    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
+
+    @Autowired
     private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
 
     @Autowired
     private ProjectsController projectsController;
 
     @Autowired
-    private ProfilesController profilesController;
+    private FactorsController factorsController;
 
     @Autowired
-    private QualityFactorsController qualityFactorsController;
+    private ProfilesController profilesController;
 
     @Autowired
     private MetricsController metricsController;
@@ -73,9 +76,6 @@ public class StrategicIndicatorsController {
 
     @Autowired
     private StrategicIndicatorQualityFactorsController strategicIndicatorQualityFactorsController;
-
-    @Autowired
-    private StrategicIndicatorQualityFactorsRepository strategicIndicatorQualityFactorsRepository;
 
     private Logger logger = LoggerFactory.getLogger(StrategicIndicatorsController.class);
 
@@ -131,7 +131,7 @@ public class StrategicIndicatorsController {
     }
 
 
-    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException {
+    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, QualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator = getStrategicIndicatorById(strategicIndicatorId);
         if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
         strategicIndicator.setName(name);
@@ -143,22 +143,23 @@ public class StrategicIndicatorsController {
         return  strategicIndicator;
     }
 
-    private  boolean reassignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator) throws StrategicIndicatorQualityFactorNotFoundException {
+    private  boolean reassignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator) throws StrategicIndicatorQualityFactorNotFoundException, QualityFactorNotFoundException {
         List<StrategicIndicatorQualityFactors> newQualityFactorsWeights = new ArrayList();
         // Delete oldQualityFactorsWeights
         List<StrategicIndicatorQualityFactors> oldQualityFactorsWeights = strategicIndicatorQualityFactorsRepository.findByStrategic_indicator(strategicIndicator);
-        strategicIndicator.setQuality_factors(null);
+        strategicIndicator.setStrategicIndicatorQualityFactorsList(null);
         for (StrategicIndicatorQualityFactors old : oldQualityFactorsWeights) {
             strategicIndicatorQualityFactorsController.deleteStrategicIndicatorQualityFactor(old.getId());
         }
         boolean weighted = false;
-        String f;
+        String factorID;
         Float w;
 
         // generate StrategicIndicatorQualityFactors class objects from List<String> qualityFactors
         while (!qualityFactors.isEmpty()) {
             StrategicIndicatorQualityFactors siqf;
-            f = qualityFactors.get(0);
+            factorID = qualityFactors.get(0);
+            Factor f = factorsController.getQualityFactorById(Long.valueOf(factorID));
             w = Float.parseFloat(qualityFactors.get(1));
             if (w == -1) {
                 siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
@@ -172,12 +173,12 @@ public class StrategicIndicatorsController {
             qualityFactors.remove(0);
         }
         // create the association between Strategic Indicator and its Quality Factors
-        strategicIndicator.setQuality_factors(newQualityFactorsWeights);
+        strategicIndicator.setStrategicIndicatorQualityFactorsList(newQualityFactorsWeights);
         return weighted;
     }
 
 
-    public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) {
+    public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) throws QualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator;
         // create Strategic Indicator minim (without quality factors and weighted)
         strategicIndicator = new Strategic_Indicator(name, description, file, project);
@@ -189,15 +190,16 @@ public class StrategicIndicatorsController {
         return strategicIndicator;
     }
 
-    private boolean assignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator ) {
+    private boolean assignQualityFactorsToStrategicIndicator (List<String> qualityFactors, Strategic_Indicator strategicIndicator ) throws QualityFactorNotFoundException {
         List<StrategicIndicatorQualityFactors> qualityFactorsWeights = new ArrayList();
         boolean weighted = false;
-        String f;
+        String factorID;
         Float w;
         // generate StrategicIndicatorQualityFactors class objects from List<String> qualityFactors
         while (!qualityFactors.isEmpty()) {
             StrategicIndicatorQualityFactors siqf;
-            f = qualityFactors.get(0);
+            factorID = qualityFactors.get(0);
+            Factor f = factorsController.getQualityFactorById(Long.valueOf(factorID));
             w = Float.parseFloat(qualityFactors.get(1));
             if (w == -1) {
                 siqf = strategicIndicatorQualityFactorsController.saveStrategicIndicatorQualityFactor(f, w, strategicIndicator);
@@ -211,7 +213,7 @@ public class StrategicIndicatorsController {
             qualityFactors.remove(0);
         }
         // create the association between Strategic Indicator and its Quality Factors
-        strategicIndicator.setQuality_factors(qualityFactorsWeights);
+        strategicIndicator.setStrategicIndicatorQualityFactorsList(qualityFactorsWeights);
         return weighted;
     }
 
@@ -256,11 +258,11 @@ public class StrategicIndicatorsController {
         return qmaStrategicIndicators.SingleCurrentEvaluation(projectExternalId, profileId, strategicIndicatorId);
     }
 
-    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, String profileId, boolean filterDB) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+    public List<DTODetailedStrategicIndicatorEvaluation> getAllDetailedStrategicIndicatorsCurrentEvaluation (String projectExternalId, String profileId, boolean filterDB) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
         return qmaDetailedStrategicIndicators.CurrentEvaluation(null, projectExternalId, profileId, filterDB);
     }
 
-    public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorCurrentEvaluation (String strategicIndicatorId, String projectExternalId, String profileId) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+    public List<DTODetailedStrategicIndicatorEvaluation> getSingleDetailedStrategicIndicatorCurrentEvaluation (String strategicIndicatorId, String projectExternalId, String profileId) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
         return qmaDetailedStrategicIndicators.CurrentEvaluation(strategicIndicatorId, projectExternalId, profileId, true);
     }
 
@@ -268,11 +270,11 @@ public class StrategicIndicatorsController {
         return qmaStrategicIndicators.HistoricalData(from, to, projectExternalId, profileId);
     }
 
-    public List<DTODetailedStrategicIndicator> getAllDetailedStrategicIndicatorsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+    public List<DTODetailedStrategicIndicatorEvaluation> getAllDetailedStrategicIndicatorsHistoricalEvaluation (String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
         return qmaDetailedStrategicIndicators.HistoricalData(null, from, to, projectExternalId, profileId);
     }
 
-    public List<DTODetailedStrategicIndicator> getSingleDetailedStrategicIndicatorsHistoricalEvaluation (String strategicIndicatorId, String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
+    public List<DTODetailedStrategicIndicatorEvaluation> getSingleDetailedStrategicIndicatorsHistoricalEvaluation (String strategicIndicatorId, String projectExternalId, String profileId, LocalDate from, LocalDate to) throws IOException, ElasticsearchStatusException, ProjectNotFoundException {
         return qmaDetailedStrategicIndicators.HistoricalData(strategicIndicatorId, from, to, projectExternalId, profileId);
     }
 
@@ -280,7 +282,7 @@ public class StrategicIndicatorsController {
         return qmaForecast.ForecastSI(si,technique, freq, horizon, projectExternalId);
     }
 
-    public List<DTODetailedStrategicIndicator> getDetailedStrategicIndicatorsPrediction (List<DTODetailedStrategicIndicator> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException {
+    public List<DTODetailedStrategicIndicatorEvaluation> getDetailedStrategicIndicatorsPrediction (List<DTODetailedStrategicIndicatorEvaluation> currentEvaluation, String technique, String freq, String horizon, String projectExternalId) throws IOException, ElasticsearchStatusException {
         return qmaForecast.ForecastDSI(currentEvaluation, technique, freq, horizon, projectExternalId);
     }
 
@@ -291,11 +293,12 @@ public class StrategicIndicatorsController {
         }
     }
 
+
     public void trainForecastModelsSingleProject(String project, String profile, String technique) throws IOException, CategoriesException, ProjectNotFoundException {
-        List<DTOMetric> metrics = metricsController.getAllMetricsCurrentEvaluation(project);
+        List<DTOMetricEvaluation> metrics = metricsController.getAllMetricsCurrentEvaluation(project, profile);
         qmaForecast.trainMetricForecast(metrics, "7", project, technique);
 
-        List<DTOQualityFactor> factors = qualityFactorsController.getAllFactorsWithMetricsCurrentEvaluation(project, profile);
+        List<DTODetailedFactorEvaluation> factors = factorsController.getAllFactorsWithMetricsCurrentEvaluation(project, profile, false);
         qmaForecast.trainFactorForecast(factors, "7", project, technique);
 
         List<DTOStrategicIndicatorEvaluation> strategicIndicators = getAllStrategicIndicatorsCurrentEvaluation(project, profile);
@@ -338,23 +341,23 @@ public class StrategicIndicatorsController {
     }
 
     private boolean assessDateProjectStrategicIndicators(String project, LocalDate evaluationDate) throws IOException, ProjectNotFoundException {
-        Factors factorsQma= new Factors(); //factors list, each of them includes list of SI in which is involved
-        List<DTOFactor> factorList;
+        FactorEvaluation factorEvaluationQma = new FactorEvaluation(); //factors list, each of them includes list of SI in which is involved
+        List<DTOFactorEvaluation> factorList;
 
         // If we receive an evaluationData is because we are recomputing historical data. We need the factors for an
         // specific day, not the last evaluation
         if (evaluationDate == null) {
             evaluationDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            factorList = qualityFactorsController.getAllFactorsEvaluation(project);
+            factorList = factorsController.getAllFactorsEvaluation(project, null,false);
         }
         else
-            factorList = qualityFactorsController.getAllFactorsHistoricalEvaluation(project, evaluationDate, evaluationDate);
-        factorsQma.setFactors(factorList);
+            factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null,evaluationDate, evaluationDate);
+        factorEvaluationQma.setFactors(factorList);
 
-        return assessProjectStrategicIndicators(evaluationDate, project, factorsQma);
+        return assessProjectStrategicIndicators(evaluationDate, project, factorEvaluationQma);
     }
 
-    private boolean assessProjectStrategicIndicators(LocalDate evaluationDate, String  projectExternalId, Factors factorsQMA) throws IOException, ProjectNotFoundException {
+    private boolean assessProjectStrategicIndicators(LocalDate evaluationDate, String  projectExternalId, FactorEvaluation factorEvaluationQMA) throws IOException, ProjectNotFoundException {
         // List of ALL the strategic indicators in the local database
         Project project = new Project();
         try {
@@ -368,18 +371,18 @@ public class StrategicIndicatorsController {
         boolean correct = true;
 
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
-        factorsQMA.clearStrategicIndicatorsRelations(evaluationDate);
+        //factorEvaluationQMA.clearStrategicIndicatorsRelations(evaluationDate);
 
         // 2.- We will compute the evaluation values for the SIs, adding the corresponding relations to the factors
         //      used for these computation
         for (Strategic_Indicator si : strategicIndicatorIterable) {
-            correct = assessStrategicIndicator(evaluationDate, projectExternalId, si, factorsQMA);
+            factorEvaluationQMA.clearStrategicIndicatorsRelations(si.getExternalId());
+            correct = assessStrategicIndicator(evaluationDate, projectExternalId, si, factorEvaluationQMA);
         }
 
         // 3. When all the strategic indicators is calculated, we need to update the factors with the information of
         // the strategic indicators using them
-        qualityFactorsController.setFactorStrategicIndicatorRelation(factorsQMA.getFactors(), projectExternalId);
-
+        factorsController.setFactorStrategicIndicatorRelation(factorEvaluationQMA.getFactors(), projectExternalId);
         return correct;
     }
 
@@ -393,7 +396,7 @@ public class StrategicIndicatorsController {
         Strategic_Indicator si = strategicIndicatorRepository.findByName(name);
 
         // All the factors' assessment from QMA external service
-        Factors factorsQma= new Factors();
+        FactorEvaluation factorEvaluationQma = new FactorEvaluation();
 
         // List of component, the SI is assessed for all the components
         List <String> projects = projectsController.getAllProjectsExternalID();
@@ -401,14 +404,14 @@ public class StrategicIndicatorsController {
         // We will compute the evaluation values for the SI for all the components
         for (String prj: projects) {
             // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
-            factorsQma.setFactors(qualityFactorsController.getAllFactorsEvaluation(prj));
-            factorsQma.clearStrategicIndicatorsRelations(evaluationDate, name);
+            factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj, null,false));
+            factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
 
-            correct = assessStrategicIndicator(evaluationDate, prj, si, factorsQma);
+            correct = assessStrategicIndicator(evaluationDate, prj, si, factorEvaluationQma);
 
             // 3. When all the strategic indicators is calculated, we need to update the factors with the information of
             // the strategic indicators using them
-            qualityFactorsController.setFactorStrategicIndicatorRelation(factorsQma.getFactors(), prj);
+            factorsController.setFactorStrategicIndicatorRelation(factorEvaluationQma.getFactors(), prj);
         }
 
         return correct;
@@ -426,32 +429,33 @@ public class StrategicIndicatorsController {
         Strategic_Indicator si = strategicIndicatorRepository.findByNameAndProject_Id(name, project.getId());
 
         // All the factors' assessment from QMA external service
-        Factors factorsQma= new Factors();
+        FactorEvaluation factorEvaluationQma = new FactorEvaluation();
 
         // We will compute the evaluation values for the SI for THIS CONCRETE component
 
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
-        factorsQma.setFactors(qualityFactorsController.getAllFactorsEvaluation(prj));
-        factorsQma.clearStrategicIndicatorsRelations(evaluationDate, name);
+        factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj, null,false));
+        factorEvaluationQma.clearStrategicIndicatorsRelations(si.getExternalId());
+        //factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
 
-        correct = assessStrategicIndicator(evaluationDate, prj, si, factorsQma);
+        correct = assessStrategicIndicator(evaluationDate, prj, si, factorEvaluationQma);
 
         // 3. When all the strategic indicators is calculated, we need to update the factors with the information of
         // the strategic indicators using them
-        qualityFactorsController.setFactorStrategicIndicatorRelation(factorsQma.getFactors(), prj);
+        factorsController.setFactorStrategicIndicatorRelation(factorEvaluationQma.getFactors(), prj);
 
         return correct;
     }
 
-    private boolean assessStrategicIndicator(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, Factors factorsQMA)
+    private boolean assessStrategicIndicator(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, FactorEvaluation factorEvaluationQMA)
             throws IOException {
         boolean correct = true;
         // We need the evaluation for the factors used to compute "si"
         List<Float> listFactorsAssessmentValues = new ArrayList<>();
         // List of factor impacting in ONE strategic indicator
         List<String> siFactors;
-        DTOFactor factor;
-        List<DTOFactor> factorList = new ArrayList<>();
+        DTOFactorEvaluation factor;
+        List<DTOFactorEvaluation> factorList = new ArrayList<>();
         List<String> missingFactors = new ArrayList<>(); //List of factors without assessment ---> SI assessment incomplete
         int index;
         boolean factorFound;
@@ -460,7 +464,7 @@ public class StrategicIndicatorsController {
         // We need to identify the factors in factors_qma that are used to compute SI
         Map<String,String> mapSIFactors = new HashMap<>();
         siFactors = strategicIndicator.getQuality_factors();
-        factorsMismatch = buildFactorsInfoAndCalculateMismatch(evaluationDate, project, strategicIndicator, factorsQMA, listFactorsAssessmentValues, siFactors, factorList, missingFactors, factorsMismatch, mapSIFactors);
+        factorsMismatch = buildFactorsInfoAndCalculateMismatch(evaluationDate, project, strategicIndicator, factorEvaluationQMA, listFactorsAssessmentValues, siFactors, factorList, missingFactors, factorsMismatch, mapSIFactors);
 
         String assessmentValueOrLabel = "";
         // The computations depends on having a BN or not
@@ -476,7 +480,7 @@ public class StrategicIndicatorsController {
         }
 
         // Save relations of factor -> SI
-        if (correct) {
+        if (correct && !assessmentValueOrLabel.isEmpty()) {
             correct = buildAndSaveFactorSIRelation(evaluationDate, project, strategicIndicator, factorList, assessmentValueOrLabel);
         }
 
@@ -499,7 +503,7 @@ public class StrategicIndicatorsController {
             }
             assessmentValueOrLabel = String.valueOf(value);
             String info = "factors: {";
-            for (int j = 0; j < siFactors.size(); j++) {
+            for (int j = 0; j < listFactorsAssessmentValues.size(); j++) {
                 String factorInfo = " " + siFactors.get(j) + " (value: " +  listFactorsAssessmentValues.get(j) + ", ";
                 if (weighted) factorInfo += "weight: " + weights.get(j).intValue() + "%);";
                 else factorInfo += "no weighted);";
@@ -559,10 +563,10 @@ public class StrategicIndicatorsController {
         return assessmentValueOrLabel;
     }
 
-    private long buildFactorsInfoAndCalculateMismatch(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, Factors factorsQMA, List<Float> listFactorsAssessmentValues, List<String> siFactors, List<DTOFactor> factorList, List<String> missingFactors, long factorsMismatch, Map<String, String> mapSIFactors) throws IOException {
+    private long buildFactorsInfoAndCalculateMismatch(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, FactorEvaluation factorEvaluationQMA, List<Float> listFactorsAssessmentValues, List<String> siFactors, List<DTOFactorEvaluation> factorList, List<String> missingFactors, long factorsMismatch, Map<String, String> mapSIFactors) throws IOException {
         int index;
         boolean factorFound;
-        DTOFactor factor;//siFactors is the list of factors that are needed to compute the SI
+        DTOFactorEvaluation factor;//siFactors is the list of factors that are needed to compute the SI
         //missingFactors will contain the factors not found in QMA
         for (String qfId : siFactors) {
             // qfID contains a factor that is used to compute the sI
@@ -570,14 +574,16 @@ public class StrategicIndicatorsController {
             // this factor will be added to the missing factors list
             index =0;
             factorFound = false;
-            while (!factorFound && index < factorsQMA.getFactors().size()){
-                factor = factorsQMA.getFactors().get(index++);
+            while (!factorFound && index < factorEvaluationQMA.getFactors().size()){
+                factor = factorEvaluationQMA.getFactors().get(index++);
                 if (factor.getId().equals(qfId)) {
                     factorFound = true;
                     factorList.add(factor);
-                    listFactorsAssessmentValues.add(factor.getValue());
-                    mapSIFactors.put(factor.getId(), qualityFactorsController.getFactorLabelFromValue(factor.getValue()));
-                    factor.addStrategicIndicator(StrategicIndicator.getHardID(project, strategicIndicator.getExternalId(), evaluationDate));
+                    listFactorsAssessmentValues.add(factor.getValue().getFirst());
+                    mapSIFactors.put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue().getFirst()));
+                    // ToDo using getHardID or not
+                    factor.addStrategicIndicator(strategicIndicator.getExternalId());
+                    //factor.addStrategicIndicator(StrategicIndicator.getHardID(project, strategicIndicator.getExternalId(), evaluationDate));
                     // If there is some missing days, we keep the maximum gap to be materialised
                     long mismach = DAYS.between(factor.getDate(), evaluationDate);
                     if (mismach > factorsMismatch)
@@ -591,31 +597,31 @@ public class StrategicIndicatorsController {
         return factorsMismatch;
     }
 
-    private boolean buildAndSaveFactorSIRelation(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<DTOFactor> factorList, String assessmentValueOrLabel) throws IOException {
+    private boolean buildAndSaveFactorSIRelation(LocalDate evaluationDate, String project, Strategic_Indicator strategicIndicator, List<DTOFactorEvaluation> factorList, String assessmentValueOrLabel) throws IOException {
         boolean correct;
         List<String> factorIds = new ArrayList<>();
         List<Float> weights = new ArrayList<>();
         List<Float> values = new ArrayList<>();
         List<String> labels = new ArrayList<>();
-        for (DTOFactor dtoFactor : factorList) {
-            factorIds.add(dtoFactor.getId());
+        for (DTOFactorEvaluation dtoFactorEvaluation : factorList) {
+            factorIds.add(dtoFactorEvaluation.getId());
             Float weight = -1f; // when SI is computed with network
             if (strategicIndicator.getNetwork() == null) {
                 // when SI is not weighted the weight of factor value is computed as average
                 if (!strategicIndicator.isWeighted()) {
                     weight = 1f/factorList.size();
                 } else { // when SI is weighted the weight of factor has corresponding value
-                    List<String> qfw = strategicIndicator.getWeights();
-                    weight = Float.parseFloat(qfw.get(qfw.indexOf(dtoFactor.getId()) + 1)) / 100;
+                    List<String> qfw = strategicIndicator.getWeightsWithExternalId();
+                    weight = Float.parseFloat(qfw.get(qfw.indexOf(dtoFactorEvaluation.getId()) + 1)) / 100;
                 }
             }
             weights.add(weight);
             if (weight == -1f){
-                values.add(dtoFactor.getValue()*1f/factorList.size()); // value for representation (average)
+                values.add(dtoFactorEvaluation.getValue().getFirst()*1f/factorList.size()); // value for representation (average)
             } else {
-                values.add(dtoFactor.getValue() * weight); // value of weighted factor
+                values.add(dtoFactorEvaluation.getValue().getFirst() * weight); // value of weighted factor
             }
-            labels.add(qualityFactorsController.getFactorLabelFromValue(dtoFactor.getValue()));
+            labels.add(factorsController.getFactorLabelFromValue(dtoFactorEvaluation.getValue().getFirst()));
         }
         correct = saveFactorSIRelation(project, factorIds, strategicIndicator.getExternalId(), evaluationDate, weights, values, labels, assessmentValueOrLabel);
         return correct;
@@ -656,39 +662,46 @@ public class StrategicIndicatorsController {
         return (index/siCategoryList.size() + (index+1)/siCategoryList.size())/2.0f;
     }
 
-    public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException {
+    public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException, QualityFactorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, StrategicIndicatorNotFoundException {
         List<String> projects = projectsController.importProjectsAndUpdateDatabase();
         for(String projectExternalId : projects) {
-            List<DTODetailedStrategicIndicator> dtoDetailedStrategicIndicators = new ArrayList<>();
+            List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicators = new ArrayList<>();
             try {
                 dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, null, false);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
-            for (DTODetailedStrategicIndicator dtoDetailedStrategicIndicator : dtoDetailedStrategicIndicators) {
+            Project project = projectsController.findProjectByExternalId(projectExternalId);
+            for (DTODetailedStrategicIndicatorEvaluation dtoDetailedStrategicIndicator : dtoDetailedStrategicIndicators) {
                 List<String> factors = new ArrayList<>();
-                for (DTOFactor f : dtoDetailedStrategicIndicator.getFactors()) {
-                    factors.add(f.getId());
+                for (DTOFactorEvaluation f : dtoDetailedStrategicIndicator.getFactors()) {
+                    Factor factor = factorsController.findFactorByExternalIdAndProjectId(f.getId(), project.getId());
+                    factors.add(String.valueOf(factor.getId()));
                     factors.add("-1");
                 }
-                Project project = projectsController.findProjectByExternalId(projectExternalId);
-                saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
+                // check if si is in data base and update it
+                Strategic_Indicator strategicIndicator = strategicIndicatorRepository.findByNameAndProject_Id(dtoDetailedStrategicIndicator.getName(),project.getId());
+                if (strategicIndicator != null) {
+                    editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), null, factors);
+                } else { // save it if it's new
+                    saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
+                }
             }
         }
     }
 
     public List<DTOStrategicIndicatorEvaluation> simulateStrategicIndicatorsAssessment (Map<String, Float> factorsNameValueMap, String projectExternalId, String profileId) throws IOException, ProjectNotFoundException {
-        List<DTOFactor> factors = qualityFactorsController.getAllFactorsEvaluation(projectExternalId);
-        for (DTOFactor factor : factors) {
+        List<DTOFactorEvaluation> factors = factorsController.getAllFactorsEvaluation(projectExternalId,profileId,true);
+        for (DTOFactorEvaluation factor : factors) {
             if (factorsNameValueMap.containsKey(factor.getId())) {
-                factor.setValue(factorsNameValueMap.get(factor.getId()));
+                factor.setValue(Pair.of(factorsNameValueMap.get(factor.getId()),factorsController.getFactorLabelFromValue(factorsNameValueMap.get(factor.getId()))));
             }
         }
         Iterable<Strategic_Indicator> listSI = getStrategicIndicatorsByProjectAndProfile(projectExternalId,profileId);
         List<DTOStrategicIndicatorEvaluation> result = new ArrayList<>();
         for (Strategic_Indicator si : listSI) {
             Map<String,String> mapSIFactors = new HashMap<>();
-            List<DTOFactor> listSIFactors = new ArrayList<>();
+            List<DTOFactorEvaluation> listSIFactors = new ArrayList<>();
             buildMapAndListOfFactors(factors, si, mapSIFactors, listSIFactors);
             if (si.getNetwork() != null && si.getNetwork().length > 10) {
                 File tempFile = File.createTempFile("network", ".dne", null);
@@ -727,23 +740,23 @@ public class StrategicIndicatorsController {
         return result;
     }
 
-    private void buildMapAndListOfFactors(List<DTOFactor> factors, Strategic_Indicator si, Map<String, String> mapSIFactors, List<DTOFactor> listSIFactors) {
+    private void buildMapAndListOfFactors(List<DTOFactorEvaluation> factors, Strategic_Indicator si, Map<String, String> mapSIFactors, List<DTOFactorEvaluation> listSIFactors) {
         for (String qfId : si.getQuality_factors()) {
-            for (DTOFactor factor : factors) {
+            for (DTOFactorEvaluation factor : factors) {
                 if (factor.getId().equals(qfId)) {
-                    mapSIFactors.put(factor.getId(), qualityFactorsController.getFactorLabelFromValue(factor.getValue()));
+                    mapSIFactors.put(factor.getId(), factorsController.getFactorLabelFromValue(factor.getValue().getFirst()));
                     listSIFactors.add(factor);
                 }
             }
         }
     }
 
-    public float computeStrategicIndicatorValue(List<DTOFactor> factors) {
+    public float computeStrategicIndicatorValue(List<DTOFactorEvaluation> factors) {
         float result = 0;
         int nFactors = 0;
-        for (DTOFactor f : factors) {
+        for (DTOFactorEvaluation f : factors) {
             if (f.getValue() != null) {
-                result += f.getValue();
+                result += f.getValue().getFirst();
                 nFactors++;
             }
         }

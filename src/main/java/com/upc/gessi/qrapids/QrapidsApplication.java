@@ -1,6 +1,8 @@
 package com.upc.gessi.qrapids;
 
-import com.upc.gessi.qrapids.app.domain.controllers.*;
+import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
+import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
@@ -39,7 +41,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 
 		// Check the categories in the SQL database and if they are empty create the default ones
 		List<SICategory> siCategoryList = context.getBean(StrategicIndicatorsController.class).getStrategicIndicatorCategories();
-		List<QFCategory> factorCategoryList = context.getBean(QualityFactorsController.class).getFactorCategories();
+		List<QFCategory> factorCategoryList = context.getBean(FactorsController.class).getFactorCategories();
 		List<MetricCategory> metricCategoryList = context.getBean(MetricsController.class).getMetricCategories();
 
 		try {
@@ -67,7 +69,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 			}
 			// Save Factor categories
 			if (factorCategoryList.size() == 0){
-				context.getBean(QualityFactorsController.class).newFactorCategories(categories);
+				context.getBean(FactorsController.class).newFactorCategories(categories);
 			}
 			// Save Metric categories
 			if (metricCategoryList.size() == 0) {

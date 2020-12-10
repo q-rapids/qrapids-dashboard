@@ -7,7 +7,7 @@ var categories = [];
 var detailedCharts = [];
 
 function getAllQualityFactors () {
-    var url = "../api/qualityFactors";
+    var url = "../api/qualityFactors/current";
     $.ajax({
         url : url,
         type: "GET",
@@ -85,23 +85,23 @@ function showQualityFactorSliders () {
             min: 0,
             max: 1,
             step: 0.01,
-            value: qualityFactor.value
+            value: qualityFactor.value.first
         };
         sliderConfig.rangeHighlights = [];
         Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
         // Add original value
         var start, end;
-        if (qualityFactor.value === 0) {
+        if (qualityFactor.value.first === 0) {
             start = 0;
             end = 0.03;
         }
-        else if (qualityFactor.value === 1) {
+        else if (qualityFactor.value.first === 1) {
             start = 0.97;
             end = 1;
         }
         else {
-            start = qualityFactor.value - 0.015;
-            end = qualityFactor.value + 0.015;
+            start = qualityFactor.value.first - 0.015;
+            end = qualityFactor.value.first + 0.015;
         }
         sliderConfig.rangeHighlights.push({
             start: start,
@@ -162,7 +162,7 @@ function getDetailedStrategicIndicators () {
                         labels[i].push(data[i].factors[j].name);
                     else
                         labels[i].push(data[i].factors[j].name.slice(0, 23) + "...");
-                    values[i].push(data[i].factors[j].value);
+                    values[i].push(data[i].factors[j].value.first);
                     strategicIndicators[i].factors.push({
                         id: data[i].factors[j].id,
                         name: data[i].factors[j].name
@@ -277,7 +277,27 @@ function showDetailedStrategicIndicators (titles, ids, labels, values) {
                     ticks: {
                         min: 0,
                         max: 1,
-                        maxTicksLimit: 5
+                        stepSize: 0.2,
+                    }
+                },
+                tooltips: {
+                    filter: function (tooltipItem) {
+                        if ((tooltipItem.datasetIndex === 0) || (tooltipItem.datasetIndex === 1))
+                            return true;
+                    },
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index] || '';
+
+                            if (label) {
+                                label += ': ';
+                            }
+                            label += Math.round(tooltipItem.yLabel * 100) / 100;
+                            return label;
+                        },
+                        title: function(tooltipItem, data) {
+                            return data.datasets[0].label;
+                        }
                     }
                 }
             }
