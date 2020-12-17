@@ -18,7 +18,8 @@
 </div>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.19.2"></script>
+<!--script src="https://cdn.jsdelivr.net/npm/apexcharts@3.19.2"></script-->
+<script type="text/javascript" th:src="@{/js/lib/apexcharts.min.js}"></script>
 <script type="text/javascript" src="../../static/js/phases.js" th:src="@{/js/phases.js}"></script>
 <script>
     window.onload = function() {
