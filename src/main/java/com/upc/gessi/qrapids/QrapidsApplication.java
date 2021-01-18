@@ -1,28 +1,34 @@
 package com.upc.gessi.qrapids;
 
-import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
-import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
-import com.upc.gessi.qrapids.app.domain.controllers.StrategicIndicatorsController;
+import com.upc.gessi.qrapids.app.domain.controllers.*;
+import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
 import com.upc.gessi.qrapids.app.presentation.rest.services.Alerts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.text.ParseException;
+import java.time.ZoneId;
+import java.util.*;
+import eval2.Eval;
+import java.time.LocalDate;
 
 @SpringBootApplication
+@EnableScheduling
 public class QrapidsApplication extends SpringBootServletInitializer {
 
 	@Override
@@ -30,14 +36,40 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		return application.sources(QrapidsApplication.class);
 	}
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public BCryptPasswordEncoder bCryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Value("${projects.dir:}") // default -> empty string
+	private String projectsDir;
+
+	static ConfigurableApplicationContext context;
+
+	@Scheduled(cron = "${cron.expression:-}") // default -> disable scheduled task
+	public void scheduleTask() throws ParseException, ProjectNotFoundException, IOException, CategoriesException {
+		// ToDo: decide if we also copy this code to assessSI function
+		LocalDate evaluationLocalDate = LocalDate.now(); // we need LocalDate for assessStrategicIndicators
+		Date evaluationDate= Date.from(evaluationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()); // we need Date for evaluateQualityModel in qrapids-eval libs
+
+		// params config:
+		// 					projects dir path, evaluationDate, null
+		//					projects dir path, fromDate, toDate
+		Eval.evaluateQualityModel(projectsDir, evaluationDate, null);
+
+		boolean correct = true;
+		// assess strategic indicator for all projects
+		correct = context.getBean(StrategicIndicatorsController.class).assessStrategicIndicators(null, evaluationLocalDate);
+		if (!correct) {
+			Logger logger = LoggerFactory.getLogger(Alerts.class);
+			logger.error(evaluationLocalDate + ": strategic indicators assessment complete with error.");
+		}
+	}
+
 
 	public static void main(String[] args) throws Exception {
 
-		ConfigurableApplicationContext context = SpringApplication.run(QrapidsApplication.class, args);
+		context = SpringApplication.run(QrapidsApplication.class, args);
 
 		// Check the categories in the SQL database and if they are empty create the default ones
 		List<SICategory> siCategoryList = context.getBean(StrategicIndicatorsController.class).getStrategicIndicatorCategories();
