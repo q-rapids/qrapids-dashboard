@@ -212,7 +212,7 @@ function drawChartFactors(factors, container, width, height, categories, chartHy
                 if (message !== "") {
                     message += "\n"
                 }
-                message += "The assessment of the factors and the strategic indicator has a difference of " + mismatchDays + " days.";
+                message += "The assessment of the factors and the metrics has a difference of " + mismatchDays + " days.";
             }
 
             var missingMetrics = factors[i].missingMetrics;

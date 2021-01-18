@@ -131,38 +131,43 @@ function getData(phases) {
 
             console.log("getData");
             console.log(data);
+            console.log("phases");
+            console.log(phases);
 
-            if (data.length === 0) {
+            if (data.length === 0) { // when there is NO historical data for phases period
                 var siData = [];
                 addNoDataStrategicIndicators (phases, siData);
-            } else {
+            } else { // when there is historical data
                 var aux = [{cat: "No data", val:-1}];
                 var values = [];
-                var currentSI = data[0].name;
+                var currentSI = data[0].name; // take first SI from hist. data
                 var i = 0;
-                var currentPH = phases[i];
+                var currentPH = phases[i]; // take first phase as current phase
                 var siData = [data[0].name];
-                data.forEach(function (d) {
-                    if (d.name == currentSI) {
+                data.forEach(function (d) { // for on historical data
+                    if (d.name == currentSI) { // same SI
                         var out = false;
                         while (i < phases.length && !out) {
-                            if (d.date < currentPH.to) {
+                            if (d.date <= currentPH.to) {
                                 aux.push({cat: d.value.second, val: d.value.first});
                                 out = true;
                             } else {
                                 var m = mode(aux);
                                 values.push({x: currentPH.name, y: Math.round(100 * m.val)});
+                                // change phase in same SI
                                 i++;
                                 currentPH = phases[i];
                                 aux = [{cat: "No data", val:-1}];
                             }
                         }
                     } else {
+                        // put current si values
                         var m = mode(aux);
                         values.push({x: currentPH.name, y: Math.round(100 * m.val)});
                         i++;
                         currentPH = phases[i];
                         aux = [{cat: "No data", val:-1}];
+                        // put no data for future phases of current si
                         while (i < phases.length){
                             var m = mode(aux);
                             values.push({x: currentPH.name, y: Math.round(100 * m.val)});
@@ -170,10 +175,12 @@ function getData(phases) {
                             currentPH = phases[i];
                             aux = [{cat: "No data", val:-1}];
                         }
+                        // prepare heatmap series
                         s.push({
                             name: currentSI,
                             data: values
                         });
+                        // change SI
                         currentSI = d.name;
                         siData.push(d.name);
                         aux = [{cat: "No data", val:-1}];
@@ -182,7 +189,7 @@ function getData(phases) {
                         currentPH = phases[i];
                         out = false;
                         while (i < phases.length && !out) {
-                            if (d.date < currentPH.to) {
+                            if (d.date <= currentPH.to) {
                                 aux.push({cat: d.value.second, val: d.value.first});
                                 out = true;
                             } else {
@@ -195,11 +202,15 @@ function getData(phases) {
                         }
                     }
                 });
+                // after for function on historical data
+                // put last phase with historical data values (last si)
                 var m = mode(aux);
                 values.push({x: currentPH.name, y: Math.round(100 * m.val)});
+                // change phase
                 i++;
                 currentPH = phases[i];
                 aux = [{cat: "No data", val:-1}];
+                // add no data values for future phases if there are (last si)
                 while (i < phases.length){
                     var m = mode(aux);
                     values.push({x: currentPH.name, y: Math.round(100 * m.val)});
@@ -207,13 +218,12 @@ function getData(phases) {
                     currentPH = phases[i];
                     aux = [{cat: "No data", val:-1}];
                 }
+                // prepare heatmap series
                 s.push({
                     name: currentSI,
                     data: values
                 });
                 addNoDataStrategicIndicators(phases, siData);
-                console.log("new serie: ");
-                console.log(s);
                 drawHeatmap(phases);
             }
         }

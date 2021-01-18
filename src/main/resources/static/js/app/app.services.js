@@ -15,6 +15,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             url : "../api/strategicIndicators/current?profile="+profileId
         }).then(function mySuccess(response) {
             response.data.forEach(function (strategicIndicator) {
+                strategicIndicator.warning = "";
                 var siDate = new Date(strategicIndicator.date);
                 var today = new Date();
                 today.setHours(0);
@@ -58,6 +59,19 @@ app.controller('TablesCtrl', function($scope, $http) {
         }).then(function mySuccess(response) {
             var data = [];
             response.data.forEach(function (strategicIndicatorEval) {
+                strategicIndicatorEval.warning = "";
+                // "The assessment is X days old." warning have no sense for historical data
+                var mismatchDays = strategicIndicatorEval.mismatchDays;
+                if (mismatchDays > 0) {
+                    strategicIndicatorEval.warning = "The assessment of the factors and the strategic \nindicator has a difference of " + mismatchDays + " days. \n";
+                }
+
+                var missingFactors = strategicIndicatorEval.missingFactors;
+                if (missingFactors.length > 0) {
+                    var factors = missingFactors.length === 1 ? missingFactors[0] : [ missingFactors.slice(0, -1).join(", "), missingFactors[missingFactors.length - 1] ].join(" and ");
+                    strategicIndicatorEval.warning += "The following factors were missing when \nthe strategic indicator was assessed: " + factors;
+                }
+
                 data.push({
                     id: strategicIndicatorEval.id,
                     name: strategicIndicatorEval.name,
@@ -65,7 +79,8 @@ app.controller('TablesCtrl', function($scope, $http) {
                     description: strategicIndicatorEval.description,
                     value: strategicIndicatorEval.value_description,
                     categories: strategicIndicatorEval.categories_description,
-                    rationale: strategicIndicatorEval.rationale
+                    rationale: strategicIndicatorEval.rationale,
+                    warning: strategicIndicatorEval.warning
                 });
             });
             $scope.data = data;
@@ -504,6 +519,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                     };
 
                     //Warnings
+                    strategicIndicator.warning = "";
                     var siDate = new Date(strategicIndicatorEval.date);
                     var today = new Date();
                     today.setHours(0);
@@ -589,6 +605,33 @@ app.controller('TablesCtrl', function($scope, $http) {
         }).then(function mySuccess(response) {
             var data = [];
             response.data.forEach(function (factorEval) {
+
+                //Warnings
+                factorEval.warning = "";
+                var fDate = new Date(factorEval.date);
+                var today = new Date();
+                today.setHours(0);
+                today.setMinutes(0);
+                today.setSeconds(0);
+                var millisecondsInOneDay = 86400000;
+                var millisecondsBetweenAssessmentAndToday = today.getTime() - fDate.getTime();
+                var oldAssessment = millisecondsBetweenAssessmentAndToday > millisecondsInOneDay;
+                if (oldAssessment) {
+                    var daysOld = Math.round(millisecondsBetweenAssessmentAndToday / millisecondsInOneDay);
+                    factorEval.warning = "The " + factorEval.name +  " assessment is " + daysOld + " days old. \n";
+                }
+
+                var mismatchDays = factorEval.mismatchDays;
+                if (mismatchDays > 0) {
+                    factorEval.warning += "The assessment of the metrics and the " + factorEval.name + " factor has a difference of " + mismatchDays + " days. \n";
+                }
+
+                var missingMetrics = factorEval.missingMetrics;
+                if (missingMetrics.length > 0) {
+                    var factors = missingMetrics.length === 1 ? missingMetrics[0] : [ missingMetrics.slice(0, -1).join(", "), missingMetrics[missingMetrics.length - 1] ].join(" and ");
+                    factorEval.warning += "The following metrics were missing when \nthe " + factorEval.name + " factor was assessed: " + factors;
+                }
+
                 var id = getParameterByName('id');
                 if (id !== "") { // see concrete detailed factor
                     if (factorEval.id == id) {
@@ -600,7 +643,8 @@ app.controller('TablesCtrl', function($scope, $http) {
                                 metricName: metric.name,
                                 description: metric.description,
                                 value: metric.value_description,
-                                rationale: metric.rationale
+                                rationale: metric.rationale,
+                                warning: factorEval.warning
                             })
                         });
                     }
@@ -613,11 +657,13 @@ app.controller('TablesCtrl', function($scope, $http) {
                             metricName: metric.name,
                             description: metric.description,
                             value: metric.value_description,
-                            rationale: metric.rationale
+                            rationale: metric.rationale,
+                            warning: factorEval.warning
                         })
                     });
                 }
             });
+            //TODO
             $scope.data = data;
             $scope.sortType = 'factorName';
             $scope.sortReverse = false;
@@ -810,6 +856,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                 result = response.data[0].factors;
             }
             result.forEach(function (factor) {
+                factor.warning = "";
                 var qfDate = new Date(factor.date);
                 var today = new Date();
                 today.setHours(0);
@@ -862,13 +909,26 @@ app.controller('TablesCtrl', function($scope, $http) {
             }
             console.log(response.data);
             result.forEach(function (factorEval) {
+                factorEval.warning = "";
+                // "The assessment is X days old." warning have no sense for historical data
+                var mismatchDays = factorEval.mismatchDays;
+                if (mismatchDays > 0) {
+                    factorEval.warning = "The assessment of the metrics and the factors \n has a difference of " + mismatchDays + " days. \n";
+                }
+
+                var missingMetrics = factorEval.missingMetrics;
+                if (missingMetrics && missingMetrics.length > 0) {
+                    var factors = missingMetrics.length === 1 ? missingMetrics[0] : [ missingMetrics.slice(0, -1).join(", "), missingMetrics[missingMetrics.length - 1] ].join(" and ");
+                    factorEval.warning += "The following metrics were missing when \nthe factor was assessed: " + factors;
+                }
                 data.push({
                     id: factorEval.id,
                     date: factorEval.date,
                     name: factorEval.name,
                     description: factorEval.description,
                     value: factorEval.value_description,
-                    rationale: factorEval.rationale
+                    rationale: factorEval.rationale,
+                    warning: factorEval.warning
                 })
             });
             $scope.data = data;
