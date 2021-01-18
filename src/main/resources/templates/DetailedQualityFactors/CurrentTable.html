@@ -57,6 +57,12 @@
                         <span class="caret"></span>
                     </span>
                 </th>
+                <th ng-click="sortBy('warning')">Warning (Factor)
+                    <span ng-show="sortType == 'warning' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'warning' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
             </tr>
             </thead>
             <tbody>
@@ -67,6 +73,7 @@
                 <td>{{d.description}}</td>
                 <td>{{d.value}}</td>
                 <td>{{d.rationale}}</td>
+                <td style="white-space: pre;" id="warning">{{d.warning}}</td>
             <tr ng-repeat-end="d in data"></tr>
             </tbody>
         </table>

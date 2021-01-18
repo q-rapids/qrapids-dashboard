@@ -134,7 +134,7 @@ if (currentURL.search("/HistoricTable") !== -1) {
 } else if (currentURL.search("/HistoricChart") !== -1) {
     viewMode = "Chart";
     time = "Historic";
-}  else if (currentURL.search("/DetailedStrategicIndicators/CurrentChartRadar") !== -1){
+} else if (currentURL.search("/DetailedStrategicIndicators/CurrentChartRadar") !== -1){
     viewMode = "Chart";
     DSIRepresentationMode = "Radar";
     time = "Current";
@@ -166,6 +166,12 @@ if (currentURL.search("/HistoricTable") !== -1) {
     viewMode = "Chart";
     DQFRepresentationMode = sessionStorage.getItem("DQFRepresentationMode");
     time = "Current";
+} else if (currentURL.search("/CurrentChart") !== -1) {
+    viewMode = "Chart";
+    // TODO decide if necessary
+    DQFRepresentationMode = sessionStorage.getItem("DQFRepresentationMode");
+    DSIRepresentationMode = sessionStorage.getItem("DSIRepresentationMode");
+    time = "Current";
 }
 
 if (currentURL.search("/QualityModelGraph") !== -1) {
@@ -180,6 +186,10 @@ sessionStorage.setItem("DSIRepresentationMode", DSIRepresentationMode);
 sessionStorage.setItem("DQFRepresentationMode", DQFRepresentationMode);
 sessionStorage.setItem("qmMode", qmMode);
 sessionStorage.setItem("time", time);
+
+console.log("AFTER store in sessionStorage");
+console.log("time value: " + time);
+console.log("viewMode value: " + viewMode);
 
 // Highlighting the enabled options depending on the View Mode and Time options selected
 $("#" + viewMode).css("background-color", "#ffc380");
@@ -443,6 +453,14 @@ $("#LogoutProfileConfig").click(function () {
 
 
 function menuNav (urlNav) {
+
+    console.log("IN menuNav: ");
+    console.log(urlNav);
+    console.log("time value: " + time);
+    console.log("viewMode value: " + viewMode);
+
+    console.log(location);
+
     //add id and name to url if found
     var id = getParameterByName('id');
     if (id.length !== 0) {
@@ -460,7 +478,13 @@ function menuNav (urlNav) {
             urlNav = urlNav + "&siid=" + siid;
         }
     }
-    location.href = urlNav;
+    if (location.href.includes("/DetailedQualityFactors") && urlNav == "CurrentChart") {
+        location.href = urlNav + DQFRepresentationMode;
+    } else if (location.href.includes("/DetailedStrategicIndicators") && urlNav == "CurrentChart") {
+        location.href = urlNav + DSIRepresentationMode;
+    } else {
+        location.href = urlNav;
+    }
 }
 
 function parseURLSimple(url) {

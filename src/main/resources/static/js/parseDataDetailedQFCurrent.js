@@ -70,7 +70,7 @@ function getData() {
 
                 var mismatchDays = data[i].mismatchDays;
                 if (mismatchDays > 0) {
-                    var message = "The assessment of the factors and the strategic indicator has a difference of " + mismatchDays + " days.";
+                    var message = "The assessment of the factors and the metrics has a difference of " + mismatchDays + " days.";
                     messages.push(message);
                 }
 
