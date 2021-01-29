@@ -77,6 +77,12 @@
                         <span class="caret"></span>
                     </span>
                 </th>
+                <th ng-click="sortBy('warning')">Warning
+                    <span ng-show="sortType == 'warning' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'warning' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
             </tr>
             </thead>
             <tbody>
@@ -87,6 +93,7 @@
                     <td id="value" ng-class="{'color-red': (d.lowerThreshold > d.value), 'color-green': (d.value > d.upperThreshold)}">{{d.value}}</td>
                     <td id="categories">{{d.categories}}</td>
                     <td id="rationale">{{d.rationale}}</td>
+                    <td style="white-space: pre;" id="warning">{{d.warning}}</td>
                 </tr>
             </tbody>
         </table>

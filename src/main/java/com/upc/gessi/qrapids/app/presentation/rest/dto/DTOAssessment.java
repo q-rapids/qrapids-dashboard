@@ -1,6 +1,6 @@
 package com.upc.gessi.qrapids.app.presentation.rest.dto;
 /**
- * @author Oriol M. Alexandra V.
+ * @author Oriol M.
  */
 
 public class DTOAssessment {
