@@ -56,6 +56,9 @@ public class StrategicIndicatorsController {
     private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
 
     @Autowired
+    private AlertsController alertsController;
+
+    @Autowired
     private ProjectsController projectsController;
 
     @Autowired
@@ -353,6 +356,11 @@ public class StrategicIndicatorsController {
             factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null,evaluationDate, evaluationDate);
         factorEvaluationQma.setFactors(factorList);
 
+        // TODO check factors alerts
+        for (DTOFactorEvaluation f : factorList) {
+            alertsController.checkFactorAlert(f.getId(), f.getValue().getFirst(), project);
+        }
+
         return assessProjectStrategicIndicators(evaluationDate, project, factorEvaluationQma);
     }
 
@@ -431,11 +439,16 @@ public class StrategicIndicatorsController {
         FactorEvaluation factorEvaluationQma = new FactorEvaluation();
 
         // We will compute the evaluation values for the SI for THIS CONCRETE component
-
+        List<DTOFactorEvaluation> factorList = factorsController.getAllFactorsEvaluation(prj, null,false);
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
-        factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj, null,false));
+        factorEvaluationQma.setFactors(factorList);
         factorEvaluationQma.clearStrategicIndicatorsRelations(si.getExternalId());
         //factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
+
+        // TODO check factors alerts
+        for (DTOFactorEvaluation f : factorList) {
+            alertsController.checkFactorAlert(f.getId(), f.getValue().getFirst(), prj);
+        }
 
         correct = assessStrategicIndicator(evaluationDate, prj, si, factorEvaluationQma);
 

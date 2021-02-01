@@ -60,6 +60,9 @@ public class StrategicIndicatorsControllerTest {
     private SICategoryRepository siCategoryRepository;
 
     @Mock
+    private AlertsController alertsController;
+
+    @Mock
     private ProjectsController projectsController;
 
     @Mock

@@ -1,11 +1,11 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
-import com.upc.gessi.qrapids.app.domain.models.Alert;
-import com.upc.gessi.qrapids.app.domain.models.AlertStatus;
-import com.upc.gessi.qrapids.app.domain.models.AlertType;
-import com.upc.gessi.qrapids.app.domain.models.Project;
+import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.exceptions.AlertNotFoundException;
+import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,15 @@ public class AlertsController {
 
     @Autowired
     private AlertRepository alertRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
+    private MetricRepository metricRepository;
+
+    @Autowired
+    private QualityFactorRepository factorRepository;
 
     @Autowired
     private QRPatternsController qrPatternsController;
@@ -57,5 +66,33 @@ public class AlertsController {
         boolean hasReq = qrPatternsController.existsPatternForAlert(alert);
         alert.setReqAssociat(hasReq);
         alertRepository.save(alert);
+    }
+
+    public void checkMetricAlert(String externalId, float value, String prj){
+        // get project from data base
+        Project p = projectRepository.findByExternalId(prj);
+        // get metric threshold from data base
+        Metric m = metricRepository.findByExternalIdAndProjectId(externalId, p.getId());
+        // check if the value is below the threshold then create new alert for this metric
+        if (m.getThreshold() != null) {
+            if (value < m.getThreshold()) {
+                // createAlert( id, name, type, value, threshold, category, project)
+                createAlert(externalId, m.getName(), AlertType.METRIC, value, m.getThreshold(), externalId, p);
+            }
+        }
+    }
+
+    public void checkFactorAlert(String externalId, float value, String prj){
+        // get project from data base
+        Project p = projectRepository.findByExternalId(prj);
+        // get factor threshold from data base
+        Factor f = factorRepository.findByExternalIdAndProjectId(externalId, p.getId());
+        // check if the value is below the threshold then create new alert for this factor
+        if (f.getThreshold() != null) {
+            if (value < f.getThreshold()) {
+                // createAlert( id, name, type, value, threshold, category, project)
+                createAlert(externalId, f.getName(), AlertType.FACTOR, value, f.getThreshold(), externalId, p);
+            }
+        }
     }
 }

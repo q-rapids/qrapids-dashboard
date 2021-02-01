@@ -768,7 +768,7 @@ public class AlertsTest {
                                 fieldWithPath("element.category")
                                         .description("Identifier of the element causing the alert"),
                                 fieldWithPath("element.project_id")
-                                        .description("Identifier of the element causing the alert")
+                                        .description("Project identifier of the element causing the alert")
                         )
                 ));
 
@@ -836,7 +836,7 @@ public class AlertsTest {
                                 fieldWithPath("element.category")
                                         .description("Identifier of the element causing the alert"),
                                 fieldWithPath("element.project_id")
-                                        .description("Identifier of the element causing the alert")
+                                        .description("Project identifier of the element causing the alert")
                         )
                 ));
 

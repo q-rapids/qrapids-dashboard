@@ -1,5 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.*;
 
 @Entity
@@ -15,6 +17,8 @@ public class Metric {
     private String name;
     @Column(name = "description")
     private String description;
+    @Column(name = "threshold")
+    private Float threshold;
 
     @ManyToOne
     @JoinColumn(name="projectId", referencedColumnName = "id")
@@ -67,5 +71,13 @@ public class Metric {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public Float getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Float threshold) {
+        this.threshold = threshold;
     }
 }

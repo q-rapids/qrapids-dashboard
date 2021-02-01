@@ -58,11 +58,17 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		Eval.evaluateQualityModel(projectsDir, evaluationDate, null);
 
 		boolean correct = true;
-		// assess strategic indicator for all projects
-		correct = context.getBean(StrategicIndicatorsController.class).assessStrategicIndicators(null, evaluationLocalDate);
-		if (!correct) {
+		// first assess factors for all projects
+		correct = context.getBean(FactorsController.class).assessQualityFactors(null, evaluationLocalDate);
+
+		if (correct) {
+			// then assess strategic indicator for all projects
+			correct = context.getBean(StrategicIndicatorsController.class).assessStrategicIndicators(null, evaluationLocalDate);
+		}
+
+		if (!correct) { // check if the assessment complete with error
 			Logger logger = LoggerFactory.getLogger(Alerts.class);
-			logger.error(evaluationLocalDate + ": strategic indicators assessment complete with error.");
+			logger.error(evaluationLocalDate + ": factors or strategic indicators assessment complete with error.");
 		}
 	}
 

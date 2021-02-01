@@ -49,6 +49,9 @@ public class FactorsController {
     private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
 
     @Autowired
+    private AlertsController alertsController;
+
+    @Autowired
     private MetricsController metricsController;
 
     @Autowired
@@ -326,6 +329,11 @@ public class FactorsController {
             metricList = metricsController.getAllMetricsHistoricalEvaluation(project, null, evaluationDate, evaluationDate);
         metricEvaluationQma.setMetrics(metricList);
 
+        // TODO check metrics alerts
+        for (DTOMetricEvaluation m : metricList) {
+            alertsController.checkMetricAlert(m.getId(), m.getValue(), project);
+        }
+
         return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
     }
 
@@ -526,7 +534,6 @@ public class FactorsController {
         MetricEvaluation metricEvaluationQma = new MetricEvaluation();
 
         // We will compute the evaluation values for the QF for THIS CONCRETE component
-
         // 1.- We need to remove old data from metric evaluations in the quality_factors relationship attribute
         metricEvaluationQma.setMetrics(metricsController.getAllMetricsEvaluation(prj, null));
         metricEvaluationQma.clearQualityFactorsRelations(qf.getExternalId());
