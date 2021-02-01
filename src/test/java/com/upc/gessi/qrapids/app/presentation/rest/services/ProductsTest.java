@@ -9,7 +9,6 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOStrategicIndicatorEval
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
