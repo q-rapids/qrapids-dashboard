@@ -44,6 +44,18 @@ public class DomainObjectsBuilder {
         return alert;
     }
 
+    public Metric buildMetric(Project project){
+        long metricId = 1L;
+        String externalId = "duplication";
+        String name = "Duplication";
+        String description = "Percentage of files lying within a defined range of duplication density";
+        float threshold = 0.5f;
+        Metric metric = new Metric(externalId, name, description, project);
+        metric.setThreshold(threshold);
+        metric.setId(metricId);
+        return metric;
+    }
+
     // build Strategic Indicator without weights
     public Strategic_Indicator buildStrategicIndicator (Project project) {
         Long strategicIndicatorId = 1L;
@@ -155,18 +167,22 @@ public class DomainObjectsBuilder {
 
         Factor factor =  new Factor("codequality", "Quality of the implemented code", project);
         factor.setId(1L);
+        factor.setThreshold(0.3f);
         Metric metric1 = new Metric("duplication","Duplication", "Density of non-duplicated code",project);
         metric1.setId(1L);
+        metric1.setThreshold(null);
         QualityFactorMetrics qfm1 = new QualityFactorMetrics(-1f, metric1, factor);
         qfm1.setId(1L);
         qualityMetrics.add(qfm1);
         Metric metric2 = new Metric("bugdensity","Bugdensity", "Density of files without bugs", project);
         metric2.setId(2L);
+        metric2.setThreshold(null);
         QualityFactorMetrics qfm2 = new QualityFactorMetrics(-1f, metric2, factor);
         qfm1.setId(2L);
         qualityMetrics.add(qfm2);
         Metric metric3 = new Metric("fasttests","Fast Tests", "Percentage of tests under the testing duration threshold",project);
         metric3.setId(3L);
+        metric3.setThreshold(null);
         QualityFactorMetrics qfm3 = new QualityFactorMetrics(-1f, metric3, factor);
         qfm1.setId(3L);
         qualityMetrics.add(qfm3);

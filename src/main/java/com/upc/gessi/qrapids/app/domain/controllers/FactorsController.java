@@ -329,7 +329,7 @@ public class FactorsController {
             metricList = metricsController.getAllMetricsHistoricalEvaluation(project, null, evaluationDate, evaluationDate);
         metricEvaluationQma.setMetrics(metricList);
 
-        // TODO check metrics alerts
+        // CHECK METRICS ALERTS
         for (DTOMetricEvaluation m : metricList) {
             alertsController.checkMetricAlert(m.getId(), m.getValue(), project);
         }

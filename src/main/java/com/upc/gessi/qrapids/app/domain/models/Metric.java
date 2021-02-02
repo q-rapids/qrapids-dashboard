@@ -1,7 +1,5 @@
 package com.upc.gessi.qrapids.app.domain.models;
 
-import org.hibernate.annotations.ColumnDefault;
-
 import javax.persistence.*;
 
 @Entity

@@ -74,11 +74,9 @@ public class AlertsController {
         // get metric threshold from data base
         Metric m = metricRepository.findByExternalIdAndProjectId(externalId, p.getId());
         // check if the value is below the threshold then create new alert for this metric
-        if (m.getThreshold() != null) {
-            if (value < m.getThreshold()) {
-                // createAlert( id, name, type, value, threshold, category, project)
-                createAlert(externalId, m.getName(), AlertType.METRIC, value, m.getThreshold(), externalId, p);
-            }
+        if (m.getThreshold() != null && value < m.getThreshold()) {
+            // createAlert( id, name, type, value, threshold, category, project)
+            createAlert(externalId, m.getName(), AlertType.METRIC, value, m.getThreshold(), externalId, p);
         }
     }
 
@@ -88,11 +86,9 @@ public class AlertsController {
         // get factor threshold from data base
         Factor f = factorRepository.findByExternalIdAndProjectId(externalId, p.getId());
         // check if the value is below the threshold then create new alert for this factor
-        if (f.getThreshold() != null) {
-            if (value < f.getThreshold()) {
-                // createAlert( id, name, type, value, threshold, category, project)
-                createAlert(externalId, f.getName(), AlertType.FACTOR, value, f.getThreshold(), externalId, p);
-            }
+        if (f.getThreshold() != null && value < f.getThreshold()) {
+            // createAlert( id, name, type, value, threshold, category, project)
+            createAlert(externalId, f.getName(), AlertType.FACTOR, value, f.getThreshold(), externalId, p);
         }
     }
 }

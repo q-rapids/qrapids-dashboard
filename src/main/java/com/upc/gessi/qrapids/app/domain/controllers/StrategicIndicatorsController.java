@@ -356,7 +356,7 @@ public class StrategicIndicatorsController {
             factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null,evaluationDate, evaluationDate);
         factorEvaluationQma.setFactors(factorList);
 
-        // TODO check factors alerts
+        // CHECK FACTORS ALERTS
         for (DTOFactorEvaluation f : factorList) {
             alertsController.checkFactorAlert(f.getId(), f.getValue().getFirst(), project);
         }
@@ -445,7 +445,7 @@ public class StrategicIndicatorsController {
         factorEvaluationQma.clearStrategicIndicatorsRelations(si.getExternalId());
         //factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
 
-        // TODO check factors alerts
+        // CHECK FACTORS ALERTS
         for (DTOFactorEvaluation f : factorList) {
             alertsController.checkFactorAlert(f.getId(), f.getValue().getFirst(), prj);
         }
