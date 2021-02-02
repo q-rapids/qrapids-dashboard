@@ -91,6 +91,9 @@
                 <td id="type" ng-class="{'color-red': (d.status == 'NEW')}">{{d.type}}</td>
                 <td id="category" ng-class="{'color-red': (d.status == 'NEW')}">{{d.category}}</td>
                 <td id="name" ng-class="{'color-red': (d.status == 'NEW')}">
+                    <a ng-class="{'color-red-link': (d.status == 'NEW')}" ng-if="d.type == 'STRATEGIC_INDICATOR'" ng-href="QualityFactors/HistoricChart?id={{d.id_element}}&amp;name={{d.name}}&amp;from={{substractOneWeek(d.date)}}">
+                        {{d.name}}
+                    </a>
                     <a ng-class="{'color-red-link': (d.status == 'NEW')}" ng-if="d.type == 'FACTOR'" ng-href="Metrics/HistoricChart?id={{d.id_element}}&amp;name={{d.name}}&amp;from={{substractOneWeek(d.date)}}">
                         {{d.name}}
                     </a>

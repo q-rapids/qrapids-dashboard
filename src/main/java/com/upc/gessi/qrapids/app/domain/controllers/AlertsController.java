@@ -6,6 +6,7 @@ import com.upc.gessi.qrapids.app.domain.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ public class AlertsController {
 
     @Autowired
     private QualityFactorRepository factorRepository;
+
+    @Autowired
+    private StrategicIndicatorRepository strategicIndicatorRepository;
 
     @Autowired
     private QRPatternsController qrPatternsController;
@@ -89,6 +93,18 @@ public class AlertsController {
         if (f.getThreshold() != null && value < f.getThreshold()) {
             // createAlert( id, name, type, value, threshold, category, project)
             createAlert(externalId, f.getName(), AlertType.FACTOR, value, f.getThreshold(), externalId, p);
+        }
+    }
+
+    public void checkStrategicIndicatorAlert(String externalId, float value, String prj){
+        // get project from data base
+        Project p = projectRepository.findByExternalId(prj);
+        // get factor threshold from data base
+        Strategic_Indicator si = strategicIndicatorRepository.findByExternalIdAndProjectId(externalId, p.getId());
+        // check if the value is below the threshold then create new alert for this factor
+        if (si.getThreshold() != null && value < si.getThreshold()) {
+            // createAlert( id, name, type, value, threshold, category, project)
+            createAlert(externalId, si.getName(), AlertType.STRATEGIC_INDICATOR, value, si.getThreshold(), externalId, p);
         }
     }
 }

@@ -64,6 +64,7 @@ public class DomainObjectsBuilder {
 
         Strategic_Indicator strategicIndicator = new Strategic_Indicator(strategicIndicatorName, strategicIndicatorDescription, null, project);
         strategicIndicator.setId(strategicIndicatorId);
+        strategicIndicator.setThreshold(0.5f);
 
         List<StrategicIndicatorQualityFactors> qualityFactors = new ArrayList<>();
 

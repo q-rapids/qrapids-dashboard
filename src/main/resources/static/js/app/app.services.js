@@ -146,21 +146,23 @@ app.controller('TablesCtrl', function($scope, $http) {
             getQualityModel();
             $scope.data = response.data;
             $scope.data.forEach(function (alert) {
-                var relations = qualityModelRelations.get(alert.id_element);
+                if (alert.type != "STRATEGIC_INDICATOR") { // on SIs alerts can't define impacted fields
+                    var relations = qualityModelRelations.get(alert.id_element);
 
-                var strategicIndicators = relations.strategicIndicators;
-                var strategicIndicatorsText = [];
-                strategicIndicators.forEach(function (strategicIndicator) {
-                    strategicIndicatorsText.push(strategicIndicator.name);
-                });
-                alert.strategicIndicators = strategicIndicatorsText.join(", ");
+                    var strategicIndicators = relations.strategicIndicators;
+                    var strategicIndicatorsText = [];
+                    strategicIndicators.forEach(function (strategicIndicator) {
+                        strategicIndicatorsText.push(strategicIndicator.name);
+                    });
+                    alert.strategicIndicators = strategicIndicatorsText.join(", ");
 
-                var factors = relations.factors;
-                var factorsText = [];
-                factors.forEach(function (factor) {
-                    factorsText.push(factor.name);
-                });
-                alert.factors = factorsText.join(", ");
+                    var factors = relations.factors;
+                    var factorsText = [];
+                    factors.forEach(function (factor) {
+                        factorsText.push(factor.name);
+                    });
+                    alert.factors = factorsText.join(", ");
+                }
             });
             clearAlertsPendingBanner();
         })

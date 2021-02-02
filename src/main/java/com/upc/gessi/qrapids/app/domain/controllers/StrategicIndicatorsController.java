@@ -356,10 +356,10 @@ public class StrategicIndicatorsController {
             factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null,evaluationDate, evaluationDate);
         factorEvaluationQma.setFactors(factorList);
 
-        // CHECK FACTORS ALERTS
+        /* TODO CHECK FACTORS ALERTS
         for (DTOFactorEvaluation f : factorList) {
             alertsController.checkFactorAlert(f.getId(), f.getValue().getFirst(), project);
-        }
+        }*/
 
         return assessProjectStrategicIndicators(evaluationDate, project, factorEvaluationQma);
     }
@@ -445,10 +445,10 @@ public class StrategicIndicatorsController {
         factorEvaluationQma.clearStrategicIndicatorsRelations(si.getExternalId());
         //factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
 
-        // CHECK FACTORS ALERTS
+        /* TODO CHECK FACTORS ALERTS
         for (DTOFactorEvaluation f : factorList) {
             alertsController.checkFactorAlert(f.getId(), f.getValue().getFirst(), prj);
-        }
+        }*/
 
         correct = assessStrategicIndicator(evaluationDate, prj, si, factorEvaluationQma);
 
@@ -490,6 +490,8 @@ public class StrategicIndicatorsController {
             logger.error(e.getMessage(), e);
             correct = false;
         }
+
+
 
         // Save relations of factor -> SI
         if (correct && !assessmentValueOrLabel.isEmpty()) {
@@ -540,6 +542,8 @@ public class StrategicIndicatorsController {
                     factorsMismatch
             ))
                 throw new AssessmentErrorException();
+            // TODO CHECK STRATEGIC INDICATOR ALERT
+            alertsController.checkStrategicIndicatorAlert(strategicIndicator.getExternalId(), value,project);
         }
         return assessmentValueOrLabel;
     }
@@ -568,6 +572,8 @@ public class StrategicIndicatorsController {
                     missingFactors,
                     factorsMismatch))
                 throw new AssessmentErrorException();
+            // TODO CHECK STRATEGIC INDICATOR ALERT
+            alertsController.checkStrategicIndicatorAlert(strategicIndicator.getExternalId(), valueAndLabel.getFirst(),project);
         }
         else {
             throw new AssessmentErrorException();

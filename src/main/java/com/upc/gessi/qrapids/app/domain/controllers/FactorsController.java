@@ -515,6 +515,8 @@ public class FactorsController {
                     indicators
             ))
                 throw new AssessmentErrorException();
+            // TODO CHECK FACTORS ALERTS
+            alertsController.checkFactorAlert(qualityFactor.getExternalId(),value,project);
         }
         return assessmentValueOrLabel;
     }

@@ -6,6 +6,7 @@ import com.upc.gessi.qrapids.app.domain.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
 import com.upc.gessi.qrapids.app.testHelpers.DomainObjectsBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +41,9 @@ public class AlertsControllerTest {
 
     @Mock
     private QualityFactorRepository factorRepository;
+
+    @Mock
+    private StrategicIndicatorRepository strategicIndicatorRepository;
 
     @Mock
     private QRPatternsController qrPatternsController;
@@ -229,6 +233,40 @@ public class AlertsControllerTest {
         assertEquals(AlertType.FACTOR, alertSaved.getType());
         assertEquals(value, alertSaved.getValue(), 0f);
         assertEquals(factor.getThreshold(), alertSaved.getThreshold(), 0f);
+        assertEquals(externalId, alertSaved.getCategory());
+        assertEquals(AlertStatus.NEW, alertSaved.getStatus());
+        assertFalse(alertSaved.isReqAssociat());
+        assertEquals(project, alertSaved.getProject());
+    }
+
+    @Test
+    public void checkStrategicIndicatorAlert(){
+        // Given
+        String externalId = "productquality";
+        float value = 0.38f;
+        String projectExternalId = "test";
+
+        Project project = domainObjectsBuilder.buildProject();
+        when(projectRepository.findByExternalId(projectExternalId)).thenReturn(project);
+
+        Strategic_Indicator si = domainObjectsBuilder.buildStrategicIndicator(project);
+        when(strategicIndicatorRepository.findByExternalIdAndProjectId(externalId, project.getId())).thenReturn(si);
+
+        // When
+        alertsController.checkStrategicIndicatorAlert(externalId, value, projectExternalId);
+
+        // Then
+        verify(projectRepository, times(1)).findByExternalId(projectExternalId);
+        verify(strategicIndicatorRepository, times(1)).findByExternalIdAndProjectId(externalId, project.getId());
+
+        ArgumentCaptor<Alert> alertArgumentCaptor = ArgumentCaptor.forClass(Alert.class);
+        verify(alertRepository, times(1)).save(alertArgumentCaptor.capture());
+        Alert alertSaved = alertArgumentCaptor.getValue();
+        assertEquals(externalId, alertSaved.getId_element());
+        assertEquals(si.getName(), alertSaved.getName());
+        assertEquals(AlertType.STRATEGIC_INDICATOR, alertSaved.getType());
+        assertEquals(value, alertSaved.getValue(), 0f);
+        assertEquals(si.getThreshold(), alertSaved.getThreshold(), 0f);
         assertEquals(externalId, alertSaved.getCategory());
         assertEquals(AlertStatus.NEW, alertSaved.getStatus());
         assertFalse(alertSaved.isReqAssociat());
