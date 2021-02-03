@@ -1977,6 +1977,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$[0].externalId", is(strategicIndicatorExternalId)))
                 .andExpect(jsonPath("$[0].name", is(strategicIndicatorName)))
                 .andExpect(jsonPath("$[0].description", is(strategicIndicatorDescription)))
+                .andExpect(jsonPath("$[0].threshold", is(strategicIndicator.getThreshold())))
                 .andExpect(jsonPath("$[0].network", is(nullValue())))
                 .andExpect(jsonPath("$[0].qualityFactors", hasSize(3)))
                 .andExpect(jsonPath("$[0].qualityFactors[0]", is("1")))
@@ -2002,6 +2003,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator name"),
                                 fieldWithPath("[].description")
                                         .description("Strategic indicator description"),
+                                fieldWithPath("[].threshold")
+                                        .description("Strategic indicator minimum acceptable value"),
                                 fieldWithPath("[].network")
                                         .description("Strategic indicator bayesian network"),
                                 fieldWithPath("[].qualityFactors")
@@ -2038,6 +2041,7 @@ public class StrategicIndicatorsTest {
                 .andExpect(jsonPath("$.externalId", is(strategicIndicator.getExternalId())))
                 .andExpect(jsonPath("$.name", is(strategicIndicator.getName())))
                 .andExpect(jsonPath("$.description", is(strategicIndicator.getDescription())))
+                .andExpect(jsonPath("$.threshold", is(Double.valueOf(strategicIndicator.getThreshold().toString()))))
                 .andExpect(jsonPath("$.network", is(notNullValue())))
                 .andExpect(jsonPath("$.qualityFactors", hasSize(3)))
                 .andExpect(jsonPath("$.qualityFactors[0]", is(strategicIndicator.getQuality_factorsIds().get(0))))
@@ -2060,6 +2064,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator name"),
                                 fieldWithPath("description")
                                         .description("Strategic indicator description"),
+                                fieldWithPath("threshold")
+                                        .description("Strategic indicator minimum acceptable value"),
                                 fieldWithPath("network")
                                         .description("Strategic indicator bayesian network"),
                                 fieldWithPath("qualityFactors")
@@ -2132,6 +2138,7 @@ public class StrategicIndicatorsTest {
                 .param("prj", projectExternalId)
                 .param("name", strategicIndicator.getName())
                 .param("description", strategicIndicator.getDescription())
+                .param("threshold", strategicIndicator.getThreshold().toString())
                 .param("quality_factors", String.join(",", strategicIndicator.getQuality_factors()));
 
         this.mockMvc.perform(requestBuilder)
@@ -2146,6 +2153,8 @@ public class StrategicIndicatorsTest {
                                         .description("Strategic indicator name"),
                                 parameterWithName("description")
                                         .description("Strategic indicator description"),
+                                parameterWithName("threshold")
+                                        .description("Strategic indicator minimum acceptable value"),
                                 parameterWithName("quality_factors")
                                         .description("Comma separated values of the quality factors identifiers which belong to the strategic indicator")),
                         requestParts(
@@ -2158,7 +2167,7 @@ public class StrategicIndicatorsTest {
         verify(projectsController, times(1)).findProjectByExternalId(projectExternalId);
         verifyNoMoreInteractions(projectsController);
 
-        verify(strategicIndicatorsDomainController, times(1)).saveStrategicIndicator(eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getQuality_factors()), eq(project));
+        verify(strategicIndicatorsDomainController, times(1)).saveStrategicIndicator(eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), eq(strategicIndicator.getThreshold().toString()) , any(), eq(strategicIndicator.getQuality_factors()), eq(project));
         verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getProject().getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
@@ -2182,6 +2191,7 @@ public class StrategicIndicatorsTest {
                 .param("prj", projectExternalId)
                 .param("name", strategicIndicator.getName())
                 .param("description", strategicIndicator.getDescription())
+                .param("threshold", strategicIndicator.getThreshold().toString())
                 .param("quality_factors", String.join(",", strategicIndicator.getQuality_factors()));
 
         this.mockMvc.perform(requestBuilder)
@@ -2195,7 +2205,7 @@ public class StrategicIndicatorsTest {
         verify(projectsController, times(1)).findProjectByExternalId(projectExternalId);
         verifyNoMoreInteractions(projectsController);
 
-        verify(strategicIndicatorsDomainController, times(1)).saveStrategicIndicator(eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getQuality_factors()), eq(project));
+        verify(strategicIndicatorsDomainController, times(1)).saveStrategicIndicator(eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()),eq(strategicIndicator.getThreshold().toString()) , any(), eq(strategicIndicator.getQuality_factors()), eq(project));
         verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getProject().getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
@@ -2218,6 +2228,7 @@ public class StrategicIndicatorsTest {
                 .file(network)
                 .param("name", strategicIndicator.getName())
                 .param("description", strategicIndicator.getDescription())
+                .param("threshold", strategicIndicator.getThreshold().toString())
                 .param("quality_factors", String.join(",", strategicIndicator.getWeights()))
                 .with(new RequestPostProcessor() {
                     @Override
@@ -2234,9 +2245,11 @@ public class StrategicIndicatorsTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("name")
-                                        .description("Product name"),
+                                        .description("Strategic Indicator name"),
                                 parameterWithName("description")
-                                        .description("Product description"),
+                                        .description("Strategic Indicator description"),
+                                parameterWithName("threshold")
+                                        .description("Strategic Indicator minimum acceptable value"),
                                 parameterWithName("quality_factors")
                                         .description("Comma separated values of the quality factors identifiers which belong to the strategic indicator and their corresponding weights (-1 if no weighted)")),
                         requestParts(
@@ -2247,7 +2260,7 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
-        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getWeights()));
+        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), eq(strategicIndicator.getThreshold().toString()), any(), eq(strategicIndicator.getWeights()));
         verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getProject().getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
@@ -2270,6 +2283,7 @@ public class StrategicIndicatorsTest {
                 .file(network)
                 .param("name", strategicIndicator.getName())
                 .param("description", strategicIndicator.getDescription())
+                .param("threshold", strategicIndicator.getThreshold().toString())
                 .param("quality_factors", String.join(",", strategicIndicator.getWeights()))
                 .with(new RequestPostProcessor() {
                     @Override
@@ -2288,7 +2302,7 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
-        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getWeights()));
+        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), eq(strategicIndicator.getThreshold().toString()), any(), eq(strategicIndicator.getWeights()));
         verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
@@ -2319,6 +2333,7 @@ public class StrategicIndicatorsTest {
                 .file(network)
                 .param("name", strategicIndicator.getName())
                 .param("description", strategicIndicator.getDescription())
+                .param("threshold", strategicIndicator.getThreshold().toString())
                 .param("quality_factors", String.join(",", qualityFactors))
                 .with(new RequestPostProcessor() {
                     @Override
@@ -2337,7 +2352,7 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
-        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(qualityFactors));
+        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), eq(strategicIndicator.getThreshold().toString()), any(), eq(qualityFactors));
         verify(strategicIndicatorsDomainController, times(1)).assessStrategicIndicator(strategicIndicator.getName(), project.getExternalId());
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
@@ -2347,6 +2362,7 @@ public class StrategicIndicatorsTest {
         Long strategicIndicatorId = 1L;
         String strategicIndicatorName = "Product Quality";
         String strategicIndicatorDescription = "Quality of the product built";
+        String strategicIndicatorThreshold = null;
         File networkFile = new File("src/test/java/com/upc/gessi/qrapids/app/testHelpers/WSA_ProductQuality.dne");
 
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
@@ -2356,6 +2372,7 @@ public class StrategicIndicatorsTest {
                 .file(network)
                 .param("name", strategicIndicatorName)
                 .param("description", strategicIndicatorDescription)
+                .param("threshold", strategicIndicatorThreshold)
                 .with(new RequestPostProcessor() {
                     @Override
                     public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
@@ -2381,13 +2398,14 @@ public class StrategicIndicatorsTest {
         MockMultipartFile network = new MockMultipartFile("network", "network.dne", "text/plain", Files.readAllBytes(networkFile.toPath()));
         strategicIndicator.setNetwork(Files.readAllBytes(networkFile.toPath()));
         when(strategicIndicatorsDomainController.getStrategicIndicatorById(strategicIndicator.getId())).thenReturn(strategicIndicator);
-        when(strategicIndicatorsDomainController.editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getQuality_factors()))).thenThrow(new DataIntegrityViolationException(""));
+        when(strategicIndicatorsDomainController.editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), eq(strategicIndicator.getThreshold().toString()), any(), eq(strategicIndicator.getQuality_factors()))).thenThrow(new DataIntegrityViolationException(""));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart("/api/strategicIndicators/{id}", strategicIndicator.getId())
                 .file(network)
                 .param("name", strategicIndicator.getName())
                 .param("description", strategicIndicator.getDescription())
+                .param("threshold", strategicIndicator.getThreshold().toString())
                 .param("quality_factors", String.join(",", strategicIndicator.getQuality_factors()))
                 .with(new RequestPostProcessor() {
                     @Override
@@ -2406,7 +2424,7 @@ public class StrategicIndicatorsTest {
 
         // Verify mock interactions
         verify(strategicIndicatorsDomainController, times(1)).getStrategicIndicatorById(strategicIndicator.getId());
-        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), any(), eq(strategicIndicator.getQuality_factors()));
+        verify(strategicIndicatorsDomainController, times(1)).editStrategicIndicator(eq(strategicIndicator.getId()), eq(strategicIndicator.getName()), eq(strategicIndicator.getDescription()), eq(strategicIndicator.getThreshold().toString()), any(), eq(strategicIndicator.getQuality_factors()));
         verifyNoMoreInteractions(strategicIndicatorsDomainController);
     }
 

@@ -23,6 +23,8 @@ function checkAlertsPending(){
         type: "GET",
         async: true,
         success: function (data) {
+            console.log("checkAlertsPending()");
+            console.log(data);
             var newAlerts = data.newAlerts;
             var newAlertsWithQR = data.newAlertsWithQR;
             var newAlertsText = "";
@@ -35,15 +37,18 @@ function checkAlertsPending(){
                     if (newAlertsWithQR == 1) newAlertsWithQRText += newAlertsWithQR + " of them has QR associated";
                     else newAlertsWithQRText += newAlertsWithQR + " of them have QR associated";
                 }
+
+                $("#alertsPending").text(newAlertsText);
+                $("#qrAlertsPending").text(newAlertsWithQRText);
+                $(".post-it-alert").css("visibility", "visible");
+                $("#AlertsBanner").attr("href", serverUrl+"/QualityAlerts")
             }
-            $("#alertsPending").text(newAlertsText);
-            $("#qrAlertsPending").text(newAlertsWithQRText);
-            $("#AlertsBanner").attr("href", serverUrl+"/QualityAlerts")
         }
     });
 }
 
 function clearAlertsPendingBanner() {
+    $("#AlertsBanner").hide();
     $("#alertsPending").text("");
     $("#qrAlertsPending").text("");
 }

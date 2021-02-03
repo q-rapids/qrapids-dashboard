@@ -253,6 +253,7 @@ public class StrategicIndicators {
                         strategic_indicator.getExternalId(),
                         strategic_indicator.getName(),
                         strategic_indicator.getDescription(),
+                        strategic_indicator.getThreshold(),
                         strategic_indicator.getNetwork(),
                         strategic_indicator.getQuality_factorsIds(),
                         strategic_indicator.isWeighted(),
@@ -275,6 +276,7 @@ public class StrategicIndicators {
                     strategicIndicator.getExternalId(),
                     strategicIndicator.getName(),
                     strategicIndicator.getDescription(),
+                    strategicIndicator.getThreshold(),
                     strategicIndicator.getNetwork(),
                     strategicIndicator.getQuality_factorsIds(),
                     strategicIndicator.isWeighted(),
@@ -292,6 +294,7 @@ public class StrategicIndicators {
             String prj = request.getParameter("prj");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
+            String threshold = request.getParameter("threshold");
             byte[] file = null;
             if (network != null) {
                 file = IOUtils.toByteArray(network.getInputStream());
@@ -299,7 +302,7 @@ public class StrategicIndicators {
             List<String> qualityFactors = new ArrayList<>(Arrays.asList(request.getParameter("quality_factors").split(",")));
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Project project = projectsController.findProjectByExternalId(prj);
-                strategicIndicatorsController.saveStrategicIndicator(name, description, file, qualityFactors, project);
+                strategicIndicatorsController.saveStrategicIndicator(name, description, threshold, file, qualityFactors, project);
                 if (!strategicIndicatorsController.assessStrategicIndicator(name, prj)) {
                     throw new AssessmentErrorException();
                 }
@@ -319,11 +322,13 @@ public class StrategicIndicators {
         try {
             String name;
             String description;
+            String threshold;
             byte[] file = null;
             List<String> qualityFactors;
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
+                threshold = request.getParameter("threshold");
                 if (network != null) {
                     file = IOUtils.toByteArray(network.getInputStream());
                 }
@@ -333,7 +338,7 @@ public class StrategicIndicators {
             }
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Strategic_Indicator oldStrategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
-                strategicIndicatorsController.editStrategicIndicator(oldStrategicIndicator.getId(), name, description, file, qualityFactors);
+                strategicIndicatorsController.editStrategicIndicator(oldStrategicIndicator.getId(), name, description, threshold, file, qualityFactors);
                 if (!strategicIndicatorsController.assessStrategicIndicator(name, oldStrategicIndicator.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }

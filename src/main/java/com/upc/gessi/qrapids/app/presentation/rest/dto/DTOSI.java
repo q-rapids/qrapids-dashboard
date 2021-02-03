@@ -7,16 +7,18 @@ public class DTOSI { // get strategic indicator information from DB
     private String externalId;
     private String name;
     private String description;
+    private Float threshold;
     private byte[] network;
     private List<String> qualityFactors;
     private boolean weighted;
     private List<String> qualityFactorsWeights;
 
-    public DTOSI(Long id, String externalId, String name, String description, byte[] network, List<String> qualityFactors, boolean weighted, List<String> qualityFactorsWeights) {
+    public DTOSI(Long id, String externalId, String name, String description, Float threshold, byte[] network, List<String> qualityFactors, boolean weighted, List<String> qualityFactorsWeights) {
         this.id = id;
         this.externalId = externalId;
         this.name = name;
         this.description = description;
+        this.threshold = threshold;
         this.network = network;
         this.qualityFactors = qualityFactors;
         this.weighted = weighted;
@@ -53,6 +55,14 @@ public class DTOSI { // get strategic indicator information from DB
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Float getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Float threshold) {
+        this.threshold = threshold;
     }
 
     public byte[] getNetwork() {

@@ -208,6 +208,7 @@ canvas {
 .post-it-alert {
     list-style: none;
     overflow: hidden;
+    visibility: hidden;
     padding: 0.5em;
     background: #feff9a;
     display: block;

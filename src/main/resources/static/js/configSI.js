@@ -69,6 +69,8 @@ function clickOnTree(e){
             $("#SIName").val(si.name);
             $("#SIDescription").attr("placeholder", "Write the strategic indicator description here");
             $("#SIDescription").val(si.description);
+            $("#SIThreshold").attr("placeholder", "Specify minimum acceptable value for the strategic indicator here");
+            $("#SIThreshold").val(si.threshold);
             $("#SINetworkLabel").html("Assessment Model: <br/>(leave empty if unchanged)");
             $("#SINetwork").val("");
             $("#SICompositionTitle").text("Strategic Indicator Composition");
@@ -107,6 +109,8 @@ function newSI() {
     $("#SIName").val("");
     $("#SIDescription").attr("placeholder", "Write the strategic indicator description here");
     $("#SIDescription").val("");
+    $("#SIThreshold").attr("placeholder", "Specify minimum acceptable value for the strategic indicator here");
+    $("#SIThreshold").val("");
     $("#SINetworkLabel").html("Assessment Model: ");
     $("#SINetwork").val("");
     $("#SICompositionTitle").text("Step 2 - Select the corresponding factors");
@@ -361,6 +365,7 @@ $("#saveSI").click(function () {
         var formData = new FormData();
         formData.append("name", $('#SIName').val());
         formData.append("description", $('#SIDescription').val());
+        formData.append("threshold", $('#SIThreshold').val());
         var file = $('#SINetwork').prop('files')[0];
         if (file)
             formData.append("network", file);

@@ -84,6 +84,7 @@ public class Factors {
                         factor.getExternalId(),
                         factor.getName(),
                         factor.getDescription(),
+                        factor.getThreshold(),
                         factor.getMetricsIds(),
                         factor.isWeighted(),
                         factor.getWeights());
@@ -105,6 +106,7 @@ public class Factors {
                         factor.getExternalId(),
                         factor.getName(),
                         factor.getDescription(),
+                        factor.getThreshold(),
                         factor.getMetricsIds(),
                         factor.isWeighted(),
                         factor.getWeights());
@@ -122,10 +124,11 @@ public class Factors {
             String prj = request.getParameter("prj");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
+            String threshold = request.getParameter("threshold");
             List<String> metrics = new ArrayList<>(Arrays.asList(request.getParameter("metrics").split(",")));
             if (!name.equals("") && !metrics.isEmpty()) {
                 Project project = projectsController.findProjectByExternalId(prj);
-                factorsController.saveQualityFactor(name, description, metrics, project);
+                factorsController.saveQualityFactor(name, description, threshold, metrics, project);
                 if (!factorsController.assessQualityFactor(name, prj)) {
                     throw new AssessmentErrorException();
                 }
@@ -159,17 +162,19 @@ public class Factors {
         try {
             String name;
             String description;
+            String threshold;
             List<String> qualityMetrics;
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
+                threshold = request.getParameter("threshold");
                 qualityMetrics = new ArrayList<>(Arrays.asList(request.getParameter("metrics").split(",")));
             } catch (Exception e) {
                 throw new MissingParametersException();
             }
             if (!name.equals("") && !qualityMetrics.isEmpty()) {
                 Factor oldFactor = factorsController.getQualityFactorById(id);
-                factorsController.editQualityFactor(oldFactor.getId(), name, description, qualityMetrics);
+                factorsController.editQualityFactor(oldFactor.getId(), name, description, threshold, qualityMetrics);
                 if (!factorsController.assessQualityFactor(name, oldFactor.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }

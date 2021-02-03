@@ -185,10 +185,14 @@ public class FactorsController {
         }
     }
 
-    public Factor saveQualityFactor(String name, String description, List<String> qualityMetrics, Project project) throws MetricNotFoundException {
+    public Factor saveQualityFactor(String name, String description, String threshold, List<String> qualityMetrics, Project project) throws MetricNotFoundException {
         Factor qualityFactor;
         // create Quality Factor minim (without quality factors and weighted)
         qualityFactor = new Factor (name, description, project);
+        if (!threshold.isEmpty()) // check if threshold is specified and then set it
+            qualityFactor.setThreshold(Float.parseFloat(threshold));
+        else
+            qualityFactor.setThreshold(null);
         qualityFactorRepository.save(qualityFactor);
         boolean weighted = assignQualityMetricsToQualityFactor (qualityMetrics, qualityFactor);
         qualityFactor.setWeighted(weighted);
@@ -223,10 +227,14 @@ public class FactorsController {
         return weighted;
     }
 
-    public Factor editQualityFactor (Long factorId, String name, String description, List<String> qualityMetrics) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
+    public Factor editQualityFactor(Long factorId, String name, String description, String threshold, List<String> qualityMetrics) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
         Factor factor = getQualityFactorById(factorId);
         factor.setName(name);
         factor.setDescription(description);
+        if (!threshold.isEmpty()) // check if threshold is specified and then set it
+            factor.setThreshold(Float.parseFloat(threshold));
+        else
+            factor.setThreshold(null);
         // Actualize Quality Metrics
         boolean weighted = reassignQualityMetricsToQualityFactor (qualityMetrics, factor);
         factor.setWeighted(weighted);

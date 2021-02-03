@@ -144,7 +144,7 @@ public class StrategicIndicatorsControllerTest {
         }
 
         // When
-        strategicIndicatorsController.saveStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getDescription(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getWeights(), project);
+        strategicIndicatorsController.saveStrategicIndicator(strategicIndicator.getName(), strategicIndicator.getDescription(), strategicIndicator.getThreshold().toString(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getWeights(), project);
 
         // Then
         ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);
@@ -171,7 +171,7 @@ public class StrategicIndicatorsControllerTest {
         }
 
         // When
-        strategicIndicatorsController.editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(), strategicIndicator.getDescription(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getWeights());
+        strategicIndicatorsController.editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(), strategicIndicator.getDescription(), strategicIndicator.getThreshold().toString(), Files.readAllBytes(networkFile.toPath()), strategicIndicator.getWeights());
 
         // Then
         ArgumentCaptor<Strategic_Indicator> argument = ArgumentCaptor.forClass(Strategic_Indicator.class);

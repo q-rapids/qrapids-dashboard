@@ -133,11 +133,15 @@ public class StrategicIndicatorsController {
     }
 
 
-    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, QualityFactorNotFoundException {
+    public Strategic_Indicator editStrategicIndicator(Long strategicIndicatorId, String name, String description, String threshold, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, QualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator = getStrategicIndicatorById(strategicIndicatorId);
         if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
         strategicIndicator.setName(name);
         strategicIndicator.setDescription(description);
+        if (!threshold.isEmpty()) // check if threshold is specified and then set it
+            strategicIndicator.setThreshold(Float.parseFloat(threshold));
+        else
+            strategicIndicator.setThreshold(null);
         // Actualize Quality Factors
         boolean weighted = reassignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
         strategicIndicator.setWeighted(weighted);
@@ -180,10 +184,14 @@ public class StrategicIndicatorsController {
     }
 
 
-    public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) throws QualityFactorNotFoundException {
+    public Strategic_Indicator saveStrategicIndicator(String name, String description, String threshold, byte[] file, List<String> qualityFactors, Project project) throws QualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator;
         // create Strategic Indicator minim (without quality factors and weighted)
         strategicIndicator = new Strategic_Indicator(name, description, file, project);
+        if (!threshold.isEmpty()) // check if threshold is specified and then set it
+            strategicIndicator.setThreshold(Float.parseFloat(threshold));
+        else
+            strategicIndicator.setThreshold(null);
         strategicIndicatorRepository.save(strategicIndicator);
         // Associate it with Quality Factors (set weighted)
         boolean weighted = assignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
@@ -700,9 +708,9 @@ public class StrategicIndicatorsController {
                 // check if si is in data base and update it
                 Strategic_Indicator strategicIndicator = strategicIndicatorRepository.findByNameAndProject_Id(dtoDetailedStrategicIndicator.getName(),project.getId());
                 if (strategicIndicator != null) {
-                    editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), null, factors);
+                    editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), strategicIndicator.getThreshold().toString(), null, factors);
                 } else { // save it if it's new
-                    saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
+                    saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", "" , null, factors, project);
                 }
             }
         }
