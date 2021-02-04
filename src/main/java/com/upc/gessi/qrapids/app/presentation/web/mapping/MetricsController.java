@@ -29,4 +29,9 @@ public class MetricsController {
     public String PredictionChart(){
         return "Metrics/PredictionChart";
     }
+
+    @RequestMapping("/Metrics/Configuration")
+    public String Config(){
+        return "Metrics/AdditionalScreens/MetricsConfig";
+    }
 }

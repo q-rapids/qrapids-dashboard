@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <link rel="stylesheet" th:href="@{/css/products.css}" />
+</head>
+
+<body ng-app="TablesApp" ng-controller="TablesCtrl">
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
+<div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+<br/>
+<br/>
+<br/>
+<div class="contanier" style="padding-right: 15em; padding-left: 15em; margin-right: auto; margin-left: auto;" id="tableCurrent" ng-init="getMetricsConfig()">
+    <br/>
+    <br/>
+    <span><b>Search:</b></span> <input ng-model="f"></input>
+    <br/>
+    <br/>
+    <table class="table table-hover">
+        <thead>
+        <tr style="white-space: nowrap">
+            <th ng-click="sortBy('externalId')">Assessment ID
+                <span ng-show="sortType == 'externalId' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'externalId' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+            </th>
+            <th ng-click="sortBy('name')">Name
+                <span ng-show="sortType == 'name' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'name' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+            </th>
+            <th ng-click="sortBy('description')">Description
+                <span ng-show="sortType == 'description' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'description' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+            </th>
+            <th ng-click="sortBy('threshold')">Threshold
+                <span ng-show="sortType == 'threshold' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'threshold' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="d in data | filter:f | orderBy:sortType:sortReverse">
+            <td id="externalId" >{{d.externalId}}</td>
+            <td id="name" >{{d.name}}</td>
+            <td id="description" >{{d.description}}</td>
+            <td id="threshold">
+                <input id="MetThreshold{{d.id}}" value="{{d.threshold}}" type="number" step="0.01" min="0" max="1" rows="1" style="width: 100%;"></input></td>
+            <td>
+                <button id="saveMet" type="button" class="btn btn-primary" ng-click="saveMetric(d.id)">Save Metric</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" th:src="@{/js/configMet.js}"></script>
+</html>

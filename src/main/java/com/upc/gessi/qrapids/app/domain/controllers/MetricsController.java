@@ -5,10 +5,7 @@ import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
 import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.StrategicIndicatorNotFoundException;
-import com.upc.gessi.qrapids.app.domain.models.Metric;
-import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
-import com.upc.gessi.qrapids.app.domain.models.Project;
-import com.upc.gessi.qrapids.app.domain.models.Strategic_Indicator;
+import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCategoryRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOFactorEvaluation;
@@ -162,5 +159,15 @@ public class MetricsController {
 
     public List<DTOMetricEvaluation> getAllMetricsEvaluation(String projectExternalId, String profileId) throws IOException {
         return qmaMetrics.getAllMetrics(projectExternalId, profileId);
+    }
+
+    public Metric editMetric(Long id, String threshold) throws MetricNotFoundException {
+        Metric metric = getMetricById(id);
+        if (!threshold.isEmpty()) // check if threshold is specified and then set it
+            metric.setThreshold(Float.parseFloat(threshold));
+        else
+            metric.setThreshold(null);
+        metricRepository.save(metric);
+        return metric;
     }
 }

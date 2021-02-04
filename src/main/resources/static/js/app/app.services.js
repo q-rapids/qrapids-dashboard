@@ -665,7 +665,6 @@ app.controller('TablesCtrl', function($scope, $http) {
                     });
                 }
             });
-            //TODO
             $scope.data = data;
             $scope.sortType = 'factorName';
             $scope.sortReverse = false;
