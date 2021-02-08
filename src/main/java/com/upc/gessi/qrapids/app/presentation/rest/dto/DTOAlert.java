@@ -13,6 +13,7 @@ public class DTOAlert {
     private String name;
     private AlertType type;
     private float value;
+    private String value_description;
     private float threshold;
     private String category;
     private Date date;
@@ -73,6 +74,14 @@ public class DTOAlert {
 
     public void setValue(float value) {
         this.value = value;
+    }
+
+    public String getValue_description() {
+        return value_description;
+    }
+
+    public void setValue_description(String value_description) {
+        this.value_description = value_description;
     }
 
     public float getThreshold() {

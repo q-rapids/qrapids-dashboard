@@ -1,9 +1,11 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
+import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.repositories.Alert.AlertRepository;
 import com.upc.gessi.qrapids.app.domain.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.domain.repositories.Metric.MetricRepository;
+import com.upc.gessi.qrapids.app.domain.repositories.Profile.ProfileProjectStrategicIndicatorsRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorRepository;
 import com.upc.gessi.qrapids.app.domain.repositories.StrategicIndicator.StrategicIndicatorRepository;
@@ -35,7 +37,16 @@ public class AlertsController {
     private StrategicIndicatorRepository strategicIndicatorRepository;
 
     @Autowired
+    private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
+
+    @Autowired
     private QRPatternsController qrPatternsController;
+
+    @Autowired
+    private ProjectsController projectsController;
+
+    @Autowired
+    private  ProfilesController profilesController;
 
     public Alert getAlertById(long alertId) throws AlertNotFoundException {
         Optional<Alert> alertOptional = alertRepository.findById(alertId);
@@ -63,6 +74,26 @@ public class AlertsController {
         long newAlerts = alertRepository.countByProject_IdAndStatus(project.getId(), AlertStatus.NEW);
         long newAlertsWithQR = alertRepository.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(project.getId(), AlertStatus.NEW);
         return Pair.of(newAlerts, newAlertsWithQR);
+    }
+
+    public Pair<Long, Long> countNewAlertsByProfile(String prj, String profileId) throws ProjectNotFoundException {
+        Project project = projectsController.findProjectByExternalId(prj);
+        long newAlertsCount = alertRepository.countByProject_IdAndStatus(project.getId(), AlertStatus.NEW);
+        long newAlertsWithQRCount = alertRepository.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(project.getId(), AlertStatus.NEW);
+        if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
+            Profile profile = profilesController.findProfileById(profileId);
+            if (profile.getAllSIByProject(project)) { // if allSI true --> return all new alerts count
+                return Pair.of(newAlertsCount, newAlertsWithQRCount);
+            } else { // if allSI false --> return filtered new alerts
+                List<Alert> allNewAlerts = alertRepository.getByProject_IdAndStatus(project.getId(), AlertStatus.NEW);
+                List<Alert> allNewAlertsWithQR = alertRepository.getByProject_IdAndReqAssociatIsTrueAndStatusEquals(project.getId(), AlertStatus.NEW);
+                List<Alert> filteredNewAlerts = filterByProfile(project, profile, allNewAlerts);
+                List<Alert> filteredNewAlertsWithQR = filterByProfile(project, profile, allNewAlertsWithQR);
+                return Pair.of(Long.valueOf(filteredNewAlerts.size()), Long.valueOf(filteredNewAlertsWithQR.size()));
+            }
+        } else { // if profile is null --> return all alerts
+            return Pair.of(newAlertsCount, newAlertsWithQRCount);
+        }
     }
 
     public void createAlert (String id, String name, AlertType type, float value, float threshold, String category, Project project) {
@@ -106,5 +137,46 @@ public class AlertsController {
             // createAlert( id, name, type, value, threshold, category, project)
             createAlert(externalId, si.getName(), AlertType.STRATEGIC_INDICATOR, value, si.getThreshold(), externalId, p);
         }
+    }
+
+    public List<Alert> getAlertsByProjectAndProfile(String prjExternalId, String profileId) throws ProjectNotFoundException {
+        Project project = projectsController.findProjectByExternalId(prjExternalId);
+        List<Alert> alerts = alertRepository.findByProject_IdOrderByDateDesc(project.getId());
+        if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
+            Profile profile = profilesController.findProfileById(profileId);
+            if (profile.getAllSIByProject(project)){ // if allSI true --> return all alerts
+                return alerts;
+            } else { // if allSI false --> return filtered alerts
+                return filterByProfile(project,profile,alerts);
+            }
+        } else { // if profile is null --> return all alerts
+            return alerts;
+        }
+    }
+
+    public List <Alert> filterByProfile (Project project, Profile profile, List<Alert> alerts) {
+        List<ProfileProjectStrategicIndicators> ppsiList =
+                profileProjectStrategicIndicatorsRepository.findByProfileAndProject(profile,project);
+        List<Alert> result = new ArrayList<>();
+        for (Alert a : alerts) {
+            for (ProfileProjectStrategicIndicators ppsi : ppsiList) {
+                if(a.getType().equals(AlertType.STRATEGIC_INDICATOR)) {
+                    if (a.getId_element().equals(ppsi.getStrategicIndicator().getExternalId()) && !result.contains(a)) result.add(a);
+                }
+                List<StrategicIndicatorQualityFactors> siqfList = ppsi.getStrategicIndicator().getStrategicIndicatorQualityFactorsList();
+                for (StrategicIndicatorQualityFactors siqf : siqfList) {
+                    if (a.getType().equals(AlertType.FACTOR)) {
+                        if (a.getId_element().equals(siqf.getFactor().getExternalId()) && !result.contains(a)) result.add(a);
+                    }
+                    List<String> metrics = siqf.getFactor().getMetrics();
+                    for (String m : metrics) {
+                        if (a.getType().equals(AlertType.METRIC)) {
+                            if (a.getId_element().equals(m) && !result.contains(a)) result.add(a);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

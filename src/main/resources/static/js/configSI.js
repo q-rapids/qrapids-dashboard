@@ -7,6 +7,25 @@ var postUrl;
 var deleteUrl;
 var httpMethod = "POST";
 
+var assessSI_url;
+
+function getAssessSIUrl () {
+    if (serverUrl) {
+        var url = serverUrl + "/api/assessSIUrl";
+    }
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            console.log(data.assessSIUrl);
+            assessSI_url = data.assessSIUrl;
+        }
+    });
+}
+
 function buildSIList() {
     console.log("sessionStorage: profile_id");
     console.log(sessionStorage.getItem("profile_id"));
@@ -71,8 +90,13 @@ function clickOnTree(e){
             $("#SIDescription").val(si.description);
             $("#SIThreshold").attr("placeholder", "Specify minimum acceptable value for the strategic indicator here");
             $("#SIThreshold").val(si.threshold);
-            $("#SINetworkLabel").html("Assessment Model: <br/>(leave empty if unchanged)");
-            $("#SINetwork").val("");
+            if (assessSI_url != '') {
+                $("#SINetworkLabel").html("Assessment Model: <br/>(leave empty if unchanged)");
+                $("#SINetwork").val("");
+            } else {
+                $("#SINetworkLabel").hide();
+                $("#SINetwork").hide();
+            }
             $("#SICompositionTitle").text("Strategic Indicator Composition");
             $("#deleteSI").show();
             if (factors.length > 0) {
@@ -111,8 +135,13 @@ function newSI() {
     $("#SIDescription").val("");
     $("#SIThreshold").attr("placeholder", "Specify minimum acceptable value for the strategic indicator here");
     $("#SIThreshold").val("");
-    $("#SINetworkLabel").html("Assessment Model: ");
-    $("#SINetwork").val("");
+    if (assessSI_url != '') {
+        $("#SINetworkLabel").html("Assessment Model: ");
+        $("#SINetwork").val("");
+    } else {
+        $("#SINetworkLabel").hide();
+        $("#SINetwork").hide();
+    }
     $("#SICompositionTitle").text("Step 2 - Select the corresponding factors");
     $("#deleteSI").hide();
     if (factors.length > 0)
@@ -409,4 +438,5 @@ $("#deleteSI").click(function () {
 window.onload = function() {
     loadFactors(false);
     buildSIList();
+    getAssessSIUrl();
 };

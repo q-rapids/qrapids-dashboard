@@ -18,7 +18,7 @@ function checkAlertsPending(){
     var serverUrl = sessionStorage.getItem("serverUrl");
     jQuery.ajax({
         dataType: "json",
-        url: serverUrl+'/api/alerts/countNew',
+        url: serverUrl+'/api/alerts/countNew?profile=' + sessionStorage.getItem('profile_id'),
         cache: false,
         type: "GET",
         async: true,
@@ -48,7 +48,7 @@ function checkAlertsPending(){
 }
 
 function clearAlertsPendingBanner() {
-    $("#AlertsBanner").hide();
+    $(".post-it-alert").css("visibility", "hidden");
     $("#alertsPending").text("");
     $("#qrAlertsPending").text("");
 }

@@ -600,16 +600,6 @@ public class FactorsController {
         qmaQualityFactors.setFactorStrategicIndicatorRelation(factorList, projectExternalId);
     }
 
-    /*public static String getFactorLabelFromValue(Float f) {
-        List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
-        if (f != null) {
-            for (QFCategory qfCategory : qfCategoryList) {
-                if (f <= qfCategory.getUpperThreshold())
-                    return qfCategory.getName();
-            }
-        }
-        return "No Category";
-    }*/
     public String getFactorLabelFromValue (Float f) {
         List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
         if (f != null) {
