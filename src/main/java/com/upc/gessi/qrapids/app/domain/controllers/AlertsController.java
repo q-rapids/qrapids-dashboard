@@ -76,8 +76,7 @@ public class AlertsController {
         return Pair.of(newAlerts, newAlertsWithQR);
     }
 
-    public Pair<Long, Long> countNewAlertsByProfile(String prj, String profileId) throws ProjectNotFoundException {
-        Project project = projectsController.findProjectByExternalId(prj);
+    public Pair<Long, Long> countNewAlertsByProfile(Project project, String profileId) throws ProjectNotFoundException {
         long newAlertsCount = alertRepository.countByProject_IdAndStatus(project.getId(), AlertStatus.NEW);
         long newAlertsWithQRCount = alertRepository.countByProject_IdAndReqAssociatIsTrueAndStatusEquals(project.getId(), AlertStatus.NEW);
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
@@ -139,8 +138,7 @@ public class AlertsController {
         }
     }
 
-    public List<Alert> getAlertsByProjectAndProfile(String prjExternalId, String profileId) throws ProjectNotFoundException {
-        Project project = projectsController.findProjectByExternalId(prjExternalId);
+    public List<Alert> getAlertsByProjectAndProfile(Project project, String profileId) throws ProjectNotFoundException {
         List<Alert> alerts = alertRepository.findByProject_IdOrderByDateDesc(project.getId());
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);
@@ -158,15 +156,18 @@ public class AlertsController {
         List<ProfileProjectStrategicIndicators> ppsiList =
                 profileProjectStrategicIndicatorsRepository.findByProfileAndProject(profile,project);
         List<Alert> result = new ArrayList<>();
+        Profile.QualityLevel ql = profile.getQualityLevel();
         for (Alert a : alerts) {
             for (ProfileProjectStrategicIndicators ppsi : ppsiList) {
                 if(a.getType().equals(AlertType.STRATEGIC_INDICATOR)) {
-                    if (a.getId_element().equals(ppsi.getStrategicIndicator().getExternalId()) && !result.contains(a)) result.add(a);
+                    if (a.getId_element().equals(ppsi.getStrategicIndicator().getExternalId()) && !result.contains(a)
+                            && ql.equals(Profile.QualityLevel.ALL)) result.add(a);
                 }
                 List<StrategicIndicatorQualityFactors> siqfList = ppsi.getStrategicIndicator().getStrategicIndicatorQualityFactorsList();
                 for (StrategicIndicatorQualityFactors siqf : siqfList) {
                     if (a.getType().equals(AlertType.FACTOR)) {
-                        if (a.getId_element().equals(siqf.getFactor().getExternalId()) && !result.contains(a)) result.add(a);
+                        if (a.getId_element().equals(siqf.getFactor().getExternalId()) && !result.contains(a)
+                                && (ql.equals(Profile.QualityLevel.ALL) || ql.equals(Profile.QualityLevel.METRICS_FACTORS))) result.add(a);
                     }
                     List<String> metrics = siqf.getFactor().getMetrics();
                     for (String m : metrics) {

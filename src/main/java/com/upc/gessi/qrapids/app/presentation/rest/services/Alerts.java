@@ -65,7 +65,8 @@ public class Alerts {
     @ResponseStatus(HttpStatus.OK)
     public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
-            List<Alert> alerts = alertsController.getAlertsByProjectAndProfile(prj, profile);
+            Project project = projectsController.findProjectByExternalId(prj);
+            List<Alert> alerts = alertsController.getAlertsByProjectAndProfile(project, profile);
             alertsController.setViewedStatusForAlerts(alerts);
 
             List<DTOAlert> dtoAlerts = new ArrayList<>();
@@ -93,9 +94,8 @@ public class Alerts {
     @ResponseStatus(HttpStatus.OK)
     public DTONewAlerts countNewAlerts(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
-            //Project project = projectsController.findProjectByExternalId(prj);
-            //Pair<Long, Long> newAlerts = alertsController.countNewAlerts(project);
-            Pair<Long, Long> newAlerts = alertsController.countNewAlertsByProfile(prj, profile);
+            Project project = projectsController.findProjectByExternalId(prj);
+            Pair<Long, Long> newAlerts = alertsController.countNewAlertsByProfile(project, profile);
             return new DTONewAlerts(newAlerts.getFirst(), newAlerts.getSecond());
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
