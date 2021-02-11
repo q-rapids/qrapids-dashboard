@@ -17,6 +17,8 @@ public class Metric {
     private String description;
     @Column(name = "threshold")
     private Float threshold;
+    @Column(name = "kibana_url")
+    private String kibanaUrl;
 
     @ManyToOne
     @JoinColumn(name="projectId", referencedColumnName = "id")
@@ -77,5 +79,13 @@ public class Metric {
 
     public void setThreshold(Float threshold) {
         this.threshold = threshold;
+    }
+
+    public String getKibanaUrl() {
+        return kibanaUrl;
+    }
+
+    public void setKibanaUrl(String kibanaUrl) {
+        this.kibanaUrl = kibanaUrl;
     }
 }

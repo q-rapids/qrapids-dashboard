@@ -19,6 +19,7 @@ app.controller('TablesCtrl', function($scope, $http) {
                     name: metric.name,
                     description: metric.description,
                     threshold: metric.threshold,
+                    kibanaUrl: metric.kibanaUrl
                 });
             });
             $scope.data = data;
@@ -32,6 +33,8 @@ app.controller('TablesCtrl', function($scope, $http) {
         //formData.append("name", $('#QFName').val());
         //formData.append("description", $('#QFDescription').val());
         formData.append("threshold", document.getElementById("MetThreshold"+id).value);
+        if(document.getElementById("MetUrl"+id).validity.valid) // if url input text is valid
+            formData.append("kibana_url", document.getElementById("MetUrl"+id).value);
 
         $.ajax({
             url: "../api/metrics/"+id,

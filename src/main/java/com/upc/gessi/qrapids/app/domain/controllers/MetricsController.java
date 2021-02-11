@@ -161,12 +161,13 @@ public class MetricsController {
         return qmaMetrics.getAllMetrics(projectExternalId, profileId);
     }
 
-    public Metric editMetric(Long id, String threshold) throws MetricNotFoundException {
+    public Metric editMetric(Long id, String threshold, String kibanaUrl) throws MetricNotFoundException {
         Metric metric = getMetricById(id);
         if (!threshold.isEmpty()) // check if threshold is specified and then set it
             metric.setThreshold(Float.parseFloat(threshold));
         else
             metric.setThreshold(null);
+        metric.setKibanaUrl(kibanaUrl); // set kibana url
         metricRepository.save(metric);
         return metric;
     }

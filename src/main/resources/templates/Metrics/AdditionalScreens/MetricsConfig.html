@@ -46,6 +46,12 @@
                         <span class="caret"></span>
                     </span>
             </th>
+            <th ng-click="sortBy('kibanaUrl')"> Kibana URL
+                <span ng-show="sortType == 'threshold' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'threshold' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -54,7 +60,11 @@
             <td id="name" >{{d.name}}</td>
             <td id="description" >{{d.description}}</td>
             <td id="threshold">
-                <input id="MetThreshold{{d.id}}" value="{{d.threshold}}" type="number" step="0.01" min="0" max="1" rows="1" style="width: 100%;"></input></td>
+                <input id="MetThreshold{{d.id}}" value="{{d.threshold}}" type="number" step="0.01" min="0" max="1" rows="1" size="10" style="width: 100%;"></input>
+            </td>
+            <td id="kibanaUrl">
+                <input id="MetUrl{{d.id}}" value="{{d.kibanaUrl}}" type="url" size="30"></input>
+            </td>
             <td>
                 <button id="saveMet" type="button" class="btn btn-primary" ng-click="saveMetric(d.id)">Save Metric</button>
             </td>

@@ -17,6 +17,8 @@ if (getParameterByName('id').length !== 0) {
     url = parseURLComposed("../api/metrics/current?profile="+profileId);
 }
 
+var metricsDB = [];
+
 var urlLink;
 
 function getData(width, height) {
@@ -28,7 +30,16 @@ function getData(width, height) {
         async: true,
         success: function (data) {
             sortDataAlphabetically(data);
-            getMetricsCategories(data, width, height);
+            jQuery.ajax({
+                dataType: "json",
+                url: "../api/metrics",
+                cache: false,
+                type: "GET",
+                async: true,
+                success: function (dataDB) {
+                    metricsDB = dataDB;
+                    getMetricsCategories(data, width, height);
+                }});
         },
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
@@ -70,17 +81,36 @@ function drawChart(metrics, container, width, height, categories) {
             .startAngle(-tau);
 
         //make chart a hyperlink
-        urlLink = "../Metrics/CurrentChart?id="
-            + metrics[i].id + "&name=" + metrics[i].name;
-
-        //create chart svg with hyperlink
-        var svg = d3.select(container).append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("class", "chart")
-            .append("g")
-            .attr("transform",
-                "translate(" + width / 2 + "," + height / 2 + ")");
+        var textColor = "#000";
+        urlLink = metricsDB.find(function (element) {
+            return element.externalId === metrics[i].id;
+        }).kibanaUrl;
+        console.log(urlLink);
+        if (urlLink) {
+            //create chart svg with hyperlink
+            var svg = d3.select(container).append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("class", "chart")
+                .append("a")
+                .attr("xlink:href", function (d) {
+                    return urlLink
+                })
+                .attr("target","_blank")
+                .append("g")
+                .attr("transform",
+                    "translate(" + width / 2 + "," + height / 2 + ")");
+            textColor = "#0177a6";
+        } else {
+            //create chart svg
+            var svg = d3.select(container).append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("class", "chart")
+                .append("g")
+                .attr("transform",
+                    "translate(" + width / 2 + "," + height / 2 + ")");
+        }
 
         //draw blue background for charts
         svg.append("path")
@@ -130,6 +160,7 @@ function drawChart(metrics, container, width, height, categories) {
             .attr("x", 0)
             .attr("y", 50*width/250)
             .attr("text-anchor", "middle")
+            .attr("fill", textColor)
             .attr("title", metrics[i].name)
             .style("font-size", 11+8*width/250+"px")
             .text(name);
@@ -145,6 +176,7 @@ function drawChart(metrics, container, width, height, categories) {
             .attr("x", 0)
             .attr("y", 50*width/250 + 30)
             .attr("text-anchor", "middle")
+            .attr("fill", textColor)
             .style("font-size", 11+6*width/250+"px")
             .text(text);
 
