@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: ChartView"></th:block>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-slider.min.css}" />
+    <script type="text/javascript" th:src="@{/js/bootstrap-slider.min.js}"></script>
+
+</head>
+<body>
+    <div th:replace="Fragments/Template :: logo"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+    <br/>
+    <br/>
+    <h1 align="center">Strategic Indicator Feedback</h1>
+    <br/>
+    <div id="radarChart" style="text-align:center;"></div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" src="../../static/js/feedback.js" th:src="@{/js/feedback.js}"></script>
+</html>

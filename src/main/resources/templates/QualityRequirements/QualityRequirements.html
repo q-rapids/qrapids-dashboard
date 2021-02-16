@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+</head>
+<body ng-app="TablesApp" ng-controller="TablesCtrl">
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+<br/>
+<br/>
+<div class="container" id="tableCurrent" ng-init="getAllQRs()">
+    <br/>
+    <span><b>Search:</b></span> <input ng-model="f"></input>
+    <br/>
+    <br/>
+    <table class="table table-hover">
+        <thead>
+        <tr style="white-space: nowrap">
+            <th ng-click="sortBy('date')">Date
+                <span ng-show="sortType == 'date' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'date' &amp;&amp; !sortReverse" class="dropup">
+                    <span class="caret"></span>
+                </span>
+            </th>
+            <th ng-click="sortBy('requirement')">Requirement
+                <span ng-show="sortType == 'requirement' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'requirement' &amp;&amp; !sortReverse" class="dropup">
+                    <span class="caret"></span>
+                </span>
+            </th>
+            <th ng-click="sortBy('description')">Description
+                <span ng-show="sortType == 'description' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'description' &amp;&amp; !sortReverse" class="dropup">
+                    <span class="caret"></span>
+                </span>
+            </th>
+            <th ng-click="sortBy('goal')">Goal
+                <span ng-show="sortType == 'goal' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'goal' &amp;&amp; !sortReverse" class="dropup">
+                    <span class="caret"></span>
+                </span>
+            </th>
+            <th ng-click="sortBy('backlogId')">Backlog ID
+                <span ng-show="sortType == 'backlogId' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'backlogId' &amp;&amp; !sortReverse" class="dropup">
+                    <span class="caret"></span>
+                </span>
+            </th>
+            <th ng-click="sortBy('backlogUrl')">Backlog URL
+                <span ng-show="sortType == 'backlogUrl' &amp;&amp; sortReverse" class="caret"></span>
+                <span ng-show="sortType == 'backlogUrl' &amp;&amp; !sortReverse" class="dropup">
+                    <span class="caret"></span>
+                </span>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="d in data | filter:f | orderBy:sortType:sortReverse">
+            <td id="date">{{d.date}}</td>
+            <td id="requirement" >{{d.requirement}}</td>
+            <td id="description" >{{d.description}}</td>
+            <td id="goal">{{d.goal}}</td>
+            <td id="backlogId"><text ng-if="d.backlogId != 'undefined'">{{d.backlogId}}</text></td>
+            <td id="backlogUrl"><a ng-if="d.backlogId != 'undefined'" href="{{d.backlogUrl}}" target="_tab">{{d.backlogUrl}}</a></td>
+            <td>
+                <button ng-if="d.alert != null" type="button" class="btn btn-default" ng-click="showAlertForQR(d.alert)"> Alert </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="Fragments/Modals :: alertModal"></div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+</html>

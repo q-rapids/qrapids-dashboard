@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <script type="text/javascript" src="../../static/js/lib/d3.v4.min.js" th:src="@{/js/lib/d3.v4.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-slider.min.css}" />
+    <script type="text/javascript" th:src="@{/js/bootstrap-slider.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/Chart.min.js}"></script>
+</head>
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarSimulationDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+<div style="width:100%; overflow: hidden; padding-left: 5%; padding-right: 5%;">
+    <br/>
+    <div id="metrics" style=" width: 25%; float: left">
+        <h3>Metrics</h3>
+        <br/>
+        <div id="metricsSliders">
+        </div>
+        <div style="margin-top: 3em;">
+            <button id="apply" class="btn btn-primary">Apply</button>
+            <button id="restore" class="btn btn-primary">Restore</button>
+        </div>
+    </div>
+    <div id="radarFactors" style="width: 25%; float: left; overflow: hidden; text-align: center;">
+        <h3>Detailed Factors</h3>
+        <div style="width: 12em; display: inline-block">
+            <div id="currentColorDetailedFactors" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Current Assessment
+        </div>
+        <div style="width: 13em; display: inline-block">
+            <div id="simulationColorDetailedFactors" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Simulated Assessment
+        </div>
+    </div>
+    <div id="gaugeChartFactors" style="width: 23.3%; float: left; overflow: hidden; text-align: center;">
+        <h3>Factors</h3>
+        <div style="width: 12em; display: inline-block">
+            <div id="currentColorFactors" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Current Assessment
+        </div>
+        <div style="width: 13em; display: inline-block">
+            <div id="simulationColorFactors" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Simulated Assessment
+        </div>
+    </div>
+    <div id="radarDetailed" style="width: 25%; float: left; overflow: hidden; text-align: center;">
+        <h3>Detailed Strategic Indicators</h3>
+        <div style="width: 12em; display: inline-block">
+            <div id="currentColorDetailed" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Current Assessment
+        </div>
+        <div style="width: 13em; display: inline-block">
+            <div id="simulationColorDetailed" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Simulated Assessment
+        </div>
+    </div>
+    <div id="gaugeChart" style="width: 25%; float: left; overflow: hidden; text-align: center;">
+        <h3>Strategic Indicators</h3>
+        <div style="width: 12em; display: inline-block">
+            <div id="currentColor" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Current Assessment
+        </div>
+        <div style="width: 13em; display: inline-block">
+            <div id="simulationColor" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Simulated Assessment
+        </div>
+    </div>
+</div>
+<br/>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" src="../../static/js/gaugeChartFactor.js" th:src="@{/js/gaugeChartFactor.js}"></script>
+<script type="text/javascript" src="../../static/js/gaugeChart.js" th:src="@{/js/gaugeChart.js}"></script>
+<script type="text/javascript" src="../../static/js/simulationMetrics.js" th:src="@{/js/simulationMetrics.js}"></script>
+</html>

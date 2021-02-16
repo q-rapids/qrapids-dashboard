@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+</head>
+
+<body ng-app="TablesApp" ng-controller="TablesCtrl">
+    <div th:replace="Fragments/Template :: logo"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+    <br/>
+    <div class="col-xs-4 pull-right" style="text-align: right; padding-right: 2em;">
+        <button type="button" class="btn btn-primary" th:if="${@environment.getProperty('demoMode')}" th:unless="${false}" ng-click="newAlert()">New Metric Alert</button>
+        <button type="button" class="btn btn-primary" th:if="${@environment.getProperty('demoMode')}" th:unless="${false}" ng-click="newAlertFactor()">New Factor Alert</button>
+    </div>
+    <div class="contanier" style="padding-right: 15em; padding-left: 15em; margin-right: auto; margin-left: auto;" id="tableCurrent" ng-init="getAlerts()">
+        <br/>
+        <br/>
+        <span><b>Search:</b></span> <input ng-model="f"></input>
+        <br/>
+        <br/>
+        <table class="table table-hover">
+            <thead>
+            <tr style="white-space: nowrap">
+                <th ng-click="sortBy('date')">Date
+                    <span ng-show="sortType == 'date' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'date' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('type')">Type
+                    <span ng-show="sortType == 'type' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'type' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('name')">Name
+                    <span ng-show="sortType == 'name' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'name' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('value')">Value
+                    <span ng-show="sortType == 'value' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'value' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('threshold')">Threshold
+                    <span ng-show="sortType == 'threshold' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'threshold' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('factors')">Impacted Factors
+                    <span ng-show="sortType == 'factors' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'factors' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('strategicIndicators')">Impacted SIs
+                    <span ng-show="sortType == 'strategicIndicators' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'strategicIndicators' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+                <th ng-click="sortBy('status')">Status
+                    <span ng-show="sortType == 'status' &amp;&amp; sortReverse" class="caret"></span>
+                    <span ng-show="sortType == 'status' &amp;&amp; !sortReverse" class="dropup">
+                        <span class="caret"></span>
+                    </span>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="d in data | filter:f | orderBy:sortType:sortReverse:customComparator">
+                <td id="date" ng-class="{'color-red': (d.status == 'NEW')}">{{d.date}}</td>
+                <td id="type" ng-class="{'color-red': (d.status == 'NEW')}">{{d.type}}</td>
+                <td id="name" ng-class="{'color-red': (d.status == 'NEW')}">
+                    <a ng-class="{'color-red-link': (d.status == 'NEW')}" ng-if="d.type == 'STRATEGIC_INDICATOR'" ng-href="QualityFactors/HistoricChart?id={{d.id_element}}&amp;name={{d.name}}&amp;from={{substractOneWeek(d.date)}}">
+                        {{d.name}}
+                    </a>
+                    <a ng-class="{'color-red-link': (d.status == 'NEW')}" ng-if="d.type == 'FACTOR'" ng-href="Metrics/HistoricChart?id={{d.id_element}}&amp;name={{d.name}}&amp;from={{substractOneWeek(d.date)}}">
+                        {{d.name}}
+                    </a>
+                    <a ng-class="{'color-red-link': (d.status == 'NEW')}" ng-if="d.type == 'METRIC'" ng-href="Metrics/HistoricChart?metricId={{d.id_element}}&amp;from={{substractOneWeek(d.date)}}">
+                        {{d.name}}
+                    </a>
+                </td>
+                <td id="value" ng-class="{'color-red': (d.status == 'NEW')}">{{d.valueDescription}}</td>
+                <td id="threshold" ng-class="{'color-red': (d.status == 'NEW')}">{{d.threshold}}</td>
+                <td id="factors" ng-class="{'color-red': (d.status == 'NEW')}">{{d.factors}}</td>
+                <td id="strategicIndicators" ng-class="{'color-red': (d.status == 'NEW')}">{{d.strategicIndicators}}</td>
+                <td id="status" ng-class="{'color-red': (d.status == 'NEW')}">{{d.status}}</td>
+                <td>
+                    <button ng-if="d.status == 'RESOLVED'" type="button" class="btn btn-default" ng-click="getDecision(d.id)">See Decision</button>
+                    <button ng-if="d.reqAssociat &amp;&amp; d.status != 'RESOLVED'" type="button" class="btn btn-default" ng-click="getQR(d.id)">Add Quality Requirement</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="Fragments/Modals :: QRListModal"></div>
+    <div th:replace="Fragments/Modals :: QRModal"></div>
+    <div th:replace="Fragments/Modals :: messageModal"></div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+
+<!-- <script type="text/javascript" src="../../static/js/feedback.js" th:src="@{/js/feedback.js}"></script> -->
+
+</html>
+
+<!-- ng-click="getURL(d.id, d.name, null, '../DetailedStrategicIndicators/CurrentTable', false)"> -->

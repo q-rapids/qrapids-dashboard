@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragments/Template :: header">
+</head>
+<link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
+<script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
+
+<body>
+
+<!-- Application Logo -->
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+
+<div th:replace="Fragments/Template :: alerts"></div>
+
+<div class="row" style="padding:0em 3em;">
+    <!-- Container -->
+    <div class="col-xs-12 col-sm-12 col-lg-12 full-height">
+
+        <article class="text-frame" style="padding-top:1em;margin-rigth:1em;">
+
+            <h3>Create First User</h3>
+
+            <div class="divisor-black"></div>
+
+            <br/>
+
+            <form id="form" onsubmit="return formValidation()" class="full-width" th:object="${appuser}" th:action="@{/setupUser}" method="POST" th:fragment="form">
+
+                <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" th:name="username" th:id="username" th:field="*{username}" th:value="${appuser.getUsername()}"  disabled="disabled" required="required"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email address *</label>
+                    <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" th:value="${appuser.getEmail()}"  required="required"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="appuser_question">Security Question *</label>
+                    <select class="selectpicker" th:name="appuser_question" data-width="50%">
+
+                        <option th:each="question : ${ questions }"
+                                th:value="${question.getId()}"
+                                th:text="${question.getQuestion()}"></option>
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="answer">Answer *</label>
+                    <input type="text" class="form-control" th:name="question" th:id="question" />
+                </div>
+
+                <div id="form_password" class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" class="form-control" th:name="password" th:id="password" th:field="*{password}" required="required"/>
+                    <span id="form_password_text" class="help-block">The password and password confirmation, does not be the same.</span>
+                </div>
+
+                <div id="form_confirmation" class="form-group">
+                    <label for="password_confirmation">Password confirmation *</label>
+                    <input id="password_confirmation" type="password" class="form-control" required="required"/>
+                </div>
+
+                <button type="submit" class="btn btn-border-black">Setup</button>
+
+            </form>
+
+        </article>
+
+
+    </div>
+</div>
+
+<select id="shadow_slt" hidden="hidden">
+
+    <option th:value="${appuser.getAppuser_question()?.getId()}"
+            th:text="${appuser.getAppuser_question()?.getQuestion()}"></option>
+
+</select>
+
+<script>
+
+    var _$ = [];
+    $('#shadow_slt').children('option').each(function(el){_$.push( $(this).val().toString() );})
+    $('.selectpicker').selectpicker('val', _$ );
+
+
+    $("#form_password_text").hide();
+    // Handlers
+    $('.nav,ul li a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+
+    function formValidation ( event ) {
+
+        var pass = $('#password').val(),
+            confirmation = $('#password_confirmation').val();
+
+        if (! ( pass === confirmation ) ) {
+
+            $("#form_password").addClass("has-error");
+            $("#form_password_text").show();
+            $("#form_confirmation").addClass("has-error");
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+</script>
+
+</body>
+</html>

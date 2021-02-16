@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.springframework.org/schema/jdbc">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+<div>
+    <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/></div>
+<script>
+    alert("a");
+    // With JQuery
+    var slider = new Slider('#ex1', {
+        formatter: function(value) {
+            return 'Current value: ' + value;
+        }
+    });
+
+    alert("b");
+</script><</body>
+<link  type="text/css" rel="stylesheet" href="../static/css/bootstrap-slider.css"/>
+<script type="text/javascript" src="../static/js/bootstrap-slider.js" th:src="@{/js/bootstrap-slider.js}"></script>
+<script type="text/javascript" src="../static/js/lib/jquery.min.js"></script>
+</html>

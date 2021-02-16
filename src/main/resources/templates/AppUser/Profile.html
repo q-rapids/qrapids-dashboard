@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragments/TemplateDashboard :: basicHeader">
+</head>
+<link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
+<script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
+
+
+<body>
+
+<!-- Application Logo -->
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+
+
+<!-- Navigation -->
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
+
+<div id="msg_success"
+    class="alert alert-success"
+    role="alert"
+    th:text="${#httpServletRequest.getParameter('success')}"
+    th:if="${(param.success != null)}"
+    onclick="document.getElementById('msg_success').style.display = 'none'" style="cursor: pointer;margin-bottom: 0px;">
+</div>
+
+<div id="msg_error"
+     class="alert alert-danger"
+     role="alert"
+     th:text="${#httpServletRequest.getParameter('error')}"
+     th:if="${(param.error != null)}"
+     onclick="document.getElementById('msg_error').style.display = 'none'" style="cursor: pointer;margin-bottom: 0px;">
+</div>
+
+<div class="row">
+    <article class="text-frame col-lg-4" style="padding-left: 2em; padding-top: 1em; padding-right: 1em;">
+
+        <h3>My profile </h3>
+
+        <div class="divisor-black"></div>
+
+        <br/>
+
+        <form id="form_main_" onsubmit="return formValidation()" class="full-width" th:object="${appuser}" th:action="@{/profile/update}" method="POST" th:fragment="form">
+
+            <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" disabled=" disabled" th:name="username" th:id="username" th:field="*{username}" th:value="${appuser.getUsername()}"  required="required"/>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email address *</label>
+                <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" th:value="${appuser.getEmail()}"  required="required"/>
+            </div>
+
+            <button type="submit" class="btn btn-border-black">Update</button>
+
+        </form>
+
+    </article>
+    <article class="text-frame col-lg-4" style="padding-left: 1em; padding-top: 1em; padding-right: 1em;">
+
+        <h3>My Security Question </h3>
+
+        <div class="divisor-black"></div>
+
+        <br/>
+
+        <form id="form_group_" onsubmit="return formValidation()" class="full-width" th:object="${appuser}" th:action="@{/profile/update}" method="POST">
+
+            <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+
+            <div class="form-group" hidden="hidden">
+                <label for="username">Username *</label>
+                <input type="text" class="form-control" th:name="username" th:id="username" th:field="*{username}" th:value="${appuser.getUsername()}"  required="required"/>
+            </div>
+
+            <div class="form-group" hidden="hidden">
+                <label for="email">Email address *</label>
+                <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" th:value="${appuser.getEmail()}"  required="required"/>
+            </div>
+
+            <div class="form-group">
+                <label for="appuser_question">Security Question *</label>
+                <br/>
+                <select class="selectpicker" th:name="appuser_question" data-width="100%">
+
+                    <option th:each="question : ${ questions }"
+                            th:value="${question.getId()}"
+                            th:text="${question.getQuestion()}"></option>
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="answer">Answer </label>
+                <input type="text" class="form-control" th:name="question" th:id="question" />
+            </div>
+
+            <button type="submit" class="btn btn-warning">Update question</button>
+
+        </form>
+
+    </article>
+    <article class="text-frame col-lg-4" style="padding-left: 1em; padding-top: 1em; padding-right: 2em;">
+
+        <h3>My password </h3>
+
+        <div class="divisor-black"></div>
+
+        <br/>
+
+        <form id="form_pass_" onsubmit="return formValidation()" class="full-width" th:object="${appuser}" th:action="@{/profile/update}" method="POST" th:fragment="form">
+
+            <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+
+            <div class="form-group" hidden="hidden">
+                <label for="username">Username *</label>
+                <input type="text" class="form-control" th:name="username" th:id="username" th:field="*{username}" th:value="${appuser.getUsername()}" disabled=" disabled"  required="required"/>
+            </div>
+
+            <div class="form-group" hidden="hidden">
+                <label for="email">Email address *</label>
+                <input type="email" class="form-control" th:name="email" th:id="email" th:field="*{email}" th:value="${appuser.getEmail()}"  required="required"/>
+            </div>
+
+            <div id="form_password" class="form-group">
+                <label for="password">Password </label>
+                <input type="password" class="form-control" th:name="password" th:id="password" th:field="*{password}" />
+                <span id="form_password_text" class="help-block">The password and password confirmation, does not be the same.</span>
+            </div>
+
+            <div id="form_confirmation" class="form-group">
+                <label for="password_confirmation">Password confirmation </label>
+                <input id="password_confirmation" type="password" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-danger">Update password</button>
+
+        </form>
+
+    </article>
+</div>
+
+<select id="shadow_slt" hidden="hidden">
+
+    <option th:value="${appuser.getAppuser_question()?.getId()}"
+            th:text="${appuser.getAppuser_question()?.getQuestion()}"></option>
+
+</select>
+
+<script>
+
+    var _$ = [];
+    $('#shadow_slt').children('option').each(function(el){_$.push( $(this).val().toString() );})
+    $('.selectpicker').selectpicker('val', _$ );
+
+
+    $("#form_password_text").hide();
+
+    // Handlers
+    function formValidation ( event ) {
+
+        var pass = $('#password').val(),
+            confirmation = $('#password_confirmation').val();
+
+        if (! ( pass === confirmation ) ) {
+
+            $("#form_password").addClass("has-error");
+            $("#form_password_text").show();
+            $("#form_confirmation").addClass("has-error");
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+</script>
+
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+
+</body>
+</html>

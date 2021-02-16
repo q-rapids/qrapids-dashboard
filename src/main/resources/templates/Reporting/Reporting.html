@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <link rel="stylesheet" th:href="@{/css/products.css}" />
+    <th:block th:replace="Fragments/TemplateDashboard :: HistoricView"></th:block>
+</head>
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<table>
+    <tr>
+        <td style="width: 50%;">
+            <div class="form-group">
+                <div style="margin-top: 1em;padding-left: 15px;padding-right: 15px;" th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+            </div>
+        </td>
+        <td style="width: 50%;">
+            <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
+                <form class="form-inline well" style="float: left">
+                    <div class="form-group">
+                        <label class="control-label">From: </label>
+                        <input id="datepickerFrom" width="250" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"> To: </label>
+                        <input id="datepickerTo" width="250" class="form-control"/>
+                    </div>
+                    <div class="form-group dropdown">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a onclick="thisWeek()" href="#">This week</a></li>
+                            <li><a onclick="last7Days()" href="#">Last 7 days</a></li>
+                            <li><a onclick="last14Days()" href="#">Last 14 days</a></li>
+                            <li><a onclick="thisMonth()" href="#">This month</a></li>
+                            <li><a onclick="thisYear()" href="#">This year</a></li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </td>
+    </tr>
+</table>
+<div id="ReportingView">
+    <div id="ProjectSelector">
+        <ul id="ElementList" class="list-group">
+        </ul>
+    </div>
+    <div id="ReportingInfo">
+        <div id="tableREPdiv" class="table-editable" style="display: none">
+            <div class="container" >
+                <span><b> &nbsp; Search:</b></span> <input id="searchInput" type="text">
+                <br/><br/>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Report Name</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableREP">
+                    </tbody>
+                </table>
+            </div>
+            <br/>
+        </div>
+    </div>
+</div>
+</body>
+<!--th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block-->
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsHistoric"></th:block>
+<script type="text/javascript" th:src="@{/js/reporting.js}"></script>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <link rel="stylesheet" th:href="@{/css/products.css}" />
+</head>
+
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
+<div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+<br/>
+<br/>
+<br/>
+<div id="QFConfigView">
+    <div id="QFTree">
+        <div style="display: flex; flex-direction: row; justify-content: center;">
+            <button onclick="newQF()" class="btn btn-primary" style="font-size: 18px; margin-bottom: 12px">New Quality Factor</button>
+        </div>
+        <br/>
+        <ul id="QFList" class="list-group">
+        </ul>
+    </div>
+    <div id="QFInfo" style="display: none">
+        <div id="QFForm">
+            <div class="QFInfoRow">
+                <p id = "QFInfoTitle" style="font-size: 36px; margin-right: 1%">1. Quality Factor Information</p>
+            </div>
+            <div class="QFInfoRowID" style="display:none;">
+                <p style="font-size: 18px; margin-right: 1%; width: 40%;">Assessment ID: </p>
+                <input id="QFAssessmentID" style="border:none; font-size: 18px; margin-right: 1%; width: 100%;" readonly></input>
+            </div>
+            <div class="QFInfoRow">
+                <p style="font-size: 18px; margin-right: 1%">Name*: </p>
+                <input id="QFName" rows="1" style="width: 100%;"></input>
+            </div>
+            <div class="QFInfoRow" style="resize: vertical;">
+                <p style="font-size: 18px; margin-right: 1%">Description: </p>
+                <textarea id="QFDescription" style="width: 100%;" rows="3"></textarea>
+            </div>
+            <div class="QFInfoRow">
+                <p style="font-size: 18px; margin-right: 1%">Threshold: </p>
+                <input id="QFThreshold" type="number" step="0.01" min="0" max="1" rows="1" style="width: 100%;"></input>
+            </div>
+            <div class="QFInfoRow">
+                <p id="QFCompositionTitle" style="font-size: 36px; margin-right: 1%">2. Quality Factor Composition</p>
+            </div>
+            <div class="QFInfoRow">
+                <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Available Metrics: </p>
+                    <select id="avMetricsBox" multiple="multiple" style="height: 150px;">
+
+                    </select>
+                </div>
+                <div class="selectionColumn" style="padding-top:30px;">
+                    <button onclick="moveItemsLeft()" class="btn btn-default top-and-bottom-margin" id="oneLeft">&lt;</button>
+                    <button onclick="moveItemsRight()" class="btn btn-default top-and-bottom-margin" id="right" style="margin-top:3px;">&gt;</button>
+                    <button onclick="moveAllItemsRight()" class="btn btn-default top-and-bottom-margin" id="allRight" style="margin-top:3px;">&gt;&gt;</button>
+                    <button onclick="moveAllItemsLeft()" class="btn btn-default top-and-bottom-margin" id="allLeft" style="margin-top:3px;">&lt;&lt;</button>
+                </div>
+                <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Selected Metrics*: </p>
+                    <select id="selMetricsBox" multiple="multiple" style="height: 150px;">
+                    </select>
+                    <form style="margin-top: 5px">
+                        <input type="checkbox" id="QFweightCheckbox" onchange="openEdit()"> Weighted average &nbsp;&nbsp;&nbsp;
+                        <button class = "btn" id="QFweightEditButton" disabled="true">
+                            <img class="icons" th:src="@{/icons/edit.png}"
+                                 src="../../static/icons/edit.png" alt="edit weights data"/>
+                        </button>
+                        <div th:replace="Fragments/Modals :: QFweightsModal"></div>
+                    </form>
+                </div>
+            </div>
+            <div class="QFInfoRow" style="justify-content: space-between">
+                <button class="btn btn-primary btn-danger" id="deleteQF" style="font-size: 18px; max-width: 30%;" >Delete Quality Factor</button>
+                <button class="btn btn-primary" id="saveQF" style="font-size: 18px; max-width: 30%;">Save Quality Factor</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" th:src="@{/js/configQF.js}"></script>
+</html>

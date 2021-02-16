@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+</head>
+<body onload="getFeedFact()">
+    <div th:replace="Fragments/Template :: logo"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+    <br/>
+    <br/>
+    <h1 id="title" align="center"></h1>
+    <br/>
+    <div class="container">
+        <table id="myTable" class="table table-hover"></table>
+    </div>
+    <br/>
+    <br/>
+    <div style="text-align: right; padding-right: 2em;">
+        <button type="button" class="btn btn-default" onclick="exportTableToCSV('feedback.csv')">Download table</button>
+    </div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" src="../../static/js/feedbackReport.js" th:src="@{/js/feedbackReport.js}"></script>
+</html>

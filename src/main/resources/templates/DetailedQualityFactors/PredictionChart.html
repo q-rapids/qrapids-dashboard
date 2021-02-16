@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: HistoricChartView"></th:block>
+</head>
+<body>
+    <div th:replace="Fragments/Template :: logo"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navSubBarPredictionDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+    <br/>
+    <br/>
+    <h1 id="title" align="center"></h1>
+    <p th:replace="Fragments/TemplateDashboard :: navLinkDetailedQF"></p>
+    <div id="loader"></div>
+    <style>
+            /* Center the loader */
+        #loader {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 150px;
+            height: 150px;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <th:block th:replace="Fragments/TemplateDashboard :: HistoricChart"></th:block>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsHistoric"></th:block>
+<script type="text/javascript" src="../../static/js/parseDataDetailedQFPrediction.js" th:src="@{/js/parseDataDetailedQFPrediction.js}"></script>
+<script type="text/javascript" src="../../static/js/predictionLineChart.js" th:src="@{/js/predictionLineChart.js}"></script>
+</html>

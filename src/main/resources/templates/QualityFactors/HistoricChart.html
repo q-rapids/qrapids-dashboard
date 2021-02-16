@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: HistoricChartView"></th:block>
+</head>
+<body>
+    <div th:replace="Fragments/Template :: logo"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
+    <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+    <br/>
+    <br/>
+    <h1 id="title" align="center"></h1>
+    <p th:replace="Fragments/TemplateDashboard :: navLinkQF"></p>
+    <th:block th:replace="Fragments/TemplateDashboard :: HistoricChart"></th:block>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsHistoric"></th:block>
+<script type="text/javascript" th:src="@{/js/parseDataQFHistorical.js}"></script>
+<script type="text/javascript" th:src="@{/js/getDecisions.js}"></script>
+<script type="text/javascript" th:src="@{/js/stackedLineChart.js}"></script>
+</html>

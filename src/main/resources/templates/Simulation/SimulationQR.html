@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <script type="text/javascript" src="../../static/js/lib/d3.v4.min.js" th:src="@{/js/lib/d3.v4.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-slider.min.css}" />
+    <script type="text/javascript" th:src="@{/js/bootstrap-slider.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/Chart.min.js}"></script>
+</head>
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarSimulationDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+<div style="width:100%; overflow: hidden; padding-left: 2%; padding-right: 2%;">
+    <br/>
+    <div id="qualityRequirementArea" style=" width: 30%; float: left; padding-right: 2em">
+        <h3>Quality Requirement Candidate
+            <button id="patternListButton" class="btn btn-secondary"><span class="glyphicon glyphicon-list" aria-hidden="true"></span></button>
+        </h3>
+        <div id="qualityRequirement">
+            <div class="input-group" style="margin-top: 15px">
+                <span class="input-group-addon input-group-addon-qr">Goal</span>
+                <label for="QRGoalSimulation"></label><input id="QRGoalSimulation" type="text" class="form-control" readonly="true"/>
+            </div>
+            <br/>
+            <div class="input-group">
+                <span class="input-group-addon input-group-addon-qr">Requirement</span>
+                <label for="QRRequirementSimulation"></label><textarea id="QRRequirementSimulation" type="text" class="form-control" readonly="true" style="resize: vertical"></textarea>
+            </div>
+            <br/>
+            <div class="input-group">
+                <span class="input-group-addon input-group-addon-qr">Description</span>
+                <label for="QRDescriptionSimulation"></label><textarea id="QRDescriptionSimulation" type="text" class="form-control" readonly="true" style="resize: vertical"></textarea>
+            </div>
+        </div>
+        <br/>
+        <div id="metrics">
+            <h3>Metrics</h3>
+            <div id="metricsSliders">
+            </div>
+        </div>
+        <div style="margin-top: 3em;">
+            <button id="apply" class="btn btn-primary">Apply</button>
+            <button id="restore" class="btn btn-primary">Restore</button>
+            <button id="decision" class="btn btn-primary" style="float: right">Decision</button>
+        </div>
+    </div>
+    <div id="radarFactors" style="width: 23.3%; float: left; overflow: hidden; text-align: center;">
+        <h3>Detailed Factors</h3>
+        <div style="width: 12em; display: inline-block">
+            <div id="currentColorDetailedFactors" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Current Assessment
+        </div>
+        <div style="width: 13em; display: inline-block">
+            <div id="simulationColorDetailedFactors" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Simulated Assessment
+        </div>
+    </div>
+    <div id="gaugeChartFactors" style="width: 23.3%; float: left; overflow: hidden; text-align: center;">
+        <h3>Factors</h3>
+        <div style="width: 12em; display: inline-block">
+            <div id="currentColorFactors" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Current Assessment
+        </div>
+        <div style="width: 13em; display: inline-block">
+            <div id="simulationColorFactors" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Simulated Assessment
+        </div>
+    </div>
+    <div id="radarDetailed" style="width: 23.3%; float: left; overflow: hidden; text-align: center;">
+        <h3>Detailed Strategic Indicators</h3>
+        <div style="width: 12em; display: inline-block">
+            <div id="currentColorDetailed" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Current Assessment
+        </div>
+        <div style="width: 13em; display: inline-block">
+            <div id="simulationColorDetailed" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Simulated Assessment
+        </div>
+    </div>
+    <div id="gaugeChart" style="width: 23.3%; float: left; overflow: hidden; text-align: center;">
+        <h3>Strategic Indicators</h3>
+        <div style="width: 12em; display: inline-block">
+            <div id="currentColor" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Current Assessment
+        </div>
+        <div style="width: 13em; display: inline-block">
+            <div id="simulationColor" style="float: left; height: 20px; width: 20px; border: 1px solid black; clear: both">
+            </div>
+            Simulated Assessment
+        </div>
+    </div>
+    <div th:replace="Fragments/Modals :: QRListModal"></div>
+    <div th:replace="Fragments/Modals :: QRModal"></div>
+    <div th:replace="Fragments/Modals :: messageModal"></div>
+</div>
+<br/>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" src="../../static/js/gaugeChartFactor.js" th:src="@{/js/gaugeChartFactor.js}"></script>
+<script type="text/javascript" src="../../static/js/gaugeChart.js" th:src="@{/js/gaugeChart.js}"></script>
+<script type="text/javascript" src="../../static/js/simulationQR.js" th:src="@{/js/simulationQR.js}"></script>
+</html>

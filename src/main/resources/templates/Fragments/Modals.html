@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+    <th:block th:fragment="projectModal">
+        <div class="modal fade" id="projectsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div id="profileSelectorDiv" style="margin-top: 1em;">
+                            <h4 style="display: inline">Profile: </h4>
+                            <div class="dropdown" style="display: inline-grid">
+                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                                    <span id = "profilesDropdownText" class="text"> Profiles </span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul id="profilesDropdownItems" class="dropdown-menu dropdown-menu-left">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Available Projects</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="list-group" id="projectsModalItems"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="aboutModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="title" style="margin-left: 10px;color: #0177a6;" >
+                <img class="container" th:src="@{/icons/qrapids.png}" src="../../static/icons/qrapids.png" alt="qrapids logo"/>
+                Q-Rapids: Quality-aware rapid software development
+            </h4>
+        </div>
+        <div class="modal-body">
+            <table style="width:100%">
+                <tr>
+                    <td>
+                        <p> Developed by the Software and Service Engineering Group (GESSI) from the Universitat Politècnica de Catalunya (UPC), as part of the Q-Rapids project.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p  th:text="@{${@environment.getProperty('about.custom.text')}}" > </p>
+                    </td>
+                </tr>
+            </table>
+            <hr/>
+            <h6>
+                <p> Software licensed under the <a style=" line-height: initial; float: initial; display: initial; color: #2e6da4; text-decoration: underline; background-color: initial; font-size: 12px; padding: initial" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</a> </p>
+                <span> Q-Rapids Dashboard </span>
+                <span> (Open Source Software, available at <a style=" line-height: initial; float: initial; display: initial; color: #2e6da4; text-decoration: underline; background-color: initial; font-size: 12px; padding: initial" href="https://github.com/q-rapids/qrapids-dashboard">GitHub</a>)</span>
+                <p></p>
+                <span> Icons made by <a style=" line-height: initial; float: initial; display: initial; color: #2e6da4; text-decoration: underline; background-color: initial; font-size: 12px; padding: initial" href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a style=" line-height: initial; float: initial; display: initial; color: #2e6da4; text-decoration: underline; background-color: initial; font-size: 12px; padding: initial" href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></span>
+            </h6>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="QRListModal">
+        <div class="modal fade" id="QRListModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Select from Quality Requirement candidates</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="list-group" id="QRCandidates"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="showQRButton" type="button" class="btn btn-primary">Show Quality Requirement</button>
+                        <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="QRModal">
+        <div class="modal fade" id="QRModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Quality Requirement</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h4 id="QRType">Quality Requirement Candidate</h4>
+                        <div class="input-group" style="margin-top: 15px">
+                            <span class="input-group-addon input-group-addon-qr">Goal</span>
+                            <label for="QRGoal"></label><input id="QRGoal" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr">Requirement</span>
+                            <label for="QRRequirement"></label><textarea id="QRRequirement" type="text" class="form-control" style="resize: vertical"></textarea>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr">Description</span>
+                            <label for="QRDescription"></label><textarea id="QRDescription" type="text" class="form-control" style="resize: vertical"></textarea>
+                        </div>
+                        <div id="QRBacklogUrlDiv" style="display: none">
+                            <br/>
+                            <span>Backlog URL: </span>
+                            <a id="QRBacklogUrl"></a>
+                        </div>
+                        <hr/>
+                        <h4>Decision</h4>
+                        <div class="input-group" style="margin-top: 15px">
+                            <span>Action: </span>
+                            <div class="dropdown" style="display: inline-grid;">
+                                <button id="decisionTypeButton" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><text id="decisionType">Select</text> <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li id="addQR"><a href="#">Add Quality Requirement</a></li>
+                                    <li id="ignoreQR"><a href="#">Ignore Quality Requirement</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr">Comments</span>
+                            <label for="QRDecisionRationale"></label><textarea id="QRDecisionRationale" type="text" class="form-control" style="resize: vertical"></textarea>
+                        </div>
+
+                    </div>
+                    <div id="cancelSaveFooter" class="modal-footer" style="display: block">
+                        <button id="cancelQRButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                        <button id="saveButton" type="button" class="btn btn-primary">Save</button>
+                        <button id="simulateButton" type="button" class="btn btn-primary">Simulate</button>
+                    </div>
+                    <div id="closeFooter" class="modal-footer" style="display: none">
+                        <button id="closeQRButton" type="button" class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="messageModal">
+        <div class="modal fade" id="messageModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 id="messageModalTitle" class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <span id="messageModalContent"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="acceptButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Accept</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="qualityModelElementModal">
+        <div class="modal fade" id="qualityModelElementModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 id="qualityModelElementModalTitle" class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr">Value</span>
+                            <label for="qualityModelElementValue"></label><input id="qualityModelElementValue" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr">Description</span>
+                            <label for="qualityModelElementDescription"></label><input id="qualityModelElementDescription" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group" id="qualityModelElementRationaleDiv">
+                            <span class="input-group-addon input-group-addon-qr">Rationale</span>
+                            <label for="qualityModelElementRationale"></label><textarea id="qualityModelElementRationale" type="text" class="form-control" readonly="true" style="resize: vertical"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="qualityModelElementModalOKButton" type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="alertModal">
+        <div class="modal fade" id="alertModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Alert</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Alert Id</b></span>
+                            <label for="alertId"></label><input id="alertId" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Date</b></span>
+                            <label for="alertDate"></label><input id="alertDate" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Type</b></span>
+                            <label for="alertType"></label><input id="alertType" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Element Id</b></span>
+                            <label for="alertElementId"></label><input id="alertElementId" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Name</b></span>
+                            <label for="alertName"></label><input id="alertName" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Value</b></span>
+                            <label for="alertValue"></label><input id="alertValue" type="text" class="form-control" readonly="true"/>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon input-group-addon-qr"><b>Threshold</b></span>
+                            <label for="alertThreshold"></label><input id="alertThreshold" type="text" class="form-control" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="closeAlertButton" type="button" class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="milestonesModal">
+        <div class="modal fade" id="milestonesModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Milestones list</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table id="milestonesTable" class="milestonesTable">
+                            <thead>
+                                <tr class="milestoneItem">
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id = "milestonesItems">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="closeMilestonesButton" type="button" class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="phasesModal">
+        <div class="modal fade" id="phasesModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Phases list</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table id="phasesTable" class="phasesTable">
+                            <thead>
+                            <tr class="phaseItem">
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody id = "phasesItems">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="closePhasesButton" type="button" class="btn btn-secondary pull-right" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="SIweightsModal">
+        <div class="modal fade" id="SIweightsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!--button type="button" class="close" data-dismiss="modal">&times;</button-->
+                        <h4 class="modal-title">Weighted average</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p> You have chosen the weighted average option, complete the weights for each factor.</p>
+                        <p>(Remember that the total sum of the weights has to be 100%)</p>
+                    </div>
+                    <div class="modal-body">
+                        <table id="SIweightsTable" class="weightsTable">
+                            <thead>
+                            <tr class="weightItem">
+                                <th>Selected Factors</th>
+                                <th>Weight (%)</th>
+                            </tr>
+                            </thead>
+                            <tbody id = "SIweightsItems">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="SIsubmitWeightsButton" type="button" class="btn btn-primary pull-right">Accept</button>
+                        <button id="SIcloseWeightsButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="QFweightsModal">
+        <div class="modal fade" id="QFweightsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!--button type="button" class="close" data-dismiss="modal">&times;</button-->
+                        <h4 class="modal-title">Weighted average</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p> You have chosen the weighted average option, complete the weights for each metric.</p>
+                        <p>(Remember that the total sum of the weights has to be 100%)</p>
+                    </div>
+                    <div class="modal-body">
+                        <table id="QFweightsTable" class="weightsTable">
+                            <thead>
+                            <tr class="weightItem">
+                                <th>Selected Metrics</th>
+                                <th>Weight (%)</th>
+                            </tr>
+                            </thead>
+                            <tbody id = "QFweightsItems">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="QFsubmitWeightsButton" type="button" class="btn btn-primary pull-right">Accept</button>
+                        <button id="QFcloseWeightsButton" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="profileSelectProjectsModal">
+        <div class="modal fade" id="profileSelectProjectsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"> Select Projects </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="projectsRow"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="submitProfileSelectProjectsModalBtn" type="button" class="btn btn-primary pull-right">Accept</button>
+                        <button id="closeProfileSelectProjectsModalBtn" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="profileProjectSelectSIsModal">
+        <div class="modal fade" id="profileProjectSelectSIsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" id="modalTitle"> Select Strategic Indicators </h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="projectText"></p>
+                        <div id="SIsRow"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="submitProfileProjectSelectSIsModalBtn" type="button" class="btn btn-primary pull-right">Accept</button>
+                        <button id="closeProfileProjectSelectSIsModalBtn" type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+</body>
+</html>

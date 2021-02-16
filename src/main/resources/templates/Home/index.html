@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragments/Template :: header">
+    <p><a href="http://localhost:63342/q-rapids-dashboard/q-rapids-dashboard_main/templates/StrategicIndicators/CurrentChart.html">Dashboard Home</a></p>
+</head>
+
+<link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
+<script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
+
+
+<body>
+
+<!-- Application Logo -->
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+
+<!-- Navegation -->
+<div th:replace="Fragments/Template :: navbar"></div>
+
+<div th:replace="Fragments/Template :: alerts"></div>
+
+<section id="admin-control">
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-lg-12">
+
+
+            <h1 style="display: flex; align-items: center; justify-content: center; height: 100vh; width: 100%;">
+                Welcome
+            </h1>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+</body>
+</html>

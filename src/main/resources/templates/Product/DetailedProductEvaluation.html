@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: ChartView"></th:block>
+</head>
+<body>
+    <div th:replace="Fragments/Template :: logo"></div>
+	<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+	<div th:replace="Fragments/TemplateDashboard :: navSubBarProductsDashboard"></div>
+    <div class="col-xs-2" style="margin-top: 1em;">
+        <h4 style="display: inline">Product: </h4>
+        <div style="display: inline-grid">
+            <select id="productSelector" class="form-control"></select>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <div id="radarChart" style="text-align:center;"></div>
+    <br/>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" src="../../static/js/productDetailedEvaluation.js" th:src="@{/js/productDetailedEvaluation.js}"></script>
+</html>

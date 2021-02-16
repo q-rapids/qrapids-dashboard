@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragments/TemplateDashboard :: basicHeader">
+</head>
+<link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
+<script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
+
+
+
+<body>
+
+<!-- Application Logo -->
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+
+<!-- Navegation -->
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
+
+<!-- Alert's system -->
+<div th:replace="Fragments/Template :: alerts"></div>
+
+<div class="row" style="padding:1em 3em;">
+    <!-- Container -->
+    <div class="col-xs-12 col-sm-12 col-lg-12 full-height">
+
+        <ul id="menu_top" class="col-xs-12 col-sm-12 col-lg-12 nav nav-tabs">
+
+            <li role="presentation" class="active">
+                <a href="#usersarea_list">User group</a>
+            </li>
+
+            <li role="presentation">
+                <a href="#create_usersarea">Create User Group</a>
+            </li>
+
+        </ul>
+
+        <div class="tab-content" style="margin-top:5em;margin-right:1em;">
+
+            <div role="tabpanel" class="tab-pane fade in active " id="usersarea_list">
+
+                <div class="panel panel-default">
+                    <!-- Default panel contents -->
+                    <div class="panel-heading">User's List</div>
+
+                    <!-- Table -->
+                    <table class="table table-striped">
+
+                        <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>Name Group</th>
+                            <th>Secctions</th>
+                            <th>Default Group</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+
+                        <!-- Childs -->
+                        <tbody>
+
+                            <tr th:each="userGroup : ${userGroups}">
+
+                                <td th:text="${userGroup.getId()}"></td>
+                                <td th:text="${userGroup.getName()}"></td>
+
+                                <td>
+                                    <span th:each="routeView : ${ userGroup.getRoutes() }">
+                                        <span th:text="${routeView.getName() }"></span>
+                                        <strong>|</strong>
+                                    </span>
+                                </td>
+
+                                <td style="display: flex; flex-flow: center; align-items: center; justify-content: center;">
+                                    <span th:if="${ userGroup.getDefault_group() }" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                    <span th:if="${ ! userGroup.getDefault_group() }" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </td>
+
+                                <td>
+                                    <form th:action="@{/usergroups/updateDefaultGroup}" method="POST">
+                                        <input type="hidden" th:name="id" th:value="${userGroup.getId()}" hidden="hidden"/>
+                                        <button type="submit" class="btn btn-border-black">Set Default</button>
+                                    </form>
+                                </td>
+
+                                <td>
+                                    <a th:href="@{/usergroups/{id}/update(id=${userGroup.getId()})}"> Update </a>
+                                </td>
+                                <td>
+                                    <a th:href="@{/usergroups/{id}/delete(id=${userGroup.getId()})}"> Delete </a>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                        <!-- Childs -->
+
+                    </table>
+                </div>
+
+            </div>
+
+            <div role="tabpanel" class="tab-pane fade" id="create_usersarea">
+
+                <article class="text-frame col-lg-4" style="padding-top:1em;margin-rigth:1em;">
+
+                    <h3>Create Group</h3>
+
+                    <div class="divisor-black"></div>
+
+                    <br/>
+
+                    <form class="full-width" th:object="${userGroup}" th:action="@{/usergroups/}" method="POST">
+
+                        <div class="form-group">
+                            <label for="name">Name *</label>
+                            <input type="text" class="form-control" th:name="name" th:id="name" th:field="*{name}"/>
+                        </div>
+
+
+                        <div class="form-group" hidden="hidden">
+                            <select class="selectpicker" multiple="multiple" th:name="routes" data-width="50%">
+
+                                <option th:each="route : ${ routes }"
+                                        th:value="${route.getId()}"
+                                        th:text="${route.getName()}"></option>
+
+                            </select>
+                        </div>
+
+
+                        <button type="submit" class="btn btn-border-black">Submit</button>
+                    </form>
+
+                </article>
+                <article class="col-lg-8">
+
+                    <h3>Select options</h3>
+
+                    <div class="divisor-black" style="margin: 1em 0em;"></div>
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>Name</th>
+                                <th>Route</th>
+                                <th>Enable</th>
+                            </tr>
+                        </thead>
+                        <!-- Childs -->
+                        <tbody>
+
+                        <tr th:each="route : ${routes}" th:id="${route.getId() + '_row'}">
+
+                            <td th:text="${route.getId()}"></td>
+                            <td th:text="${route.getName()}"></td>
+                            <td th:text="${route.getPath()}"></td>
+                            <td>
+                                <input class="input_dropdown"
+                                       th:id="${route.getId()}"
+                                       th:name="${route.getId()}" type="checkbox"/>
+                            </td>
+
+
+                        </tr>
+                        </tbody>
+                        <!-- Childs -->
+
+                    </table>
+                </article>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<select id="shadow_slt" hidden="hidden">
+
+    <option th:each="i : ${ userGroup.getRoutes() }"
+            th:value="${i.getId()}"
+            th:text="${i.getName()}"></option>
+
+</select>
+
+<select id="shadow_default_group" hidden="hidden">
+
+    <option th:each="i : ${routes}"
+            th:if="${i?.isRequired()}"
+            th:value="${i?.getId()}"
+            th:text="${i?.getName()}"></option>
+
+</select>
+
+<script>
+    var _t = [];
+
+    $('.input_dropdown').click(function( event ){
+
+        var curr_element = $(this)[0].name;
+        var isCheck = $(this)[0].checked;
+
+        if ( isCheck ) {
+            _t.push( curr_element );
+        } else {
+            var pos = _t.indexOf( curr_element );
+            if (pos > -1)
+                _t.splice(pos,1);
+        }
+
+        $('.selectpicker').selectpicker('val', _t );
+    })
+
+    // Default group
+    var _$ = [];
+    $('#shadow_slt').children('option').each(function(el){_$.push( $(this).val().toString() );})
+    $('.selectpicker').selectpicker('val', _$ );
+
+    // options new
+    var _$r = [];
+    $('#shadow_default_group').children('option').each(function(el){
+        _$r.push( $(this).val().toString() );
+    })
+    _$r.forEach(function (e) {
+        $('.selectpicker').selectpicker('val', e );
+        _t.push( e );
+        $("#" + e).attr('checked', true);
+        $("#" + e + '_row').attr('hidden', true);
+    });
+
+    // Handlers
+    $('#menu_top li a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+
+</script>
+
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+
+</body>
+</html>

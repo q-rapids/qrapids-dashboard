@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <script type="text/javascript" src="../../static/js/lib/d3.v4.min.js" th:src="@{/js/lib/d3.v4.min.js}"></script>
+</head>
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+<br/>
+<br/>
+<h1 id="title" align="center"></h1>
+<p th:replace="Fragments/TemplateDashboard :: navLinkMetrics"></p>
+<br/>
+<div id="gaugeChart" class="container" style="text-align:center;"></div>
+<br/>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" src="../../static/js/gaugeChart.js" th:src="@{/js/gaugeChartMet.js}"></script>
+<script>
+    window.onload = function() {
+        getData(200, 200, true);
+    };
+</script>
+</html>

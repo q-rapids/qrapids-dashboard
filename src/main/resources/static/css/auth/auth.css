@@ -1,0 +1,178 @@
+/*User*/
+
+.user-pane{
+    background: #071e2b;
+}
+
+.text-center{
+    text-align:center;
+}
+
+
+/* Components */
+.custom-card{
+    margin-top: 5vh;
+    background: white;
+    border: 2px solid #bac3ce;
+    min-height: 40em;
+    height: auto;
+    width: 100%;
+    border-radius: 1%;
+}
+
+.full-width{
+    width: 100%;
+}
+
+.users-list{
+    background: white;
+    min-height: 55vh;
+    height: auto;
+    width: 100%;
+}
+
+.user-item-view{
+    height: 100%;
+    align-items: center;
+    background: white;
+    border: 2px solid #99c9db;
+    border-radius: 7px;
+    color: black;
+    margin-top: .7em;
+}
+
+.flex-center{
+    justify-content: center !important;
+    align-items: center !important;
+    flex-direction: column;
+}
+
+.flex-row{
+    flex-direction: row !important;
+}
+
+.flex-start{
+    align-items: flex-start !important;
+}
+
+.no-space-left{
+    margin-left: 0px !important;
+    padding-left: 0px !important;
+}
+
+
+
+
+/* GLOBAL */
+p, a, ul, li, span, h1, h2, h3, h4, h5, label{
+    font-family: Helvetica, sans-serif;
+    font-weight: lighter;
+}
+
+a{
+    text-decoration: none;
+}
+
+a:hover{
+    color: #fff;
+}
+
+body{
+    margin: 0px;
+    padding: 0px;
+}
+
+.red{
+    background: red;
+}
+
+.blue{
+    background: #2189ce;
+}
+
+.tomato{
+    background: tomato;
+}
+
+.has-text-white{
+    color: white;
+}
+
+.btn-border{
+    border: 1px solid white;
+    background: rgba(0, 0, 0, 0);
+    color: white;
+    float: right;
+
+    transition: all .3s;
+}
+
+.btn-border:hover{
+    border: 1.3px solid white;
+    background: rgba(255, 255, 255, .9);
+    color: black;
+
+}
+
+.btn-border-black{
+    border: 1px solid black;
+    background: rgba(0, 0, 0, 0);
+    color: black;
+    float: right;
+
+    transition: all .3s;
+}
+
+.btn-border-black:hover{
+    border: 1.3px solid white;
+    background: #2189ce;
+    color: white;
+
+}
+
+/* Tools */
+.divisor{
+    border: 1px solid white;
+    width: 100%;
+}
+
+.divisor-black{
+    border: 1px solid black;
+    width: 100%;
+}
+
+.space-head{
+    margin-top: 15em;
+}
+
+/* Aligment */
+.is-flex{
+    display: flex !important;
+    align-items: center;
+    flex-direction: column;
+}
+
+.valign-flex{
+    justify-content: center;
+}
+
+
+.full-height{
+    min-height: 100vh;
+    height: auto;
+}
+
+/* Font */
+
+.text-frame{
+    padding: 0em 3em;
+}
+
+.font-medium{
+    font-size: 13pt;
+}
+
+.font-base{
+    font-family: Helvetica, sans-serif;
+    font-weight: lighter;
+}

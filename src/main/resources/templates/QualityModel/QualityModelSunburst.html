@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <script type="text/javascript" src="../../static/js/lib/d3.v4.min.js" th:src="@{/js/lib/d3.v4.min.js}"></script>
+    <script type="text/javascript" src="../../static/js/dagre.js" th:src="@{/js/dagre.js}"></script>
+    <script type="text/javascript" src="../../static/js/cytoscape.js" th:src="@{/js/cytoscape.js}"></script>
+    <script type="text/javascript" src="../../static/js/cytoscape-dagre.js" th:src="@{/js/cytoscape-dagre.js}"></script>
+
+    <style>
+        #cy {
+            width: 100%;
+            height: 700px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarAssessmentDashboard"></div>
+<table style="width:100%">
+    <tr>
+        <td width="80%"><div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div></td>
+        <td id= "QMView" width="20%"><div th:replace="Fragments/TemplateDashboard :: QualityModelView"></div></td>
+    </tr>
+</table>
+<br/>
+<br/>
+<br/>
+<div class="container" id='SunburstChart' align="center"><!-- Plotly chart will be drawn inside this DIV --></div>
+<div id="legend"></div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<!--script src='https://cdn.plot.ly/plotly-latest.min.js'></script-->
+<script type="text/javascript" th:src="@{/js/lib/plotly-latest.min.js}"></script>
+<script type="text/javascript" src="../../static/js/sunburstChart.js" th:src="@{/js/sunburstChart.js}"></script>
+</html>

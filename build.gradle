@@ -1,0 +1,127 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.6.RELEASE'
+		snippetsDir = file('build/generated-snippets')
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath('org.postgresql:postgresql:42.1.4.jre7')
+		classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2'
+	}
+}
+
+plugins {
+	id "org.sonarqube" version "2.7"
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'war'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'jacoco'
+apply plugin: 'org.asciidoctor.convert'
+
+group = 'com.upc.gessi.qrapids'
+version = '1.6.2'
+sourceCompatibility = 1.8
+
+war {
+	from 'README.md'
+	baseName = 'qr-dashboard'
+	version =  version
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('elasticsearch.version', '5.6.3')
+}
+
+dependencies {
+    // Security
+    compile("org.springframework.boot:spring-boot-starter-security")
+
+    // JWT
+    compile("io.jsonwebtoken:jjwt:0.7.0")
+
+    // Development
+    compile('org.springframework.boot:spring-boot-devtools')
+
+    // Spring Boot
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	compile('org.springframework.boot:spring-boot-starter-web')
+
+    // Spring mail
+	compile 'org.springframework.boot:spring-boot-starter-mail:1.5.8.RELEASE'
+
+    // DB JDBC
+	compile('org.postgresql:postgresql:42.1.4.jre7')
+
+	//JSON Java Library
+	compile 'com.google.code.gson:gson:2.8.2'
+
+	//socket
+	compile 'org.springframework.boot:spring-boot-starter-websocket'
+
+	//Utils
+	compile 'commons-io:commons-io:2.5'
+
+	//API Elastic
+	compile('org.elasticsearch.client:transport:5.6.3')
+	compile('org.elasticsearch:elasticsearch:5.6.3')
+	compile('org.elasticsearch.client:elasticsearch-rest-high-level-client:5.6.3')
+	compile files('libs/qrapids-qma-elastic-1.1.jar')
+
+	//API QR Generator
+	compile files('libs/qrapids-qr_generator-0.2.jar')
+
+	//Add qr-eval jar compilation
+	compile files('libs/qrapids-eval-2.0.jar')
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile('org.apache.logging.log4j:log4j-api:2.9.1')
+	compile('org.apache.logging.log4j:log4j-core:2.9.1')
+	testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+	testCompile('com.h2database:h2')
+
+	// comment this line to launch application from developing environment
+	// uncomment this line before generating .war file
+	//providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+}
+
+jacoco {
+	toolVersion = "0.8.2"
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled = true
+		html.enabled = false
+	}
+}
+
+asciidoctor {
+	sourceDir = file('docs/asciidoc')
+	inputs.dir snippetsDir
+	outputDir = file('docs/asciidoc')
+	separateOutputDirs = false
+	dependsOn test
+}
+
+test {
+	testLogging {
+		events "passed", "skipped", "failed"
+		exceptionFormat "full"
+	}
+}
+

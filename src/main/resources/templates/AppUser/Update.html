@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="Fragments/TemplateDashboard :: basicHeader">
+</head>
+
+<link rel="stylesheet" th:href="@{/css/bootstrap-select.min.css}" />
+<script type="text/javascript" th:src="@{/js/bootstrap-select.min.js}"></script>
+
+
+<body>
+
+<!-- Application Logo -->
+<div th:replace="Fragments/Template :: logo"></div>
+<br/>
+
+<!-- NAvegation -->
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
+
+<div class="row">
+    <article class="text-frame col-lg-6 " style="margin:1em;">
+
+        <h3>Update</h3>
+
+        <div class="divisor-black"></div>
+
+        <br/>
+
+        <form class="full-width" th:object="${appuser}" th:action="@{/users/update}" method="POST">
+
+            <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" disabled=" disabled" th:name="username" th:id="username" th:value="${appuser.getUsername()}" th:field="*{username}"/>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email address *</label>
+                <input type="email" class="form-control" th:name="email" th:id="email" th:value="${appuser.getEmail()}" th:field="*{email}" />
+            </div>
+
+            <button type="submit" class="btn btn-border-black">Update</button>
+
+        </form>
+
+        <br/>
+        <form id="form_reset" class="full-width" th:object="${appuser}" th:action="@{/users/resetpassword}" method="POST" >
+
+            <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+
+            <button type="submit" class="btn btn-danger">Reset Password</button>
+
+        </form>
+
+
+    </article>
+
+    <!--article class="text-frame col-lg-6 " style="padding-top:1em;margin-rigth:1em;">
+
+        <h3>Change permissions</h3>
+
+        <div class="divisor-black" ></div>
+
+        <form th:if="${! appuser.getAdmin()}" id="form_set_admin" class="full-width" th:object="${appuser}" th:action="@{/users/updateadmin}" method="POST">
+
+            <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+
+            <button type="submit" class="btn btn-danger" style="margin-top: 1em;">Set Admin User </button>
+
+        </form>
+
+        <form th:if="${! appuser.getAdmin()}" id="form_set_admin" class="full-width" th:object="${appuser}" th:action="@{/users/setusergroup}" method="POST">
+
+
+            <h3>Change group</h3>
+            <div class="divisor-black" ></div>
+
+            <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+
+            <div class="form-group" style="margin-top: 1em;">
+                <select class="selectpicker" th:name="userGroup" data-width="50%">
+
+                    <option th:each="userGroup : ${ userGroups }"
+                            th:value="${userGroup?.getId()}"
+                            th:text="${userGroup?.getName()}"></option>
+
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-warning">Change user group </button>
+
+        </form>
+
+        <form th:if="${ appuser.getAdmin()}" id="form_set_admin" class="full-width" th:object="${appuser}" th:action="@{/users/setusergroup}" method="POST">
+
+            <input type="hidden" th:name="id" th:value="${appuser.getId()}" hidden="hidden"/>
+
+            <div class="form-group" style="margin-top: 1em;">
+                <select class="selectpicker" th:name="userGroup" data-width="50%">
+
+                    <option th:each="userGroup : ${ userGroups }"
+                            th:value="${userGroup.getId()}"
+                            th:text="${userGroup.getName()}"></option>
+
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-danger" style="margin-top: 1em;">Remove admin and set group </button>
+
+        </form>
+
+    </article-->
+</div>
+
+
+<select id="shadow_slt" hidden="hidden">
+
+    <option th:value="${defautlUserGroup?.getId()}"
+            th:text="${defautlUserGroup?.getName()}"></option>
+
+</select>
+
+<script>
+    var _$ = [];
+    $('#shadow_slt').children('option').each(function(el){_$.push( $(this).val().toString() );})
+    $('.selectpicker').selectpicker('val', _$ );
+</script>
+
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+
+</body>
+</html>

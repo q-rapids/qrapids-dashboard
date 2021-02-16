@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <th:block th:fragment="HistoricChartView">
+        <th:block th:fragment="ChartView">
+            <th:block th:fragment="basicHeader">
+                <meta charset="UTF-8" />
+                <title>Q-Rapids</title>
+
+                <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+                <link rel="stylesheet" th:href="@{/css/stylesDashboard.css}" />
+
+                <link rel='shortcut icon' type='image/x-icon' th:href="@{/favicon.ico}"/>
+
+                <script type="text/javascript" th:src="@{/js/lib/angular.min.js}"></script>
+                <script type="text/javascript" th:src="@{/js/app/app.services.js}"></script>
+                <!--script type="text/javascript" th:src="@{/js/lib/popper.min.js}"></script-->
+
+                <script type="text/javascript" th:src="@{/js/lib/jquery.min.js}"></script>
+
+                <!-- Latest compiled and minified JavaScript -->
+                <script th:src="@{/js/bootstrap.min.js}"></script>
+
+                <script type="text/javascript" th:src="@{/js/lib/sockjs.min.js}"></script>
+                <script type="text/javascript" th:src="@{/js/lib/stomp.min.js}"></script>
+                <link rel="stylesheet" th:href="@{/css/animate.css}" />
+                <script type="text/javascript" th:src="@{/js/lib/bootstrap-notify.min.js}"></script>
+                <script type="text/javascript" th:src="@{/js/notificationsHandler.js}"></script>
+            </th:block>
+
+            <script type="text/javascript" th:src="@{/js/lib/moment.js}"></script>
+            <script type="text/javascript" th:src="@{/js/lib/Chart.min.js}"></script>
+            <script type="text/javascript" th:src="@{/js/lib/chartjs-plugin-annotation.min.js}"></script>
+
+            <script type="text/javascript" th:src="@{/js/chartjs-plugin-trendline.js}"></script>
+
+        </th:block>
+
+        <th:block th:fragment="HistoricView">
+            <script type="text/javascript" th:src="@{/js/lib/gijgo.min.js}"></script>
+            <link rel="stylesheet" th:href="@{/css/gijgo.min.css}" />
+            <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}" />
+        </th:block>
+    </th:block>
+</head>
+<body>
+    <div class="topnav" id="myTopnav" th:fragment="navBarDashboard">
+        <a id="Products" style="display: none;">Products</a>
+        <a id="Assessment">Assessment</a>
+        <a id="Prediction">Prediction</a>
+        <a id="Simulation">Simulation</a>
+        <a id="QualityAlerts">Alerts</a>
+        <a id="QualityRequirements">Quality Requirements</a>
+        <a id="Decisions">Decisions</a>
+        <a id="Reporting" th:if="${@environment.getProperty('jasperServer.url') != ''}">Reporting</a>
+        <a id="Configuration" ><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a>
+        <div id="helpDropdown" class="dropdown pull-right" style="margin-top: 1em; margin-right: 1em; margin-left: 1em;">
+            <button id="helpDropdownButton" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                <span id = "HelpDropdownText" class="text">Help</span>
+                <span class="caret"></span>
+            </button>
+            <ul id="helpDropdownItems" class="dropdown-menu dropdown-menu-right">
+                <li th:if="${@environment.getProperty('help.process') != ''}">
+                    <a th:href="@{${@environment.getProperty('help.process')}}" target="_tab">Q-Rapids Process</a>
+                </li>
+                <li>
+                    <a th:href="@{${@environment.getProperty('help.userguide')}}" target="_tab">User guide</a>
+                </li>
+                <li>
+                    <a th:href="@{${@environment.getProperty('help.support')}}" target="_tab">Support</a>
+                </li>
+                <li >
+                    <a href="Modals.html" data-toggle="modal" data-target="#aboutModal" >About</a>
+                </li>
+            </ul>
+            <div class="modal fade" id="aboutModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div th:replace="Fragments/Modals :: aboutModal"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a th:if="${@environment.getProperty('security.enable')}" class="pull-right"
+           th:href="@{/profile}">
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span id="MyProfile">My profile</span>
+        </a>
+    </div>
+    <div class="subnav" id="submenuAssessment" th:fragment="navSubBarAssessmentDashboard">
+        <a id="StrategicIndicatorsAssessment">Strategic Indicators</a>
+        <a id="DetailedStrategicIndicatorsAssessment">Detailed Strategic Indicators</a>
+        <a id="QualityFactorsAssessment">Factors</a>
+        <a id="DetailedQualityFactorsAssessment">Detailed Factors</a>
+        <a id="MetricsAssessment">Metrics</a>
+        <a id="PhasesAssessment" style="display: none;">Phases</a>
+        <a id="RawDataAssessment" th:unless="${@environment.getProperty('rawdata.dashboard') == null}"
+           th:href="@{${@environment.getProperty('rawdata.dashboard')}}" target="_tab">Raw Data</a>
+        <a id="QualityModelAssessment">Quality Model</a>
+        <span class="pull-right">
+            <div class="panel-body" style="color: #3F403F">
+                View mode:
+                <div class="btn-group">
+                    <button id="Chart" type="button" onclick="menuNav(time + 'Chart')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment graphically">
+                        <img class="icons" th:src="@{/icons/graphical.png}"
+                             src="../../static/icons/graphical.png" alt="graphical data"/>
+                    </button>
+                    <button id="Table" type="button" onclick="menuNav(time + 'Table')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment textually">
+                        <img class="icons" th:src="@{/icons/table.png}"
+                             src="../../static/icons/table.png" alt="table data"/>
+                    </button>
+                </div>
+                <div class="btn-group">
+                    <button id="Current" type="button" onclick="menuNav('Current' + viewMode)" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View current assessment">
+                        <img class="icons" th:src="@{/icons/current.png}"
+                             src="../../static/icons/current.png" alt="current data"/>
+                    </button>
+                    <button id="Historic" type="button" onclick="menuNav('Historic' + viewMode)" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View historical assessments">
+                        <img class="icons" th:src="@{/icons/histo.png}"
+                             src="../../static/icons/histo.png" alt="historical data"/>
+                    </button>
+                </div>
+            </div>
+        </span>
+    </div>
+    <div class="subnav" id="submenuPrediction" th:fragment="navSubBarPredictionDashboard">
+        <a id="StrategicIndicatorsPrediction">Strategic Indicators</a>
+        <a id="DetailedStrategicIndicatorsPrediction">Detailed Strategic Indicators</a>
+        <a id="QualityFactorsPrediction">Factors</a>
+        <a id="DetailedQualityFactorsPrediction">Detailed Factors</a>
+        <a id="MetricsPrediction">Metrics</a>
+    </div>
+    <div class="subnav" id="submenuProjects" th:fragment="navSubBarProductsDashboard">
+        <a id="ProductsEvaluation">Products</a>
+        <a id="ProductsDetailedEvaluation">Projects</a>
+    </div>
+    <div class="subnav" id="submenuConfiguration" th:fragment="navSubBarConfiguration">
+        <a id="ProductsConfig">Products</a>
+        <a id="StrategicIndicatorsConfig">Strategic Indicators</a>
+        <a id="QualityFactorsConfig">Quality Factors</a>
+        <a id="MetricsConfig">Metrics</a>
+        <a id="CategoriesConfig">Categories</a>
+        <a id="ProfilesConfig">Profiles</a>
+        <a th:if="${@environment.getProperty('security.enable')}" id="profileConfig">User Profile</a>
+        <a th:if="${@environment.getProperty('security.enable')}" id="usersConfig">User Administration</a>
+        <a th:if="${@environment.getProperty('security.enable')}" id="LogoutProfileConfig">Logout</a>
+    </div>
+    <div class="subnav" id="submenuSimulation" th:fragment="navSubBarSimulationDashboard">
+        <a id="FactorsSimulation">Factors</a>
+        <a id="MetricsSimulation">Metrics</a>
+        <a id="QRSimulation">Quality Requirements</a>
+    </div>
+    <p th:fragment="navLinkMetrics" style="margin-left: 20px; font-size: medium; font-family: Arial ">
+        <a id="originDSI" onclick="navBack(true)"></a>
+        <span id = "arrow1"></span>
+        <a id="originQF" onclick="navBack(false)"></a>
+        <span id = "arrow2"></span>
+        <a id="originDQF" onclick="navBack(true,true)"></a>
+    </p>
+    <p th:fragment="navLinkDetailedQF" style="margin-left: 20px; font-size: medium; font-family: Arial ">
+        <a id="originSI" onclick="navBack(true)"></a>
+        <span id = "arrow"></span>
+        <a id="origin" onclick="navBack(false)"></a></p>
+    <p th:fragment="navLinkQF" style="margin-left: 20px; font-size: medium; font-family: Arial ">
+        <a id="originSIQF" onclick="myFunction()"></a>
+    <script>
+        function myFunction() {
+            if (time == 'Current' && viewMode == 'Chart') {
+                document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode + DSIRepresentationMode);
+            } else {
+                document.getElementById("originSIQF").onclick = menuNav('../DetailedStrategicIndicators/' + time + viewMode);
+            }
+        }
+    </script></p>
+    <th:block th:fragment="HistoricChart">
+        <br/>
+        <div class="pull-right" style="width: 100%; padding-right: 1em; padding-left: 1em;">
+            <form class="form-inline well" style="float: right">
+                <table style="width:100%">
+                    <tr>
+                        <td>
+                            <div class="form-group" id="fitToContentDiv" style="margin-right: 10px">
+                                <input type="checkbox" class="form-check-input" id="fitToContent">
+                                <label class="control-label" for="fitToContent">Fit to content</label>
+                            </div>
+                        </td>
+                        <td rowspan="2">
+                            <div class="form-group dropdown" id="techniqueDropdownDiv">
+                                <label class="control-label">Technique: </label>
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <span id="selectedTechnique" th:text="${@environment.getProperty('forecast.technique')}"></span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul id="techniqueDropdown" class="dropdown-menu dropdown-menu-right"></ul>
+                            </div>
+                            <div class="form-group" id="fromDiv">
+                                <label class="control-label">From: </label>
+                                <input id="datepickerFrom" width="250" class="form-control"/>
+                            </div>
+                            <div class="form-group" id="current_dateDiv">
+                                <label class="control-label">Current: </label>
+                                <input id="datepickerCurrentDate" width="250" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label"> To: </label>
+                                <input id="datepickerTo" width="250" class="form-control"/>
+                            </div>
+                            <button id="applyButton" type="button" class="btn btn-default">Apply</button>
+                            <div class="form-group dropdown">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Interval <span class="caret"></span></button>
+                                <ul id="intervalsDropdown" class="dropdown-menu dropdown-menu-right"></ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="form-group" id="showConfidenceDiv" style="margin-right: 10px">
+                                <input type="checkbox" class="form-check-input" id="showConfidence">
+                                <label class="control-label" for="showConfidence">Show confidence intervals</label>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <br/>
+        <div class="container" style="text-align:center;" id="chartContainer"></div>
+        <br/>
+    </th:block>
+    <th:block th:fragment="ProjectSelector">
+        <div id="projectSelectorDiv" class="col-xs-4" style="margin-top: 1em;">
+            <h4 style="display: inline">Project: </h4>
+            <div class="dropdown" style="display: inline-grid">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                    <span id = "projectsDropdownText" class="text">Projects</span>
+                    <span class="caret"></span>
+                </button>
+                <ul id="projectsDropdownItems" class="dropdown-menu dropdown-menu-left">
+                </ul>
+            </div>
+            <button class = "btn" id="projectModalButton">
+                <img class="icons" th:src="@{/icons/select.png}"
+                     src="../../static/icons/select.png" alt="select profile data"/>
+            </button>
+            <div th:replace="Fragments/Modals :: projectModal"></div>
+        </div>
+        <script type="text/javascript" th:src="@{/js/projectsSelector.js}"></script>
+    </th:block>
+    <th:block th:fragment="RepresentationMode">
+        <div class="btn-group" style="display: flex; justify-content: flex-end; margin-right: 5px;">
+            <button id="Radar" type="button" onclick="menuNav(time + viewMode + 'Radar')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment with radar charts">
+                <img class="icons" th:src="@{/icons/radar_chart.png}"
+                     src="../../static/icons/radar_chart.png" alt="radar chart representation"/>
+            </button>
+            <button id="Stacked" type="button" onclick="menuNav(time + viewMode + 'Stacked')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment with stacked bar charts">
+                <img class="icons" th:src="@{/icons/stacked_bar_chart.png}"
+                     src="../../static/icons/stacked_bar_chart.png" alt="stacked bar chart representation"/>
+            </button>
+            <button id="Polar" type="button" onclick="menuNav(time + viewMode + 'Polar')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View assessment with polar charts">
+                <img class="icons" th:src="@{/icons/polar_chart.png}"
+                     src="../../static/icons/polar_chart.png" alt="polar chart representation"/>
+            </button>
+        </div>
+    </th:block>
+    <th:block th:fragment="QualityModelView">
+        <div class="btn-group" style="display: flex; justify-content: flex-end; margin-right: 5px;">
+            <button id="Graph" type="button" onclick="menuNav('QualityModelGraph')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View quality model with graph chart">
+                <img class="icons" th:src="@{/icons/tree_chart.png}"
+                     src="../../static/icons/tree_chart.png" alt="graph chart representation"/>
+            </button>
+            <button id="Sunburst" type="button" onclick="menuNav('QualityModelSunburst')" class="btn btn-primary" style="background-color: #ffffff" data-toggle="tooltip" title="View quality model with sunburst chart">
+                <img class="icons" th:src="@{/icons/sunburst_chart.png}"
+                     src="../../static/icons/sunburst_chart.png" alt="sunburst chart representation"/>
+            </button>
+        </div>
+    </th:block>
+</body>
+<th:block th:fragment="scriptsHistoric">
+    <script type="text/javascript" th:src="@{/js/scriptDatePicker.js}"></script>
+    <th:block th:fragment="scriptsBasic">
+        <script type="text/javascript" th:src="@{/js/navScript.js}"></script>
+    </th:block>
+</th:block>
+</html>

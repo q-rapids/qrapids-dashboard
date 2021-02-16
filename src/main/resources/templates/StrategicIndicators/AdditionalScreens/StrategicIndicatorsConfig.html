@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
+    <link rel="stylesheet" th:href="@{/css/products.css}" />
+</head>
+
+<body>
+<div th:replace="Fragments/Template :: logo"></div>
+<div th:replace="Fragments/TemplateDashboard :: navBarDashboard"></div>
+<div th:replace="Fragments/TemplateDashboard :: navSubBarConfiguration"></div>
+<div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
+<br/>
+<br/>
+<br/>
+<div id="SIConfigView">
+    <div id="SITree">
+        <div style="display: flex; flex-direction: row; justify-content: center;">
+            <button onclick="newSI()" class="btn btn-primary" style="font-size: 18px; margin-bottom: 12px">New Strategic Indicator</button>
+        </div>
+        <br/>
+        <ul id="SIList" class="list-group">
+        </ul>
+    </div>
+    <div id="SIInfo" style="display: none">
+        <div id="SIForm">
+            <div class="SIInfoRow">
+                <p id = "SIInfoTitle" style="font-size: 36px; margin-right: 1%">1. Strategic Indicator Information</p>
+            </div>
+            <div class="SIInfoRowID" style="display:none;">
+                <p style="font-size: 18px; margin-right: 1%; width: 40%;">Assessment ID: </p>
+                <input id="SIAssessmentID" style="border:none; font-size: 18px; margin-right: 1%; width: 100%;" readonly></input>
+            </div>
+            <div class="SIInfoRow">
+                <p style="font-size: 18px; margin-right: 1%">Name*: </p>
+                <input id="SIName" rows="1" style="width: 100%;"></input>
+            </div>
+            <div class="SIInfoRow" style="resize: vertical;">
+                <p style="font-size: 18px; margin-right: 1%">Description: </p>
+                <textarea id="SIDescription" style="width: 100%;" rows="3"></textarea>
+            </div>
+            <div class="QFInfoRow">
+                <p style="font-size: 18px; margin-right: 1%">Threshold: </p>
+                <input id="SIThreshold" type="number" step="0.01" min="0" max="1" rows="1" style="width: 100%;"></input>
+            </div>
+            <div class="SIInfoRow" style="resize: vertical;">
+                <p id="SINetworkLabel" style="font-size: 18px; margin-right: 1%">Assessment model: </p>
+                <input id="SINetwork" type="file"></input>
+            </div>
+            <div class="SIInfoRow">
+                <p id="SICompositionTitle" style="font-size: 36px; margin-right: 1%">2. Strategic Indicator Composition</p>
+            </div>
+            <div class="SIInfoRow">
+                <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Available Factors: </p>
+                    <select id="avFactorsBox" multiple="multiple" style="height: 150px;">
+
+                    </select>
+                </div>
+                <div class="selectionColumn" style="padding-top:30px;">
+                    <button onclick="moveItemsLeft()" class="btn btn-default top-and-bottom-margin" id="oneLeft">&lt;</button>
+                    <button onclick="moveItemsRight()" class="btn btn-default top-and-bottom-margin" id="right" style="margin-top:3px;">&gt;</button>
+                    <button onclick="moveAllItemsRight()" class="btn btn-default top-and-bottom-margin" id="allRight" style="margin-top:3px;">&gt;&gt;</button>
+                    <button onclick="moveAllItemsLeft()" class="btn btn-default top-and-bottom-margin" id="allLeft" style="margin-top:3px;">&lt;&lt;</button>
+                </div>
+                <div class="selectionColumn" style="width: 100%">
+                    <p style="font-size: 18px; margin-bottom: 1%">Selected Factors*: </p>
+                    <select id="selFactorsBox" multiple="multiple" style="height: 150px;">
+                    </select>
+                    <form style="margin-top: 5px" >
+                        <input type="checkbox" id="weightCheckbox" onchange="openEdit()"> Weighted average
+                        <button class = "btn" id="weightEditButton" disabled="true">
+                            <img class="icons" th:src="@{/icons/edit.png}"
+                                 src="../../static/icons/edit.png" alt="edit weights data"/>
+                        </button>
+                        <div th:replace="Fragments/Modals :: SIweightsModal"></div>
+                    </form>
+                </div>
+            </div>
+            <div class="SIInfoRow" style="justify-content: space-between">
+                <button class="btn btn-primary btn-danger" id="deleteSI" style="font-size: 18px; max-width: 30%;">Delete Strategic Indicator</button>
+                <button class="btn btn-primary" id="saveSI" style="font-size: 18px; max-width: 30%;">Save Strategic Indicator</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
+<script type="text/javascript" th:src="@{/js/configSI.js}"></script>
+</html>
