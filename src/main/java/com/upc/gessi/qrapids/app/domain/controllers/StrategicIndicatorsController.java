@@ -363,7 +363,6 @@ public class StrategicIndicatorsController {
         else
             factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null,evaluationDate, evaluationDate);
         factorEvaluationQma.setFactors(factorList);
-
         return assessProjectStrategicIndicators(evaluationDate, project, factorEvaluationQma);
     }
 
@@ -447,7 +446,6 @@ public class StrategicIndicatorsController {
         factorEvaluationQma.setFactors(factorList);
         factorEvaluationQma.clearStrategicIndicatorsRelations(si.getExternalId());
         //factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
-
         correct = assessStrategicIndicator(evaluationDate, prj, si, factorEvaluationQma);
 
         // 3. When all the strategic indicators is calculated, we need to update the factors with the information of

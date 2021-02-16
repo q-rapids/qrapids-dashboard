@@ -111,7 +111,6 @@ public class Factors {
                         factor.getWeights());
             dtoFactor.setThreshold(factor.getThreshold());
             return dtoFactor;
-
         } catch (QualityFactorNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);

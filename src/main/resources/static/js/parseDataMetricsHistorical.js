@@ -17,9 +17,7 @@ var ids = [];
 var value = [];
 var labels = [];
 var categories = [];
-
 var metricsDB = [];
-
 var decisions = new Map();
 
 function getData() {
@@ -148,7 +146,6 @@ function getMetricsCategories () {
     });
 }
 
-
 function getMetricsDB() {
     jQuery.ajax({
         dataType: "json",
@@ -161,6 +158,7 @@ function getMetricsDB() {
         }
     });
 }
+
 window.onload = function() {
     getData();
 };
