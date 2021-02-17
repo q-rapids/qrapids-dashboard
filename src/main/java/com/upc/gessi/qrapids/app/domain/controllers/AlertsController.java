@@ -142,9 +142,15 @@ public class AlertsController {
         List<Alert> alerts = alertRepository.findByProject_IdOrderByDateDesc(project.getId());
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);
-            if (profile.getAllSIByProject(project)){ // if allSI true --> return all alerts
+            if (profile.getAllSIByProject(project)) { // allSI true --> filter only by profile quality level
+                if(profile.getQualityLevel().equals(Profile.QualityLevel.METRICS_FACTORS))
+                    alerts.removeIf(a -> a.getType().equals(AlertType.STRATEGIC_INDICATOR));
+                else if (profile.getQualityLevel().equals(Profile.QualityLevel.METRICS)) {
+                    alerts.removeIf(a -> a.getType().equals(AlertType.STRATEGIC_INDICATOR));
+                    alerts.removeIf(a -> a.getType().equals(AlertType.FACTOR));
+                }
                 return alerts;
-            } else { // if allSI false --> return filtered alerts
+            } else { // if allSI false --> return alerts filtered by profile quality level and SIs
                 return filterByProfile(project,profile,alerts);
             }
         } else { // if profile is null --> return all alerts

@@ -46,11 +46,8 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
-    console.log("sessionStorage: profile_id");
-    console.log(sessionStorage.getItem("profile_id"));
-    var profileId = sessionStorage.getItem("profile_id");
-
     $scope.getKPIEval = function(){
+        setHistoricDataPickers();
         $http({
             method : "GET",
             url : "../api/strategicIndicators/historical?profile="+profileId,
@@ -569,6 +566,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         } else {
             var url = "../api/strategicIndicators/qualityFactors/historical?profile="+profileId;
         }
+        setHistoricDataPickers();
         $http({
             method : "GET",
             url : url,
@@ -683,6 +681,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             var profileId = sessionStorage.getItem("profile_id");
             var url = "../api/qualityFactors/metrics/historical?profile="+profileId;
         }
+        setHistoricDataPickers();
         $http({
             method : "GET",
             url : url,
@@ -786,6 +785,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             var profileId = sessionStorage.getItem("profile_id");
             var url = "../api/metrics/historical?profile="+profileId;
         }
+        setHistoricDataPickers();
         $http({
             method : "GET",
             url : url,
@@ -915,6 +915,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             var profileId = sessionStorage.getItem("profile_id");
             var url = "../api/qualityFactors/historical?profile="+profileId;
         }
+        setHistoricDataPickers();
         $http({
             method : "GET",
             url : url,
