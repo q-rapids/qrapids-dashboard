@@ -46,11 +46,8 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
-    console.log("sessionStorage: profile_id");
-    console.log(sessionStorage.getItem("profile_id"));
-    var profileId = sessionStorage.getItem("profile_id");
-
     $scope.getKPIEval = function(){
+        setHistoricDataPickers();
         $http({
             method : "GET",
             url : "../api/strategicIndicators/historical?profile="+profileId,
@@ -138,29 +135,34 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.getAlerts = function(){
-        var url =  "api/alerts?prj=" + sessionStorage.getItem("prj");
+        var url =  "api/alerts?prj=" + sessionStorage.getItem("prj") + "&profile=" + sessionStorage.getItem("profile_id");
         $http({
             method : "GET",
             url : url
         }).then(function mySuccess(response) {
             getQualityModel();
             $scope.data = response.data;
+            console.log("getAlerts function DATA: ");
+            console.log(response.data);
             $scope.data.forEach(function (alert) {
-                var relations = qualityModelRelations.get(alert.id_element);
+                if (alert.type != "STRATEGIC_INDICATOR") { // on SIs alerts can't define impacted fields
+                    var relations = qualityModelRelations.get(alert.id_element);
+                    if (relations) { //avoid error if there are problems with relations (quality model) for this element
+                        var strategicIndicators = relations.strategicIndicators;
+                        var strategicIndicatorsText = [];
+                        strategicIndicators.forEach(function (strategicIndicator) {
+                            strategicIndicatorsText.push(strategicIndicator.name);
+                        });
+                        alert.strategicIndicators = strategicIndicatorsText.join(", ");
 
-                var strategicIndicators = relations.strategicIndicators;
-                var strategicIndicatorsText = [];
-                strategicIndicators.forEach(function (strategicIndicator) {
-                    strategicIndicatorsText.push(strategicIndicator.name);
-                });
-                alert.strategicIndicators = strategicIndicatorsText.join(", ");
-
-                var factors = relations.factors;
-                var factorsText = [];
-                factors.forEach(function (factor) {
-                    factorsText.push(factor.name);
-                });
-                alert.factors = factorsText.join(", ");
+                        var factors = relations.factors;
+                        var factorsText = [];
+                        factors.forEach(function (factor) {
+                            factorsText.push(factor.name);
+                        });
+                        alert.factors = factorsText.join(", ");
+                    }
+                }
             });
             clearAlertsPendingBanner();
         })
@@ -454,12 +456,12 @@ app.controller('TablesCtrl', function($scope, $http) {
             url: url,
             data: {
                 element : {
-                    id: "duplication",
-                    name: "Duplication Density",
+                    id: "comments", // "duplication", alert demo data
+                    name: "Comment Ratio", // "Duplication Density", alert demo data
                     type: "METRIC",
                     value: "0.4",
                     threshold: "0.5",
-                    category: "duplication",
+                    category: "comments", // "duplication", alert demo data
                     project_id: sessionStorage.getItem("prj")
                 }
             }
@@ -475,12 +477,12 @@ app.controller('TablesCtrl', function($scope, $http) {
             url: url,
             data: {
                 element : {
-                    id: "testingperformance",
-                    name: "Performance of the tests",
+                    id: "codequality", // "testingperformance", alert demo data
+                    name: "Code Quality", // "Performance of the tests", alert demo data
                     type: "FACTOR",
                     value: "0.4",
                     threshold: "0.5",
-                    category: "testingperformance",
+                    category: "codequality", // "testingperformance", alert demo data
                     project_id: sessionStorage.getItem("prj")
                 }
             }
@@ -564,6 +566,7 @@ app.controller('TablesCtrl', function($scope, $http) {
         } else {
             var url = "../api/strategicIndicators/qualityFactors/historical?profile="+profileId;
         }
+        setHistoricDataPickers();
         $http({
             method : "GET",
             url : url,
@@ -663,7 +666,6 @@ app.controller('TablesCtrl', function($scope, $http) {
                     });
                 }
             });
-            //TODO
             $scope.data = data;
             $scope.sortType = 'factorName';
             $scope.sortReverse = false;
@@ -679,6 +681,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             var profileId = sessionStorage.getItem("profile_id");
             var url = "../api/qualityFactors/metrics/historical?profile="+profileId;
         }
+        setHistoricDataPickers();
         $http({
             method : "GET",
             url : url,
@@ -757,6 +760,21 @@ app.controller('TablesCtrl', function($scope, $http) {
         })
     };
 
+    $scope.getMetUrl = function (metricId) {
+        jQuery.ajax({
+            dataType: "json",
+            url: "../api/metrics",
+            cache: false,
+            type: "GET",
+            async: true,
+            success: function (dataDB) {
+                var urlLink = dataDB.find(function (element) {
+                    return element.externalId === metricId;
+                }).webUrl;
+                if (urlLink) window.open(urlLink,'_blank');
+            }});
+    };
+
     $scope.getMetricsTableHistorical = function(){
         var id = getParameterByName('id');
         if (id !== "") {
@@ -767,6 +785,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             var profileId = sessionStorage.getItem("profile_id");
             var url = "../api/metrics/historical?profile="+profileId;
         }
+        setHistoricDataPickers();
         $http({
             method : "GET",
             url : url,
@@ -896,6 +915,7 @@ app.controller('TablesCtrl', function($scope, $http) {
             var profileId = sessionStorage.getItem("profile_id");
             var url = "../api/qualityFactors/historical?profile="+profileId;
         }
+        setHistoricDataPickers();
         $http({
             method : "GET",
             url : url,

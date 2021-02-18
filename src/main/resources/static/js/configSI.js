@@ -7,6 +7,25 @@ var postUrl;
 var deleteUrl;
 var httpMethod = "POST";
 
+var assessSI_url;
+
+function getAssessSIUrl () {
+    if (serverUrl) {
+        var url = serverUrl + "/api/assessSIUrl";
+    }
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            console.log(data.assessSIUrl);
+            assessSI_url = data.assessSIUrl;
+        }
+    });
+}
+
 function buildSIList() {
     console.log("sessionStorage: profile_id");
     console.log(sessionStorage.getItem("profile_id"));
@@ -69,8 +88,15 @@ function clickOnTree(e){
             $("#SIName").val(si.name);
             $("#SIDescription").attr("placeholder", "Write the strategic indicator description here");
             $("#SIDescription").val(si.description);
-            $("#SINetworkLabel").html("Assessment Model: <br/>(leave empty if unchanged)");
-            $("#SINetwork").val("");
+            $("#SIThreshold").attr("placeholder", "Specify minimum acceptable value for the strategic indicator here");
+            $("#SIThreshold").val(si.threshold);
+            if (assessSI_url != '') {
+                $("#SINetworkLabel").html("Assessment Model: <br/>(leave empty if unchanged)");
+                $("#SINetwork").val("");
+            } else {
+                $("#SINetworkLabel").hide();
+                $("#SINetwork").hide();
+            }
             $("#SICompositionTitle").text("Strategic Indicator Composition");
             $("#deleteSI").show();
             if (factors.length > 0) {
@@ -107,8 +133,15 @@ function newSI() {
     $("#SIName").val("");
     $("#SIDescription").attr("placeholder", "Write the strategic indicator description here");
     $("#SIDescription").val("");
-    $("#SINetworkLabel").html("Assessment Model: ");
-    $("#SINetwork").val("");
+    $("#SIThreshold").attr("placeholder", "Specify minimum acceptable value for the strategic indicator here");
+    $("#SIThreshold").val("");
+    if (assessSI_url != '') {
+        $("#SINetworkLabel").html("Assessment Model: ");
+        $("#SINetwork").val("");
+    } else {
+        $("#SINetworkLabel").hide();
+        $("#SINetwork").hide();
+    }
     $("#SICompositionTitle").text("Step 2 - Select the corresponding factors");
     $("#deleteSI").hide();
     if (factors.length > 0)
@@ -361,6 +394,7 @@ $("#saveSI").click(function () {
         var formData = new FormData();
         formData.append("name", $('#SIName').val());
         formData.append("description", $('#SIDescription').val());
+        formData.append("threshold", $('#SIThreshold').val());
         var file = $('#SINetwork').prop('files')[0];
         if (file)
             formData.append("network", file);
@@ -404,4 +438,5 @@ $("#deleteSI").click(function () {
 window.onload = function() {
     loadFactors(false);
     buildSIList();
+    getAssessSIUrl();
 };

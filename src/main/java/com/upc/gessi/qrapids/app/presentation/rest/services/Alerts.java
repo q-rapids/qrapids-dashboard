@@ -26,6 +26,7 @@ import qr.models.QualityRequirementPattern;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -47,21 +48,39 @@ public class Alerts {
     private ProjectsController projectsController;
 
     @Autowired
+    private MetricsController metricsController;
+
+    @Autowired
+    private FactorsController factorsController;
+
+    @Autowired
+    private StrategicIndicatorsController strategicIndicatorsController;
+
+    @Autowired
     private UsersController usersController;
 
     private Logger logger = LoggerFactory.getLogger(Alerts.class);
 
     @GetMapping("/api/alerts")
     @ResponseStatus(HttpStatus.OK)
-    public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj) {
+    public List<DTOAlert> getAlerts(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
             Project project = projectsController.findProjectByExternalId(prj);
-            List<Alert> alerts = alertsController.getAlerts(project);
+            List<Alert> alerts = alertsController.getAlertsByProjectAndProfile(project, profile);
             alertsController.setViewedStatusForAlerts(alerts);
 
             List<DTOAlert> dtoAlerts = new ArrayList<>();
             for (Alert a : alerts) {
+                String valueDescription = String.format(Locale.ENGLISH, "%.2f", a.getValue());
+                if (a.getType() == AlertType.METRIC) {
+                    valueDescription = metricsController.getMetricLabelFromValue(a.getValue()) + " (" + valueDescription + ")";
+                } else if (a.getType() == AlertType.FACTOR) {
+                    valueDescription = factorsController.getFactorLabelFromValue(a.getValue()) + " (" + valueDescription + ")";
+                } else if (a.getType() == AlertType.STRATEGIC_INDICATOR) {
+                    valueDescription = strategicIndicatorsController.getLabel(a.getValue()) + " (" + valueDescription + ")";
+                }
                 DTOAlert dtoAlert = new DTOAlert(a.getId(), a.getId_element(), a.getName(), a.getType(), a.getValue(), a.getThreshold(), a.getCategory(), new java.sql.Date(a.getDate().getTime()), a.getStatus(), a.isReqAssociat(), null);
+                dtoAlert.setValueDescription(valueDescription);
                 dtoAlerts.add(dtoAlert);
             }
             return dtoAlerts;
@@ -73,10 +92,10 @@ public class Alerts {
 
     @GetMapping("/api/alerts/countNew")
     @ResponseStatus(HttpStatus.OK)
-    public DTONewAlerts countNewAlerts(@RequestParam(value = "prj") String prj) {
+    public DTONewAlerts countNewAlerts(@RequestParam(value = "prj") String prj, @RequestParam(value = "profile", required = false) String profile) {
         try {
             Project project = projectsController.findProjectByExternalId(prj);
-            Pair<Long, Long> newAlerts = alertsController.countNewAlerts(project);
+            Pair<Long, Long> newAlerts = alertsController.countNewAlertsByProfile(project, profile);
             return new DTONewAlerts(newAlerts.getFirst(), newAlerts.getSecond());
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);

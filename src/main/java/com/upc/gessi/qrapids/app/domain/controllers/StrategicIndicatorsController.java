@@ -56,6 +56,9 @@ public class StrategicIndicatorsController {
     private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
 
     @Autowired
+    private AlertsController alertsController;
+
+    @Autowired
     private ProjectsController projectsController;
 
     @Autowired
@@ -130,11 +133,15 @@ public class StrategicIndicatorsController {
     }
 
 
-    public Strategic_Indicator editStrategicIndicator (Long strategicIndicatorId, String name, String description, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, QualityFactorNotFoundException {
+    public Strategic_Indicator editStrategicIndicator(Long strategicIndicatorId, String name, String description, String threshold, byte[] file, List<String> qualityFactors) throws StrategicIndicatorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, QualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator = getStrategicIndicatorById(strategicIndicatorId);
         if (file != null && file.length > 10) strategicIndicator.setNetwork(file);
         strategicIndicator.setName(name);
         strategicIndicator.setDescription(description);
+        if (!threshold.isEmpty()) // check if threshold is specified and then set it
+            strategicIndicator.setThreshold(Float.parseFloat(threshold));
+        else
+            strategicIndicator.setThreshold(null);
         // Actualize Quality Factors
         boolean weighted = reassignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
         strategicIndicator.setWeighted(weighted);
@@ -177,10 +184,14 @@ public class StrategicIndicatorsController {
     }
 
 
-    public Strategic_Indicator saveStrategicIndicator (String name, String description, byte[] file, List<String> qualityFactors, Project project) throws QualityFactorNotFoundException {
+    public Strategic_Indicator saveStrategicIndicator(String name, String description, String threshold, byte[] file, List<String> qualityFactors, Project project) throws QualityFactorNotFoundException {
         Strategic_Indicator strategicIndicator;
         // create Strategic Indicator minim (without quality factors and weighted)
         strategicIndicator = new Strategic_Indicator(name, description, file, project);
+        if (!threshold.isEmpty()) // check if threshold is specified and then set it
+            strategicIndicator.setThreshold(Float.parseFloat(threshold));
+        else
+            strategicIndicator.setThreshold(null);
         strategicIndicatorRepository.save(strategicIndicator);
         // Associate it with Quality Factors (set weighted)
         boolean weighted = assignQualityFactorsToStrategicIndicator (qualityFactors, strategicIndicator);
@@ -352,7 +363,6 @@ public class StrategicIndicatorsController {
         else
             factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null,evaluationDate, evaluationDate);
         factorEvaluationQma.setFactors(factorList);
-
         return assessProjectStrategicIndicators(evaluationDate, project, factorEvaluationQma);
     }
 
@@ -431,12 +441,11 @@ public class StrategicIndicatorsController {
         FactorEvaluation factorEvaluationQma = new FactorEvaluation();
 
         // We will compute the evaluation values for the SI for THIS CONCRETE component
-
+        List<DTOFactorEvaluation> factorList = factorsController.getAllFactorsEvaluation(prj, null,false);
         // 1.- We need to remove old data from factor evaluations in the strategic_indicators relationship attribute
-        factorEvaluationQma.setFactors(factorsController.getAllFactorsEvaluation(prj, null,false));
+        factorEvaluationQma.setFactors(factorList);
         factorEvaluationQma.clearStrategicIndicatorsRelations(si.getExternalId());
         //factorEvaluationQma.clearStrategicIndicatorsRelations(evaluationDate, si.getExternalId());
-
         correct = assessStrategicIndicator(evaluationDate, prj, si, factorEvaluationQma);
 
         // 3. When all the strategic indicators is calculated, we need to update the factors with the information of
@@ -477,6 +486,8 @@ public class StrategicIndicatorsController {
             logger.error(e.getMessage(), e);
             correct = false;
         }
+
+
 
         // Save relations of factor -> SI
         if (correct && !assessmentValueOrLabel.isEmpty()) {
@@ -527,6 +538,8 @@ public class StrategicIndicatorsController {
                     factorsMismatch
             ))
                 throw new AssessmentErrorException();
+            // CHECK STRATEGIC INDICATOR ALERT
+            alertsController.checkStrategicIndicatorAlert(strategicIndicator.getExternalId(), value,project);
         }
         return assessmentValueOrLabel;
     }
@@ -555,6 +568,8 @@ public class StrategicIndicatorsController {
                     missingFactors,
                     factorsMismatch))
                 throw new AssessmentErrorException();
+            // CHECK STRATEGIC INDICATOR ALERT
+            alertsController.checkStrategicIndicatorAlert(strategicIndicator.getExternalId(), valueAndLabel.getFirst(),project);
         }
         else {
             throw new AssessmentErrorException();
@@ -681,9 +696,9 @@ public class StrategicIndicatorsController {
                 // check if si is in data base and update it
                 Strategic_Indicator strategicIndicator = strategicIndicatorRepository.findByNameAndProject_Id(dtoDetailedStrategicIndicator.getName(),project.getId());
                 if (strategicIndicator != null) {
-                    editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), null, factors);
+                    editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), strategicIndicator.getThreshold().toString(), null, factors);
                 } else { // save it if it's new
-                    saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", null, factors, project);
+                    saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", "" , null, factors, project);
                 }
             }
         }

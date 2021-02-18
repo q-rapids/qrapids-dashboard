@@ -29,7 +29,7 @@ public class AssesSI {
     @Autowired
     private StrategicIndicatorsController strategicIndicatorsController;
 
-    @Value("${assessSI.url}")
+    @Value("${assessSI.url:}")
     private String url;
 
     public List<DTOAssessment> assesSI(String siId, Map<String, String> mapFactors, File network) {

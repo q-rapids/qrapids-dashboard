@@ -36,6 +36,9 @@ public class Strategic_Indicator {
     @Column(name = "weighted")
     boolean weighted;
 
+    @Column(name = "threshold")
+    private Float threshold;
+
     // we need to keep the name of this list as quality_factors, it is the name of the table in the database
     // ToDo: This should be changed, the name of the local variables should be no directly connected to table names in database
     //@ElementCollection(fetch = FetchType.EAGER)
@@ -182,5 +185,13 @@ public class Strategic_Indicator {
 
     public boolean isWeighted() {
         return weighted;
+    }
+
+    public Float getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Float threshold) {
+        this.threshold = threshold;
     }
 }

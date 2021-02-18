@@ -363,6 +363,8 @@ public class QualityRequirementsTest {
                                         .description("Type of element causing the alert (METRIC or FACTOR)"),
                                 fieldWithPath("[].alert.value")
                                         .description("Current value of the element causing the alert"),
+                                fieldWithPath("[].alert.valueDescription")
+                                        .description("Category and value of the element causing the alert"),
                                 fieldWithPath("[].alert.threshold")
                                         .description("Minimum acceptable value for the element"),
                                 fieldWithPath("[].alert.category")

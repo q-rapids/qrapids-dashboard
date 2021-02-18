@@ -23,7 +23,7 @@ function configureHistoric () {
     $('#datepickerFrom').datepicker(config);
     $('#datepickerTo').datepicker(config);
 
-    if (window.location.href.search("/Reporting") !== -1) { // reporting page intervals
+    if (window.location.href.match("/Reporting")) { // reporting page intervals
         $('#intervalsDropdown').append('<li><a onclick="thisWeek();" href="#">This week</a></li>');
         $('#intervalsDropdown').append('<li><a onclick="last7Days();" href="#">Last 7 days</a></li>');
         $('#intervalsDropdown').append('<li><a onclick="last14Days();" href="#">Last 14 days</a></li>');
@@ -70,7 +70,7 @@ function configureHistoric () {
     $('#current_dateDiv').hide();
     $('#showConfidenceDiv').hide();
     // hide some parts in reporting page
-    if (window.location.href.search("/Reporting") !== -1) {
+    if (window.location.href.match("/Reporting")) {
         $('#fitToContentDiv').hide();
         $('#applyButton').hide();
     }
@@ -339,6 +339,11 @@ function parseDate(date) {
 
     var stringDate = yyyy + '-' + mm + '-' + dd;
     return stringDate
+}
+
+function setHistoricDataPickers() {
+    sessionStorage.setItem("historicFromDate",$('#datepickerFrom').val());
+    sessionStorage.setItem("historicToDate",$('#datepickerTo').val());
 }
 
 

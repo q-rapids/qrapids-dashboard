@@ -63,6 +63,8 @@ function clickOnTree(e){
             $("#QFName").val(qf.name);
             $("#QFDescription").attr("placeholder", "Write the quality factor description here");
             $("#QFDescription").val(qf.description);
+            $("#QFThreshold").attr("placeholder", "Specify minimum acceptable value for the quality factor here");
+            $("#QFThreshold").val(qf.threshold);
             $("#QFCompositionTitle").text("Quality Factor Composition");
             $("#deleteQF").show();
             if (metrics.length > 0) {
@@ -100,6 +102,8 @@ function newQF() {
     $("#QFName").val("");
     $("#QFDescription").attr("placeholder", "Write the quality factor description here");
     $("#QFDescription").val("");
+    $("#QFThreshold").attr("placeholder", "Specify minimum acceptable value for the quality factor here");
+    $("#QFThreshold").val("");
     $("#QFCompositionTitle").text("Step 2 - Select the corresponding metrics");
     $("#deleteQF").hide();
     if (metrics.length > 0)
@@ -352,6 +356,7 @@ $("#saveQF").click(function () {
         var formData = new FormData();
         formData.append("name", $('#QFName').val());
         formData.append("description", $('#QFDescription').val());
+        formData.append("threshold", $('#QFThreshold').val());
         formData.append("metrics", qualityMetrics);
         $.ajax({
             url: postUrl,

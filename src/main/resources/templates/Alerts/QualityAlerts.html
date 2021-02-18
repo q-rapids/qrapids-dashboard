@@ -10,8 +10,8 @@
     <div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div>
     <br/>
     <div class="col-xs-4 pull-right" style="text-align: right; padding-right: 2em;">
-        <button type="button" class="btn btn-primary" ng-click="newAlert()">New Metric Alert</button>
-        <button type="button" class="btn btn-primary" ng-click="newAlertFactor()">New Factor Alert</button>
+        <button type="button" class="btn btn-primary" th:if="${@environment.getProperty('demoMode')}" th:unless="${false}" ng-click="newAlert()">New Metric Alert</button>
+        <button type="button" class="btn btn-primary" th:if="${@environment.getProperty('demoMode')}" th:unless="${false}" ng-click="newAlertFactor()">New Factor Alert</button>
     </div>
     <div class="contanier" style="padding-right: 15em; padding-left: 15em; margin-right: auto; margin-left: auto;" id="tableCurrent" ng-init="getAlerts()">
         <br/>
@@ -22,12 +22,6 @@
         <table class="table table-hover">
             <thead>
             <tr style="white-space: nowrap">
-                <th ng-click="sortBy('id_element')">Alert Id
-                    <span ng-show="sortType == 'id_element' &amp;&amp; sortReverse" class="caret"></span>
-                    <span ng-show="sortType == 'id_element' &amp;&amp; !sortReverse" class="dropup">
-                        <span class="caret"></span>
-                    </span>
-                </th>
                 <th ng-click="sortBy('date')">Date
                     <span ng-show="sortType == 'date' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'date' &amp;&amp; !sortReverse" class="dropup">
@@ -37,12 +31,6 @@
                 <th ng-click="sortBy('type')">Type
                     <span ng-show="sortType == 'type' &amp;&amp; sortReverse" class="caret"></span>
                     <span ng-show="sortType == 'type' &amp;&amp; !sortReverse" class="dropup">
-                        <span class="caret"></span>
-                    </span>
-                </th>
-                <th ng-click="sortBy('category')">Element Id
-                    <span ng-show="sortType == 'category' &amp;&amp; sortReverse" class="caret"></span>
-                    <span ng-show="sortType == 'category' &amp;&amp; !sortReverse" class="dropup">
                         <span class="caret"></span>
                     </span>
                 </th>
@@ -86,11 +74,12 @@
             </thead>
             <tbody>
             <tr ng-repeat="d in data | filter:f | orderBy:sortType:sortReverse:customComparator">
-                <td id="element_id" ng-class="{'color-red': (d.status == 'NEW')}">{{d.id_element}}</td>
                 <td id="date" ng-class="{'color-red': (d.status == 'NEW')}">{{d.date}}</td>
                 <td id="type" ng-class="{'color-red': (d.status == 'NEW')}">{{d.type}}</td>
-                <td id="category" ng-class="{'color-red': (d.status == 'NEW')}">{{d.category}}</td>
                 <td id="name" ng-class="{'color-red': (d.status == 'NEW')}">
+                    <a ng-class="{'color-red-link': (d.status == 'NEW')}" ng-if="d.type == 'STRATEGIC_INDICATOR'" ng-href="QualityFactors/HistoricChart?id={{d.id_element}}&amp;name={{d.name}}&amp;from={{substractOneWeek(d.date)}}">
+                        {{d.name}}
+                    </a>
                     <a ng-class="{'color-red-link': (d.status == 'NEW')}" ng-if="d.type == 'FACTOR'" ng-href="Metrics/HistoricChart?id={{d.id_element}}&amp;name={{d.name}}&amp;from={{substractOneWeek(d.date)}}">
                         {{d.name}}
                     </a>
@@ -98,7 +87,7 @@
                         {{d.name}}
                     </a>
                 </td>
-                <td id="value" ng-class="{'color-red': (d.status == 'NEW')}">{{d.value}}</td>
+                <td id="value" ng-class="{'color-red': (d.status == 'NEW')}">{{d.valueDescription}}</td>
                 <td id="threshold" ng-class="{'color-red': (d.status == 'NEW')}">{{d.threshold}}</td>
                 <td id="factors" ng-class="{'color-red': (d.status == 'NEW')}">{{d.factors}}</td>
                 <td id="strategicIndicators" ng-class="{'color-red': (d.status == 'NEW')}">{{d.strategicIndicators}}</td>

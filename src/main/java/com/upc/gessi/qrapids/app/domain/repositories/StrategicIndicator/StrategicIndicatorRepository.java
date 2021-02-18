@@ -11,4 +11,5 @@ public interface StrategicIndicatorRepository extends CrudRepository<Strategic_I
     List<Strategic_Indicator> findByProject_IdOrderByName (Long projectId);
     Strategic_Indicator findByNameAndProject_Id (String name, Long projectId);
     boolean existsByExternalIdAndProject_Id (String externalId, Long projectId);
+    Strategic_Indicator findByExternalIdAndProjectId(String externalId, Long projectId);
 }

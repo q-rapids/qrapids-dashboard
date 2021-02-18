@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 
 
 import com.upc.gessi.qrapids.app.domain.controllers.MetricsController;
+import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Metric;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -53,6 +55,19 @@ public class Metrics {
         } catch (ProjectNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
+        }
+    }
+
+    @PutMapping("/api/metrics/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void editMetric(@PathVariable Long id, HttpServletRequest request) {
+        try {
+            String threshold = request.getParameter("threshold");
+            String webUrl = request.getParameter("url");
+            metricsController.editMetric(id,threshold,webUrl); // at the moment is only possible change threshold
+        } catch (MetricNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
     }
 

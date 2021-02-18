@@ -13,15 +13,18 @@ if (getParameterByName('id').length !== 0) {
 
 //initialize data vectors
 var texts = [];
+var ids = [];
 var value = [];
 var labels = [];
 var categories = [];
-
+var metricsDB = [];
 var decisions = new Map();
 
 function getData() {
     getDecisions();
+    getMetricsDB();
     texts = [];
+    ids = [];
     value = [];
     labels = [];
     //get data from API
@@ -37,6 +40,8 @@ function getData() {
         async: true,
         success: function (response) {
             var data = response;
+            console.log("MY Data");
+            console.log(data);
             if (getParameterByName('id').length !== 0) {
                 data = response[0].metrics;
             }
@@ -48,6 +53,7 @@ function getData() {
             if (data[j]) {
                 last = data[j].id;
                 texts.push(data[j].name);
+                ids.push(data[j].id);
                 labels.push([data[j].name]);
             }
             while (data[j]) {
@@ -66,6 +72,7 @@ function getData() {
                     decisionsIgnore = [];
                     last = data[j].id;
                     texts.push(data[j].name);
+                    ids.push(data[j].id);
                     var labelsForOneChart = [];
                     labelsForOneChart.push(data[j].name);
                     if (decisions.has(data[j].id)) {
@@ -135,6 +142,19 @@ function getMetricsCategories () {
         success: function (response) {
             categories = response;
             drawChart();
+        }
+    });
+}
+
+function getMetricsDB() {
+    jQuery.ajax({
+        dataType: "json",
+        url: "../api/metrics",
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (dataDB) {
+            metricsDB = dataDB;
         }
     });
 }

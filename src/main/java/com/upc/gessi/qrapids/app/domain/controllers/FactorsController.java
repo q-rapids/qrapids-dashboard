@@ -49,6 +49,9 @@ public class FactorsController {
     private ProfileProjectStrategicIndicatorsRepository profileProjectStrategicIndicatorsRepository;
 
     @Autowired
+    private AlertsController alertsController;
+
+    @Autowired
     private MetricsController metricsController;
 
     @Autowired
@@ -182,10 +185,14 @@ public class FactorsController {
         }
     }
 
-    public Factor saveQualityFactor(String name, String description, List<String> qualityMetrics, Project project) throws MetricNotFoundException {
+    public Factor saveQualityFactor(String name, String description, String threshold, List<String> qualityMetrics, Project project) throws MetricNotFoundException {
         Factor qualityFactor;
         // create Quality Factor minim (without quality factors and weighted)
         qualityFactor = new Factor (name, description, project);
+        if (!threshold.isEmpty()) // check if threshold is specified and then set it
+            qualityFactor.setThreshold(Float.parseFloat(threshold));
+        else
+            qualityFactor.setThreshold(null);
         qualityFactorRepository.save(qualityFactor);
         boolean weighted = assignQualityMetricsToQualityFactor (qualityMetrics, qualityFactor);
         qualityFactor.setWeighted(weighted);
@@ -220,10 +227,14 @@ public class FactorsController {
         return weighted;
     }
 
-    public Factor editQualityFactor (Long factorId, String name, String description, List<String> qualityMetrics) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
+    public Factor editQualityFactor(Long factorId, String name, String description, String threshold, List<String> qualityMetrics) throws QualityFactorNotFoundException, QualityFactorMetricsNotFoundException, MetricNotFoundException {
         Factor factor = getQualityFactorById(factorId);
         factor.setName(name);
         factor.setDescription(description);
+        if (!threshold.isEmpty()) // check if threshold is specified and then set it
+            factor.setThreshold(Float.parseFloat(threshold));
+        else
+            factor.setThreshold(null);
         // Actualize Quality Metrics
         boolean weighted = reassignQualityMetricsToQualityFactor (qualityMetrics, factor);
         factor.setWeighted(weighted);
@@ -325,6 +336,11 @@ public class FactorsController {
         else
             metricList = metricsController.getAllMetricsHistoricalEvaluation(project, null, evaluationDate, evaluationDate);
         metricEvaluationQma.setMetrics(metricList);
+
+        // CHECK METRICS ALERTS
+        for (DTOMetricEvaluation m : metricList) {
+            alertsController.checkMetricAlert(m.getId(), m.getValue(), project);
+        }
 
         return assessProjectQualityFactors(evaluationDate, project, metricEvaluationQma);
     }
@@ -507,6 +523,8 @@ public class FactorsController {
                     indicators
             ))
                 throw new AssessmentErrorException();
+            // CHECK FACTORS ALERTS
+            alertsController.checkFactorAlert(qualityFactor.getExternalId(),value,project);
         }
         return assessmentValueOrLabel;
     }
@@ -526,7 +544,6 @@ public class FactorsController {
         MetricEvaluation metricEvaluationQma = new MetricEvaluation();
 
         // We will compute the evaluation values for the QF for THIS CONCRETE component
-
         // 1.- We need to remove old data from metric evaluations in the quality_factors relationship attribute
         metricEvaluationQma.setMetrics(metricsController.getAllMetricsEvaluation(prj, null));
         metricEvaluationQma.clearQualityFactorsRelations(qf.getExternalId());
@@ -583,16 +600,6 @@ public class FactorsController {
         qmaQualityFactors.setFactorStrategicIndicatorRelation(factorList, projectExternalId);
     }
 
-    /*public static String getFactorLabelFromValue(Float f) {
-        List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
-        if (f != null) {
-            for (QFCategory qfCategory : qfCategoryList) {
-                if (f <= qfCategory.getUpperThreshold())
-                    return qfCategory.getName();
-            }
-        }
-        return "No Category";
-    }*/
     public String getFactorLabelFromValue (Float f) {
         List <QFCategory> qfCategoryList = factorCategoryRepository.findAllByOrderByUpperThresholdAsc();
         if (f != null) {

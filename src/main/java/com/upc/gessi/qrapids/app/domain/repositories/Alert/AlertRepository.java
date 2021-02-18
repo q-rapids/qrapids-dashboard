@@ -23,4 +23,8 @@ public interface AlertRepository extends JpaRepository<Alert, Long> {
     long countByProject_IdAndStatus(Long projectId, AlertStatus status);
 
     long countByProject_IdAndReqAssociatIsTrueAndStatusEquals(Long projectId, AlertStatus status);
+
+    List<Alert> getByProject_IdAndStatus(Long projectId, AlertStatus status);
+
+    List<Alert> getByProject_IdAndReqAssociatIsTrueAndStatusEquals(Long projectId, AlertStatus status);
 }
