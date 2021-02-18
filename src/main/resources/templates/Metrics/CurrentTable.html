@@ -56,7 +56,7 @@
             <tbody>
             <tr ng-repeat="d in data | filter:f | orderBy:sortType:sortReverse">
                 <td id="date">{{d.date}}</td>
-                <td>{{d.name}}</td>
+                <td id="name" ng-click="getMetUrl(d.id)">{{d.name}}</td>
                 <td>{{d.description}}</td>
                 <td>{{d.value}}</td>
                 <td>{{d.rationale}}</td>

@@ -20,6 +20,8 @@ public class Factor {
     private String description;
     @Column(name = "weighted")
     private boolean weighted;
+    @Column(name = "threshold")
+    private Float threshold;
 
     @ManyToOne
     @JoinColumn(name="project_id", referencedColumnName = "id")
@@ -151,5 +153,13 @@ public class Factor {
 
     public void setQualityFactorMetricsList(List<QualityFactorMetrics> qfMetricsList) {
         this.qualityFactorMetricsList = qfMetricsList;
+    }
+
+    public Float getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Float threshold) {
+        this.threshold = threshold;
     }
 }

@@ -3,10 +3,7 @@ package com.upc.gessi.qrapids.app.presentation.rest.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.upc.gessi.qrapids.app.domain.controllers.AlertsController;
-import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
-import com.upc.gessi.qrapids.app.domain.controllers.QRPatternsController;
-import com.upc.gessi.qrapids.app.domain.controllers.QualityRequirementController;
+import com.upc.gessi.qrapids.app.domain.controllers.*;
 import com.upc.gessi.qrapids.app.domain.models.*;
 import com.upc.gessi.qrapids.app.domain.exceptions.AlertNotFoundException;
 import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
@@ -34,10 +31,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.HttpClientErrorException;
 import qr.models.QualityRequirementPattern;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -66,6 +60,9 @@ public class AlertsTest {
     private ProjectsController projectsDomainController;
 
     @Mock
+    private MetricsController metricsDomainController;
+
+    @Mock
     private AlertsController alertsDomainController;
 
     @Mock
@@ -91,17 +88,22 @@ public class AlertsTest {
     public void getAllAlerts() throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
+        String profileID = null; // without profile
         when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         Alert alert = domainObjectsBuilder.buildAlert(project);
         List<Alert> alertList = new ArrayList<>();
         alertList.add(alert);
-        when(alertsDomainController.getAlerts(project)).thenReturn(alertList);
+
+        when(metricsDomainController.getMetricLabelFromValue(alert.getValue())).thenReturn("Normal");
+
+        when(alertsDomainController.getAlertsByProjectAndProfile(project,profileID)).thenReturn(alertList);
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/alerts")
-                .param("prj", project.getExternalId());
+                .param("prj", project.getExternalId())
+                .param("profile", profileID);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -111,6 +113,7 @@ public class AlertsTest {
                 .andExpect(jsonPath("$[0].name", is(alert.getName())))
                 .andExpect(jsonPath("$[0].type", is(alert.getType().toString())))
                 .andExpect(jsonPath("$[0].value", is(HelperFunctions.getFloatAsDouble(alert.getValue()))))
+                .andExpect(jsonPath("$[0].valueDescription", is("Normal ("+ String.format(Locale.ENGLISH, "%.2f", alert.getValue())+")")))
                 .andExpect(jsonPath("$[0].threshold", is(HelperFunctions.getFloatAsDouble(alert.getThreshold()))))
                 .andExpect(jsonPath("$[0].category", is(alert.getCategory())))
                 .andExpect(jsonPath("$[0].date", is(alert.getDate().getTime())))
@@ -122,7 +125,10 @@ public class AlertsTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("[].id")
                                         .description("Alert identifier"),
@@ -134,6 +140,8 @@ public class AlertsTest {
                                         .description("Type of element causing the alert (METRIC or FACTOR)"),
                                 fieldWithPath("[].value")
                                         .description("Current value of the element causing the alert"),
+                                fieldWithPath("[].valueDescription")
+                                        .description("Category and value of the element causing the alert"),
                                 fieldWithPath("[].threshold")
                                         .description("Minimum acceptable value for the element"),
                                 fieldWithPath("[].category")
@@ -150,7 +158,7 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(alertsDomainController, times(1)).getAlerts(project);
+        verify(alertsDomainController, times(1)).getAlertsByProjectAndProfile(project, profileID);
         verify(alertsDomainController, times(1)).setViewedStatusForAlerts(alertList);
         verifyNoMoreInteractions(alertsDomainController);
     }
@@ -159,12 +167,14 @@ public class AlertsTest {
     public void getAllAlertsWrongProject() throws Exception {
         // Given
         String projectExternalId = "test";
+        String profileId = null; // without profile
         when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/alerts")
-                .param("prj", projectExternalId);
+                .param("prj", projectExternalId)
+                .param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
@@ -181,15 +191,17 @@ public class AlertsTest {
     public void countNewAlerts() throws Exception {
         // Given
         Project project = domainObjectsBuilder.buildProject();
+        String profileId = null; // without profile
         when(projectsDomainController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
         Long newAlerts = 2L;
         Long newAlertWithQR = 1L;
-        when(alertsDomainController.countNewAlerts(project)).thenReturn(Pair.of(newAlerts, newAlertWithQR));
+        when(alertsDomainController.countNewAlertsByProfile(project,profileId)).thenReturn(Pair.of(newAlerts, newAlertWithQR));
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/alerts/countNew")
-                .param("prj", project.getExternalId());
+                .param("prj", project.getExternalId())
+                .param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -200,7 +212,10 @@ public class AlertsTest {
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("prj")
-                                        .description("Project external identifier")),
+                                        .description("Project external identifier"),
+                                parameterWithName("profile")
+                                        .description("Profile data base identifier")
+                                        .optional()),
                         responseFields(
                                 fieldWithPath("newAlerts")
                                         .description("Number of new alerts"),
@@ -210,7 +225,7 @@ public class AlertsTest {
                 ));
 
         // Verify mock interactions
-        verify(alertsDomainController, times(1)).countNewAlerts(project);
+        verify(alertsDomainController, times(1)).countNewAlertsByProfile(project, profileId);
         verifyNoMoreInteractions(alertsDomainController);
     }
 
@@ -218,12 +233,14 @@ public class AlertsTest {
     public void countNewAlertsWrongProject() throws Exception {
         // Given
         String projectExternalId = "test";
+        String profileId = null; // without profile
         when(projectsDomainController.findProjectByExternalId(projectExternalId)).thenThrow(new ProjectNotFoundException());
 
         // Perform request
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/api/alerts/countNew")
                 .param("prj", projectExternalId);
+                //.param("profile", profileId);
 
         this.mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
@@ -768,7 +785,7 @@ public class AlertsTest {
                                 fieldWithPath("element.category")
                                         .description("Identifier of the element causing the alert"),
                                 fieldWithPath("element.project_id")
-                                        .description("Identifier of the element causing the alert")
+                                        .description("Project identifier of the element causing the alert")
                         )
                 ));
 
@@ -836,7 +853,7 @@ public class AlertsTest {
                                 fieldWithPath("element.category")
                                         .description("Identifier of the element causing the alert"),
                                 fieldWithPath("element.project_id")
-                                        .description("Identifier of the element causing the alert")
+                                        .description("Project identifier of the element causing the alert")
                         )
                 ));
 

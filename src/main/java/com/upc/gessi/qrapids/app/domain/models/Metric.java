@@ -15,6 +15,10 @@ public class Metric {
     private String name;
     @Column(name = "description")
     private String description;
+    @Column(name = "threshold")
+    private Float threshold;
+    @Column(name = "web_url")
+    private String webUrl;
 
     @ManyToOne
     @JoinColumn(name="projectId", referencedColumnName = "id")
@@ -67,5 +71,21 @@ public class Metric {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public Float getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Float threshold) {
+        this.threshold = threshold;
+    }
+
+    public String getWebUrl() {
+        return webUrl;
+    }
+
+    public void setWebUrl(String webUrl) {
+        this.webUrl = webUrl;
     }
 }

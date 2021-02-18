@@ -253,10 +253,11 @@ public class StrategicIndicators {
                         strategic_indicator.getExternalId(),
                         strategic_indicator.getName(),
                         strategic_indicator.getDescription(),
-                        strategic_indicator.getNetwork(),
                         strategic_indicator.getQuality_factorsIds(),
                         strategic_indicator.isWeighted(),
                         strategic_indicator.getWeights());
+                dtosi.setThreshold(strategic_indicator.getThreshold());
+                dtosi.setNetwork(strategic_indicator.getNetwork());
                 dtoSIList.add(dtosi);
             }
             return dtoSIList;
@@ -271,14 +272,16 @@ public class StrategicIndicators {
     public DTOSI getSI(@PathVariable Long id) {
         try {
             Strategic_Indicator strategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
-            return new DTOSI(strategicIndicator.getId(),
+            DTOSI dtosi = new DTOSI(strategicIndicator.getId(),
                     strategicIndicator.getExternalId(),
                     strategicIndicator.getName(),
                     strategicIndicator.getDescription(),
-                    strategicIndicator.getNetwork(),
                     strategicIndicator.getQuality_factorsIds(),
                     strategicIndicator.isWeighted(),
                     strategicIndicator.getWeights());
+            dtosi.setThreshold(strategicIndicator.getThreshold());
+            dtosi.setNetwork(strategicIndicator.getNetwork());
+            return dtosi;
         } catch (StrategicIndicatorNotFoundException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, Messages.STRATEGIC_INDICATOR_NOT_FOUND);
@@ -292,6 +295,7 @@ public class StrategicIndicators {
             String prj = request.getParameter("prj");
             String name = request.getParameter("name");
             String description = request.getParameter("description");
+            String threshold = request.getParameter("threshold");
             byte[] file = null;
             if (network != null) {
                 file = IOUtils.toByteArray(network.getInputStream());
@@ -299,7 +303,7 @@ public class StrategicIndicators {
             List<String> qualityFactors = new ArrayList<>(Arrays.asList(request.getParameter("quality_factors").split(",")));
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Project project = projectsController.findProjectByExternalId(prj);
-                strategicIndicatorsController.saveStrategicIndicator(name, description, file, qualityFactors, project);
+                strategicIndicatorsController.saveStrategicIndicator(name, description, threshold, file, qualityFactors, project);
                 if (!strategicIndicatorsController.assessStrategicIndicator(name, prj)) {
                     throw new AssessmentErrorException();
                 }
@@ -319,11 +323,13 @@ public class StrategicIndicators {
         try {
             String name;
             String description;
+            String threshold;
             byte[] file = null;
             List<String> qualityFactors;
             try {
                 name = request.getParameter("name");
                 description = request.getParameter("description");
+                threshold = request.getParameter("threshold");
                 if (network != null) {
                     file = IOUtils.toByteArray(network.getInputStream());
                 }
@@ -333,7 +339,7 @@ public class StrategicIndicators {
             }
             if (!name.equals("") && !qualityFactors.isEmpty()) {
                 Strategic_Indicator oldStrategicIndicator = strategicIndicatorsController.getStrategicIndicatorById(id);
-                strategicIndicatorsController.editStrategicIndicator(oldStrategicIndicator.getId(), name, description, file, qualityFactors);
+                strategicIndicatorsController.editStrategicIndicator(oldStrategicIndicator.getId(), name, description, threshold, file, qualityFactors);
                 if (!strategicIndicatorsController.assessStrategicIndicator(name, oldStrategicIndicator.getProject().getExternalId())) {
                     throw new AssessmentErrorException();
                 }

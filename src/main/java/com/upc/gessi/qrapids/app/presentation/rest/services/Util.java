@@ -26,6 +26,9 @@ public class Util {
     @Value("${server.url}")
     private String serverUrl;
 
+    @Value("${assessSI.url:}")
+    private String assessSIUrl;
+
     // add jasterserver data
     @Value("${jasperServer.url}")
     private String jasperserverURL;
@@ -50,6 +53,12 @@ public class Util {
     @ResponseStatus(HttpStatus.OK)
     public String serverUrl() {
         return "{\"serverUrl\":\""+serverUrl+"\"}";
+    }
+
+    @GetMapping("/api/assessSIUrl")
+    @ResponseStatus(HttpStatus.OK)
+    public String assessSIUrl() {
+        return "{\"assessSIUrl\":\""+assessSIUrl+"\"}";
     }
 
     @PostMapping("/api/createIssueTest")

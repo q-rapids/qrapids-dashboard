@@ -319,6 +319,14 @@ function drawChart() {
             //if its a SI chart make it a hyperlink
             urlLink = "../DetailedStrategicIndicators/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             a.setAttribute("href", urlLink);
+        } else { // case of metrics link
+            urlLink = metricsDB.find(function (element) {
+                return element.externalId === ids[i];
+            }).webUrl;
+            if (urlLink) {
+                a.setAttribute("href", urlLink);
+                a.setAttribute("target","_blank")
+            }
         }
         a.innerHTML = texts[i];
         a.style.fontSize = "16px";

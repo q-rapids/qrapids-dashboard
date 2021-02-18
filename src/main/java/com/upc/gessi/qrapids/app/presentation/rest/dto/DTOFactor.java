@@ -9,6 +9,7 @@ public class DTOFactor { // get factor information from DB
     private String externalId;
     private String name;
     private String description;
+    private Float threshold;
     private List<String> metrics;
     private boolean weighted;
     private List<String> metricsWeights;
@@ -53,6 +54,14 @@ public class DTOFactor { // get factor information from DB
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Float getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(Float threshold) {
+        this.threshold = threshold;
     }
 
     public List<String> getMetrics() {

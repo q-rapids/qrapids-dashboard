@@ -45,10 +45,11 @@ function makeChart(strategicIndicators) {
             var w = parseFloat(factor.weight);
             if (w == -1) {
                 // if the factor value is zero we have to change it to 0.01 and sum this for all upper levels
+                var factor_aux = 0.01;
                 if (parseFloat(factor.weightedValue) == 0) {
-                    values.push(0.01);
+                    values.push(factor_aux);
                     var ind_si =ids.indexOf(strategicIndicator.id);
-                    values[ind_si] = values[ind_si] + 0.01;
+                    values[ind_si] = values[ind_si] + factor_aux;
                 } else {
                     values.push(parseFloat(factor.weightedValue));
                 }
@@ -57,10 +58,11 @@ function makeChart(strategicIndicators) {
                     "(NA)");
             } else {
                 // if the factor value is zero we have to change it to 0.01 and sum this for all upper levels
+                var factor_aux = 0.01;
                 if (parseFloat(factor.weightedValue) == 0) {
-                    values.push(0.01);
+                    values.push(factor_aux);
                     var ind_si =ids.indexOf(strategicIndicator.id);
-                    values[ind_si] = values[ind_si] + 0.01;
+                    values[ind_si] = values[ind_si] + factor_aux;
                 } else {
                     values.push(parseFloat(factor.weightedValue));
                 }
@@ -75,12 +77,17 @@ function makeChart(strategicIndicators) {
                 labels.push(metric.name);
                 parents.push(strategicIndicator.id + '/' + factor.id);
                 // if the metric value is zero we have to change it to 0.01 and sum this for all upper levels
+                var metric_aux = 0.01;
                 if (parseFloat(metric.weightedValue) == 0) {
-                    values.push(0.01 * factor.weight);
-                    var ind_f =ids.indexOf(strategicIndicator.id + '/' + factor.id);
-                    values[ind_f] = values[ind_f] + 0.01*factor.weight;
-                    var ind_si =ids.indexOf(strategicIndicator.id);
-                    values[ind_si] = values[ind_si] + 0.01*factor.weight;
+                    if (parseFloat(factor.weightedValue) == 0) {
+                        values.push(metric_aux * metric.weight);
+                    } else { // when factor is not zero, but has some metrics with zero value
+                        values.push(metric_aux * metric.weight);
+                        var ind_f =ids.indexOf(strategicIndicator.id + '/' + factor.id);
+                        values[ind_f] = values[ind_f] + metric_aux * metric.weight;
+                        var ind_si =ids.indexOf(strategicIndicator.id);
+                        values[ind_si] = values[ind_si] + metric_aux * metric.weight;
+                    }
                 } else {
                     values.push(parseFloat(metric.weightedValue * factor.weight));
                 }
