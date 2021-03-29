@@ -3,6 +3,9 @@
 <head>
     <th:block th:replace="Fragments/TemplateDashboard :: basicHeader"></th:block>
     <script type="text/javascript" src="../../static/js/lib/d3.v4.min.js" th:src="@{/js/lib/d3.v4.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/bootstrap-slider.min.css}" />
+    <script type="text/javascript" th:src="@{/js/bootstrap-slider.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/lib/Chart.min.js}"></script>
 </head>
 <body>
 <div th:replace="Fragments/Template :: logo"></div>
@@ -18,15 +21,16 @@
 <br/>
 <h1 id="title" align="center"></h1>
 <p th:replace="Fragments/TemplateDashboard :: navLinkMetrics"></p>
-<br/>
-<div id="gaugeChart" class="container" style="text-align:center;"></div>
+<div style="width:100%; overflow: hidden; padding-left: 5%; padding-right: 5%;">
+    <div id="metrics" style=" width: 100%; float: left; position: absolute;">
+        <br/>
+        <div id="metricsSliders">
+        </div>
+    </div>
+
+</div>
 <br/>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
-<script type="text/javascript" src="../../static/js/gaugeChart.js" th:src="@{/js/gaugeChartMet.js}"></script>
-<script>
-    window.onload = function() {
-        getData(200, 200, true);
-    };
-</script>
+<script type="text/javascript" src="../../static/js/sliderChartMet.js" th:src="@{/js/sliderChartMet.js}"></script>
 </html>

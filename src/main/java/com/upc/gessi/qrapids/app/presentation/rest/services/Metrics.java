@@ -38,9 +38,12 @@ public class Metrics {
     public void importMetrics() {
         try {
             metricsController.importMetricsAndUpdateDatabase();
-        } catch (CategoriesException | ProjectNotFoundException e) {
+        } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
+        } catch (ProjectNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.PROJECT_NOT_FOUND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error on ElasticSearch connection");

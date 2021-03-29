@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.ZoneId;
 import java.util.*;
@@ -49,6 +50,8 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 	@Scheduled(cron = "${cron.expression:-}") // default -> disable scheduled task
 	public void scheduleTask() throws ParseException, ProjectNotFoundException, IOException, CategoriesException {
 		// ToDo: decide if we also copy this code to assessSI function
+		System.out.println("Start Scheduled task: " + new Timestamp(System.currentTimeMillis()));
+		System.out.println("projects dir: " + projectsDir);
 		LocalDate evaluationLocalDate = LocalDate.now(); // we need LocalDate for assessStrategicIndicators
 		Date evaluationDate= Date.from(evaluationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()); // we need Date for evaluateQualityModel in qrapids-eval libs
 

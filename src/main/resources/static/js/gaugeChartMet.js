@@ -82,9 +82,13 @@ function drawChart(metrics, container, width, height, categories) {
 
         //make chart a hyperlink
         var textColor = "#000";
-        urlLink = metricsDB.find(function (element) {
+        console.log(metrics[i].id);
+        var findMet = metricsDB.find(function (element) {
             return element.externalId === metrics[i].id;
-        }).webUrl;
+        });
+        if (findMet) { // if metric not found it will be undefined
+            urlLink = findMet.webUrl;
+        }
         console.log(urlLink);
         if (urlLink) {
             //create chart svg with hyperlink

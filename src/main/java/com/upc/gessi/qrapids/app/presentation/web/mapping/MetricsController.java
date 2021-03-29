@@ -10,6 +10,16 @@ public class MetricsController {
         return "Metrics/CurrentChart";
     }
 
+    @RequestMapping("/Metrics/CurrentChartGauge")
+    public String CurrentChartGauge(){
+        return "Metrics/CurrentChart";
+    }
+
+    @RequestMapping("/Metrics/CurrentChartSlider")
+    public String CurrentSlider(){
+        return "Metrics/CurrentSlider";
+    }
+
     @RequestMapping("/Metrics/CurrentTable")
     public String CurrentTable(){
         return "Metrics/CurrentTable";
