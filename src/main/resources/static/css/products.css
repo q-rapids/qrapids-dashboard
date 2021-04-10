@@ -1,11 +1,11 @@
 @CHARSET "UTF-8";
 
 
-#productView, #profileView, #SIConfigView, #QFConfigView, #CategoriesConfigView, #ReportingView {
+#productView, #profileView, #SIConfigView, #QFConfigView, #CategoriesConfigView, #ReportingView, #patternView {
 	display: flex;
 	flex-direction: row;
 }
-#productTree, #profileTree, #SITree, #QFTree, #CategoriesElementSelector, #ProjectSelector {
+#productTree, #profileTree, #SITree, #QFTree, #CategoriesElementSelector, #ProjectSelector, #patternTree {
 	margin: 1%;
 	width: 21%;
 }

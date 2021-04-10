@@ -16,4 +16,9 @@ public class QualityRequirementsController {
         return "Decisions/Decisions";
     }
 
+    @RequestMapping("/QRPatterns/Configuration")
+    public String QRPatternsConfig() {
+        return "QualityRequirements/QRPatternsConfig";
+    }
+
 }

@@ -8,6 +8,7 @@ import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QualityRequirement;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQRPatternsClassifier;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Mappers;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityRequirement;
@@ -22,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
+import qr.models.Classifier;
 import qr.models.QualityRequirementPattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -170,6 +172,17 @@ public class QualityRequirements {
         Map<String, String> object = new HashMap<>();
         object.put("metric", metric);
         return object;
+    }
+
+    @GetMapping("/api/qrPatternsClassifiers")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOQRPatternsClassifier> getAllQRPatternsClassifiers() {
+        List<Classifier> classifierList = qrPatternsController.getAllClassifiers();
+        List<DTOQRPatternsClassifier> dtoClassifierList = new ArrayList<>();
+        for (Classifier classifier : classifierList) {
+            dtoClassifierList.add(Mappers.mapClassifierToDTOQRPatternsClassifier(classifier));
+        }
+        return dtoClassifierList;
     }
 
 }

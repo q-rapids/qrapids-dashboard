@@ -5,6 +5,7 @@ import com.upc.gessi.qrapids.app.domain.models.Alert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qr.QRGenerator;
+import qr.models.Classifier;
 import qr.models.QualityRequirementPattern;
 import qr.models.enumerations.Type;
 
@@ -50,5 +51,10 @@ public class QRPatternsController {
     public Map<Integer, String> getMetricsForPatterns (List<Integer> ids) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getMetricsForPatterns(ids);
+    }
+
+    public List<Classifier> getAllClassifiers() {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getAllClassifiers();
     }
 }
