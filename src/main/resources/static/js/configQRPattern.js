@@ -1,4 +1,6 @@
 var serverUrl = sessionStorage.getItem("serverUrl");
+var previousSelectionId;
+var currentSelectionId;
 
 function buildTree() {
     var url = "/api/qrPatternsClassifiers";
@@ -90,7 +92,126 @@ function buildTree() {
 };
 
 function clickOnTree(e) {
-    //show pattern or classifier information
+    var target = e.target;
+    if (target.parentNode.classList.contains("Pattern") || target.parentNode.classList.contains("Classifier")) target = target.parentNode;
+    if (target.classList.contains("Pattern")) {
+        //currentSelection = "Project";
+        previousSelectionId = currentSelectionId;
+        currentSelectionId = target.id;
+        if (previousSelectionId != null) {
+            document.getElementById(previousSelectionId).setAttribute('style', 'background-color: #ffffff;');
+        }
+        document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
+        var idString = target.id.split("-")[0];
+        getChosenPattern(idString.replace("pattern", ""));
+    } else if (target.classList.contains("Classifier")) {
+        //currentSelection = "Project";
+        previousSelectionId = currentSelectionId;
+        currentSelectionId = target.id;
+        if (previousSelectionId != null) {
+            document.getElementById(previousSelectionId).setAttribute('style', 'background-color: #ffffff;');
+        }
+        document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
+        getChosenClassifier(target.id.replace("classifier", ""));
+    }
+}
+
+function getChosenPattern(currentPatternId) {
+    var url = "/api/qrPatterns/" + currentPatternId;
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+    jQuery.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            var patternForm = document.createElement('div');
+            patternForm.setAttribute("id", "patternForm");
+
+            var title1Row = document.createElement('div');
+            title1Row.classList.add("productInfoRow");
+            var title1P = document.createElement('p');
+            title1P.appendChild(document.createTextNode("Requirement Pattern Information"))
+            title1P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
+            title1Row.appendChild(title1P);
+            patternForm.appendChild(title1Row);
+
+            var nameRow = document.createElement('div');
+            nameRow.classList.add("productInfoRow");
+            var nameP = document.createElement('p');
+            nameP.appendChild(document.createTextNode("Name: "));
+            nameP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
+            nameRow.appendChild(nameP);
+            var inputName = document.createElement("input");
+            inputName.setAttribute('id', 'patternName');
+            inputName.setAttribute('type', 'text');
+            inputName.setAttribute('value', data.name);
+            inputName.setAttribute('style', 'width: 100%;');
+            inputName.setAttribute('placeholder', 'Write the pattern name here');
+            inputName.setAttribute('readonly', "");
+            nameRow.appendChild(inputName);
+            patternForm.appendChild(nameRow);
+
+            var goalRow = document.createElement('div');
+            goalRow.classList.add("productInfoRow");
+            var goalP = document.createElement('p');
+            goalP.appendChild(document.createTextNode("Goal: "));
+            goalP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
+            goalRow.appendChild(goalP);
+            var inputGoal = document.createElement("input");
+            inputGoal.setAttribute('id', 'patternGoal');
+            inputGoal.setAttribute('type', 'text');
+            inputGoal.setAttribute('value', data.goal);
+            inputGoal.setAttribute('style', 'width: 100%;');
+            inputGoal.setAttribute('placeholder', 'Write the pattern goal here');
+            inputGoal.setAttribute('readonly', "");
+            goalRow.appendChild(inputGoal);
+            patternForm.appendChild(goalRow);
+
+            var descriptionRow = document.createElement('div');
+            descriptionRow.classList.add("productInfoRow");
+            var descriptionP = document.createElement('p');
+            descriptionP.appendChild(document.createTextNode("Description: "));
+            descriptionP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
+            descriptionRow.appendChild(descriptionP);
+            var inputDescription = document.createElement("textarea");
+            inputDescription.setAttribute('id', 'patternDescription');
+            inputDescription.setAttribute('type', 'text');
+            inputDescription.value = data.forms[0].description;
+            inputDescription.setAttribute('style', 'width: 100%;');
+            inputDescription.setAttribute('rows', '3');
+            inputDescription.setAttribute('placeholder', 'Write the pattern description here');
+            inputDescription.setAttribute('readonly', "");
+            descriptionRow.appendChild(inputDescription);
+            patternForm.appendChild(descriptionRow);
+
+            var requirementRow = document.createElement('div');
+            requirementRow.classList.add("productInfoRow");
+            var requirementP = document.createElement('p');
+            requirementP.appendChild(document.createTextNode("Requirement: "));
+            requirementP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
+            requirementRow.appendChild(requirementP);
+            var inputRequirement = document.createElement("input");
+            inputRequirement.setAttribute('id', 'patternRequirement');
+            inputRequirement.setAttribute('type', 'text');
+            inputRequirement.setAttribute('value', data.forms[0].fixedPart.formText);
+            inputRequirement.setAttribute('style', 'width: 100%;');
+            inputRequirement.setAttribute('placeholder', 'Write the pattern requirement here');
+            inputRequirement.setAttribute('readonly', "");
+            requirementRow.appendChild(inputRequirement);
+            patternForm.appendChild(requirementRow);
+
+            document.getElementById('patternInfo').innerHTML = "";
+            document.getElementById('patternInfo').appendChild(patternForm);
+        }
+    })
+}
+
+function getChosenClassifier(currentClassifierId) {
+    //not implemented yet
 }
 
 function newRequirement() {
