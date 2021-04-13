@@ -307,6 +307,9 @@ public class Forecast {
 
         List<DTOFactorEvaluation> result = new ArrayList<>();
 
+        //get current date
+        LocalDate current = factor.get(0).getDate();
+
         JsonParser parser = new JsonParser();
         JsonArray data = parser.parse(content.toString()).getAsJsonArray();
         for (int i = 0; i < data.size(); ++i) {
@@ -317,13 +320,13 @@ public class Forecast {
                 getFactorWithError(factor, result, object);
             }
             else {
-                getFactors(factor, result, object);
+                getFactors(current, factor, result, object);
             }
         }
         return result;
     }
 
-    private void getFactors(List<DTOFactorEvaluation> factor, List<DTOFactorEvaluation> result, JsonObject object) {
+    private void getFactors(LocalDate current, List<DTOFactorEvaluation> factor, List<DTOFactorEvaluation> result, JsonObject object) {
         //check if json values are null
         JsonArray lower80;
         if (!object.get(LOWER_80).isJsonNull()) lower80 = object.getAsJsonArray(LOWER_80);
@@ -348,11 +351,11 @@ public class Forecast {
         String id = object.get(ID).getAsString();
 
         for (DTOFactorEvaluation f : factor) {
-            buildFactor(result, lower80, upper80, lower95, upper95, mean, id, f);
+            buildFactor(result, lower80, upper80, lower95, upper95, mean, id, f, current);
         }
     }
 
-    private void buildFactor(List<DTOFactorEvaluation> result, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, DTOFactorEvaluation f) {
+    private void buildFactor(List<DTOFactorEvaluation> result, JsonArray lower80, JsonArray upper80, JsonArray lower95, JsonArray upper95, JsonArray mean, String id, DTOFactorEvaluation f, LocalDate current) {
         if (f.getId().equals(id) && lower80.size() == upper80.size() && lower95.size() == upper95.size() && lower80.size() == lower95.size() && lower80.size() == mean.size()) {
             if (lower80.size() > 0) {
                 for (int j = 0; j < lower80.size(); ++j) {
@@ -361,14 +364,14 @@ public class Forecast {
                             f.getDescription(),
                             f.getDatasource(),
                             f.getRationale(),
-                            LocalDate.now().plusDays((long) j + 1), Pair.of(aux,factorsController.getFactorLabelFromValue(aux)), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
+                            current.plusDays((long) j + 1), Pair.of(aux,factorsController.getFactorLabelFromValue(aux)), Pair.of(upper80.get(j).getAsFloat(), lower80.get(j).getAsFloat()), Pair.of(upper95.get(j).getAsFloat(), lower95.get(j).getAsFloat())));
                 }
             } else {
                 result.add(new DTOFactorEvaluation(f.getId(), f.getName(),
                         f.getDescription(),
                         f.getDatasource(),
                         f.getRationale(),
-                        LocalDate.now().plusDays((long) 1), null, null, null));
+                        current.plusDays((long) 1), null, null, null));
             }
         }
     }
@@ -431,6 +434,7 @@ public class Forecast {
             metricsMatrix.add(new ArrayList<>());
         }
 
+        // get current date
         LocalDate current = factor.get(0).getMetrics().get(0).getDate();
 
         JsonParser parser = new JsonParser();

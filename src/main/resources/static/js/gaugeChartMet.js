@@ -89,7 +89,6 @@ function drawChart(metrics, container, width, height, categories) {
         if (findMet) { // if metric not found it will be undefined
             urlLink = findMet.webUrl;
         }
-        console.log(urlLink);
         if (urlLink) {
             //create chart svg with hyperlink
             var svg = d3.select(container).append("svg")

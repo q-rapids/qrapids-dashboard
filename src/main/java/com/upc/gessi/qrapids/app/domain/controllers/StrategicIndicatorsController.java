@@ -696,7 +696,10 @@ public class StrategicIndicatorsController {
                 // check if si is in data base and update it
                 Strategic_Indicator strategicIndicator = strategicIndicatorRepository.findByNameAndProject_Id(dtoDetailedStrategicIndicator.getName(),project.getId());
                 if (strategicIndicator != null) {
-                    editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), strategicIndicator.getThreshold().toString(), null, factors);
+                    if (strategicIndicator.getThreshold() != null)
+                        editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), strategicIndicator.getThreshold().toString(), null, factors);
+                    else
+                        editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), "", null, factors);
                 } else { // save it if it's new
                     saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", "" , null, factors, project);
                 }

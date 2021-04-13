@@ -326,7 +326,6 @@ function drawChart() {
             });
             if (findMet)  // if metric not found it will be undefined
                 urlLink = findMet.webUrl;
-            console.log(urlLink);
             if (urlLink) {
                 a.setAttribute("href", urlLink);
                 a.setAttribute("target","_blank")
