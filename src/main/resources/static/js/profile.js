@@ -304,7 +304,6 @@ function clickOnTree(e){
             allowedRow.appendChild(allowedSIsCol);
             profileForm.appendChild(allowedRow);
 
-            // TODO
             var title3Row = document.createElement('div');
             title3Row.classList.add("profileInfoRow");
             var title3P = document.createElement('p');
@@ -447,6 +446,54 @@ function clickOnTree(e){
             // add BtnGroup to text paragraph
             dqfViewP.appendChild(dqfViewBtnGroup);
 
+            // Metrics visualization case
+            var mViewP = document.createElement('p');
+            mViewP.appendChild(document.createTextNode("Metrics view:   "));
+            mViewP.setAttribute('id', 'mViewP');
+            mViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+            var mViewBtnGroup = document.createElement('div');
+            mViewBtnGroup.classList.add("btn-group");
+            mViewBtnGroup.setAttribute('id', 'mViewBtnGroup');
+            // Gauge case
+            var mViewGaugeBtn = document.createElement('button');
+            mViewGaugeBtn.classList.add("btn");
+            mViewGaugeBtn.classList.add("btn-primary");
+            mViewGaugeBtn.setAttribute('id', 'mView_Gauge');
+            mViewGaugeBtn.setAttribute('type', 'button');
+            mViewGaugeBtn.setAttribute('style', 'background-color: #ffffff');
+            mViewGaugeBtn.setAttribute('value', 'Gauge');
+            mViewGaugeBtn.onclick = mViewUpdate;
+            var imgGauge = document.createElement('img');
+            imgGauge.setAttribute('class', 'icons');
+            imgGauge.setAttribute('src', '../icons/gauge_chart.png');
+            mViewGaugeBtn.appendChild(imgGauge);
+            // Slider case
+            var mViewSliderBtn = document.createElement('button');
+            mViewSliderBtn.classList.add("btn");
+            mViewSliderBtn.classList.add("btn-primary");
+            mViewSliderBtn.setAttribute('id', 'mView_Slider');
+            mViewSliderBtn.setAttribute('type', 'button');
+            mViewSliderBtn.setAttribute('style', 'background-color: #ffffff');
+            mViewSliderBtn.setAttribute('value', 'Slider');
+            mViewSliderBtn.onclick = mViewUpdate;
+            var imgSlider = document.createElement('img');
+            imgSlider.setAttribute('class', 'icons');
+            imgSlider.setAttribute('src', '../icons/slider_chart.png');
+            mViewSliderBtn.appendChild(imgSlider);
+
+            // update Metrics view visualizations and check the correct button
+            mView = data.mView;
+            if (mView == "Gauge")
+                mViewGaugeBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+            else if (mView == "Slider")
+                mViewSliderBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+
+            // add buttons to BtnGroup
+            mViewBtnGroup.appendChild(mViewGaugeBtn);
+            mViewBtnGroup.appendChild(mViewSliderBtn);
+            // add BtnGroup to text paragraph
+            mViewP.appendChild(mViewBtnGroup);
+
             // QM visualization case
             var qmViewP = document.createElement('p');
             qmViewP.appendChild(document.createTextNode("Quality Model view:   "));
@@ -510,6 +557,7 @@ function clickOnTree(e){
 
             visualizationsCol.appendChild(dsiViewP);
             visualizationsCol.appendChild(dqfViewP);
+            visualizationsCol.appendChild(mViewP);
             visualizationsCol.appendChild(qmViewP);
             visualizationsRow.appendChild(visualizationsCol);
             profileForm.appendChild(visualizationsRow);
@@ -776,7 +824,6 @@ function newProfile() {
     allowedRow.appendChild(allowedSIsCol);
     profileForm.appendChild(allowedRow);
 
-    // TODO
     var title3Row = document.createElement('div');
     title3Row.classList.add("profileInfoRow");
     var title3P = document.createElement('p');
@@ -901,7 +948,7 @@ function newProfile() {
     // add BtnGroup to "Step 3.2 - ..."
     dqfViewP.appendChild(dqfViewBtnGroup);
 
-    // TODO Metrics visualization case
+    // Metrics visualization case
     var mViewP = document.createElement('p');
     mViewP.appendChild(document.createTextNode("Step 3.3 - Metrics view:   "));
     mViewP.setAttribute('id', 'mViewP');
@@ -1658,6 +1705,7 @@ function saveProfile() {
 
     console.log(dsiView);
     console.log(dqfView);
+    console.log(mView);
     console.log(qmView);
 
     if ($('#profileName').val() != "" && allowedProjects.length > 0) {
@@ -1667,6 +1715,7 @@ function saveProfile() {
         formData.append("quality_level", qualityLevel);
         formData.append("dsi_view", dsiView);
         formData.append("dqf_view", dqfView);
+        formData.append("m_view",mView);
         formData.append("qm_view", qmView);
         formData.append("projects_info", JSON.stringify(allowedProjects));
 

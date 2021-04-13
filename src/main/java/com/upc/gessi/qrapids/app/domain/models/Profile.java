@@ -127,11 +127,11 @@ public class Profile {
         this.dqfView = dqfView;
     }
 
-    public MetricsView getMetView() {
+    public MetricsView getmView() {
         return mView;
     }
 
-    public void setMetView(MetricsView mView) {
+    public void setmView(MetricsView mView) {
         this.mView = mView;
     }
 

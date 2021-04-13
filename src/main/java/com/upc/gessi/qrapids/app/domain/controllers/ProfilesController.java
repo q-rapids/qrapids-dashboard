@@ -83,7 +83,7 @@ public class ProfilesController {
                     }
                 });
                 return new DTOProfile(profile.getId(), profile.getName(), profile.getDescription(), String.valueOf(profile.getQualityLevel()),
-                        String.valueOf(profile.getDsiView()), String.valueOf(profile.getDqfView()), String.valueOf(profile.getQmView()), relatedProjects, relatedAllSIs);
+                        String.valueOf(profile.getDsiView()), String.valueOf(profile.getDqfView()),String.valueOf(profile.getmView()), String.valueOf(profile.getQmView()), relatedProjects, relatedAllSIs);
             }
         }
         return null;
@@ -111,7 +111,7 @@ public class ProfilesController {
                 }
             });
             DTOProfile profile = new DTOProfile(pr.getId(), pr.getName(), pr.getDescription(), String.valueOf(pr.getQualityLevel()),
-                    String.valueOf(pr.getDsiView()), String.valueOf(pr.getDqfView()), String.valueOf(pr.getQmView()), relatedProjects, relatedAllSIs);
+                    String.valueOf(pr.getDsiView()), String.valueOf(pr.getDqfView()), String.valueOf(pr.getmView()), String.valueOf(pr.getQmView()), relatedProjects, relatedAllSIs);
             profiles.add(profile);
         }
         Collections.sort(profiles, new Comparator<DTOProfile>() {
@@ -130,7 +130,7 @@ public class ProfilesController {
         return (pr == null || pr.getId() == id);
     }
 
-    public void updateProfile(Long id, String name, String description, Profile.QualityLevel qualityLevel, Profile.DetailedViews dsiView, Profile.DetailedViews dqfView, Profile.QualityModelView qmView, Map<String, Pair<Boolean, List<String>>> projectInfo) throws ProfileProjectsNotFoundException {
+    public void updateProfile(Long id, String name, String description, Profile.QualityLevel qualityLevel, Profile.DetailedViews dsiView, Profile.DetailedViews dqfView, Profile.MetricsView mView, Profile.QualityModelView qmView, Map<String, Pair<Boolean, List<String>>> projectInfo) throws ProfileProjectsNotFoundException {
         Optional<Profile> profileOptional = profileRep.findById(id);
         Profile profile = profileOptional.get();
         // update profile information
@@ -139,6 +139,7 @@ public class ProfilesController {
         profile.setQualityLevel(qualityLevel);
         profile.setDsiView(dsiView);
         profile.setDqfView(dqfView);
+        profile.setmView(mView);
         profile.setQmView(qmView);
         // delete old ProfileProjects List
         List<ProfileProjects> oldProfileProjectsList = profile.getProfileProjectsList();
