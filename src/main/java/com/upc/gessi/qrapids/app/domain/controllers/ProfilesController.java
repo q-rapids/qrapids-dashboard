@@ -39,8 +39,8 @@ public class ProfilesController {
         return (pr == null);
     }
 
-    public void newProfile(String name, String description, Profile.QualityLevel qualityLevel, Profile.DetailedViews dsiView, Profile.DetailedViews dqfView, Profile.QualityModelView qmView, Map<String, Pair<Boolean, List<String>>> projectInfo) {
-        Profile profile = new Profile(name, description, qualityLevel, dsiView, dqfView, qmView);
+    public void newProfile(String name, String description, Profile.QualityLevel qualityLevel, Profile.DetailedViews dsiView, Profile.DetailedViews dqfView, Profile.MetricsView mView, Profile.QualityModelView qmView, Map<String, Pair<Boolean, List<String>>> projectInfo) {
+        Profile profile = new Profile(name, description, qualityLevel, dsiView, dqfView, mView, qmView);
         List<ProfileProjects> ppList = new ArrayList<>(); // prepare list of profile projects
         List<ProfileProjectStrategicIndicators> ppsiList = new ArrayList<>();
         for ( Map.Entry<String, org.springframework.data.util.Pair<Boolean, List<String>>> project : projectInfo.entrySet()) {
