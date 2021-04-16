@@ -50,8 +50,9 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 	@Scheduled(cron = "${cron.expression:-}") // default -> disable scheduled task
 	public void scheduleTask() throws ParseException, ProjectNotFoundException, IOException, CategoriesException {
 		// ToDo: decide if we also copy this code to assessSI function
-		System.out.println("Start Scheduled task: " + new Timestamp(System.currentTimeMillis()));
-		System.out.println("projects dir: " + projectsDir);
+		Logger logger = LoggerFactory.getLogger(Alerts.class);
+		logger.info("Start Scheduled task: " + new Timestamp(System.currentTimeMillis()));
+		logger.info("projects dir: " + projectsDir);
 		LocalDate evaluationLocalDate = LocalDate.now(); // we need LocalDate for assessStrategicIndicators
 		Date evaluationDate= Date.from(evaluationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()); // we need Date for evaluateQualityModel in qrapids-eval libs
 
@@ -70,7 +71,6 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		}
 
 		if (!correct) { // check if the assessment complete with error
-			Logger logger = LoggerFactory.getLogger(Alerts.class);
 			logger.error(evaluationLocalDate + ": factors or strategic indicators assessment complete with error.");
 		}
 	}

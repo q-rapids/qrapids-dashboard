@@ -677,15 +677,16 @@ public class StrategicIndicatorsController {
     }
 
     public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException, QualityFactorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, StrategicIndicatorNotFoundException {
-        List<String> projects = projectsController.importProjectsAndUpdateDatabase();
+        List<String> projects = projectsController.getAllProjectsExternalID();
         for(String projectExternalId : projects) {
             List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicators = new ArrayList<>();
+            Project project = new Project();
             try {
                 dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, null, false);
+                project = projectsController.findProjectByExternalId(projectExternalId);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
-            Project project = projectsController.findProjectByExternalId(projectExternalId);
             for (DTODetailedStrategicIndicatorEvaluation dtoDetailedStrategicIndicator : dtoDetailedStrategicIndicators) {
                 List<String> factors = new ArrayList<>();
                 for (DTOFactorEvaluation f : dtoDetailedStrategicIndicator.getFactors()) {
