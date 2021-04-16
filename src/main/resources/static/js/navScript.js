@@ -1,5 +1,5 @@
 var currentURL = window.location.href;
-var viewMode, DSIRepresentationMode, DQFRepresentationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
+var viewMode, DSIRepresentationMode, DQFRepresentationMode, metRepresentationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
 
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
@@ -88,6 +88,9 @@ if (!(DSIRepresentationMode = sessionStorage.getItem("DSIRepresentationMode"))) 
 if (!(DQFRepresentationMode = sessionStorage.getItem("DQFRepresentationMode"))) {
     DQFRepresentationMode = "Radar";
 }
+if (!(metRepresentationMode = sessionStorage.getItem("metRepresentationMode"))) {
+    metRepresentationMode = "Gauge";
+}
 if (!(qmMode = sessionStorage.getItem("qmMode"))) {
     qmMode = "Graph";
 }
@@ -114,6 +117,7 @@ if (!(simulation = sessionStorage.getItem("simulation"))) {
 sessionStorage.setItem("viewMode", viewMode);
 sessionStorage.setItem("DSIRepresentationMode", DSIRepresentationMode);
 sessionStorage.setItem("DQFRepresentationMode", DQFRepresentationMode);
+sessionStorage.setItem("metRepresentationMode", metRepresentationMode)
 sessionStorage.setItem("qmMode", qmMode);
 sessionStorage.setItem("time", time);
 
@@ -164,9 +168,21 @@ if (currentURL.search("/HistoricTable") !== -1) {
     viewMode = "Chart";
     DQFRepresentationMode = sessionStorage.getItem("DQFRepresentationMode");
     time = "Current";
+} else if (currentURL.search("/Metrics/CurrentChartGauge") !== -1){
+    viewMode = "Chart";
+    metRepresentationMode = "Gauge";
+    time = "Current";
+} else if (currentURL.search("/Metrics/CurrentChartSlider") !== -1){
+    viewMode = "Chart";
+    metRepresentationMode = "Slider";
+    time = "Current";
+} else if (currentURL.search("/Metrics/CurrentChart") !== -1) {
+    viewMode = "Chart";
+    metRepresentationMode = sessionStorage.getItem("metRepresentationMode");
+    time = "Current";
 } else if (currentURL.search("/CurrentChart") !== -1) {
     viewMode = "Chart";
-    // TODO decide if necessary
+    metRepresentationMode = sessionStorage.getItem("metRepresentationMode");
     DQFRepresentationMode = sessionStorage.getItem("DQFRepresentationMode");
     DSIRepresentationMode = sessionStorage.getItem("DSIRepresentationMode");
     time = "Current";
@@ -182,6 +198,7 @@ if (currentURL.search("/QualityModelGraph") !== -1) {
 sessionStorage.setItem("viewMode", viewMode);
 sessionStorage.setItem("DSIRepresentationMode", DSIRepresentationMode);
 sessionStorage.setItem("DQFRepresentationMode", DQFRepresentationMode);
+sessionStorage.setItem("metRepresentationMode", metRepresentationMode);
 sessionStorage.setItem("qmMode", qmMode);
 sessionStorage.setItem("time", time);
 
@@ -196,6 +213,7 @@ if (currentURL.search("/DetailedStrategicIndicators/CurrentChart") !== -1) {
 } else if(currentURL.search("/DetailedQualityFactors/CurrentChart") !== -1) {
     $("#" + DQFRepresentationMode).css("background-color", "#ffc380");
 }
+$("#" + metRepresentationMode).css("background-color", "#ffc380");
 $("#" + qmMode).css("background-color", "#ffc380");
 $("#" + time).css("background-color", "#ffc380");
 
@@ -368,6 +386,12 @@ else if (assessment === "DetailedStrategicIndicators") {
     } else {
         $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
     }
+} else if (assessment === "Metrics") {
+    if (time == "Current" && viewMode == "Chart") {
+        $("#Assessment").attr("href", serverUrl + "/" + assessment + "/" + time + viewMode + metRepresentationMode);
+    } else {
+        $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
+    }
 } else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
@@ -397,7 +421,12 @@ if ((time == "Current") && (viewMode == "Chart")) {
 
 $("#DetailedQualityFactorsPrediction").attr("href", serverUrl + "/DetailedQualityFactors/PredictionChart");
 
-$("#MetricsAssessment").attr("href", serverUrl + "/Metrics/" + time + viewMode);
+if ((time == "Current") && (viewMode == "Chart")) {
+    console.log("metRepresentationMode " + metRepresentationMode);
+    $("#MetricsAssessment").attr("href", serverUrl + "/Metrics/" + time + viewMode + metRepresentationMode);
+} else {
+    $("#MetricsAssessment").attr("href", serverUrl + "/Metrics/" + time + viewMode);
+}
 
 $("#MetricsPrediction").attr("href", serverUrl + "/Metrics/PredictionChart");
 
@@ -480,7 +509,9 @@ function menuNav (urlNav) {
             urlNav = urlNav + "&siid=" + siid;
         }
     }
-    if (location.href.includes("/DetailedQualityFactors") && urlNav == "CurrentChart") {
+    if (location.href.includes("/Metrics") && urlNav == "CurrentChart"){
+        location.href = urlNav + metRepresentationMode;
+    } else if (location.href.includes("/DetailedQualityFactors") && urlNav == "CurrentChart") {
         location.href = urlNav + DQFRepresentationMode;
     } else if (location.href.includes("/DetailedStrategicIndicators") && urlNav == "CurrentChart") {
         location.href = urlNav + DSIRepresentationMode;

@@ -82,10 +82,13 @@ function drawChart(metrics, container, width, height, categories) {
 
         //make chart a hyperlink
         var textColor = "#000";
-        urlLink = metricsDB.find(function (element) {
+        console.log(metrics[i].id);
+        var findMet = metricsDB.find(function (element) {
             return element.externalId === metrics[i].id;
-        }).webUrl;
-        console.log(urlLink);
+        });
+        if (findMet) { // if metric not found it will be undefined
+            urlLink = findMet.webUrl;
+        }
         if (urlLink) {
             //create chart svg with hyperlink
             var svg = d3.select(container).append("svg")

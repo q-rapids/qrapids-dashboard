@@ -39,6 +39,7 @@ public class Profiles {
             Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf(request.getParameter("quality_level"));
             Profile.DetailedViews dsiView = Profile.DetailedViews.valueOf(request.getParameter("dsi_view"));
             Profile.DetailedViews dqfView = Profile.DetailedViews.valueOf(request.getParameter("dqf_view"));
+            Profile.MetricsView mView = Profile.MetricsView.valueOf(request.getParameter("m_view"));
             Profile.QualityModelView qmView = Profile.QualityModelView.valueOf(request.getParameter("qm_view"));
             JsonParser parser = new JsonParser();
             JsonArray projectsInfoJsonArray = parser.parse(request.getParameter("projects_info")).getAsJsonArray();
@@ -56,7 +57,7 @@ public class Profiles {
                 projectsInfoMap.put(projectID, Pair.of(allSI,si));
             }
             if (profileCont.checkNewProfileByName(name)) {
-                profileCont.newProfile(name, description, qualityLevel, dsiView, dqfView, qmView, projectsInfoMap);
+                profileCont.newProfile(name, description, qualityLevel, dsiView, dqfView, mView, qmView, projectsInfoMap);
             } else {
                 throw new ElementAlreadyPresentException();
             }
@@ -106,6 +107,7 @@ public class Profiles {
             Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf(request.getParameter("quality_level"));
             Profile.DetailedViews dsiView = Profile.DetailedViews.valueOf(request.getParameter("dsi_view"));
             Profile.DetailedViews dqfView = Profile.DetailedViews.valueOf(request.getParameter("dqf_view"));
+            Profile.MetricsView mView = Profile.MetricsView.valueOf(request.getParameter("m_view"));
             Profile.QualityModelView qmView = Profile.QualityModelView.valueOf(request.getParameter("qm_view"));
             JsonParser parser = new JsonParser();
             JsonArray projectsInfoJsonArray = parser.parse(request.getParameter("projects_info")).getAsJsonArray();
@@ -123,7 +125,7 @@ public class Profiles {
                 projectsInfoMap.put(projectID, Pair.of(allSI, si));
             }
             if (profileCont.checkProfileByName(id, name)) {
-                profileCont.updateProfile(id, name, description, qualityLevel, dsiView, dqfView, qmView, projectsInfoMap);
+                profileCont.updateProfile(id, name, description, qualityLevel, dsiView, dqfView, mView, qmView, projectsInfoMap);
             } else {
                 throw new ElementAlreadyPresentException();
             }

@@ -38,6 +38,14 @@ public class Profile {
     }
 
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'Gauge'")
+    private MetricsView mView = MetricsView.Gauge;
+
+    public enum MetricsView {
+        Gauge, Slider
+    }
+
+    @Enumerated(EnumType.STRING)
     @ColumnDefault("'Graph'")
     private QualityModelView qmView = QualityModelView.Graph;
 
@@ -61,12 +69,13 @@ public class Profile {
         this.qualityLevel = qualityLevel;
     }
 
-    public Profile(String name, String description, QualityLevel qualityLevel, DetailedViews dsiview, DetailedViews dqfview, QualityModelView qmview) {
+    public Profile(String name, String description, QualityLevel qualityLevel, DetailedViews dsiview, DetailedViews dqfview, MetricsView mview, QualityModelView qmview) {
         this.name = name;
         this.description = description;
         this.qualityLevel = qualityLevel;
         this.dsiView = dsiview;
         this.dqfView = dqfview;
+        this.mView = mview;
         this.qmView = qmview;
     }
 
@@ -116,6 +125,14 @@ public class Profile {
 
     public void setDqfView(DetailedViews dqfView) {
         this.dqfView = dqfView;
+    }
+
+    public MetricsView getmView() {
+        return mView;
+    }
+
+    public void setmView(MetricsView mView) {
+        this.mView = mView;
     }
 
     public QualityModelView getQmView() {
