@@ -4,6 +4,8 @@ import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QRPatternsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityRequirementController;
 import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
+import com.upc.gessi.qrapids.app.domain.exceptions.MissingParametersException;
+import com.upc.gessi.qrapids.app.domain.exceptions.QRPatternNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Project;
@@ -172,6 +174,36 @@ public class QualityRequirements {
         Map<String, String> object = new HashMap<>();
         object.put("metric", metric);
         return object;
+    }
+
+    @PutMapping("/api/qrPatterns/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void saveQRPattern(@PathVariable String id, HttpServletRequest request) {
+        try {
+            String name = request.getParameter("name");
+            String goal = request.getParameter("goal");
+            String description = request.getParameter("description");
+            String requirement = request.getParameter("requirement");
+            if (name == null || goal == null || description == null || requirement == null) {
+                throw new MissingParametersException();
+            }
+            if (!name.equals("")) {
+                QualityRequirementPattern oldQRPattern = qrPatternsController.getOnePattern(Integer.parseInt(id));
+                if (oldQRPattern == null) {
+                    throw new QRPatternNotFoundException();
+                }
+                qrPatternsController.editPattern(oldQRPattern.getId(), name, goal, description, requirement);
+            }
+        } catch (MissingParametersException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+        } catch (QRPatternNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
     }
 
     @GetMapping("/api/qrPatternsClassifiers")

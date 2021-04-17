@@ -142,7 +142,7 @@ function getChosenPattern(currentPatternId) {
             var nameRow = document.createElement('div');
             nameRow.classList.add("productInfoRow");
             var nameP = document.createElement('p');
-            nameP.appendChild(document.createTextNode("Name: "));
+            nameP.appendChild(document.createTextNode("Name*: "));
             nameP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
             nameRow.appendChild(nameP);
             var inputName = document.createElement("input");
@@ -151,7 +151,6 @@ function getChosenPattern(currentPatternId) {
             inputName.setAttribute('value', data.name);
             inputName.setAttribute('style', 'width: 100%;');
             inputName.setAttribute('placeholder', 'Write the pattern name here');
-            inputName.setAttribute('readonly', "");
             nameRow.appendChild(inputName);
             patternForm.appendChild(nameRow);
 
@@ -167,7 +166,6 @@ function getChosenPattern(currentPatternId) {
             inputGoal.setAttribute('value', data.goal);
             inputGoal.setAttribute('style', 'width: 100%;');
             inputGoal.setAttribute('placeholder', 'Write the pattern goal here');
-            inputGoal.setAttribute('readonly', "");
             goalRow.appendChild(inputGoal);
             patternForm.appendChild(goalRow);
 
@@ -184,7 +182,6 @@ function getChosenPattern(currentPatternId) {
             inputDescription.setAttribute('style', 'width: 100%;');
             inputDescription.setAttribute('rows', '3');
             inputDescription.setAttribute('placeholder', 'Write the pattern description here');
-            inputDescription.setAttribute('readonly', "");
             descriptionRow.appendChild(inputDescription);
             patternForm.appendChild(descriptionRow);
 
@@ -200,9 +197,30 @@ function getChosenPattern(currentPatternId) {
             inputRequirement.setAttribute('value', data.forms[0].fixedPart.formText);
             inputRequirement.setAttribute('style', 'width: 100%;');
             inputRequirement.setAttribute('placeholder', 'Write the pattern requirement here');
-            inputRequirement.setAttribute('readonly', "");
             requirementRow.appendChild(inputRequirement);
             patternForm.appendChild(requirementRow);
+
+            var buttonsRow = document.createElement('div');
+            buttonsRow.classList.add("productInfoRow");
+            buttonsRow.setAttribute('id', 'buttonsRow');
+            buttonsRow.setAttribute('style', 'justify-content: space-between;');
+            var deleteButton = document.createElement('button');
+            deleteButton.classList.add("btn");
+            deleteButton.classList.add("btn-danger");
+            deleteButton.setAttribute('id', 'deleteButton');
+            deleteButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+            deleteButton.appendChild(document.createTextNode("Delete Pattern"));
+            //deleteButton.addEventListener("click", deletePattern);
+            buttonsRow.appendChild(deleteButton);
+            var saveButton = document.createElement('button');
+            saveButton.classList.add("btn");
+            saveButton.classList.add("btn-primary");
+            saveButton.setAttribute('id', 'saveButton');
+            saveButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+            saveButton.appendChild(document.createTextNode("Save Pattern"));
+            saveButton.addEventListener("click", savePattern);
+            buttonsRow.appendChild(saveButton);
+            patternForm.appendChild(buttonsRow);
 
             document.getElementById('patternInfo').innerHTML = "";
             document.getElementById('patternInfo').appendChild(patternForm);
@@ -212,6 +230,7 @@ function getChosenPattern(currentPatternId) {
 
 function getChosenClassifier(currentClassifierId) {
     //not implemented yet
+    document.getElementById('patternInfo').innerHTML = "";
 }
 
 function newRequirement() {
@@ -225,6 +244,50 @@ function newRequirement() {
     document.getElementById('patternInfo').innerHTML = "";
     document.getElementById('patternInfo').appendChild(requirementForm);
 };
+
+function savePattern() {
+    if ($('#patternName').val() !== "") {
+        var formData = new FormData();
+        formData.append("name", $('#patternName').val());
+        formData.append("goal", $('#patternGoal').val());
+        formData.append("description", $('#patternDescription').val());
+        formData.append("requirement", $('#patternRequirement').val());
+
+        var idString = currentSelectionId.split("-")[0];
+        var url = "/api/qrPatterns/" + idString.replace("pattern", "");
+        if (serverUrl) {
+            url = serverUrl + url;
+        }
+
+        $('#saveButton').text("Saving...");
+
+        $.ajax({
+            url: url,
+            data: formData,
+            type: "PUT",
+            contentType: false,
+            processData: false,
+            error: function (jqXHR, textStatus, errorThrown) {
+                $('#saveButton').text("Save Pattern");
+                if (jqXHR.status == 400)
+                    alert("Error: Missing parameters");
+                else if (jqXHR.status == 404)
+                    alert("Error: This pattern does not exist");
+                else {
+                    alert("Internal server error");
+                }
+            },
+            success: function() {
+                /*buildTree();
+                getChosenPattern(idString.replace("pattern", ""));*/
+                location.href = serverUrl + "/QRPatterns/Configuration";
+            }
+        });
+    }
+    else {
+        alert("Make sure that you have completed all fields marked with an *");
+    }
+}
 
 window.onload = function() {
     buildTree();

@@ -57,4 +57,16 @@ public class QRPatternsController {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getAllClassifiers();
     }
+
+    public QualityRequirementPattern editPattern(Integer id, String name, String goal, String description, String fixedPartFormText) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        QualityRequirementPattern qrPattern = getOnePattern(id);
+        qrPattern.setName(name);
+        qrPattern.setGoal(goal);
+        qrPattern.getForms().get(0).setName(name);
+        qrPattern.getForms().get(0).setDescription(description);
+        qrPattern.getForms().get(0).getFixedPart().setFormText(fixedPartFormText);
+        gen.saveQRPattern(id, qrPattern);
+        return qrPattern;
+    }
 }
