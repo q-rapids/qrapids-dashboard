@@ -176,9 +176,40 @@ public class QualityRequirements {
         return object;
     }
 
+    @PostMapping("/api/qrPatterns")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createQRPattern(HttpServletRequest request) {
+        try {
+            String name = request.getParameter("name");
+            String goal = request.getParameter("goal");
+            String description = request.getParameter("description");
+            String requirement = request.getParameter("requirement");
+            String classifierId = request.getParameter("classifierId");
+            String classifierName = request.getParameter("classifierName");
+            String classifierPos = request.getParameter("classifierPos");
+            String classifierPatterns = request.getParameter("classifierPatterns");
+            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null) {
+                throw new MissingParametersException();
+            }
+            if (!name.equals("")) {
+                List<Integer> listClassifierPatterns = new ArrayList<>();
+                for (String pat : classifierPatterns.split(",")) {
+                    listClassifierPatterns.add(Integer.parseInt(pat));
+                }
+                qrPatternsController.createPattern(name, goal, description, requirement, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
+            }
+        } catch (MissingParametersException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
     @PutMapping("/api/qrPatterns/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void saveQRPattern(@PathVariable String id, HttpServletRequest request) {
+    public void updateQRPattern(@PathVariable String id, HttpServletRequest request) {
         try {
             String name = request.getParameter("name");
             String goal = request.getParameter("goal");

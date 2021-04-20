@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qr.QRGenerator;
 import qr.models.Classifier;
+import qr.models.FixedPart;
+import qr.models.Form;
 import qr.models.QualityRequirementPattern;
 import qr.models.enumerations.Type;
 
@@ -53,9 +55,17 @@ public class QRPatternsController {
         return gen.getMetricsForPatterns(ids);
     }
 
-    public List<Classifier> getAllClassifiers() {
+    public void createPattern(String name, String goal, String description, String requirement, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
-        return gen.getAllClassifiers();
+        FixedPart newFixedPart = new FixedPart(requirement);
+        Form newForm = new Form(name ,description, "", newFixedPart);
+        List<Form> formList = new ArrayList<>();
+        formList.add(newForm);
+        QualityRequirementPattern newPattern = new QualityRequirementPattern(null, name, "", "", goal, formList, "");
+        int newId = gen.createQRPattern(newPattern);
+        List<Integer> classifierPatternsWithNewId = new ArrayList<>(classifierPatterns);
+        classifierPatternsWithNewId.add(newId);
+        gen.updateClassifier(classifierId, classifierName, classifierPos, classifierPatternsWithNewId);
     }
 
     public QualityRequirementPattern editPattern(Integer id, String name, String goal, String description, String fixedPartFormText) {
@@ -66,7 +76,13 @@ public class QRPatternsController {
         qrPattern.getForms().get(0).setName(name);
         qrPattern.getForms().get(0).setDescription(description);
         qrPattern.getForms().get(0).getFixedPart().setFormText(fixedPartFormText);
-        gen.saveQRPattern(id, qrPattern);
+        gen.updateQRPattern(id, qrPattern);
         return qrPattern;
     }
+
+    public List<Classifier> getAllClassifiers() {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getAllClassifiers();
+    }
+
 }
