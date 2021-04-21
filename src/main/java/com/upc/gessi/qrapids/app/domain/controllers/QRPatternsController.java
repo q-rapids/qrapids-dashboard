@@ -80,6 +80,11 @@ public class QRPatternsController {
         return qrPattern;
     }
 
+    public void deletePattern(Integer id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        gen.deleteQRPattern(id);
+    }
+
     public List<Classifier> getAllClassifiers() {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getAllClassifiers();

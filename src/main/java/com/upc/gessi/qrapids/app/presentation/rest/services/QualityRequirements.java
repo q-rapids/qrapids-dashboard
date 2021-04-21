@@ -237,6 +237,17 @@ public class QualityRequirements {
         }
     }
 
+    @DeleteMapping("/api/qrPatterns/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteQRPattern(@PathVariable String id) {
+        try {
+            qrPatternsController.deletePattern(Integer.parseInt(id));
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
     @GetMapping("/api/qrPatternsClassifiers")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOQRPatternsClassifier> getAllQRPatternsClassifiers() {

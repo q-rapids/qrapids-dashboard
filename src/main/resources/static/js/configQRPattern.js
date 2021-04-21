@@ -213,7 +213,7 @@ function getChosenPattern(currentPatternId) {
             deleteButton.setAttribute('id', 'deleteButton');
             deleteButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
             deleteButton.appendChild(document.createTextNode("Delete Pattern"));
-            //deleteButton.addEventListener("click", deletePattern);
+            deleteButton.addEventListener("click", deletePattern);
             buttonsRow.appendChild(deleteButton);
             var saveButton = document.createElement('button');
             saveButton.classList.add("btn");
@@ -422,6 +422,34 @@ function savePattern() {
     else {
         alert("Make sure that you have completed all fields marked with an *");
     }
+}
+
+function deletePattern() {
+    var idString = currentSelectionId.split("-")[0];
+    var url = "/api/qrPatterns/" + idString.replace("pattern", "");
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+
+    $('#deleteButton').text("Deleting...");
+
+    $.ajax({
+        url: url,
+        type: "DELETE",
+        contentType: false,
+        processData: false,
+        error: function (jqXHR, textStatus, errorThrown) {
+            $('#deleteButton').text("Delete Pattern");
+            if (jqXHR.status == 404)
+                alert("Error: This pattern does not exist");
+            else {
+                alert("Internal server error");
+            }
+        },
+        success: function() {
+            location.href = serverUrl + "/QRPatterns/Configuration";
+        }
+    });
 }
 
 window.onload = function() {
