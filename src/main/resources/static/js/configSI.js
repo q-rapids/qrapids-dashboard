@@ -98,6 +98,8 @@ function clickOnTree(e){
                 $("#SINetwork").hide();
             }
             $("#SICompositionTitle").text("Strategic Indicator Composition");
+            // add warning
+            $("#SICompositionWarning").text("Warning: Changing the composition of Strategic Indicator will affect its historical data interpretation.");
             $("#deleteSI").show();
             if (factors.length > 0) {
                 showFactors();

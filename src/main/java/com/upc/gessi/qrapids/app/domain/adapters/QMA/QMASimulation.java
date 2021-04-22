@@ -37,7 +37,7 @@ public class QMASimulation {
         }
         Collection<FactorEvaluationDTO> factors = model.simulate();
         List<FactorEvaluationDTO> factorsList = new ArrayList<>(factors);
-        return qmaDetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(factorsList, prjRep.findByExternalId(prj).getId(), profile,true);
+        return qmaDetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(null, factorsList, prjRep.findByExternalId(prj).getId(), profile,true);
     }
 
 }

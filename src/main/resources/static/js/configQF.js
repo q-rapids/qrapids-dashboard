@@ -66,6 +66,8 @@ function clickOnTree(e){
             $("#QFThreshold").attr("placeholder", "Specify minimum acceptable value for the quality factor here");
             $("#QFThreshold").val(qf.threshold);
             $("#QFCompositionTitle").text("Quality Factor Composition");
+            // add warning
+            $("#QFCompositionWarning").text("Warning: Changing the composition of Quality Factor will affect its historical data interpretation.");
             $("#deleteQF").show();
             if (metrics.length > 0) {
                 showMetrics();

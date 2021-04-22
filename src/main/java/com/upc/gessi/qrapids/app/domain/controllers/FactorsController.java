@@ -127,16 +127,10 @@ public class FactorsController {
     public void importFactorsAndUpdateDatabase() throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException {
         List<String> projects = projectsController.getAllProjectsExternalID();
         for (String prj : projects) {
-            try {
-                Project project = projectsController.findProjectByExternalId(prj);
-                List<DTOFactorEvaluation> factors = getAllFactorsEvaluation(prj, null, false);
-                // when we import factors we don't use profile and don't filter by Data Base
-                List<DTODetailedFactorEvaluation> factorsWithMetrics = getAllFactorsWithMetricsCurrentEvaluation(prj, null, false);
-                updateDataBaseWithNewFactors(prj, factors, factorsWithMetrics);
-            } catch (ProjectNotFoundException e) {
-                Logger logger = LoggerFactory.getLogger(MetricsController.class);
-                logger.error(e.getMessage(), e);
-            }
+            List<DTOFactorEvaluation> factors = getAllFactorsEvaluation(prj, null,false);
+            // when we import factors we don't use profile and don't filter by Data Base
+            List<DTODetailedFactorEvaluation> factorsWithMetrics = getAllFactorsWithMetricsCurrentEvaluation(prj, null,false);
+            updateDataBaseWithNewFactors(prj, factors, factorsWithMetrics);
         }
     }
 

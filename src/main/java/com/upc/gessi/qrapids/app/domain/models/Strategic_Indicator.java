@@ -2,6 +2,7 @@ package com.upc.gessi.qrapids.app.domain.models;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /*
