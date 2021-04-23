@@ -120,10 +120,9 @@ public class QMADetailedStrategicIndicators {
                 d.setMismatchDays(evaluation.getMismatchDays());
                 d.setMissingFactors(evaluation.getMissingElements());
                 //set Factors to Detailed Strategic Indicator
-                if(currentData)
-                    d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getID(), element.getFactors(),prjRep.findByExternalId(prj).getId(), profile, false));
-                else
-                    d.setFactors(FactorEvaluationDTOListToDTOFactorList(null, element.getFactors(),prjRep.findByExternalId(prj).getId(), profile, false));
+                String siExternalID = null;
+                if(currentData) siExternalID = element.getID();
+                d.setFactors(FactorEvaluationDTOListToDTOFactorList(siExternalID, element.getFactors(),prjRep.findByExternalId(prj).getId(), profile, false));
                 // Get value
                 List<DTOAssessment> categories = strategicIndicatorsController.getCategories();
                 EstimationEvaluationDTO estimation = element.getEstimation().get(0);
@@ -175,9 +174,8 @@ public class QMADetailedStrategicIndicators {
                     EvaluationDTO evaluation = iterFactEval.next();
                     // check if the factor belongs to the si
                     boolean addFactor = true;
-                    if (siExternalID != null) {
-                        if (!siRep.findByExternalIdAndProjectId(siExternalID,project.get().getId()).getQuality_factors().contains(factor.getID()))
-                            addFactor = false;
+                    if (siExternalID != null && !siRep.findByExternalIdAndProjectId(siExternalID,project.get().getId()).getQuality_factors().contains(factor.getID())) {
+                        addFactor = false;
                     }
                     if (addFactor)
                         listFact.add(FactorEvaluationDTOToDTOFactor(factor, evaluation));

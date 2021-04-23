@@ -3,7 +3,6 @@ package com.upc.gessi.qrapids.app.domain.adapters.QMA;
 import DTOs.*;
 import com.upc.gessi.qrapids.app.config.QMAConnection;
 import com.upc.gessi.qrapids.app.domain.controllers.FactorsController;
-import com.upc.gessi.qrapids.app.domain.exceptions.QualityFactorNotFoundException;
 import com.upc.gessi.qrapids.app.domain.repositories.Project.ProjectRepository;
 import com.upc.gessi.qrapids.app.domain.controllers.ProfilesController;
 import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
@@ -225,12 +224,10 @@ public class QMAQualityFactors {
             else found = true; // because we want make fetch
             // only return Detailed Quality Factor if it is in local database
             if (found) {
-                // TODO check metric composition this factor
-                DTODetailedFactorEvaluation df;
-                if (currentData)
-                    df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(qualityFactor.getID(), qualityFactor.getMetrics(), project.getExternalId() ,profileId));
-                else
-                    df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(null, qualityFactor.getMetrics(), project.getExternalId() ,profileId));
+                // check metric composition this factor
+                String factorExternalID = null;
+                if (currentData) factorExternalID = qualityFactor.getID();
+                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId));
                 EvaluationDTO evaluation = qualityFactor.getEvaluations().get(0);
                 df.setDate(evaluation.getEvaluationDate());
                 df.setValue(Pair.of(evaluation.getValue(), factorsController.getFactorLabelFromValue(evaluation.getValue())));

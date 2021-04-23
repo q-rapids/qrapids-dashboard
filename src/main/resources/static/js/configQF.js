@@ -66,8 +66,7 @@ function clickOnTree(e){
             $("#QFThreshold").attr("placeholder", "Specify minimum acceptable value for the quality factor here");
             $("#QFThreshold").val(qf.threshold);
             $("#QFCompositionTitle").text("Quality Factor Composition");
-            // add warning
-            $("#QFCompositionWarning").text("Warning: Changing the composition of Quality Factor will affect its historical data interpretation.");
+            $("#QFCompositionWarning").text("Warning: Changing the composition of Quality Factor will affect its historical data interpretation."); // add warning
             $("#deleteQF").show();
             if (metrics.length > 0) {
                 showMetrics();
@@ -107,6 +106,7 @@ function newQF() {
     $("#QFThreshold").attr("placeholder", "Specify minimum acceptable value for the quality factor here");
     $("#QFThreshold").val("");
     $("#QFCompositionTitle").text("Step 2 - Select the corresponding metrics");
+    $("#QFCompositionWarning").text(""); // clean warning
     $("#deleteQF").hide();
     if (metrics.length > 0)
         showMetrics();

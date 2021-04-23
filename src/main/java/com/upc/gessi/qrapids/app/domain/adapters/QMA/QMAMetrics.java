@@ -55,7 +55,7 @@ public class QMAMetrics {
         else
             evals = Factor.getMetricsEvaluations(prj, id).getMetrics();
         //Connection.closeConnection();
-        result = MetricEvaluationDTOListToDTOMetricList(null, evals, prj, profile);
+        result = MetricEvaluationDTOListToDTOMetricList(id, evals, prj, profile);
 
         return result;
     }
@@ -101,9 +101,8 @@ public class QMAMetrics {
                     EvaluationDTO evaluation = iterEvals.next();
                     // check if the metric belongs to the factor
                     boolean addMetric = true;
-                    if (factorExternalID != null) {
-                        if (!factorRepository.findByExternalIdAndProjectId(factorExternalID,project.getId()).getMetrics().contains(metric.getID()))
-                            addMetric = false;
+                    if (factorExternalID != null && !factorRepository.findByExternalIdAndProjectId(factorExternalID,project.getId()).getMetrics().contains(metric.getID())) {
+                        addMetric = false;
                     }
                     if (addMetric)
                         m.add(MetricEvaluationDTOToDTOMetric(metric, evaluation));
