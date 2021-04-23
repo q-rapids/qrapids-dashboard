@@ -25,6 +25,7 @@ function getAllMetrics(){
                 metrics = response[0].metrics;
             else // in case we show all metrics
                 metrics = response;
+            sortDataAlphabetically(metrics);
             jQuery.ajax({
                 dataType: "json",
                 url: "../api/metrics",
@@ -124,28 +125,8 @@ function showMetricsSliders () {
         };
         sliderConfig.rangeHighlights = [];
         Array.prototype.push.apply(sliderConfig.rangeHighlights, rangeHighlights);
-        // Add original value
-        /*var start, end;
-        if (metric.value === 0) {
-            start = 0;
-            end = 0.03;
-        }
-        else if (metric.value === 1) {
-            start = 0.97;
-            end = 1;
-        }
-        else {
-            start = metric.value - 0.015;
-            end = metric.value + 0.015;
-        }
-        sliderConfig.rangeHighlights.push({
-            start: start,
-            end: end
-        });*/
         div.appendChild(slider);
-
         div.appendChild(label);
-
         metricsDiv.append(div);
         $("#"+slider.id).slider(sliderConfig);
     });
@@ -153,6 +134,15 @@ function showMetricsSliders () {
     for (var j = 0; j < categories.length; j++) {
         $(".slider-rangeHighlight." + categories[j].name).css("background", categories[j].color)
     }
+}
+
+function sortDataAlphabetically (metrics) {
+    function compare (a, b) {
+        if (a.name < b.name) return -1;
+        else if (a.name > b.name) return 1;
+        else return 0;
+    }
+    metrics.sort(compare);
 }
 
 window.onload = function() {
