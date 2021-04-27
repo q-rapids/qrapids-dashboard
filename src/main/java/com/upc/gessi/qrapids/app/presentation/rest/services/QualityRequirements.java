@@ -185,4 +185,11 @@ public class QualityRequirements {
         return dtoClassifierList;
     }
 
+    @GetMapping("/api/qrPatternsClassifiers/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public DTOQRPatternsClassifier getQRPatternsClassifier(@PathVariable String id) {
+        Classifier classifier = qrPatternsController.getOneClassifier(Integer.parseInt(id));
+        return Mappers.mapClassifierToDTOQRPatternsClassifier(classifier);
+    }
+
 }
