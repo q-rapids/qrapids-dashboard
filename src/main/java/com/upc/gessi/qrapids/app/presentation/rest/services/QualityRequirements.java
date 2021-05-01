@@ -4,6 +4,8 @@ import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QRPatternsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityRequirementController;
 import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
+import com.upc.gessi.qrapids.app.domain.exceptions.MissingParametersException;
+import com.upc.gessi.qrapids.app.domain.exceptions.QRPatternNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Project;
@@ -172,6 +174,82 @@ public class QualityRequirements {
         Map<String, String> object = new HashMap<>();
         object.put("metric", metric);
         return object;
+    }
+
+    @PostMapping("/api/qrPatterns")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createQRPattern(HttpServletRequest request) {
+        try {
+            String name = request.getParameter("name");
+            String goal = request.getParameter("goal");
+            String description = request.getParameter("description");
+            String requirement = request.getParameter("requirement");
+            String classifierId = request.getParameter("classifierId");
+            String classifierName = request.getParameter("classifierName");
+            String classifierPos = request.getParameter("classifierPos");
+            String classifierPatterns = request.getParameter("classifierPatterns");
+            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null) {
+                throw new MissingParametersException();
+            }
+            if (!name.equals("")) {
+                List<Integer> listClassifierPatterns = new ArrayList<>();
+                for (String pat : classifierPatterns.split(",")) {
+                    listClassifierPatterns.add(Integer.parseInt(pat));
+                }
+                qrPatternsController.createPattern(name, goal, description, requirement, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
+            }
+        } catch (MissingParametersException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @PutMapping("/api/qrPatterns/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateQRPattern(@PathVariable String id, HttpServletRequest request) {
+        try {
+            String name = request.getParameter("name");
+            String goal = request.getParameter("goal");
+            String description = request.getParameter("description");
+            String requirement = request.getParameter("requirement");
+            String classifierId = request.getParameter("classifierId");
+            String classifierName = request.getParameter("classifierName");
+            String classifierPos = request.getParameter("classifierPos");
+            String classifierPatterns = request.getParameter("classifierPatterns");
+            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null) {
+                throw new MissingParametersException();
+            }
+            if (!name.equals("")) {
+                List<Integer> listClassifierPatterns = new ArrayList<>();
+                for (String pat : classifierPatterns.split(",")) {
+                    listClassifierPatterns.add(Integer.parseInt(pat));
+                }
+                qrPatternsController.editPattern(Integer.parseInt(id), name, goal, description, requirement, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
+            }
+        } catch (MissingParametersException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+        } catch (QRPatternNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/api/qrPatterns/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteQRPattern(@PathVariable String id) {
+        try {
+            qrPatternsController.deletePattern(Integer.parseInt(id));
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
     }
 
     @GetMapping("/api/qrPatternsClassifiers")
