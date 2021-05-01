@@ -215,15 +215,19 @@ public class QualityRequirements {
             String goal = request.getParameter("goal");
             String description = request.getParameter("description");
             String requirement = request.getParameter("requirement");
-            if (name == null || goal == null || description == null || requirement == null) {
+            String classifierId = request.getParameter("classifierId");
+            String classifierName = request.getParameter("classifierName");
+            String classifierPos = request.getParameter("classifierPos");
+            String classifierPatterns = request.getParameter("classifierPatterns");
+            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null) {
                 throw new MissingParametersException();
             }
             if (!name.equals("")) {
-                QualityRequirementPattern oldQRPattern = qrPatternsController.getOnePattern(Integer.parseInt(id));
-                if (oldQRPattern == null) {
-                    throw new QRPatternNotFoundException();
+                List<Integer> listClassifierPatterns = new ArrayList<>();
+                for (String pat : classifierPatterns.split(",")) {
+                    listClassifierPatterns.add(Integer.parseInt(pat));
                 }
-                qrPatternsController.editPattern(oldQRPattern.getId(), name, goal, description, requirement);
+                qrPatternsController.editPattern(Integer.parseInt(id), name, goal, description, requirement, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
             }
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);

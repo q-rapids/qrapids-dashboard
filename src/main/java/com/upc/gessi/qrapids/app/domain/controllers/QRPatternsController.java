@@ -1,6 +1,7 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
+import com.upc.gessi.qrapids.app.domain.exceptions.QRPatternNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Alert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,15 +69,19 @@ public class QRPatternsController {
         gen.updateClassifier(classifierId, classifierName, classifierPos, classifierPatternsWithNewId);
     }
 
-    public QualityRequirementPattern editPattern(Integer id, String name, String goal, String description, String fixedPartFormText) {
+    public QualityRequirementPattern editPattern(Integer id, String name, String goal, String description, String fixedPartFormText, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) throws QRPatternNotFoundException {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         QualityRequirementPattern qrPattern = getOnePattern(id);
+        if (qrPattern == null) {
+            throw new QRPatternNotFoundException();
+        }
         qrPattern.setName(name);
         qrPattern.setGoal(goal);
         qrPattern.getForms().get(0).setName(name);
         qrPattern.getForms().get(0).setDescription(description);
         qrPattern.getForms().get(0).getFixedPart().setFormText(fixedPartFormText);
         gen.updateQRPattern(id, qrPattern);
+        gen.updateClassifier(classifierId, classifierName, classifierPos, classifierPatterns);
         return qrPattern;
     }
 
