@@ -17,7 +17,7 @@
 	flex-direction: column;
 }
 
-#productForm, #profileForm, #SIForm, #QFForm, #SICategories, #FactorsCategories, #MetricsCategories, #RedirectToReport, #tableREPdiv, #patternForm {
+#productForm, #profileForm, #SIForm, #QFForm, #SICategories, #FactorsCategories, #MetricsCategories, #RedirectToReport, #tableREPdiv, #patternForm, #classifierForm {
 	margin: 1%;
 	display: flex;
 	flex-direction: column;

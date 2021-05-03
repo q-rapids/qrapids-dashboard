@@ -99,4 +99,9 @@ public class QRPatternsController {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getClassifier(id.longValue());
     }
+
+    public void createClassifier(String name, Integer parentId) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        gen.createClassifier(name, parentId.longValue());
+    }
 }
