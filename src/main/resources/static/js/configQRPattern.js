@@ -327,6 +327,29 @@ function getChosenClassifier(currentClassifierId) {
             parentClassifierRow.appendChild(parentSelect);
             classifierForm.appendChild(parentClassifierRow);
 
+            var buttonsRow = document.createElement('div');
+            buttonsRow.classList.add("productInfoRow");
+            buttonsRow.setAttribute('id', 'buttonsRow');
+            buttonsRow.setAttribute('style', 'justify-content: space-between;');
+            var deleteButton = document.createElement('button');
+            deleteButton.classList.add("btn");
+            deleteButton.classList.add("btn-danger");
+            deleteButton.setAttribute('id', 'deleteButton');
+            deleteButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+            deleteButton.appendChild(document.createTextNode("Delete Classifier"));
+            deleteButton.addEventListener("click", deleteClassifier);
+            buttonsRow.appendChild(deleteButton);
+            var saveButton = document.createElement('button');
+            saveButton.classList.add("btn");
+            saveButton.classList.add("btn-primary");
+            saveButton.setAttribute('id', 'saveButton');
+            saveButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+            saveButton.appendChild(document.createTextNode("Save Classifier"));
+            //saveButton.addEventListener("click", saveClassifier);
+            //savePatternMethod = "PUT";
+            buttonsRow.appendChild(saveButton);
+            classifierForm.appendChild(buttonsRow);
+
             document.getElementById('patternInfo').innerHTML = "";
             document.getElementById('patternInfo').appendChild(classifierForm);
         }
@@ -656,6 +679,49 @@ function saveClassifier() {
     }
     else {
         alert("Make sure that you have completed all fields marked with an *");
+    }
+}
+
+function deleteClassifier() {
+    var idString = currentSelectionId.split("-")[0];
+    var classifierId = idString.replace("classifier", "");
+    var i, j, found = false, empty = false;
+    for (i=0; i<classifiersTree.length && !found; i++) {
+        found = (classifiersTree[i].id == classifierId);
+        if (found) empty = (classifiersTree[i].internalClassifiers.length == 0);
+        for (j=0; j<classifiersTree[i].internalClassifiers.length && !found; j++) {
+            found = (classifiersTree[i].internalClassifiers[j].id == classifierId);
+            if (found) empty = (classifiersTree[i].internalClassifiers[j].requirementPatterns.length == 0);
+        }
+    }
+    if (empty) {
+        var url = "/api/qrPatternsClassifiers/" + classifierId;
+        if (serverUrl) {
+            url = serverUrl + url;
+        }
+
+        $('#deleteButton').text("Deleting...");
+
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            contentType: false,
+            processData: false,
+            error: function (jqXHR, textStatus, errorThrown) {
+                $('#deleteButton').text("Delete Classifier");
+                if (jqXHR.status == 404)
+                    alert("Error: This classifier does not exist");
+                else {
+                    alert("Internal server error");
+                }
+            },
+            success: function () {
+                location.href = serverUrl + "/QRPatterns/Configuration";
+            }
+        });
+    }
+    else {
+        alert("You could not delete a classifier that contains patterns or other classifiers");
     }
 }
 

@@ -193,8 +193,10 @@ public class QualityRequirements {
             }
             if (!name.equals("")) {
                 List<Integer> listClassifierPatterns = new ArrayList<>();
-                for (String pat : classifierPatterns.split(",")) {
-                    listClassifierPatterns.add(Integer.parseInt(pat));
+                if (!classifierPatterns.equals("")) {
+                    for (String pat : classifierPatterns.split(",")) {
+                        listClassifierPatterns.add(Integer.parseInt(pat));
+                    }
                 }
                 qrPatternsController.createPattern(name, goal, description, requirement, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
             }
@@ -285,6 +287,17 @@ public class QualityRequirements {
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/api/qrPatternsClassifiers/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteQRPatternsClassifier(@PathVariable String id) {
+        try {
+            qrPatternsController.deleteClassifier(Integer.parseInt(id));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
