@@ -12,6 +12,8 @@ if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
         success: function (data) {
             serverUrl = data.serverUrl;
             sessionStorage.setItem("serverUrl", serverUrl);
+            // Set Metrics view checkbox
+            //sessionStorage.setItem("groupByFactor", "false");
             checkAlertsPending();
         }
     })

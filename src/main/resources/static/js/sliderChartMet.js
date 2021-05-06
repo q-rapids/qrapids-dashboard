@@ -126,7 +126,7 @@ function showMetricsSliders () {
 
             var label = document.createElement('label');
             label.id = metric.id;
-            label.textContent = metric.name + " " + metric.value.toFixed(2) + " " + metric.qualityFactors;
+            label.textContent = metric.name + " " + metric.value.toFixed(2);
             label.title = metric.description;
             label.style.marginLeft = "1em";
 
@@ -141,7 +141,7 @@ function showMetricsSliders () {
                 var a = document.createElement('a');
                 a.href = urlLink;
                 a.target = "_blank";
-                a.textContent = metric.name + " " + metric.value.toFixed(2) + " " + metric.qualityFactors;
+                a.textContent = metric.name + " " + metric.value.toFixed(2);
                 label.appendChild(a);
             }
 
@@ -178,7 +178,7 @@ function showMetricsSliders () {
 
     var labelNOF = document.createElement('label');
     labelNOF.id = "withoutfactor";
-    labelNOF.textContent = "Without Factor";
+    labelNOF.textContent = "Metrics not associated to any factor";
     divNOF.appendChild(labelNOF);
     metrics.forEach(function (metric) {
         var mdiv = document.getElementById("div"+metric.id);
@@ -191,7 +191,7 @@ function showMetricsSliders () {
 
             var label = document.createElement('label');
             label.id = metric.id;
-            label.textContent = metric.name + " " + metric.value.toFixed(2) + " " + metric.qualityFactors;
+            label.textContent = metric.name + " " + metric.value.toFixed(2);
             label.title = metric.description;
             label.style.marginLeft = "1em";
 
@@ -206,7 +206,7 @@ function showMetricsSliders () {
                 var a = document.createElement('a');
                 a.href = urlLink;
                 a.target = "_blank";
-                a.textContent = metric.name + " " + metric.value.toFixed(2) + " " + metric.qualityFactors;
+                a.textContent = metric.name + " " + metric.value.toFixed(2);
                 label.appendChild(a);
             }
 

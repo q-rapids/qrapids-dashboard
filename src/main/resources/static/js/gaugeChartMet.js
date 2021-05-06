@@ -23,6 +23,17 @@ var metricsDB = [];
 
 var urlLink;
 
+var groupByFactor = new Boolean(sessionStorage.getItem("groupByFactor"));
+
+
+function clickCheckbox(){
+    var checkbox = document.getElementById("groupByFactorCheckbox");
+    sessionStorage.removeItem("groupByFactor");
+    if (checkbox.checked == true)
+        sessionStorage.setItem("groupByFactor", checkbox.checked.toString());
+    location.href = serverUrl + "/Metrics/CurrentChartGauge";
+}
+
 function getData(width, height) {
     jQuery.ajax({
         dataType: "json",
@@ -90,16 +101,27 @@ function getMetricsCategories (data, width, height) {
         type: "GET",
         async: true,
         success: function (categories) {
+            console.log("groupByFactor " + groupByFactor);
             if (id) { // in case we show metrics for one detailed factor
-                drawChart(data[0].metrics, "#gaugeChart", width, height, categories);
+                if (groupByFactor.valueOf() == true)
+                    drawChartByFactor(data[0].metrics, "#gaugeChart", width, height, categories);
+                else drawChart(data[0].metrics, "#gaugeChart", width, height, categories);
             } else { // in case we show all metrics
-                drawChart(data, "#gaugeChart", width, height, categories);
+                if (groupByFactor.valueOf() == true)
+                    drawChartByFactor(data, "#gaugeChart", width, height, categories);
+                else drawChart(data, "#gaugeChart", width, height, categories);
             }
         }
     });
 }
 
 function drawChart(metrics, container, width, height, categories) {
+    for (i = 0; i < metrics.length; ++i) {
+        drawMetricGauge(0, i, metrics[i], container, width, height, categories);
+    }
+}
+
+function drawChartByFactor(metrics, container, width, height, categories) {
     var gaugeChart = $("#gaugeChart");
     for (j = 0; j < factors.length; j++) {
         var divF = document.createElement('div');
@@ -124,7 +146,7 @@ function drawChart(metrics, container, width, height, categories) {
 
     var labelNOF = document.createElement('label');
     labelNOF.id = "withoutfactor";
-    labelNOF.textContent = "Without Factor";
+    labelNOF.textContent = "Metrics not associated to any factor";
     divNOF.appendChild(labelNOF);
 
     metrics.forEach(function (metric) {
@@ -132,7 +154,6 @@ function drawChart(metrics, container, width, height, categories) {
         if (!msvg) {
             if (!document.getElementById("divwithoutfactor"))
                 gaugeChart.append(divNOF);
-            console.log(msvg);
             drawMetricGauge(j, i, metric, container, width, height, categories);
         }
     });
