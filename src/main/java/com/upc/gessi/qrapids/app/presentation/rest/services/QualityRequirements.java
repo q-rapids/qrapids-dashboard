@@ -293,6 +293,28 @@ public class QualityRequirements {
         }
     }
 
+    @PutMapping("/api/qrPatternsClassifiers/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateClassifier(@PathVariable String id, HttpServletRequest request) {
+        try {
+            String name = request.getParameter("name");
+            String oldParentClassifierId = request.getParameter("oldParentClassifier");
+            String parentClassifierId = request.getParameter("parentClassifier");
+            if (name == null || oldParentClassifierId == null || parentClassifierId == null) {
+                throw new MissingParametersException();
+            }
+            if (!name.equals("")) {
+                qrPatternsController.updateClassifier(Integer.parseInt(id), name, Integer.parseInt(oldParentClassifierId), Integer.parseInt(parentClassifierId));
+            }
+        } catch (MissingParametersException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/api/qrPatternsClassifiers/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteQRPatternsClassifier(@PathVariable String id) {

@@ -3,7 +3,7 @@ var previousSelectionId;
 var currentSelectionId;
 var classifierOfCurrentPattern;
 var classifiersTree;
-var savePatternMethod;
+var saveMethod;
 
 function buildTree() {
     var url = "/api/qrPatternsClassifiers";
@@ -252,7 +252,7 @@ function getChosenPattern(currentPatternId) {
             saveButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
             saveButton.appendChild(document.createTextNode("Save Pattern"));
             saveButton.addEventListener("click", savePattern);
-            savePatternMethod = "PUT";
+            saveMethod = "PUT";
             buttonsRow.appendChild(saveButton);
             patternForm.appendChild(buttonsRow);
 
@@ -288,7 +288,7 @@ function getChosenClassifier(currentClassifierId) {
             var nameRow = document.createElement('div');
             nameRow.classList.add("productInfoRow");
             var nameP = document.createElement('p');
-            nameP.appendChild(document.createTextNode("Name: "));
+            nameP.appendChild(document.createTextNode("Name*: "));
             nameP.setAttribute('style', 'font-size: 18px; margin-right: 1%');
             nameRow.appendChild(nameP);
             var inputName = document.createElement("input");
@@ -314,15 +314,17 @@ function getChosenClassifier(currentClassifierId) {
             parentSelect.appendChild(optionRoot);
             parentSelect.value = "root";
             for (var i=0; i<classifiersTree.length; i++) {
-                var option = document.createElement('option');
-                option.appendChild(document.createTextNode(classifiersTree[i].name));
-                option.setAttribute('value', classifiersTree[i].id);
-                parentSelect.appendChild(option);
-                classifiersTree[i].internalClassifiers.forEach(function(c) {
-                    if (c.id == data.id) {
-                        option.setAttribute('selected', 'selected');
-                    }
-                });
+                if (classifiersTree[i].id != data.id) {
+                    var option = document.createElement('option');
+                    option.appendChild(document.createTextNode(classifiersTree[i].name));
+                    option.setAttribute('value', classifiersTree[i].id);
+                    parentSelect.appendChild(option);
+                    classifiersTree[i].internalClassifiers.forEach(function (c) {
+                        if (c.id == data.id) {
+                            option.setAttribute('selected', 'selected');
+                        }
+                    });
+                }
             }
             parentClassifierRow.appendChild(parentSelect);
             classifierForm.appendChild(parentClassifierRow);
@@ -345,8 +347,8 @@ function getChosenClassifier(currentClassifierId) {
             saveButton.setAttribute('id', 'saveButton');
             saveButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
             saveButton.appendChild(document.createTextNode("Save Classifier"));
-            //saveButton.addEventListener("click", saveClassifier);
-            //savePatternMethod = "PUT";
+            saveButton.addEventListener("click", saveClassifier);
+            saveMethod = "PUT";
             buttonsRow.appendChild(saveButton);
             classifierForm.appendChild(buttonsRow);
 
@@ -458,7 +460,7 @@ function newRequirement() {
     saveButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
     saveButton.appendChild(document.createTextNode("Save Pattern"));
     saveButton.addEventListener("click", savePattern);
-    savePatternMethod = "POST";
+    saveMethod = "POST";
     buttonsRow.appendChild(saveButton);
     patternForm.appendChild(buttonsRow);
 
@@ -487,7 +489,7 @@ function savePattern() {
         classifiersTree[i].internalClassifiers[j].requirementPatterns.forEach(function(p) {
             classifierPatterns += p.id + ",";
         });
-        if (savePatternMethod == "PUT" && classifiersTree[i].internalClassifiers[j].id != classifierOfCurrentPattern) {
+        if (saveMethod == "PUT" && classifiersTree[i].internalClassifiers[j].id != classifierOfCurrentPattern) {
             classifierPatterns += currentSelectionId.split("-")[0].replace("pattern", "");
         }
 
@@ -497,7 +499,7 @@ function savePattern() {
         formData.append("classifierPatterns", classifierPatterns);
 
         var url = "/api/qrPatterns";
-        if (savePatternMethod == "PUT"){ //Edit pattern: add id to URL
+        if (saveMethod == "PUT"){ //Edit pattern: add id to URL
             var idString = currentSelectionId.split("-")[0];
             url += "/" + idString.replace("pattern", "");
         }
@@ -510,7 +512,7 @@ function savePattern() {
         $.ajax({
             url: url,
             data: formData,
-            type: savePatternMethod,
+            type: saveMethod,
             contentType: false,
             processData: false,
             error: function (jqXHR, textStatus, errorThrown) {
@@ -631,6 +633,7 @@ function newClassifier() {
     saveButton.setAttribute('style', 'font-size: 18px; max-width: 30%;');
     saveButton.appendChild(document.createTextNode("Save Classifier"));
     saveButton.addEventListener("click", saveClassifier);
+    saveMethod = "POST";
     buttonsRow.appendChild(saveButton);
     classifierForm.appendChild(buttonsRow);
 
@@ -645,37 +648,61 @@ function saveClassifier() {
         formData.append("parentClassifier", $('#parentSelect').val());
 
         var url = "/api/qrPatternsClassifiers";
-        /*if (saveClassifierMethod == "PUT") { //Edit classifier: add id to URL
+        var emptyOrNoMove = true;
+        if (saveMethod == "PUT") { //Edit classifier: add id to URL
             var idString = currentSelectionId.split("-")[0];
-            url += "/" + idString.replace("classifier", "");
-        }*/
+            var classifierId = idString.replace("classifier", "");
+            url += "/" + classifierId;
 
-        if (serverUrl) {
-            url = serverUrl + url;
+            var i, j, found = false;
+            for (i=0; i<classifiersTree.length && !found; i++) {
+                found = (classifiersTree[i].id == classifierId);
+                if (found) {
+                    formData.append("oldParentClassifier", "-1");
+                    emptyOrNoMove = (classifiersTree[i].internalClassifiers.length == 0);
+                }
+                for (j=0; j<classifiersTree[i].internalClassifiers.length && !found; j++) {
+                    found = (classifiersTree[i].internalClassifiers[j].id == classifierId);
+                    if (found) {
+                        formData.append("oldParentClassifier", classifiersTree[i].id);
+                        emptyOrNoMove = (classifiersTree[i].internalClassifiers[j].requirementPatterns.length == 0);
+                    }
+                }
+            }
+            emptyOrNoMove = emptyOrNoMove || (formData.get("oldParentClassifier") == formData.get("parentClassifier"));
         }
 
-        $('#saveButton').text("Saving...");
-
-        $.ajax({
-            url: url,
-            data: formData,
-            type: "POST",
-            contentType: false,
-            processData: false,
-            error: function (jqXHR, textStatus, errorThrown) {
-                $('#saveButton').text("Save Classifier");
-                if (jqXHR.status == 400)
-                    alert("Error: Missing parameters");
-                /*else if (jqXHR.status == 404)
-                    alert("Error: This classifier does not exist");*/
-                else {
-                    alert("Internal server error");
-                }
-            },
-            success: function() {
-                location.href = serverUrl + "/QRPatterns/Configuration";
+        if (emptyOrNoMove) {
+            if (serverUrl) {
+                url = serverUrl + url;
             }
-        });
+
+            $('#saveButton').text("Saving...");
+
+            $.ajax({
+                url: url,
+                data: formData,
+                type: saveMethod,
+                contentType: false,
+                processData: false,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('#saveButton').text("Save Classifier");
+                    if (jqXHR.status == 400)
+                        alert("Error: Missing parameters");
+                    /*else if (jqXHR.status == 404)
+                        alert("Error: This classifier does not exist");*/
+                    else {
+                        alert("Internal server error");
+                    }
+                },
+                success: function () {
+                    location.href = serverUrl + "/QRPatterns/Configuration";
+                }
+            });
+        }
+        else {
+            alert("You could not move a classifier that contains patterns or other classifiers");
+        }
     }
     else {
         alert("Make sure that you have completed all fields marked with an *");

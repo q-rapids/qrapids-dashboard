@@ -66,7 +66,7 @@ public class QRPatternsController {
         int newId = gen.createQRPattern(newPattern);
         List<Integer> classifierPatternsWithNewId = new ArrayList<>(classifierPatterns);
         classifierPatternsWithNewId.add(newId);
-        gen.updateClassifier(classifierId, classifierName, classifierPos, classifierPatternsWithNewId);
+        gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatternsWithNewId);
     }
 
     public QualityRequirementPattern editPattern(Integer id, String name, String goal, String description, String fixedPartFormText, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) throws QRPatternNotFoundException {
@@ -81,7 +81,7 @@ public class QRPatternsController {
         qrPattern.getForms().get(0).setDescription(description);
         qrPattern.getForms().get(0).getFixedPart().setFormText(fixedPartFormText);
         gen.updateQRPattern(id, qrPattern);
-        gen.updateClassifier(classifierId, classifierName, classifierPos, classifierPatterns);
+        gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatterns);
         return qrPattern;
     }
 
@@ -103,6 +103,11 @@ public class QRPatternsController {
     public void createClassifier(String name, Integer parentId) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         gen.createClassifier(name, parentId.longValue());
+    }
+
+    public void updateClassifier(Integer id, String name, Integer oldParentId, Integer newParentId) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        gen.updateAndMoveClassifier(id.longValue(), name, oldParentId.longValue(), newParentId.longValue());
     }
 
     public void deleteClassifier(Integer id) {
