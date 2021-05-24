@@ -59,7 +59,7 @@ public class QRPatternsController {
 
     public void createPattern(String name, String goal, String description, String requirement, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
-        FixedPart newFixedPart = new FixedPart(requirement);
+        FixedPart newFixedPart = new FixedPart(requirement, new ArrayList<>());
         Form newForm = new Form(name ,description, "", newFixedPart);
         List<Form> formList = new ArrayList<>();
         formList.add(newForm);

@@ -4,6 +4,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQRPatternsClassifier;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQRPatternsMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.qrPattern.DTOQRFixedPart;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.qrPattern.DTOQRForm;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.qrPattern.DTOQRParameter;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.qrPattern.DTOQRPattern;
 import qr.models.Classifier;
 import qr.models.FixedPart;
@@ -25,7 +26,12 @@ public class Mappers {
         List<DTOQRForm> dtoQRFormList = new ArrayList<>();
         for(Form form : qrPattern.getForms()) {
             FixedPart fixedPart = form.getFixedPart();
-            DTOQRFixedPart dtoQRFixedPart = new DTOQRFixedPart(fixedPart.getFormText());
+            List<DTOQRParameter> dtoQRParameterList = new ArrayList<>();
+            for(Param parameter : fixedPart.getParameters()) {
+                DTOQRParameter dtoQRParameter = new DTOQRParameter(parameter.getId(), parameter.getName(), parameter.getDescription(), parameter.getCorrectnessCondition(), parameter.getMetricId(), parameter.getMetricName());
+                dtoQRParameterList.add(dtoQRParameter);
+            }
+            DTOQRFixedPart dtoQRFixedPart = new DTOQRFixedPart(fixedPart.getFormText(), dtoQRParameterList);
             DTOQRForm dtoQRForm = new DTOQRForm(form.getName(), form.getDescription(), form.getComments(), dtoQRFixedPart);
             dtoQRFormList.add(dtoQRForm);
         }
