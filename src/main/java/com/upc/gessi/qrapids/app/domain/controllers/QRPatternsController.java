@@ -9,6 +9,7 @@ import qr.QRGenerator;
 import qr.models.Classifier;
 import qr.models.FixedPart;
 import qr.models.Form;
+import qr.models.Metric;
 import qr.models.QualityRequirementPattern;
 import qr.models.enumerations.Type;
 
@@ -113,5 +114,15 @@ public class QRPatternsController {
     public void deleteClassifier(Integer id) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         gen.deleteClassifier(id.longValue());
+    }
+
+    public List<Metric> getAllMetrics() {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getAllMetrics();
+    }
+
+    public Metric getOneMetric(Integer id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getMetric(id);
     }
 }

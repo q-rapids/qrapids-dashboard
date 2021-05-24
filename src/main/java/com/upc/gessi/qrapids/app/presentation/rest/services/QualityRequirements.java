@@ -11,6 +11,7 @@ import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Project;
 import com.upc.gessi.qrapids.app.domain.models.QualityRequirement;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQRPatternsClassifier;
+import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQRPatternsMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.services.helpers.Mappers;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOAlert;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOQualityRequirement;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 import qr.models.Classifier;
+import qr.models.Metric;
 import qr.models.QualityRequirementPattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -324,6 +326,24 @@ public class QualityRequirements {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
         }
+    }
+
+    @GetMapping("/api/qrPatternsMetrics")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DTOQRPatternsMetric> getAllQRPatternsMetrics() {
+        List<Metric> metricList = qrPatternsController.getAllMetrics();
+        List<DTOQRPatternsMetric> dtoMetricList = new ArrayList<>();
+        for (Metric metric : metricList) {
+            dtoMetricList.add(Mappers.mapMetricToDTOQRPatternsMetric(metric));
+        }
+        return dtoMetricList;
+    }
+
+    @GetMapping("/api/qrPatternsMetrics/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public DTOQRPatternsMetric getQRPatternsMetric(@PathVariable String id) {
+        Metric metric = qrPatternsController.getOneMetric(Integer.parseInt(id));
+        return Mappers.mapMetricToDTOQRPatternsMetric(metric);
     }
 
 }
