@@ -86,13 +86,14 @@ public class ProfilesTest {
         String qualityLevel = "ALL";
         String dsiView = "Radar";
         String dqfView = "Radar";
+        String mView = "Gauge";
         String qmView = "Graph";
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
         List<Pair<Long, Boolean>> allSIs = new ArrayList<>();
         allSIs.add(pair);
 
-        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, dtoProjectList, allSIs);
+        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, mView, qmView, dtoProjectList, allSIs);
         List<DTOProfile> dtoProfileList = new ArrayList<>();
         dtoProfileList.add(dtoProfile);
 
@@ -111,6 +112,7 @@ public class ProfilesTest {
                 .andExpect(jsonPath("$[0].qualityLevel", is(qualityLevel)))
                 .andExpect(jsonPath("$[0].dsiView", is(dsiView)))
                 .andExpect(jsonPath("$[0].dqfView", is(dqfView)))
+                .andExpect(jsonPath("$[0].mView", is(mView)))
                 .andExpect(jsonPath("$[0].qmView", is(qmView)))
                 .andExpect(jsonPath("$[0].projects", hasSize(1)))
                 .andExpect(jsonPath("$[0].projects[0].id", is(projectId.intValue())))
@@ -139,6 +141,8 @@ public class ProfilesTest {
                                         .description("Default visualization for Detailed Strategic Indicators view"),
                                 fieldWithPath("[].dqfView")
                                         .description("Default visualization for Detailed Factors view"),
+                                fieldWithPath("[].mView")
+                                        .description("Default visualization for Metrics view"),
                                 fieldWithPath("[].qmView")
                                         .description("Default visualization for Quality Model view"),
                                 fieldWithPath("[].projects")
@@ -188,13 +192,14 @@ public class ProfilesTest {
         String qualityLevel = "ALL";
         String dsiView = "Radar";
         String dqfView = "Radar";
+        String mView = "Gauge";
         String qmView = "Graph";
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
         List<Pair<Long, Boolean>> allSIs = new ArrayList<>();
         allSIs.add(pair);
 
-        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, dtoProjectList, allSIs);
+        DTOProfile dtoProfile = new DTOProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, mView, qmView, dtoProjectList, allSIs);
 
         when(profilesController.getProfileById(profileId.toString())).thenReturn(dtoProfile);
 
@@ -210,6 +215,7 @@ public class ProfilesTest {
                 .andExpect(jsonPath("$.qualityLevel", is(qualityLevel)))
                 .andExpect(jsonPath("$.dsiView", is(dsiView)))
                 .andExpect(jsonPath("$.dqfView", is(dqfView)))
+                .andExpect(jsonPath("$.mView", is(mView)))
                 .andExpect(jsonPath("$.qmView", is(qmView)))
                 .andExpect(jsonPath("$.projects", hasSize(1)))
                 .andExpect(jsonPath("$.projects[0].id", is(projectId.intValue())))
@@ -242,6 +248,8 @@ public class ProfilesTest {
                                         .description("Default visualization for Detailed Strategic Indicators view"),
                                 fieldWithPath("dqfView")
                                         .description("Default visualization for Detailed Factors view"),
+                                fieldWithPath("mView")
+                                        .description("Default visualization for Metrics view"),
                                 fieldWithPath("qmView")
                                         .description("Default visualization for Quality Model view"),
                                 fieldWithPath("projects")
@@ -291,6 +299,7 @@ public class ProfilesTest {
         Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf("ALL");
         Profile.DetailedViews dsiView = Profile.DetailedViews.valueOf("Radar");
         Profile.DetailedViews dqfView = Profile.DetailedViews.valueOf("Radar");
+        Profile.MetricsView mView = Profile.MetricsView.valueOf("Gauge");
         Profile.QualityModelView qmView = Profile.QualityModelView.valueOf("Graph");
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
@@ -319,6 +328,7 @@ public class ProfilesTest {
                 .param("quality_level", qualityLevel.toString())
                 .param("dsi_view", dsiView.toString())
                 .param("dqf_view", dqfView.toString())
+                .param("m_view", mView.toString())
                 .param("qm_view", qmView.toString())
                 .param("projects_info", projects_info)
                 .with(new RequestPostProcessor() {
@@ -345,6 +355,8 @@ public class ProfilesTest {
                                         .description("Value for default Detailed Strategic Indicators view representation: Radar, Stacked or Polar"),
                                 parameterWithName("dqf_view")
                                         .description("Value for default Detailed Factors view representation: Radar, Stacked or Polar"),
+                                parameterWithName("m_view")
+                                        .description("Value for default Metrics view representation: Gauge or Slider"),
                                 parameterWithName("qm_view")
                                         .description("Value for default Quality Model view representation: Graph or Sunburst"),
                                 parameterWithName("projects_info")
@@ -353,7 +365,7 @@ public class ProfilesTest {
 
         // Verify mock interactions
         verify(profilesController, times(1)).checkProfileByName(profileId, profileName);
-        verify(profilesController, times(1)).updateProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, projectsInfoMap);
+        verify(profilesController, times(1)).updateProfile(profileId, profileName, profileDescription, qualityLevel, dsiView, dqfView, mView, qmView, projectsInfoMap);
 
         verifyNoMoreInteractions(profilesController);
     }
@@ -376,6 +388,7 @@ public class ProfilesTest {
         Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf("ALL");
         Profile.DetailedViews dsiView = Profile.DetailedViews.valueOf("Radar");
         Profile.DetailedViews dqfView = Profile.DetailedViews.valueOf("Radar");
+        Profile.MetricsView mView = Profile.MetricsView.valueOf("Gauge");
         Profile.QualityModelView qmView = Profile.QualityModelView.valueOf("Graph");
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
@@ -401,6 +414,7 @@ public class ProfilesTest {
                 .param("quality_level", qualityLevel.toString())
                 .param("dsi_view", dsiView.toString())
                 .param("dqf_view", dqfView.toString())
+                .param("m_view", mView.toString())
                 .param("qm_view", qmView.toString())
                 .param("projects_info", projects_info)
                 .with(new RequestPostProcessor() {
@@ -427,6 +441,8 @@ public class ProfilesTest {
                                         .description("Value for default Detailed Strategic Indicators view representation: Radar, Stacked or Polar"),
                                 parameterWithName("dqf_view")
                                         .description("Value for default Detailed Factors view representation: Radar, Stacked or Polar"),
+                                parameterWithName("m_view")
+                                        .description("Value for default Metrics view representation: Gauge or Slider"),
                                 parameterWithName("qm_view")
                                         .description("Value for default Quality Model view representation: Graph or Sunburst"),
                                 parameterWithName("projects_info")
@@ -455,6 +471,7 @@ public class ProfilesTest {
         Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf("ALL");
         Profile.DetailedViews dsiView = Profile.DetailedViews.valueOf("Radar");
         Profile.DetailedViews dqfView = Profile.DetailedViews.valueOf("Radar");
+        Profile.MetricsView mView = Profile.MetricsView.valueOf("Gauge");
         Profile.QualityModelView qmView = Profile.QualityModelView.valueOf("Graph");
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
@@ -483,6 +500,7 @@ public class ProfilesTest {
                 .param("quality_level", qualityLevel.toString())
                 .param("dsi_view", dsiView.toString())
                 .param("dqf_view", dqfView.toString())
+                .param("m_view", mView.toString())
                 .param("qm_view", qmView.toString())
                 .param("projects_info", projects_info);
 
@@ -502,6 +520,8 @@ public class ProfilesTest {
                                         .description("Value for default Detailed Strategic Indicators view representation: Radar, Stacked or Polar"),
                                 parameterWithName("dqf_view")
                                         .description("Value for default Detailed Factors view representation: Radar, Stacked or Polar"),
+                                parameterWithName("m_view")
+                                        .description("Value for default Metrics view representation: Gauge or Slider"),
                                 parameterWithName("qm_view")
                                         .description("Value for default Quality Model view representation: Graph or Sunburst"),
                                 parameterWithName("projects_info")
@@ -510,7 +530,7 @@ public class ProfilesTest {
 
         // Verify mock interactions
         verify(profilesController, times(1)).checkNewProfileByName(profileName);
-        verify(profilesController, times(1)).newProfile(profileName, profileDescription, qualityLevel, dsiView, dqfView, qmView, projectsInfoMap);
+        verify(profilesController, times(1)).newProfile(profileName, profileDescription, qualityLevel, dsiView, dqfView, mView, qmView, projectsInfoMap);
 
         verifyNoMoreInteractions(profilesController);
     }
@@ -532,6 +552,7 @@ public class ProfilesTest {
         Profile.QualityLevel qualityLevel = Profile.QualityLevel.valueOf("ALL");
         Profile.DetailedViews dsiView = Profile.DetailedViews.valueOf("Radar");
         Profile.DetailedViews dqfView = Profile.DetailedViews.valueOf("Radar");
+        Profile.MetricsView mView = Profile.MetricsView.valueOf("Gauge");
         Profile.QualityModelView qmView = Profile.QualityModelView.valueOf("Graph");
 
         Pair<Long, Boolean> pair = Pair.of(projectId, true);
@@ -557,6 +578,7 @@ public class ProfilesTest {
                 .param("quality_level", qualityLevel.toString())
                 .param("dsi_view", dsiView.toString())
                 .param("dqf_view", dqfView.toString())
+                .param("m_view", mView.toString())
                 .param("qm_view", qmView.toString())
                 .param("projects_info", projects_info);
 

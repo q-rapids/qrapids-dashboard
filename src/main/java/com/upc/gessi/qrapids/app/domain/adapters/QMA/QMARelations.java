@@ -169,8 +169,8 @@ public class QMARelations {
                 strategicIndicator = new DTORelationsSI(target.getID());
                 strategicIndicator.setName(thisSI.getName());
                 strategicIndicatorsMap.put(target.getID(), strategicIndicator);
+                strategicIndicator.setValue(target.getValue());
             }
-            strategicIndicator.setValue(target.getValue());
             try {
                 Float value = Float.parseFloat(strategicIndicator.getValue());
                 String label = strategicIndicatorsController.getLabel(value);

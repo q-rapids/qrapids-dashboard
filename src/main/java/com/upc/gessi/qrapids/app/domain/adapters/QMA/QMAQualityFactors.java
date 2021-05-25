@@ -128,7 +128,7 @@ public class QMAQualityFactors {
             profile = null; // if we are asking for concrete indicator, we don't need to filter by profile
         }
 //            Connection.closeConnection();
-        return FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, filterDB);
+        return FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, filterDB, true);
     }
 
     private static List<FactorEvaluationDTO> FactorEvaluationDTOtoDTOFactor(List<DTOFactorEvaluation> factors, String prj)
@@ -178,7 +178,7 @@ public class QMAQualityFactors {
             profile = null; // if we are asking for concrete indicator, we don't need to filter by profile
         }
 //        Connection.closeConnection();
-        qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, true);
+        qf = FactorMetricEvaluationDTOListToDTOQualityFactorList(prjRep.findByExternalId(prj).getId(),evals, profile, true, false);
 
         return qf;
     }
@@ -192,12 +192,12 @@ public class QMAQualityFactors {
 
     public List<DTOFactorEvaluation> getAllFactors(String prj, String profile, boolean filterDB) throws IOException {
         qmacon.initConnexion();
-        return qmaDetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj), prjRep.findByExternalId(prj).getId(), profile, filterDB);
+        return qmaDetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(null, Factor.getEvaluations(prj), prjRep.findByExternalId(prj).getId(), profile, filterDB);
     }
 
     public List<DTOFactorEvaluation> getAllFactorsHistoricalData(String prj, String profile, LocalDate from, LocalDate to) throws IOException {
         qmacon.initConnexion();
-        return qmaDetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(Factor.getEvaluations(prj, from, to), prjRep.findByExternalId(prj).getId(), profile,true);
+        return qmaDetailedStrategicIndicators.FactorEvaluationDTOListToDTOFactorList(null, Factor.getEvaluations(prj, from, to), prjRep.findByExternalId(prj).getId(), profile,true);
     }
 
     public void setFactorStrategicIndicatorRelation(List<DTOFactorEvaluation> factors, String prj) throws IOException {
@@ -206,9 +206,9 @@ public class QMAQualityFactors {
         Factor.setStrategicIndicatorRelation(qma_factors);
     }
 
-    private List<DTODetailedFactorEvaluation> FactorMetricEvaluationDTOListToDTOQualityFactorList(Long prjID,List<FactorMetricEvaluationDTO> evals, String profileId,  boolean filterDB) throws ProjectNotFoundException {
+    private List<DTODetailedFactorEvaluation> FactorMetricEvaluationDTOListToDTOQualityFactorList(Long prjID,List<FactorMetricEvaluationDTO> evals, String profileId,  boolean filterDB, boolean currentData) throws ProjectNotFoundException {
         List<DTODetailedFactorEvaluation> qf = new ArrayList<>();
-        boolean found; // to check if the SI is in the database
+        boolean found; // to check if the factor is in the database
 
         // get project info
         Iterator<FactorMetricEvaluationDTO> iter = evals.iterator();
@@ -224,7 +224,10 @@ public class QMAQualityFactors {
             else found = true; // because we want make fetch
             // only return Detailed Quality Factor if it is in local database
             if (found) {
-                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(qualityFactor.getMetrics(), project.getExternalId() ,profileId));
+                // check metric composition this factor
+                String factorExternalID = null;
+                if (currentData) factorExternalID = qualityFactor.getID();
+                DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId));
                 EvaluationDTO evaluation = qualityFactor.getEvaluations().get(0);
                 df.setDate(evaluation.getEvaluationDate());
                 df.setValue(Pair.of(evaluation.getValue(), factorsController.getFactorLabelFromValue(evaluation.getValue())));
