@@ -6,11 +6,9 @@ import com.upc.gessi.qrapids.app.domain.exceptions.ProjectNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.MetricCategory;
 import com.upc.gessi.qrapids.app.domain.models.QFCategory;
 import com.upc.gessi.qrapids.app.domain.models.SICategory;
-import com.upc.gessi.qrapids.app.domain.repositories.QualityFactor.QualityFactorMetricsRepository;
 import com.upc.gessi.qrapids.app.presentation.rest.services.Alerts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -49,10 +47,10 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 
 	static ConfigurableApplicationContext context;
 
-	@Autowired
-	private FactorsController factorsController;
-	@Autowired
-	private StrategicIndicatorsController strategicIndicatorsController;
+	//@Autowired
+	//private FactorsController factorsController;
+	//@Autowired
+	//private StrategicIndicatorsController strategicIndicatorsController;
 
 	@Scheduled(cron = "${cron.expression:-}") // default -> disable scheduled task
 	public void scheduleTask() throws ParseException, ProjectNotFoundException, IOException, CategoriesException {
@@ -70,13 +68,15 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 
 		boolean correct = true;
 		// first assess factors for all projects
-		logger.info("factorsController: " + factorsController);
-		correct = factorsController.assessQualityFactors(null, evaluationLocalDate);
+		//logger.info("factorsController: " + factorsController);
+		//correct = factorsController.assessQualityFactors(null, evaluationLocalDate);
+		correct = context.getBean(FactorsController.class).assessQualityFactors(null, evaluationLocalDate);
 
 		if (correct) {
 			// then assess strategic indicator for all projects
-			logger.info("strategicIndicatorsController: " + strategicIndicatorsController);
-			correct = strategicIndicatorsController.assessStrategicIndicators(null, evaluationLocalDate);
+			//logger.info("strategicIndicatorsController: " + strategicIndicatorsController);
+			//correct = strategicIndicatorsController.assessStrategicIndicators(null, evaluationLocalDate);
+			correct = context.getBean(StrategicIndicatorsController.class).assessStrategicIndicators(null, evaluationLocalDate);
 		}
 
 		if (!correct) { // check if the assessment complete with error

@@ -7,6 +7,7 @@ var categories = [];
 var profileId = sessionStorage.getItem("profile_id");
 
 var id = false;
+var urlLink;
 
 var url;
 if (getParameterByName('id').length !== 0) {
