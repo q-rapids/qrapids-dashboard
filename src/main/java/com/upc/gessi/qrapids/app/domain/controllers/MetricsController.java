@@ -1,6 +1,5 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
-import com.upc.gessi.qrapids.app.domain.adapters.AssesSI;
 import com.upc.gessi.qrapids.app.domain.adapters.Forecast;
 import com.upc.gessi.qrapids.app.domain.adapters.QMA.QMAMetrics;
 import com.upc.gessi.qrapids.app.domain.exceptions.MetricNotFoundException;

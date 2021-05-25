@@ -47,11 +47,6 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 
 	static ConfigurableApplicationContext context;
 
-	//@Autowired
-	//private FactorsController factorsController;
-	//@Autowired
-	//private StrategicIndicatorsController strategicIndicatorsController;
-
 	@Scheduled(cron = "${cron.expression:-}") // default -> disable scheduled task
 	public void scheduleTask() throws ParseException, ProjectNotFoundException, IOException, CategoriesException {
 		// ToDo: decide if we also copy this code to assessSI function
@@ -67,15 +62,9 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		Eval.evaluateQualityModel(projectsDir, evaluationDate, null);
 
 		boolean correct = true;
-		// first assess factors for all projects
-		//logger.info("factorsController: " + factorsController);
-		//correct = factorsController.assessQualityFactors(null, evaluationLocalDate);
 		correct = context.getBean(FactorsController.class).assessQualityFactors(null, evaluationLocalDate);
 
 		if (correct) {
-			// then assess strategic indicator for all projects
-			//logger.info("strategicIndicatorsController: " + strategicIndicatorsController);
-			//correct = strategicIndicatorsController.assessStrategicIndicators(null, evaluationLocalDate);
 			correct = context.getBean(StrategicIndicatorsController.class).assessStrategicIndicators(null, evaluationLocalDate);
 		}
 
