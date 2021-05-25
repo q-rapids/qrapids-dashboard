@@ -11,7 +11,12 @@
 <table style="width:100%">
     <tr>
         <td width="80%"><div th:replace="Fragments/TemplateDashboard :: ProjectSelector"></div></td>
-        <td width="20%"><div th:replace="Fragments/TemplateDashboard :: MetricRepresentationMode"></div></td>
+        <td width="20%">
+            <div th:replace="Fragments/TemplateDashboard :: MetricRepresentationMode"></div>
+            <form style="display: flex; justify-content: flex-end; margin-right: 5px; font-size: 12px">
+                <input type="checkbox" id="groupByFactorCheckbox" onclick="clickCheckbox()">&nbsp;Group by factor</input>
+            </form>
+        </td>
     </tr>
 </table>
 <br/>
@@ -26,6 +31,10 @@
 <script type="text/javascript" src="../../static/js/gaugeChart.js" th:src="@{/js/gaugeChartMet.js}"></script>
 <script>
     window.onload = function() {
+        var groupByFactor = new Boolean(sessionStorage.getItem("groupByFactor"));
+        if (groupByFactor.valueOf() == true) {
+            document.getElementById("groupByFactorCheckbox").setAttribute("checked","checked");
+        }
         getData(200, 200, true);
     };
 </script>

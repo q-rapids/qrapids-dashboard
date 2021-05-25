@@ -127,16 +127,10 @@ public class FactorsController {
     public void importFactorsAndUpdateDatabase() throws IOException, CategoriesException, ProjectNotFoundException, MetricNotFoundException {
         List<String> projects = projectsController.getAllProjectsExternalID();
         for (String prj : projects) {
-            try {
-                Project project = projectsController.findProjectByExternalId(prj);
-                List<DTOFactorEvaluation> factors = getAllFactorsEvaluation(prj, null, false);
-                // when we import factors we don't use profile and don't filter by Data Base
-                List<DTODetailedFactorEvaluation> factorsWithMetrics = getAllFactorsWithMetricsCurrentEvaluation(prj, null, false);
-                updateDataBaseWithNewFactors(prj, factors, factorsWithMetrics);
-            } catch (ProjectNotFoundException e) {
-                Logger logger = LoggerFactory.getLogger(MetricsController.class);
-                logger.error(e.getMessage(), e);
-            }
+            List<DTOFactorEvaluation> factors = getAllFactorsEvaluation(prj, null,false);
+            // when we import factors we don't use profile and don't filter by Data Base
+            List<DTODetailedFactorEvaluation> factorsWithMetrics = getAllFactorsWithMetricsCurrentEvaluation(prj, null,false);
+            updateDataBaseWithNewFactors(prj, factors, factorsWithMetrics);
         }
     }
 
@@ -339,8 +333,11 @@ public class FactorsController {
             evaluationDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             metricList = metricsController.getAllMetricsCurrentEvaluation(project, null);
         }
-        else
+        else {
             metricList = metricsController.getAllMetricsHistoricalEvaluation(project, null, evaluationDate, evaluationDate);
+            // when there is no historic metrics values for specified day --> take the last assessment
+            if (metricList.size() == 0) metricList = metricsController.getAllMetricsCurrentEvaluation(project, null);
+        }
         metricEvaluationQma.setMetrics(metricList);
 
         // CHECK METRICS ALERTS

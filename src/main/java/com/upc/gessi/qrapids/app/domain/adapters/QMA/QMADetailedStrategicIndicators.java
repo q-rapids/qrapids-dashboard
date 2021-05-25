@@ -76,7 +76,7 @@ public class QMADetailedStrategicIndicators {
             evals.add(StrategicIndicator.getFactorsEvaluations(prj, id));
         }
 
-        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prj, profile, evals, filterDB);
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prj, profile, evals, filterDB, true);
         //Connection.closeConnection();
         return dsi;
     }
@@ -97,13 +97,13 @@ public class QMADetailedStrategicIndicators {
             evals = new ArrayList<>();
             evals.add(StrategicIndicator.getFactorsEvaluations(prj, id, from, to));
         }
-        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prj, profile, evals, true);
+        dsi = StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(prj, profile, evals, true, false);
         //Connection.closeConnection();
         return dsi;
     }
 
 
-    private List<DTODetailedStrategicIndicatorEvaluation> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(String prj, String profile, List<StrategicIndicatorFactorEvaluationDTO> evals, boolean filterDB) throws ProjectNotFoundException {
+    private List<DTODetailedStrategicIndicatorEvaluation> StrategicIndicatorFactorEvaluationDTOtoDTODetailedStrategicIndicator(String prj, String profile, List<StrategicIndicatorFactorEvaluationDTO> evals, boolean filterDB, boolean currentData) throws ProjectNotFoundException {
         List<DTODetailedStrategicIndicatorEvaluation> dsi = new ArrayList<>();
         boolean found; // to check if the SI is in the database
         //for each Detailed Strategic Indicador
@@ -120,8 +120,9 @@ public class QMADetailedStrategicIndicators {
                 d.setMismatchDays(evaluation.getMismatchDays());
                 d.setMissingFactors(evaluation.getMissingElements());
                 //set Factors to Detailed Strategic Indicator
-                d.setFactors(FactorEvaluationDTOListToDTOFactorList(element.getFactors(),prjRep.findByExternalId(prj).getId(), profile, false));
-
+                String siExternalID = null;
+                if(currentData) siExternalID = element.getID();
+                d.setFactors(FactorEvaluationDTOListToDTOFactorList(siExternalID, element.getFactors(),prjRep.findByExternalId(prj).getId(), profile, false));
                 // Get value
                 List<DTOAssessment> categories = strategicIndicatorsController.getCategories();
                 EstimationEvaluationDTO estimation = element.getEstimation().get(0);
@@ -158,8 +159,9 @@ public class QMADetailedStrategicIndicators {
         }
     }
 
-    public List<DTOFactorEvaluation> FactorEvaluationDTOListToDTOFactorList(List<FactorEvaluationDTO> factors, Long prjID, String profileId, boolean filterDB) {
+    public List<DTOFactorEvaluation> FactorEvaluationDTOListToDTOFactorList(String siExternalID, List<FactorEvaluationDTO> factors, Long prjID, String profileId, boolean filterDB) {
         List<DTOFactorEvaluation> listFact = new ArrayList<>();
+        Optional<Project> project = prjRep.findById(prjID);
         //for each factor in the Detailed Strategic Indicator
         for (Iterator<FactorEvaluationDTO> iterFactor = factors.iterator(); iterFactor.hasNext(); ) {
             FactorEvaluationDTO factor = iterFactor.next();
@@ -170,12 +172,17 @@ public class QMADetailedStrategicIndicators {
                 //for each evaluation create new factor with factor name and id, and evaluation date and value
                 for (Iterator<EvaluationDTO> iterFactEval = factor.getEvaluations().iterator(); iterFactEval.hasNext(); ) {
                     EvaluationDTO evaluation = iterFactEval.next();
-                    listFact.add(FactorEvaluationDTOToDTOFactor(factor, evaluation));
+                    // check if the factor belongs to the si
+                    boolean addFactor = true;
+                    if (siExternalID != null && !siRep.findByExternalIdAndProjectId(siExternalID,project.get().getId()).getQuality_factors().contains(factor.getID())) {
+                        addFactor = false;
+                    }
+                    if (addFactor)
+                        listFact.add(FactorEvaluationDTOToDTOFactor(factor, evaluation));
                 }
             }
         }
         // filter by profile
-        Optional<Project> project = prjRep.findById(prjID);
         if ((profileId != null) && (!profileId.equals("null"))) { // if profile not null
             Profile profile = profilesController.findProfileById(profileId);
             if (profile.getAllSIByProject(project.get())) { // if allSI true, return all quality factors

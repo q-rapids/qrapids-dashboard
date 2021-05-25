@@ -98,6 +98,7 @@ function clickOnTree(e){
                 $("#SINetwork").hide();
             }
             $("#SICompositionTitle").text("Strategic Indicator Composition");
+            $("#SICompositionWarning").text("Warning: Changing the composition of Strategic Indicator will affect its historical data interpretation."); // add warning
             $("#deleteSI").show();
             if (factors.length > 0) {
                 showFactors();
@@ -143,6 +144,7 @@ function newSI() {
         $("#SINetwork").hide();
     }
     $("#SICompositionTitle").text("Step 2 - Select the corresponding factors");
+    $("#SICompositionWarning").text(""); // clean warning
     $("#deleteSI").hide();
     if (factors.length > 0)
         showFactors();

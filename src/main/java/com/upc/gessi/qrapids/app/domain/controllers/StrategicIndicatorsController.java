@@ -360,8 +360,11 @@ public class StrategicIndicatorsController {
             evaluationDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             factorList = factorsController.getAllFactorsEvaluation(project, null,false);
         }
-        else
-            factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null,evaluationDate, evaluationDate);
+        else {
+            factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null, evaluationDate, evaluationDate);
+            // when there is no historic factors values for specified day --> take the last assessment
+            if (factorList.size() == 0) factorList = factorsController.getAllFactorsEvaluation(project, null,false);
+        }
         factorEvaluationQma.setFactors(factorList);
         return assessProjectStrategicIndicators(evaluationDate, project, factorEvaluationQma);
     }
