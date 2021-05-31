@@ -911,7 +911,7 @@ function clickOnTreeMetrics(e) {
     previousSelectionId_metric = currentSelectionId_metric;
     currentSelectionId_metric = e.target.id;
     if (previousSelectionId_metric != null) {
-        document.getElementById(previousSelectionId_metric).classList.remove("active")
+        document.getElementById(previousSelectionId_metric).classList.remove("active");
     }
     document.getElementById(currentSelectionId_metric).classList.add("active");
     getChosenMetric(e.target.id.replace("metric", ""));
@@ -919,6 +919,9 @@ function clickOnTreeMetrics(e) {
 
 function getChosenMetric(currentMetricId) {
     document.getElementById("metricInfo").removeAttribute('style');
+    var metricInfoTitle = document.getElementById("metricInfoTitle");
+    metricInfoTitle.innerHTML = "";
+    metricInfoTitle.appendChild(document.createTextNode("Metric Information"));
     var url = "/api/qrPatternsMetrics/" + currentMetricId;
     if (serverUrl) {
         url = serverUrl + url;
@@ -930,7 +933,7 @@ function getChosenMetric(currentMetricId) {
         type: "GET",
         async: true,
         success: function (data) {
-            document.getElementById("metricName").setAttribute("value", data.name);
+            document.getElementById("metricName").value = data.name;
             document.getElementById("metricDescription").value = data.description;
             document.getElementById("typeSelect").value = data.type;
             changeTypeMetric(data.type);
@@ -949,14 +952,100 @@ function getChosenMetric(currentMetricId) {
                 }
                 document.getElementById("metricPossibleValues").value = stringPossibleValues;
             }
+
+            var buttonsRowMetric = document.getElementById("buttonsRowMetric");
+            buttonsRowMetric.innerHTML = "";
         }
     })
 }
 
 function newMetric() {
+    document.getElementById("metricInfo").removeAttribute('style');
+    var metricInfoTitle = document.getElementById("metricInfoTitle");
+    metricInfoTitle.innerHTML = "";
+    metricInfoTitle.appendChild(document.createTextNode("Step 1 - Fill the metric information"));
+
+    if (currentSelectionId_metric != null) {
+        document.getElementById(currentSelectionId_metric).classList.remove("active");
+        currentSelectionId_metric = null;
+    }
+    document.getElementById("metricName").value = "";
+    document.getElementById("metricDescription").value = "";
+    document.getElementById("typeSelect").value = "integer";
+    changeTypeMetric("integer");
+    document.getElementById("metricPossibleValues").value = "";
+
+    var buttonsRowMetric = document.getElementById("buttonsRowMetric");
+    buttonsRowMetric.innerHTML = "";
+    var saveButtonMetric = document.createElement('button');
+    saveButtonMetric.classList.add("btn");
+    saveButtonMetric.classList.add("btn-primary");
+    saveButtonMetric.setAttribute('id', 'saveButtonMetric');
+    saveButtonMetric.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+    saveButtonMetric.appendChild(document.createTextNode("Save Metric"));
+    saveButtonMetric.addEventListener("click", saveMetric);
+    saveMethod_metric = "POST";
+    buttonsRowMetric.appendChild(saveButtonMetric);
 }
 
 function saveMetric() {
+    if ($('#metricName').val() !== "") {
+        var formData = new FormData();
+        formData.append("name", $('#metricName').val());
+        formData.append("description", $('#metricDescription').val());
+        var typeSelectValue = $('#typeSelect').val();
+        formData.append("type", typeSelectValue);
+        if (typeSelectValue == "integer" || typeSelectValue == "float") {
+            var minValue = $('#metricMinValue').val();
+            var maxValue = $('#metricMaxValue').val();
+            if (minValue == "" || maxValue == "") {
+                alert("Minimum value or maximum value are not numbers");
+                return;
+            }
+            if (minValue > maxValue) {
+                alert("Minimum value must be equal or smaller than maximum value");
+                return;
+            }
+            formData.append("minValue", minValue);
+            formData.append("maxValue", maxValue);
+        } else if (typeSelectValue == "domain") {
+            formData.append("possibleValues", $('#metricPossibleValues').val());
+        }
+
+        var url = "/api/qrPatternsMetrics";
+        if (saveMethod_metric == "PUT"){ //Edit metric: add id to URL
+            url += "/" + currentSelectionId_metric.replace("metric", "");
+        }
+        if (serverUrl) {
+            url = serverUrl + url;
+        }
+
+        $.ajax({
+            url: url,
+            data: formData,
+            type: saveMethod_metric,
+            contentType: false,
+            processData: false,
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status == 400)
+                    alert("Error: Missing parameters");
+                else if (jqXHR.status == 404)
+                    alert("Error: This metric does not exist");
+                else if (jqXHR.status == 409)
+                    alert("Error: Metric name already exists")
+                else {
+                    alert("Internal server error");
+                }
+            },
+            success: function() {
+                buildTreeMetrics();
+                document.getElementById("metricInfo").setAttribute('style', "display: none");
+            }
+        });
+    }
+    else {
+        alert("Make sure that you have completed all fields marked with an *");
+    }
 }
 
 function deleteMetric() {
