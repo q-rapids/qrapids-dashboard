@@ -1,23 +1,23 @@
 @CHARSET "UTF-8";
 
 
-#productView, #profileView, #SIConfigView, #QFConfigView, #CategoriesConfigView, #ReportingView, #patternView {
+#productView, #profileView, #SIConfigView, #QFConfigView, #CategoriesConfigView, #ReportingView, #patternView, #metricView {
 	display: flex;
 	flex-direction: row;
 }
-#productTree, #profileTree, #SITree, #QFTree, #CategoriesElementSelector, #ProjectSelector, #patternTree {
+#productTree, #profileTree, #SITree, #QFTree, #CategoriesElementSelector, #ProjectSelector, #patternTree, #metricTree {
 	margin: 1%;
 	width: 21%;
 }
 
-#productInfo, #profileInfo, #SIInfo, #QFInfo, #Categories, #ReportingInfo, #patternInfo {
+#productInfo, #profileInfo, #SIInfo, #QFInfo, #Categories, #ReportingInfo, #patternInfo, #metricInfo {
 	margin: 1%;
 	width: 75%;
 	display: flex;
 	flex-direction: column;
 }
 
-#productForm, #profileForm, #SIForm, #QFForm, #SICategories, #FactorsCategories, #MetricsCategories, #RedirectToReport, #tableREPdiv, #patternForm, #classifierForm {
+#productForm, #profileForm, #SIForm, #QFForm, #SICategories, #FactorsCategories, #MetricsCategories, #RedirectToReport, #tableREPdiv, #patternForm, #classifierForm, #metricForm {
 	margin: 1%;
 	display: flex;
 	flex-direction: column;
@@ -31,7 +31,7 @@
 	width: 81%;
 }
 
-.productInfoRow, .profileInfoRow, .SIInfoRow, .SIInfoRowID, .QFInfoRow, .QFInfoRowID {
+.productInfoRow, .profileInfoRow, .SIInfoRow, .SIInfoRowID, .QFInfoRow, .QFInfoRowID, .metricInfoRow {
 	margin: 1%;
 	margin-bottom: 3%;
 	width: 90%;

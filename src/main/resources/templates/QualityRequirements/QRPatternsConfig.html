@@ -39,6 +39,72 @@
     </div>
     <div id="patternInfo"></div>
 </div>
+
+<div class="modal fade" id="manageMetricsModal" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="width: 80%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" onclick="closeMetricsModal()">&times;</button>
+                <h4 class="modal-title">Manage Metrics</h4>
+            </div>
+            <div class="modal-body">
+                <div id="metricView">
+                    <div id="metricTree">
+                        <div style="display: flex; flex-direction: row; justify-content: center;">
+                            <button onclick="newMetric()" class="btn btn-primary" style="font-size: 18px; margin-bottom: 12px">New Metric</button>
+                        </div>
+                        <br/>
+                        <ul id="metricList" class="list-group">
+                        </ul>
+                    </div>
+                    <div id="metricInfo" style="display: none">
+                        <div id="metricForm">
+                            <div class="metricInfoRow">
+                                <p id="metricInfoTitle" style="font-size: 36px; margin-right: 1%">Metric Information</p>
+                            </div>
+                            <div class="metricInfoRow">
+                                <p style="font-size: 18px; margin-right: 1%">Name*: </p>
+                                <input id="metricName" rows="1" style="width: 100%;"></input>
+                            </div>
+                            <div class="metricInfoRow">
+                                <p style="font-size: 18px; margin-right: 1%">Description: </p>
+                                <textarea id="metricDescription" rows="3" style="width: 100%;"></textarea>
+                            </div>
+                            <div class="metricInfoRow">
+                                <p style="font-size: 18px; margin-right: 1%">Type: </p>
+                                <select id="typeSelect" style="width: 100%;">
+                                    <option value="integer" onclick="changeTypeMetric('integer')">Integer</option>
+                                    <option value="float" onclick="changeTypeMetric('float')">Float</option>
+                                    <option value="string" onclick="changeTypeMetric('string')">String</option>
+                                    <option value="time" onclick="changeTypeMetric('time')">Time</option>
+                                    <option value="domain" onclick="changeTypeMetric('domain')">Domain</option>
+                                </select>
+                            </div>
+                            <div id="minValueSection" class="metricInfoRow" style="display: none">
+                                <p style="font-size: 18px; margin-right: 1%; white-space: nowrap">Minimum value: </p>
+                                <input id="metricMinValue" type="number" step="0.01" rows="1" style="width: 100%;"></input>
+                            </div>
+                            <div id="maxValueSection" class="metricInfoRow" style="display: none">
+                                <p style="font-size: 18px; margin-right: 1%; white-space: nowrap">Maximum value: </p>
+                                <input id="metricMaxValue" type="number" step="0.01" rows="1" style="width: 100%;"></input>
+                            </div>
+                            <div id="possibleValuesSection" class="metricInfoRow" style="display: none">
+                                <div style="margin-right: 1%">
+                                    <p style="font-size: 18px; white-space: nowrap">Possible values: </p>
+                                    <p style="color: grey; width: 120px">Write each value in a different line.</p>
+                                </div>
+                                <textarea id="metricPossibleValues" rows="5" style="width: 100%;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="submitProfileSelectProjectsModalBtn" type="button" class="btn btn-secondary pull-right" onclick="closeMetricsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <th:block th:replace="Fragments/TemplateDashboard :: scriptsBasic"></th:block>
 <script type="text/javascript" th:src="@{/js/configQRPattern.js}"></script>
