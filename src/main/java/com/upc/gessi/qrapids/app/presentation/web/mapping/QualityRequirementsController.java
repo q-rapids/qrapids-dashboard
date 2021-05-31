@@ -21,9 +21,4 @@ public class QualityRequirementsController {
         return "QualityRequirements/QRPatternsConfig";
     }
 
-    @RequestMapping("/QRPatterns/Configuration/PatternsMetrics")
-    public String QRPatternsMetrics() {
-        return "QualityRequirements/QRPatternsMetrics";
-    }
-
 }
