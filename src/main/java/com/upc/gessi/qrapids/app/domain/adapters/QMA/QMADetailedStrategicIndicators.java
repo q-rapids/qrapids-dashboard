@@ -121,7 +121,7 @@ public class QMADetailedStrategicIndicators {
                 d.setMissingFactors(evaluation.getMissingElements());
                 //set Factors to Detailed Strategic Indicator
                 String siExternalID = null;
-                if(currentData) siExternalID = element.getID();
+                if ((filterDB != false) && currentData) siExternalID = element.getID();
                 d.setFactors(FactorEvaluationDTOListToDTOFactorList(siExternalID, element.getFactors(),prjRep.findByExternalId(prj).getId(), profile, false));
                 // Get value
                 List<DTOAssessment> categories = strategicIndicatorsController.getCategories();
