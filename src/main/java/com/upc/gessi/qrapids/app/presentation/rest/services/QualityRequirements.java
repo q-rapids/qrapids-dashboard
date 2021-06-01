@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
 import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
 import com.upc.gessi.qrapids.app.domain.exceptions.MissingParametersException;
 import com.upc.gessi.qrapids.app.domain.exceptions.QRPatternNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.QRPatternsMetricInUseException;
 import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Project;
@@ -439,6 +440,22 @@ public class QualityRequirements {
         } catch (ElementAlreadyPresentException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Metric name already exists");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/api/qrPatternsMetrics/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteQRPatternsMetric(@PathVariable String id) {
+        try {
+            if (!qrPatternsController.deleteMetric(Integer.parseInt(id))) {
+                throw new QRPatternsMetricInUseException();
+            }
+        } catch (QRPatternsMetricInUseException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This metric is used in a pattern");
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());

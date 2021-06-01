@@ -135,4 +135,9 @@ public class QRPatternsController {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.updateMetric(id, m);
     }
+
+    public boolean deleteMetric(Integer id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.deleteMetric(id);
+    }
 }

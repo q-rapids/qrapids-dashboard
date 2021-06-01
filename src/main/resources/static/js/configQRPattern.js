@@ -1059,7 +1059,7 @@ function saveMetric() {
                 else if (jqXHR.status == 404)
                     alert("Error: This metric does not exist");
                 else if (jqXHR.status == 409)
-                    alert("Error: Metric name already exists")
+                    alert("Error: Metric name already exists");
                 else {
                     alert("Internal server error");
                 }
@@ -1081,6 +1081,31 @@ function saveMetric() {
 }
 
 function deleteMetric() {
+    var url = "/api/qrPatternsMetrics/" + currentSelectionId_metric.replace("metric", "");
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+
+    $.ajax({
+        url: url,
+        type: "DELETE",
+        contentType: false,
+        processData: false,
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 404)
+                alert("Error: This pattern does not exist");
+            else if (jqXHR.status == 409)
+                alert("Error: This metric is used in one or more patterns");
+            else {
+                alert("Internal server error");
+            }
+        },
+        success: function() {
+            buildTreeMetrics();
+            document.getElementById("metricInfo").setAttribute("style", "display: none");
+            currentSelectionId_metric = null;
+        }
+    });
 }
 
 function changeTypeMetric(type) {
