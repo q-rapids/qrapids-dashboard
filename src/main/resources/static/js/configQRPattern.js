@@ -316,30 +316,7 @@ function getChosenPattern(currentPatternId) {
             var parameterMetricSelect = document.createElement('select');
             parameterMetricSelect.setAttribute('id', "parameterMetricSelect");
             parameterMetricSelect.setAttribute('style', 'width: 100%;');
-
-            var urlMetrics = "/api/qrPatternsMetrics";
-            if (serverUrl) {
-                urlMetrics = serverUrl + urlMetrics;
-            }
-            jQuery.ajax({
-                dataType: "json",
-                url: urlMetrics,
-                cache: false,
-                type: "GET",
-                async: true,
-                success: function (dataMetric) {
-                    for (var i=0; i<dataMetric.length; i++) {
-                        var metricOption = document.createElement('option');
-                        metricOption.appendChild(document.createTextNode(dataMetric[i].name));
-                        metricOption.setAttribute('value', dataMetric[i].id);
-                        if (dataMetric[i].id == data.forms[0].fixedPart.parameters[0].metricId) {
-                            metricOption.setAttribute('selected', 'selected');
-                        }
-                        parameterMetricSelect.appendChild(metricOption);
-                    }
-                }
-            });
-
+            fillParameterMetricSelect(parameterMetricSelect, data.forms[0].fixedPart.parameters[0].metricId);
             parameterMetricRow.appendChild(parameterMetricSelect);
 
             var manageMetricsButton = document.createElement('button');
@@ -871,6 +848,31 @@ function deleteClassifier() {
     }
 }
 
+function fillParameterMetricSelect(parameterMetricSelect, selectedMetricId) {
+    var urlMetrics = "/api/qrPatternsMetrics";
+    if (serverUrl) {
+        urlMetrics = serverUrl + urlMetrics;
+    }
+    jQuery.ajax({
+        dataType: "json",
+        url: urlMetrics,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            for (var i=0; i<data.length; i++) {
+                var metricOption = document.createElement('option');
+                metricOption.appendChild(document.createTextNode(data[i].name));
+                metricOption.setAttribute('value', data[i].id);
+                if (data[i].id == selectedMetricId) {
+                    metricOption.setAttribute('selected', 'selected');
+                }
+                parameterMetricSelect.appendChild(metricOption);
+            }
+        }
+    });
+}
+
 // Metrics modal
 function openMetricsModal() {
     buildTreeMetrics();
@@ -878,7 +880,11 @@ function openMetricsModal() {
 }
 
 function closeMetricsModal() {
+    var select = document.getElementById("parameterMetricSelect");
+    select.innerHTML = "";
+    fillParameterMetricSelect(select, currentPatternData.forms[0].fixedPart.parameters[0].metricId);
     $("#manageMetricsModal").modal('hide');
+    document.getElementById("metricInfo").setAttribute('style', "display: none");
 }
 
 function buildTreeMetrics() {
@@ -891,7 +897,7 @@ function buildTreeMetrics() {
         url: url,
         cache: false,
         type: "GET",
-        async: true,
+        async: false,
         success: function (data) {
             var metricList = document.getElementById('metricList');
             metricList.innerHTML = "";
@@ -935,7 +941,9 @@ function getChosenMetric(currentMetricId) {
         success: function (data) {
             document.getElementById("metricName").value = data.name;
             document.getElementById("metricDescription").value = data.description;
-            document.getElementById("typeSelect").value = data.type;
+            var typeSelect = document.getElementById("typeSelect");
+            typeSelect.value = data.type;
+            typeSelect.setAttribute("disabled", "");
             changeTypeMetric(data.type);
 
             if (data.type == "integer" || data.type == "float") {
@@ -955,6 +963,23 @@ function getChosenMetric(currentMetricId) {
 
             var buttonsRowMetric = document.getElementById("buttonsRowMetric");
             buttonsRowMetric.innerHTML = "";
+            var deleteButtonMetric = document.createElement('button');
+            deleteButtonMetric.classList.add("btn");
+            deleteButtonMetric.classList.add("btn-danger");
+            deleteButtonMetric.setAttribute('id', 'deleteButtonMetric');
+            deleteButtonMetric.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+            deleteButtonMetric.appendChild(document.createTextNode("Delete Metric"));
+            deleteButtonMetric.addEventListener("click", deleteMetric);
+            buttonsRowMetric.appendChild(deleteButtonMetric);
+            var saveButtonMetric = document.createElement('button');
+            saveButtonMetric.classList.add("btn");
+            saveButtonMetric.classList.add("btn-primary");
+            saveButtonMetric.setAttribute('id', 'saveButtonMetric');
+            saveButtonMetric.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+            saveButtonMetric.appendChild(document.createTextNode("Save Metric"));
+            saveButtonMetric.addEventListener("click", saveMetric);
+            saveMethod_metric = "PUT";
+            buttonsRowMetric.appendChild(saveButtonMetric);
         }
     })
 }
@@ -971,7 +996,9 @@ function newMetric() {
     }
     document.getElementById("metricName").value = "";
     document.getElementById("metricDescription").value = "";
-    document.getElementById("typeSelect").value = "integer";
+    var typeSelect = document.getElementById("typeSelect");
+    typeSelect.value = "integer";
+    typeSelect.removeAttribute("disabled");
     changeTypeMetric("integer");
     document.getElementById("metricPossibleValues").value = "";
 
@@ -1039,7 +1066,12 @@ function saveMetric() {
             },
             success: function() {
                 buildTreeMetrics();
-                document.getElementById("metricInfo").setAttribute('style', "display: none");
+                if (saveMethod_metric == "PUT") {
+                    document.getElementById(currentSelectionId_metric).classList.add("active");
+                    getChosenMetric(currentSelectionId_metric.replace("metric", ""));
+                } else {
+                    document.getElementById("metricInfo").setAttribute('style', "display: none");
+                }
             }
         });
     }
