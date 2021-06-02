@@ -38,6 +38,21 @@ public class Mappers {
         return new DTOQRPattern(qrPattern.getId(), qrPattern.getName(), qrPattern.getComments(), qrPattern.getDescription(), qrPattern.getGoal(), dtoQRFormList, qrPattern.getCostFunction());
     }
 
+    public static QualityRequirementPattern mapToQualityRequirementPattern(String name, String goal, String description, String requirement, String parameterName, String parameterDescription, String parameterCorrectnessCondition, Integer metricId) {
+        Param newParameter = new Param();
+        newParameter.setName(parameterName);
+        newParameter.setDescription(parameterDescription);
+        newParameter.setCorrectnessCondition(parameterCorrectnessCondition);
+        newParameter.setMetricId(metricId);
+        List<Param> parameterList = new ArrayList<>();
+        parameterList.add(newParameter);
+        FixedPart newFixedPart = new FixedPart(requirement, parameterList);
+        Form newForm = new Form(name ,description, "", newFixedPart);
+        List<Form> formList = new ArrayList<>();
+        formList.add(newForm);
+        return new QualityRequirementPattern(null, name, "", "", goal, formList, "");
+    }
+
     public static DTOQRPatternsClassifier mapClassifierToDTOQRPatternsClassifier(Classifier classifier) {
         List<DTOQRPatternsClassifier> internalClassifierList = new ArrayList<>();
         for(Classifier internalClassifier : classifier.getInternalClassifiers()) {

@@ -192,17 +192,22 @@ public class QualityRequirements {
             String classifierName = request.getParameter("classifierName");
             String classifierPos = request.getParameter("classifierPos");
             String classifierPatterns = request.getParameter("classifierPatterns");
-            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null) {
+            String parameterName = request.getParameter("parameterName");
+            String parameterDescription = request.getParameter("parameterDescription");
+            String parameterCorrectnessCondition = request.getParameter("parameterCorrectnessCondition");
+            String metricId = request.getParameter("metricId");
+            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null || parameterName == null || metricId == null) {
                 throw new MissingParametersException();
             }
             if (!name.equals("")) {
+                QualityRequirementPattern newPattern = Mappers.mapToQualityRequirementPattern(name, goal, description, requirement, parameterName, parameterDescription, parameterCorrectnessCondition, Integer.parseInt(metricId));
                 List<Integer> listClassifierPatterns = new ArrayList<>();
                 if (!classifierPatterns.equals("")) {
                     for (String pat : classifierPatterns.split(",")) {
                         listClassifierPatterns.add(Integer.parseInt(pat));
                     }
                 }
-                qrPatternsController.createPattern(name, goal, description, requirement, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
+                qrPatternsController.createPattern(newPattern, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
             }
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);
@@ -225,22 +230,24 @@ public class QualityRequirements {
             String classifierName = request.getParameter("classifierName");
             String classifierPos = request.getParameter("classifierPos");
             String classifierPatterns = request.getParameter("classifierPatterns");
-            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null) {
+            String parameterName = request.getParameter("parameterName");
+            String parameterDescription = request.getParameter("parameterDescription");
+            String parameterCorrectnessCondition = request.getParameter("parameterCorrectnessCondition");
+            String metricId = request.getParameter("metricId");
+            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null || parameterName == null || metricId == null) {
                 throw new MissingParametersException();
             }
             if (!name.equals("")) {
+                QualityRequirementPattern pattern = Mappers.mapToQualityRequirementPattern(name, goal, description, requirement, parameterName, parameterDescription, parameterCorrectnessCondition, Integer.parseInt(metricId));
                 List<Integer> listClassifierPatterns = new ArrayList<>();
                 for (String pat : classifierPatterns.split(",")) {
                     listClassifierPatterns.add(Integer.parseInt(pat));
                 }
-                qrPatternsController.editPattern(Integer.parseInt(id), name, goal, description, requirement, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
+                qrPatternsController.editPattern(Integer.parseInt(id), pattern, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
             }
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
-        } catch (QRPatternNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());

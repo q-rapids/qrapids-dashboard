@@ -455,13 +455,18 @@ function getChosenClassifier(currentClassifierId) {
 }
 
 function newRequirement() {
+    if (currentSelectionId != null) {
+        document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #ffffff;');
+        currentSelectionId = null;
+    }
+
     var patternForm = document.createElement('div');
     patternForm.setAttribute("id", "patternForm");
 
     var title1Row = document.createElement('div');
     title1Row.classList.add("productInfoRow");
     var title1P = document.createElement('p');
-    title1P.appendChild(document.createTextNode("New Requirement Pattern")); //revisar títol
+    title1P.appendChild(document.createTextNode("Step 1 - Fill the pattern information"));
     title1P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
     title1Row.appendChild(title1P);
     patternForm.appendChild(title1Row);
@@ -545,6 +550,86 @@ function newRequirement() {
     classifierRow.appendChild(classifierSelect);
     patternForm.appendChild(classifierRow);
 
+    //Parameter
+    var parameterTitleRow = document.createElement('div');
+    parameterTitleRow.classList.add("productInfoRow");
+    var parameterTitleP = document.createElement('p');
+    parameterTitleP.appendChild(document.createTextNode("Step 2 - Fill the parameter information"));
+    parameterTitleP.setAttribute('style', 'font-size: 36px; margin-right: 1%');
+    parameterTitleRow.appendChild(parameterTitleP);
+    patternForm.appendChild(parameterTitleRow);
+
+    var parameterNameRow = document.createElement('div');
+    parameterNameRow.classList.add("productInfoRow");
+    parameterNameRow.setAttribute('style', 'align-items: center');
+    var parameterNameP = document.createElement('p');
+    parameterNameP.appendChild(document.createTextNode("Parameter name: "));
+    parameterNameP.setAttribute('style', 'font-size: 18px; margin-right: 1%; white-space: nowrap');
+    parameterNameRow.appendChild(parameterNameP);
+    var parameterNameSymbol = document.createElement('p');
+    parameterNameSymbol.appendChild(document.createTextNode("%"));
+    parameterNameSymbol.setAttribute('style', 'color: grey');
+    parameterNameRow.appendChild(parameterNameSymbol);
+    var parameterNameInput = document.createElement("input");
+    parameterNameInput.setAttribute('id', 'parameterName');
+    parameterNameInput.setAttribute('type', 'text');
+    parameterNameInput.setAttribute('style', 'width: 100%;');
+    parameterNameInput.setAttribute('placeholder', 'Write the parameter name here');
+    parameterNameRow.appendChild(parameterNameInput);
+    parameterNameRow.appendChild(parameterNameSymbol.cloneNode(true));
+    patternForm.appendChild(parameterNameRow);
+
+    var parameterDescriptionRow = document.createElement('div');
+    parameterDescriptionRow.classList.add("productInfoRow");
+    var parameterDescriptionP = document.createElement('p');
+    parameterDescriptionP.appendChild(document.createTextNode("Parameter description: "));
+    parameterDescriptionP.setAttribute('style', 'font-size: 18px; margin-right: 1%; white-space: nowrap');
+    parameterDescriptionRow.appendChild(parameterDescriptionP);
+    var parameterDescriptionInput = document.createElement("textarea");
+    parameterDescriptionInput.setAttribute('id', 'parameterDescription');
+    parameterDescriptionInput.setAttribute('type', 'text');
+    parameterDescriptionInput.setAttribute('style', 'width: 100%;');
+    parameterDescriptionInput.setAttribute('rows', '3');
+    parameterDescriptionInput.setAttribute('placeholder', 'Write the parameter description here');
+    parameterDescriptionRow.appendChild(parameterDescriptionInput);
+    patternForm.appendChild(parameterDescriptionRow);
+
+    var parameterCorrectnessConditionRow = document.createElement('div');
+    parameterCorrectnessConditionRow.classList.add("productInfoRow");
+    var parameterCorrectnessCondP = document.createElement('p');
+    parameterCorrectnessCondP.appendChild(document.createTextNode("Parameter correctness condition: "));
+    parameterCorrectnessCondP.setAttribute('style', 'font-size: 18px; margin-right: 1%; white-space: nowrap');
+    parameterCorrectnessConditionRow.appendChild(parameterCorrectnessCondP);
+    var parameterCorrectnessCondInput = document.createElement("input");
+    parameterCorrectnessCondInput.setAttribute('id', 'parameterCorrectnessCondition');
+    parameterCorrectnessCondInput.setAttribute('type', 'text');
+    parameterCorrectnessCondInput.setAttribute('style', 'width: 100%;');
+    parameterCorrectnessCondInput.setAttribute('placeholder', 'Write the parameter correctness condition here');
+    parameterCorrectnessConditionRow.appendChild(parameterCorrectnessCondInput);
+    patternForm.appendChild(parameterCorrectnessConditionRow);
+
+    var parameterMetricRow = document.createElement('div');
+    parameterMetricRow.classList.add("productInfoRow");
+    var parameterMetricP = document.createElement('p');
+    parameterMetricP.appendChild(document.createTextNode("Parameter metric: "));
+    parameterMetricP.setAttribute('style', 'font-size: 18px; margin-right: 1%; white-space: nowrap');
+    parameterMetricRow.appendChild(parameterMetricP);
+    var parameterMetricSelect = document.createElement('select');
+    parameterMetricSelect.setAttribute('id', "parameterMetricSelect");
+    parameterMetricSelect.setAttribute('style', 'width: 100%;');
+    fillParameterMetricSelect(parameterMetricSelect, 0);
+    parameterMetricRow.appendChild(parameterMetricSelect);
+
+    var manageMetricsButton = document.createElement('button');
+    manageMetricsButton.classList.add("btn");
+    manageMetricsButton.classList.add("btn-default");
+    manageMetricsButton.setAttribute('style', 'margin-left: 1%; padding: 2px 12px;');
+    manageMetricsButton.appendChild(document.createTextNode("Manage metrics"));
+    manageMetricsButton.addEventListener("click", openMetricsModal);
+    parameterMetricRow.appendChild(manageMetricsButton);
+    patternForm.appendChild(parameterMetricRow);
+    //Parameter end
+
     var buttonsRow = document.createElement('div');
     buttonsRow.classList.add("productInfoRow");
     buttonsRow.setAttribute('id', 'buttonsRow');
@@ -593,6 +678,11 @@ function savePattern() {
         formData.append("classifierName", classifiersTree[i].internalClassifiers[j].name);
         formData.append("classifierPos", j);
         formData.append("classifierPatterns", classifierPatterns);
+
+        formData.append("parameterName", $('#parameterName').val());
+        formData.append("parameterDescription", $('#parameterDescription').val());
+        formData.append("parameterCorrectnessCondition", $('#parameterCorrectnessCondition').val());
+        formData.append("metricId", $('#parameterMetricSelect').val());
 
         var url = "/api/qrPatterns";
         if (saveMethod == "PUT"){ //Edit pattern: add id to URL
@@ -662,6 +752,11 @@ function deletePattern() {
 }
 
 function newClassifier() {
+    if (currentSelectionId != null) {
+        document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #ffffff;');
+        currentSelectionId = null;
+    }
+
     var classifierForm = document.createElement('div');
     classifierForm.setAttribute("id", "classifierForm");
 
@@ -882,7 +977,11 @@ function openMetricsModal() {
 function closeMetricsModal() {
     var select = document.getElementById("parameterMetricSelect");
     select.innerHTML = "";
-    fillParameterMetricSelect(select, currentPatternData.forms[0].fixedPart.parameters[0].metricId);
+    if (currentSelectionId == null) {
+        fillParameterMetricSelect(select, 0);
+    } else {
+        fillParameterMetricSelect(select, currentPatternData.forms[0].fixedPart.parameters[0].metricId);
+    }
     $("#manageMetricsModal").modal('hide');
     document.getElementById("metricInfo").setAttribute('style', "display: none");
 }
