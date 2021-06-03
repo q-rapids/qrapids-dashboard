@@ -316,30 +316,7 @@ function getChosenPattern(currentPatternId) {
             var parameterMetricSelect = document.createElement('select');
             parameterMetricSelect.setAttribute('id', "parameterMetricSelect");
             parameterMetricSelect.setAttribute('style', 'width: 100%;');
-
-            var urlMetrics = "/api/qrPatternsMetrics";
-            if (serverUrl) {
-                urlMetrics = serverUrl + urlMetrics;
-            }
-            jQuery.ajax({
-                dataType: "json",
-                url: urlMetrics,
-                cache: false,
-                type: "GET",
-                async: true,
-                success: function (dataMetric) {
-                    for (var i=0; i<dataMetric.length; i++) {
-                        var metricOption = document.createElement('option');
-                        metricOption.appendChild(document.createTextNode(dataMetric[i].name));
-                        metricOption.setAttribute('value', dataMetric[i].id);
-                        if (dataMetric[i].id == data.forms[0].fixedPart.parameters[0].metricId) {
-                            metricOption.setAttribute('selected', 'selected');
-                        }
-                        parameterMetricSelect.appendChild(metricOption);
-                    }
-                }
-            });
-
+            fillParameterMetricSelect(parameterMetricSelect, data.forms[0].fixedPart.parameters[0].metricId);
             parameterMetricRow.appendChild(parameterMetricSelect);
 
             var manageMetricsButton = document.createElement('button');
@@ -478,13 +455,18 @@ function getChosenClassifier(currentClassifierId) {
 }
 
 function newRequirement() {
+    if (currentSelectionId != null) {
+        document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #ffffff;');
+        currentSelectionId = null;
+    }
+
     var patternForm = document.createElement('div');
     patternForm.setAttribute("id", "patternForm");
 
     var title1Row = document.createElement('div');
     title1Row.classList.add("productInfoRow");
     var title1P = document.createElement('p');
-    title1P.appendChild(document.createTextNode("New Requirement Pattern")); //revisar títol
+    title1P.appendChild(document.createTextNode("Step 1 - Fill the pattern information"));
     title1P.setAttribute('style', 'font-size: 36px; margin-right: 1%');
     title1Row.appendChild(title1P);
     patternForm.appendChild(title1Row);
@@ -568,6 +550,86 @@ function newRequirement() {
     classifierRow.appendChild(classifierSelect);
     patternForm.appendChild(classifierRow);
 
+    //Parameter
+    var parameterTitleRow = document.createElement('div');
+    parameterTitleRow.classList.add("productInfoRow");
+    var parameterTitleP = document.createElement('p');
+    parameterTitleP.appendChild(document.createTextNode("Step 2 - Fill the parameter information"));
+    parameterTitleP.setAttribute('style', 'font-size: 36px; margin-right: 1%');
+    parameterTitleRow.appendChild(parameterTitleP);
+    patternForm.appendChild(parameterTitleRow);
+
+    var parameterNameRow = document.createElement('div');
+    parameterNameRow.classList.add("productInfoRow");
+    parameterNameRow.setAttribute('style', 'align-items: center');
+    var parameterNameP = document.createElement('p');
+    parameterNameP.appendChild(document.createTextNode("Parameter name: "));
+    parameterNameP.setAttribute('style', 'font-size: 18px; margin-right: 1%; white-space: nowrap');
+    parameterNameRow.appendChild(parameterNameP);
+    var parameterNameSymbol = document.createElement('p');
+    parameterNameSymbol.appendChild(document.createTextNode("%"));
+    parameterNameSymbol.setAttribute('style', 'color: grey');
+    parameterNameRow.appendChild(parameterNameSymbol);
+    var parameterNameInput = document.createElement("input");
+    parameterNameInput.setAttribute('id', 'parameterName');
+    parameterNameInput.setAttribute('type', 'text');
+    parameterNameInput.setAttribute('style', 'width: 100%;');
+    parameterNameInput.setAttribute('placeholder', 'Write the parameter name here');
+    parameterNameRow.appendChild(parameterNameInput);
+    parameterNameRow.appendChild(parameterNameSymbol.cloneNode(true));
+    patternForm.appendChild(parameterNameRow);
+
+    var parameterDescriptionRow = document.createElement('div');
+    parameterDescriptionRow.classList.add("productInfoRow");
+    var parameterDescriptionP = document.createElement('p');
+    parameterDescriptionP.appendChild(document.createTextNode("Parameter description: "));
+    parameterDescriptionP.setAttribute('style', 'font-size: 18px; margin-right: 1%; white-space: nowrap');
+    parameterDescriptionRow.appendChild(parameterDescriptionP);
+    var parameterDescriptionInput = document.createElement("textarea");
+    parameterDescriptionInput.setAttribute('id', 'parameterDescription');
+    parameterDescriptionInput.setAttribute('type', 'text');
+    parameterDescriptionInput.setAttribute('style', 'width: 100%;');
+    parameterDescriptionInput.setAttribute('rows', '3');
+    parameterDescriptionInput.setAttribute('placeholder', 'Write the parameter description here');
+    parameterDescriptionRow.appendChild(parameterDescriptionInput);
+    patternForm.appendChild(parameterDescriptionRow);
+
+    var parameterCorrectnessConditionRow = document.createElement('div');
+    parameterCorrectnessConditionRow.classList.add("productInfoRow");
+    var parameterCorrectnessCondP = document.createElement('p');
+    parameterCorrectnessCondP.appendChild(document.createTextNode("Parameter correctness condition: "));
+    parameterCorrectnessCondP.setAttribute('style', 'font-size: 18px; margin-right: 1%; white-space: nowrap');
+    parameterCorrectnessConditionRow.appendChild(parameterCorrectnessCondP);
+    var parameterCorrectnessCondInput = document.createElement("input");
+    parameterCorrectnessCondInput.setAttribute('id', 'parameterCorrectnessCondition');
+    parameterCorrectnessCondInput.setAttribute('type', 'text');
+    parameterCorrectnessCondInput.setAttribute('style', 'width: 100%;');
+    parameterCorrectnessCondInput.setAttribute('placeholder', 'Write the parameter correctness condition here');
+    parameterCorrectnessConditionRow.appendChild(parameterCorrectnessCondInput);
+    patternForm.appendChild(parameterCorrectnessConditionRow);
+
+    var parameterMetricRow = document.createElement('div');
+    parameterMetricRow.classList.add("productInfoRow");
+    var parameterMetricP = document.createElement('p');
+    parameterMetricP.appendChild(document.createTextNode("Parameter metric: "));
+    parameterMetricP.setAttribute('style', 'font-size: 18px; margin-right: 1%; white-space: nowrap');
+    parameterMetricRow.appendChild(parameterMetricP);
+    var parameterMetricSelect = document.createElement('select');
+    parameterMetricSelect.setAttribute('id', "parameterMetricSelect");
+    parameterMetricSelect.setAttribute('style', 'width: 100%;');
+    fillParameterMetricSelect(parameterMetricSelect, 0);
+    parameterMetricRow.appendChild(parameterMetricSelect);
+
+    var manageMetricsButton = document.createElement('button');
+    manageMetricsButton.classList.add("btn");
+    manageMetricsButton.classList.add("btn-default");
+    manageMetricsButton.setAttribute('style', 'margin-left: 1%; padding: 2px 12px;');
+    manageMetricsButton.appendChild(document.createTextNode("Manage metrics"));
+    manageMetricsButton.addEventListener("click", openMetricsModal);
+    parameterMetricRow.appendChild(manageMetricsButton);
+    patternForm.appendChild(parameterMetricRow);
+    //Parameter end
+
     var buttonsRow = document.createElement('div');
     buttonsRow.classList.add("productInfoRow");
     buttonsRow.setAttribute('id', 'buttonsRow');
@@ -616,6 +678,11 @@ function savePattern() {
         formData.append("classifierName", classifiersTree[i].internalClassifiers[j].name);
         formData.append("classifierPos", j);
         formData.append("classifierPatterns", classifierPatterns);
+
+        formData.append("parameterName", $('#parameterName').val());
+        formData.append("parameterDescription", $('#parameterDescription').val());
+        formData.append("parameterCorrectnessCondition", $('#parameterCorrectnessCondition').val());
+        formData.append("metricId", $('#parameterMetricSelect').val());
 
         var url = "/api/qrPatterns";
         if (saveMethod == "PUT"){ //Edit pattern: add id to URL
@@ -685,6 +752,11 @@ function deletePattern() {
 }
 
 function newClassifier() {
+    if (currentSelectionId != null) {
+        document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #ffffff;');
+        currentSelectionId = null;
+    }
+
     var classifierForm = document.createElement('div');
     classifierForm.setAttribute("id", "classifierForm");
 
@@ -871,6 +943,31 @@ function deleteClassifier() {
     }
 }
 
+function fillParameterMetricSelect(parameterMetricSelect, selectedMetricId) {
+    var urlMetrics = "/api/qrPatternsMetrics";
+    if (serverUrl) {
+        urlMetrics = serverUrl + urlMetrics;
+    }
+    jQuery.ajax({
+        dataType: "json",
+        url: urlMetrics,
+        cache: false,
+        type: "GET",
+        async: true,
+        success: function (data) {
+            for (var i=0; i<data.length; i++) {
+                var metricOption = document.createElement('option');
+                metricOption.appendChild(document.createTextNode(data[i].name));
+                metricOption.setAttribute('value', data[i].id);
+                if (data[i].id == selectedMetricId) {
+                    metricOption.setAttribute('selected', 'selected');
+                }
+                parameterMetricSelect.appendChild(metricOption);
+            }
+        }
+    });
+}
+
 // Metrics modal
 function openMetricsModal() {
     buildTreeMetrics();
@@ -878,7 +975,15 @@ function openMetricsModal() {
 }
 
 function closeMetricsModal() {
+    var select = document.getElementById("parameterMetricSelect");
+    select.innerHTML = "";
+    if (currentSelectionId == null) {
+        fillParameterMetricSelect(select, 0);
+    } else {
+        fillParameterMetricSelect(select, currentPatternData.forms[0].fixedPart.parameters[0].metricId);
+    }
     $("#manageMetricsModal").modal('hide');
+    document.getElementById("metricInfo").setAttribute('style', "display: none");
 }
 
 function buildTreeMetrics() {
@@ -891,7 +996,7 @@ function buildTreeMetrics() {
         url: url,
         cache: false,
         type: "GET",
-        async: true,
+        async: false,
         success: function (data) {
             var metricList = document.getElementById('metricList');
             metricList.innerHTML = "";
@@ -911,7 +1016,7 @@ function clickOnTreeMetrics(e) {
     previousSelectionId_metric = currentSelectionId_metric;
     currentSelectionId_metric = e.target.id;
     if (previousSelectionId_metric != null) {
-        document.getElementById(previousSelectionId_metric).classList.remove("active")
+        document.getElementById(previousSelectionId_metric).classList.remove("active");
     }
     document.getElementById(currentSelectionId_metric).classList.add("active");
     getChosenMetric(e.target.id.replace("metric", ""));
@@ -919,6 +1024,9 @@ function clickOnTreeMetrics(e) {
 
 function getChosenMetric(currentMetricId) {
     document.getElementById("metricInfo").removeAttribute('style');
+    var metricInfoTitle = document.getElementById("metricInfoTitle");
+    metricInfoTitle.innerHTML = "";
+    metricInfoTitle.appendChild(document.createTextNode("Metric Information"));
     var url = "/api/qrPatternsMetrics/" + currentMetricId;
     if (serverUrl) {
         url = serverUrl + url;
@@ -930,9 +1038,11 @@ function getChosenMetric(currentMetricId) {
         type: "GET",
         async: true,
         success: function (data) {
-            document.getElementById("metricName").setAttribute("value", data.name);
+            document.getElementById("metricName").value = data.name;
             document.getElementById("metricDescription").value = data.description;
-            document.getElementById("typeSelect").value = data.type;
+            var typeSelect = document.getElementById("typeSelect");
+            typeSelect.value = data.type;
+            typeSelect.setAttribute("disabled", "");
             changeTypeMetric(data.type);
 
             if (data.type == "integer" || data.type == "float") {
@@ -949,17 +1059,152 @@ function getChosenMetric(currentMetricId) {
                 }
                 document.getElementById("metricPossibleValues").value = stringPossibleValues;
             }
+
+            var buttonsRowMetric = document.getElementById("buttonsRowMetric");
+            buttonsRowMetric.innerHTML = "";
+            var deleteButtonMetric = document.createElement('button');
+            deleteButtonMetric.classList.add("btn");
+            deleteButtonMetric.classList.add("btn-danger");
+            deleteButtonMetric.setAttribute('id', 'deleteButtonMetric');
+            deleteButtonMetric.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+            deleteButtonMetric.appendChild(document.createTextNode("Delete Metric"));
+            deleteButtonMetric.addEventListener("click", deleteMetric);
+            buttonsRowMetric.appendChild(deleteButtonMetric);
+            var saveButtonMetric = document.createElement('button');
+            saveButtonMetric.classList.add("btn");
+            saveButtonMetric.classList.add("btn-primary");
+            saveButtonMetric.setAttribute('id', 'saveButtonMetric');
+            saveButtonMetric.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+            saveButtonMetric.appendChild(document.createTextNode("Save Metric"));
+            saveButtonMetric.addEventListener("click", saveMetric);
+            saveMethod_metric = "PUT";
+            buttonsRowMetric.appendChild(saveButtonMetric);
         }
     })
 }
 
 function newMetric() {
+    document.getElementById("metricInfo").removeAttribute('style');
+    var metricInfoTitle = document.getElementById("metricInfoTitle");
+    metricInfoTitle.innerHTML = "";
+    metricInfoTitle.appendChild(document.createTextNode("Step 1 - Fill the metric information"));
+
+    if (currentSelectionId_metric != null) {
+        document.getElementById(currentSelectionId_metric).classList.remove("active");
+        currentSelectionId_metric = null;
+    }
+    document.getElementById("metricName").value = "";
+    document.getElementById("metricDescription").value = "";
+    var typeSelect = document.getElementById("typeSelect");
+    typeSelect.value = "integer";
+    typeSelect.removeAttribute("disabled");
+    changeTypeMetric("integer");
+    document.getElementById("metricPossibleValues").value = "";
+
+    var buttonsRowMetric = document.getElementById("buttonsRowMetric");
+    buttonsRowMetric.innerHTML = "";
+    var saveButtonMetric = document.createElement('button');
+    saveButtonMetric.classList.add("btn");
+    saveButtonMetric.classList.add("btn-primary");
+    saveButtonMetric.setAttribute('id', 'saveButtonMetric');
+    saveButtonMetric.setAttribute('style', 'font-size: 18px; max-width: 30%;');
+    saveButtonMetric.appendChild(document.createTextNode("Save Metric"));
+    saveButtonMetric.addEventListener("click", saveMetric);
+    saveMethod_metric = "POST";
+    buttonsRowMetric.appendChild(saveButtonMetric);
 }
 
 function saveMetric() {
+    if ($('#metricName').val() !== "") {
+        var formData = new FormData();
+        formData.append("name", $('#metricName').val());
+        formData.append("description", $('#metricDescription').val());
+        var typeSelectValue = $('#typeSelect').val();
+        formData.append("type", typeSelectValue);
+        if (typeSelectValue == "integer" || typeSelectValue == "float") {
+            var minValue = $('#metricMinValue').val();
+            var maxValue = $('#metricMaxValue').val();
+            if (minValue == "" || maxValue == "") {
+                alert("Minimum value or maximum value are not numbers");
+                return;
+            }
+            if (minValue > maxValue) {
+                alert("Minimum value must be equal or smaller than maximum value");
+                return;
+            }
+            formData.append("minValue", minValue);
+            formData.append("maxValue", maxValue);
+        } else if (typeSelectValue == "domain") {
+            formData.append("possibleValues", $('#metricPossibleValues').val());
+        }
+
+        var url = "/api/qrPatternsMetrics";
+        if (saveMethod_metric == "PUT"){ //Edit metric: add id to URL
+            url += "/" + currentSelectionId_metric.replace("metric", "");
+        }
+        if (serverUrl) {
+            url = serverUrl + url;
+        }
+
+        $.ajax({
+            url: url,
+            data: formData,
+            type: saveMethod_metric,
+            contentType: false,
+            processData: false,
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status == 400)
+                    alert("Error: Missing parameters");
+                else if (jqXHR.status == 404)
+                    alert("Error: This metric does not exist");
+                else if (jqXHR.status == 409)
+                    alert("Error: Metric name already exists");
+                else {
+                    alert("Internal server error");
+                }
+            },
+            success: function() {
+                buildTreeMetrics();
+                if (saveMethod_metric == "PUT") {
+                    document.getElementById(currentSelectionId_metric).classList.add("active");
+                    getChosenMetric(currentSelectionId_metric.replace("metric", ""));
+                } else {
+                    document.getElementById("metricInfo").setAttribute('style', "display: none");
+                }
+            }
+        });
+    }
+    else {
+        alert("Make sure that you have completed all fields marked with an *");
+    }
 }
 
 function deleteMetric() {
+    var url = "/api/qrPatternsMetrics/" + currentSelectionId_metric.replace("metric", "");
+    if (serverUrl) {
+        url = serverUrl + url;
+    }
+
+    $.ajax({
+        url: url,
+        type: "DELETE",
+        contentType: false,
+        processData: false,
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 404)
+                alert("Error: This pattern does not exist");
+            else if (jqXHR.status == 409)
+                alert("Error: This metric is used in one or more patterns");
+            else {
+                alert("Internal server error");
+            }
+        },
+        success: function() {
+            buildTreeMetrics();
+            document.getElementById("metricInfo").setAttribute("style", "display: none");
+            currentSelectionId_metric = null;
+        }
+    });
 }
 
 function changeTypeMetric(type) {

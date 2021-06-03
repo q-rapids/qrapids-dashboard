@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qr.QRGenerator;
 import qr.models.Classifier;
-import qr.models.FixedPart;
-import qr.models.Form;
 import qr.models.Metric;
 import qr.models.QualityRequirementPattern;
 import qr.models.enumerations.Type;
@@ -57,33 +55,18 @@ public class QRPatternsController {
         return gen.getMetricsForPatterns(ids);
     }
 
-    public void createPattern(String name, String goal, String description, String requirement, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
+    public void createPattern(QualityRequirementPattern newPattern, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
-        FixedPart newFixedPart = new FixedPart(requirement, new ArrayList<>());
-        Form newForm = new Form(name ,description, "", newFixedPart);
-        List<Form> formList = new ArrayList<>();
-        formList.add(newForm);
-        QualityRequirementPattern newPattern = new QualityRequirementPattern(null, name, "", "", goal, formList, "");
         int newId = gen.createQRPattern(newPattern);
         List<Integer> classifierPatternsWithNewId = new ArrayList<>(classifierPatterns);
         classifierPatternsWithNewId.add(newId);
         gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatternsWithNewId);
     }
 
-    public QualityRequirementPattern editPattern(Integer id, String name, String goal, String description, String fixedPartFormText, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) throws QRPatternNotFoundException {
+    public void editPattern(Integer id, QualityRequirementPattern qrPattern, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
-        QualityRequirementPattern qrPattern = getOnePattern(id);
-        if (qrPattern == null) {
-            throw new QRPatternNotFoundException();
-        }
-        qrPattern.setName(name);
-        qrPattern.setGoal(goal);
-        qrPattern.getForms().get(0).setName(name);
-        qrPattern.getForms().get(0).setDescription(description);
-        qrPattern.getForms().get(0).getFixedPart().setFormText(fixedPartFormText);
         gen.updateQRPattern(id, qrPattern);
         gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatterns);
-        return qrPattern;
     }
 
     public void deletePattern(Integer id) {
@@ -124,5 +107,20 @@ public class QRPatternsController {
     public Metric getOneMetric(Integer id) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getMetric(id);
+    }
+
+    public boolean createMetric(Metric m) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.createMetric(m);
+    }
+
+    public boolean updateMetric(Integer id, Metric m) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.updateMetric(id, m);
+    }
+
+    public boolean deleteMetric(Integer id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.deleteMetric(id);
     }
 }

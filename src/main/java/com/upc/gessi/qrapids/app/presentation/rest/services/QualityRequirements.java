@@ -4,8 +4,10 @@ import com.upc.gessi.qrapids.app.domain.controllers.ProjectsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QRPatternsController;
 import com.upc.gessi.qrapids.app.domain.controllers.QualityRequirementController;
 import com.upc.gessi.qrapids.app.domain.controllers.UsersController;
+import com.upc.gessi.qrapids.app.domain.exceptions.ElementAlreadyPresentException;
 import com.upc.gessi.qrapids.app.domain.exceptions.MissingParametersException;
 import com.upc.gessi.qrapids.app.domain.exceptions.QRPatternNotFoundException;
+import com.upc.gessi.qrapids.app.domain.exceptions.QRPatternsMetricInUseException;
 import com.upc.gessi.qrapids.app.domain.models.Alert;
 import com.upc.gessi.qrapids.app.domain.models.AppUser;
 import com.upc.gessi.qrapids.app.domain.models.Project;
@@ -190,17 +192,22 @@ public class QualityRequirements {
             String classifierName = request.getParameter("classifierName");
             String classifierPos = request.getParameter("classifierPos");
             String classifierPatterns = request.getParameter("classifierPatterns");
-            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null) {
+            String parameterName = request.getParameter("parameterName");
+            String parameterDescription = request.getParameter("parameterDescription");
+            String parameterCorrectnessCondition = request.getParameter("parameterCorrectnessCondition");
+            String metricId = request.getParameter("metricId");
+            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null || parameterName == null || metricId == null) {
                 throw new MissingParametersException();
             }
             if (!name.equals("")) {
+                QualityRequirementPattern newPattern = Mappers.mapToQualityRequirementPattern(name, goal, description, requirement, parameterName, parameterDescription, parameterCorrectnessCondition, Integer.parseInt(metricId));
                 List<Integer> listClassifierPatterns = new ArrayList<>();
                 if (!classifierPatterns.equals("")) {
                     for (String pat : classifierPatterns.split(",")) {
                         listClassifierPatterns.add(Integer.parseInt(pat));
                     }
                 }
-                qrPatternsController.createPattern(name, goal, description, requirement, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
+                qrPatternsController.createPattern(newPattern, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
             }
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);
@@ -223,22 +230,24 @@ public class QualityRequirements {
             String classifierName = request.getParameter("classifierName");
             String classifierPos = request.getParameter("classifierPos");
             String classifierPatterns = request.getParameter("classifierPatterns");
-            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null) {
+            String parameterName = request.getParameter("parameterName");
+            String parameterDescription = request.getParameter("parameterDescription");
+            String parameterCorrectnessCondition = request.getParameter("parameterCorrectnessCondition");
+            String metricId = request.getParameter("metricId");
+            if (name == null || classifierId == null || classifierName == null || classifierPos == null || classifierPatterns == null || parameterName == null || metricId == null) {
                 throw new MissingParametersException();
             }
             if (!name.equals("")) {
+                QualityRequirementPattern pattern = Mappers.mapToQualityRequirementPattern(name, goal, description, requirement, parameterName, parameterDescription, parameterCorrectnessCondition, Integer.parseInt(metricId));
                 List<Integer> listClassifierPatterns = new ArrayList<>();
                 for (String pat : classifierPatterns.split(",")) {
                     listClassifierPatterns.add(Integer.parseInt(pat));
                 }
-                qrPatternsController.editPattern(Integer.parseInt(id), name, goal, description, requirement, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
+                qrPatternsController.editPattern(Integer.parseInt(id), pattern, Integer.parseInt(classifierId), classifierName, Integer.parseInt(classifierPos), listClassifierPatterns);
             }
         } catch (MissingParametersException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
-        } catch (QRPatternNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
@@ -344,6 +353,120 @@ public class QualityRequirements {
     public DTOQRPatternsMetric getQRPatternsMetric(@PathVariable String id) {
         Metric metric = qrPatternsController.getOneMetric(Integer.parseInt(id));
         return Mappers.mapMetricToDTOQRPatternsMetric(metric);
+    }
+
+    @PostMapping("/api/qrPatternsMetrics")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createQRPatternsMetric(HttpServletRequest request) {
+        try {
+            String name = request.getParameter("name");
+            String description = request.getParameter("description");
+            String type = request.getParameter("type");
+            if (name == null) {
+                throw new MissingParametersException();
+            }
+            if (!name.equals("")) {
+                Metric newMetric = new Metric();
+                newMetric.setName(name);
+                newMetric.setDescription(description);
+                newMetric.setType(type);
+                if (type.equals("integer") || type.equals("float")) {
+                    String minValue = request.getParameter("minValue");
+                    String maxValue = request.getParameter("maxValue");
+                    if (minValue != null && !minValue.equals("")) {
+                        newMetric.setMinValue(Float.valueOf(minValue));
+                    }
+                    if (maxValue != null && !maxValue.equals("")) {
+                        newMetric.setMaxValue(Float.valueOf(maxValue));
+                    }
+                } else if (type.equals("domain")) {
+                    String possibleValues = request.getParameter("possibleValues");
+                    possibleValues = possibleValues.replace("\r", "");
+                    List<String> listPossibleValues = new ArrayList<>();
+                    for (String val : possibleValues.split("\n")) {
+                        listPossibleValues.add(val);
+                    }
+                    newMetric.setPossibleValues(listPossibleValues);
+                }
+                if (!qrPatternsController.createMetric(newMetric)) {
+                    throw new ElementAlreadyPresentException();
+                }
+            }
+        } catch (MissingParametersException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+        } catch (ElementAlreadyPresentException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Metric name already exists");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @PutMapping("/api/qrPatternsMetrics/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateQRPatternsMetric(@PathVariable String id, HttpServletRequest request) {
+        try {
+            String name = request.getParameter("name");
+            String description = request.getParameter("description");
+            String type = request.getParameter("type");
+            if (name == null) {
+                throw new MissingParametersException();
+            }
+            if (!name.equals("")) {
+                Metric editedMetric = new Metric();
+                editedMetric.setName(name);
+                editedMetric.setDescription(description);
+                editedMetric.setType(type);
+                if (type.equals("integer") || type.equals("float")) {
+                    String minValue = request.getParameter("minValue");
+                    String maxValue = request.getParameter("maxValue");
+                    if (minValue != null && !minValue.equals("")) {
+                        editedMetric.setMinValue(Float.valueOf(minValue));
+                    }
+                    if (maxValue != null && !maxValue.equals("")) {
+                        editedMetric.setMaxValue(Float.valueOf(maxValue));
+                    }
+                } else if (type.equals("domain")) {
+                    String possibleValues = request.getParameter("possibleValues");
+                    possibleValues = possibleValues.replace("\r", "");
+                    List<String> listPossibleValues = new ArrayList<>();
+                    for (String val : possibleValues.split("\n")) {
+                        listPossibleValues.add(val);
+                    }
+                    editedMetric.setPossibleValues(listPossibleValues);
+                }
+                if (!qrPatternsController.updateMetric(Integer.parseInt(id), editedMetric)) {
+                    throw new ElementAlreadyPresentException();
+                }
+            }
+        } catch (MissingParametersException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.MISSING_ATTRIBUTES_IN_BODY);
+        } catch (ElementAlreadyPresentException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Metric name already exists");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/api/qrPatternsMetrics/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteQRPatternsMetric(@PathVariable String id) {
+        try {
+            if (!qrPatternsController.deleteMetric(Integer.parseInt(id))) {
+                throw new QRPatternsMetricInUseException();
+            }
+        } catch (QRPatternsMetricInUseException e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This metric is used in a pattern");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, Messages.INTERNAL_SERVER_ERROR + e.getMessage());
+        }
     }
 
 }
