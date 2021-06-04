@@ -707,6 +707,8 @@ function savePattern() {
                     alert("Error: Missing parameters");
                 else if (jqXHR.status == 404)
                     alert("Error: This pattern does not exist");
+                else if (jqXHR.status == 409)
+                    alert("Error: Pattern name already exists");
                 else {
                     alert("Internal server error");
                 }
@@ -880,8 +882,8 @@ function saveClassifier() {
                     $('#saveButton').text("Save Classifier");
                     if (jqXHR.status == 400)
                         alert("Error: Missing parameters");
-                    /*else if (jqXHR.status == 404)
-                        alert("Error: This classifier does not exist");*/
+                    else if (jqXHR.status == 404)
+                        alert("Error: This classifier does not exist");
                     else {
                         alert("Internal server error");
                     }
