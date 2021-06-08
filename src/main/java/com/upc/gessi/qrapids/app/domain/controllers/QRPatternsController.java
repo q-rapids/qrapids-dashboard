@@ -62,6 +62,7 @@ public class QRPatternsController {
             List<Integer> classifierPatternsWithNewId = new ArrayList<>(classifierPatterns);
             classifierPatternsWithNewId.add(newId);
             gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatternsWithNewId);
+            return true;
         }
         return false;
     }

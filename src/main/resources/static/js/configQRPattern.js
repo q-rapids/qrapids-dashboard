@@ -20,7 +20,7 @@ function buildTree() {
         url: url,
         cache: false,
         type: "GET",
-        async: true,
+        async: false,
         success: function (data) {
             classifiersTree = data;
             var classifier1List = document.getElementById('patternList');
@@ -32,7 +32,6 @@ function buildTree() {
                 classifier1.setAttribute("id", "classifier" + data[i].id);
                 classifier1.setAttribute("data-toggle", "collapse");
                 classifier1.setAttribute("data-target", ("#sonsOf" + data[i].id));
-                //classifier1.appendChild(document.createTextNode(data[i].name));
                 classifier1.addEventListener("click", clickOnTree);
 
                 var icon_c1 = document.createElement('img');
@@ -51,8 +50,7 @@ function buildTree() {
                     var classifier2 = document.createElement('li');
                     classifier2.classList.add("list-group-item");
                     classifier2.classList.add("Classifier");
-                    //classifier2.appendChild(document.createTextNode(data[i].internalClassifiers[j].name));
-                    classifier2.setAttribute("id", ("classifier" + data[i].internalClassifiers[j].id + "-childOf" + data[i].name));
+                    classifier2.setAttribute("id", ("classifier" + data[i].internalClassifiers[j].id));
                     classifier2.setAttribute("data-toggle", "collapse");
                     classifier2.setAttribute("data-target", ("#sonsOf" + data[i].internalClassifiers[j].id));
                     classifier2.addEventListener("click", clickOnTree);
@@ -75,8 +73,7 @@ function buildTree() {
                         var pattern = document.createElement('li');
                         pattern.classList.add("list-group-item");
                         pattern.classList.add("Pattern");
-                        //pattern.appendChild(document.createTextNode(data[i].internalClassifiers[j].requirementPatterns[k].name));
-                        pattern.setAttribute("id", ("pattern" + data[i].internalClassifiers[j].requirementPatterns[k].id + "-childOf" + data[i].internalClassifiers[j].name));
+                        pattern.setAttribute("id", ("pattern" + data[i].internalClassifiers[j].requirementPatterns[k].id));
                         pattern.addEventListener("click", clickOnTree);
 
                         var icon_p = document.createElement('img');
@@ -98,31 +95,21 @@ function buildTree() {
             document.getElementById('patternTree').appendChild(classifier1List);
         }
     });
-};
+}
 
 function clickOnTree(e) {
     var target = e.target;
     if (target.parentNode.classList.contains("Pattern") || target.parentNode.classList.contains("Classifier")) target = target.parentNode;
+    previousSelectionId = currentSelectionId;
+    currentSelectionId = target.id;
+    if (previousSelectionId != null) {
+        document.getElementById(previousSelectionId).setAttribute('style', 'background-color: #ffffff;');
+    }
+    document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
     if (target.classList.contains("Pattern")) {
-        //currentSelection = "Project";
-        previousSelectionId = currentSelectionId;
-        currentSelectionId = target.id;
-        if (previousSelectionId != null) {
-            document.getElementById(previousSelectionId).setAttribute('style', 'background-color: #ffffff;');
-        }
-        document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
-        var idString = target.id.split("-")[0];
-        getChosenPattern(idString.replace("pattern", ""));
+        getChosenPattern(currentSelectionId.replace("pattern", ""));
     } else if (target.classList.contains("Classifier")) {
-        //currentSelection = "Project";
-        previousSelectionId = currentSelectionId;
-        currentSelectionId = target.id;
-        if (previousSelectionId != null) {
-            document.getElementById(previousSelectionId).setAttribute('style', 'background-color: #ffffff;');
-        }
-        document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
-        var idString2 = target.id.split("-")[0];
-        getChosenClassifier(idString2.replace("classifier", ""));
+        getChosenClassifier(currentSelectionId.replace("classifier", ""));
     }
 }
 
@@ -263,9 +250,7 @@ function getChosenPattern(currentPatternId) {
             var parameterNameInput = document.createElement("input");
             parameterNameInput.setAttribute('id', 'parameterName');
             parameterNameInput.setAttribute('type', 'text');
-            if (data.forms[0].fixedPart.parameters.length > 0) {
-                parameterNameInput.setAttribute('value', data.forms[0].fixedPart.parameters[0].name);
-            }
+            parameterNameInput.setAttribute('value', data.forms[0].fixedPart.parameters[0].name);
             parameterNameInput.setAttribute('style', 'width: 100%;');
             parameterNameInput.setAttribute('placeholder', 'Write the parameter name here');
             parameterNameRow.appendChild(parameterNameInput);
@@ -281,9 +266,7 @@ function getChosenPattern(currentPatternId) {
             var parameterDescriptionInput = document.createElement("textarea");
             parameterDescriptionInput.setAttribute('id', 'parameterDescription');
             parameterDescriptionInput.setAttribute('type', 'text');
-            if (data.forms[0].fixedPart.parameters.length > 0) {
-                parameterDescriptionInput.value = data.forms[0].fixedPart.parameters[0].description;
-            }
+            parameterDescriptionInput.value = data.forms[0].fixedPart.parameters[0].description;
             parameterDescriptionInput.setAttribute('style', 'width: 100%;');
             parameterDescriptionInput.setAttribute('rows', '3');
             parameterDescriptionInput.setAttribute('placeholder', 'Write the parameter description here');
@@ -299,9 +282,7 @@ function getChosenPattern(currentPatternId) {
             var parameterCorrectnessCondInput = document.createElement("input");
             parameterCorrectnessCondInput.setAttribute('id', 'parameterCorrectnessCondition');
             parameterCorrectnessCondInput.setAttribute('type', 'text');
-            if (data.forms[0].fixedPart.parameters.length > 0) {
-                parameterCorrectnessCondInput.setAttribute('value', data.forms[0].fixedPart.parameters[0].correctnessCondition);
-            }
+            parameterCorrectnessCondInput.setAttribute('value', data.forms[0].fixedPart.parameters[0].correctnessCondition);
             parameterCorrectnessCondInput.setAttribute('style', 'width: 100%;');
             parameterCorrectnessCondInput.setAttribute('placeholder', 'Write the parameter correctness condition here');
             parameterCorrectnessConditionRow.appendChild(parameterCorrectnessCondInput);
@@ -404,24 +385,7 @@ function getChosenClassifier(currentClassifierId) {
             parentClassifierRow.appendChild(parentP);
             var parentSelect = document.createElement('select');
             parentSelect.setAttribute('id', "parentSelect");
-            var optionRoot = document.createElement('option');
-            optionRoot.appendChild(document.createTextNode("(Root)"));
-            optionRoot.setAttribute('value', "-1");
-            parentSelect.appendChild(optionRoot);
-            parentSelect.value = "root";
-            for (var i=0; i<classifiersTree.length; i++) {
-                if (classifiersTree[i].id != data.id) {
-                    var option = document.createElement('option');
-                    option.appendChild(document.createTextNode(classifiersTree[i].name));
-                    option.setAttribute('value', classifiersTree[i].id);
-                    parentSelect.appendChild(option);
-                    classifiersTree[i].internalClassifiers.forEach(function (c) {
-                        if (c.id == data.id) {
-                            option.setAttribute('selected', 'selected');
-                        }
-                    });
-                }
-            }
+            fillParentClassifierSelect(parentSelect, data.id);
             parentClassifierRow.appendChild(parentSelect);
             classifierForm.appendChild(parentClassifierRow);
 
@@ -454,7 +418,7 @@ function getChosenClassifier(currentClassifierId) {
     })
 }
 
-function newRequirement() {
+function newPattern() {
     if (currentSelectionId != null) {
         document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #ffffff;');
         currentSelectionId = null;
@@ -647,9 +611,13 @@ function newRequirement() {
 
     document.getElementById('patternInfo').innerHTML = "";
     document.getElementById('patternInfo').appendChild(patternForm);
-};
+}
 
 function savePattern() {
+    var saved = document.getElementById("savedText")
+    if (saved != null) {
+        saved.remove();
+    }
     if ($('#patternName').val() !== "") {
         var formData = new FormData();
         formData.append("name", $('#patternName').val());
@@ -671,7 +639,7 @@ function savePattern() {
             classifierPatterns += p.id + ",";
         });
         if (saveMethod == "PUT" && classifiersTree[i].internalClassifiers[j].id != classifierOfCurrentPattern) {
-            classifierPatterns += currentSelectionId.split("-")[0].replace("pattern", "");
+            classifierPatterns += currentSelectionId.replace("pattern", "");
         }
 
         formData.append("classifierId", classifierId);
@@ -686,14 +654,13 @@ function savePattern() {
 
         var url = "/api/qrPatterns";
         if (saveMethod == "PUT"){ //Edit pattern: add id to URL
-            var idString = currentSelectionId.split("-")[0];
-            url += "/" + idString.replace("pattern", "");
+            url += "/" + currentSelectionId.replace("pattern", "");
         }
         if (serverUrl) {
             url = serverUrl + url;
         }
 
-        $('#saveButton').text("Saving...");
+        document.getElementById("saveButton").innerHTML = "Saving...";
 
         $.ajax({
             url: url,
@@ -702,7 +669,7 @@ function savePattern() {
             contentType: false,
             processData: false,
             error: function (jqXHR, textStatus, errorThrown) {
-                $('#saveButton').text("Save Pattern");
+                document.getElementById("saveButton").innerHTML = "Save Pattern";
                 if (jqXHR.status == 400)
                     alert("Error: Missing parameters");
                 else if (jqXHR.status == 404)
@@ -714,9 +681,23 @@ function savePattern() {
                 }
             },
             success: function() {
-                /*buildTree();
-                getChosenPattern(idString.replace("pattern", ""));*/
-                location.href = serverUrl + "/QRPatterns/Configuration";
+                classifierOfCurrentPattern = formData.get("classifierId");
+                buildTree();
+                if (saveMethod == "PUT") {
+                    document.getElementById(currentSelectionId).parentNode.parentNode.classList.add("in");
+                    document.getElementById(currentSelectionId).parentNode.classList.add("in");
+                    document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
+                    document.getElementById("saveButton").innerHTML = "Save Pattern";
+                    var savedText = document.createElement('p');
+                    savedText.setAttribute("id", "savedText");
+                    savedText.setAttribute("style", "color: #286090; text-align: center;");
+                    savedText.appendChild(document.createTextNode("Pattern saved successfully"));
+                    document.getElementById("patternForm").appendChild(savedText);
+                } else {
+                    document.getElementById("sonsOf" + formData.get("classifierId")).parentNode.classList.add("in");
+                    document.getElementById("sonsOf" + formData.get("classifierId")).classList.add("in");
+                    document.getElementById('patternInfo').innerHTML = "";
+                }
             }
         });
     }
@@ -726,31 +707,37 @@ function savePattern() {
 }
 
 function deletePattern() {
-    var idString = currentSelectionId.split("-")[0];
-    var url = "/api/qrPatterns/" + idString.replace("pattern", "");
-    if (serverUrl) {
-        url = serverUrl + url;
-    }
-
-    $('#deleteButton').text("Deleting...");
-
-    $.ajax({
-        url: url,
-        type: "DELETE",
-        contentType: false,
-        processData: false,
-        error: function (jqXHR, textStatus, errorThrown) {
-            $('#deleteButton').text("Delete Pattern");
-            if (jqXHR.status == 404)
-                alert("Error: This pattern does not exist");
-            else {
-                alert("Internal server error");
-            }
-        },
-        success: function() {
-            location.href = serverUrl + "/QRPatterns/Configuration";
+    if (confirm("Are you sure you want to delete this pattern?")) {
+        var url = "/api/qrPatterns/" + currentSelectionId.replace("pattern", "");
+        if (serverUrl) {
+            url = serverUrl + url;
         }
-    });
+
+        document.getElementById("deleteButton").innerHTML = "Deleting...";
+
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            contentType: false,
+            processData: false,
+            error: function (jqXHR, textStatus, errorThrown) {
+                $('#deleteButton').text("Delete Pattern");
+                if (jqXHR.status == 404)
+                    alert("Error: This pattern does not exist");
+                else {
+                    alert("Internal server error");
+                }
+            },
+            success: function () {
+                var parentClassifierId = document.getElementById(currentSelectionId).parentNode.id;
+                buildTree();
+                document.getElementById(parentClassifierId).parentNode.classList.add("in");
+                document.getElementById(parentClassifierId).classList.add("in");
+                document.getElementById('patternInfo').innerHTML = "";
+                currentSelectionId = null;
+            }
+        });
+    }
 }
 
 function newClassifier() {
@@ -779,7 +766,6 @@ function newClassifier() {
     var inputName = document.createElement("input");
     inputName.setAttribute('id', 'classifierName');
     inputName.setAttribute('type', 'text');
-    //inputName.setAttribute('value', data.name);
     inputName.setAttribute('style', 'width: 100%;');
     inputName.setAttribute('placeholder', 'Write the classifier name here');
     nameRow.appendChild(inputName);
@@ -801,17 +787,7 @@ function newClassifier() {
     parentClassifierRow.appendChild(parentP);
     var parentSelect = document.createElement('select');
     parentSelect.setAttribute('id', "parentSelect");
-    var optionRoot = document.createElement('option');
-    optionRoot.appendChild(document.createTextNode("(Root)"));
-    optionRoot.setAttribute('value', "-1");
-    parentSelect.appendChild(optionRoot);
-    parentSelect.value = "root";
-    for (var i=0; i<classifiersTree.length; i++) {
-        var option = document.createElement('option');
-        option.appendChild(document.createTextNode(classifiersTree[i].name));
-        option.setAttribute('value', classifiersTree[i].id);
-        parentSelect.appendChild(option);
-    }
+    fillParentClassifierSelect(parentSelect, "-1");
     parentClassifierRow.appendChild(parentSelect);
     classifierForm.appendChild(parentClassifierRow);
 
@@ -832,9 +808,13 @@ function newClassifier() {
 
     document.getElementById('patternInfo').innerHTML = "";
     document.getElementById('patternInfo').appendChild(classifierForm);
-};
+}
 
 function saveClassifier() {
+    var saved = document.getElementById("savedText")
+    if (saved != null) {
+        saved.remove();
+    }
     if ($('#classifierName').val() !== "") {
         var formData = new FormData();
         formData.append("name", $('#classifierName').val());
@@ -843,8 +823,7 @@ function saveClassifier() {
         var url = "/api/qrPatternsClassifiers";
         var emptyOrNoMove = true;
         if (saveMethod == "PUT") { //Edit classifier: add id to URL
-            var idString = currentSelectionId.split("-")[0];
-            var classifierId = idString.replace("classifier", "");
+            var classifierId = currentSelectionId.replace("classifier", "");
             url += "/" + classifierId;
 
             var i, j, found = false;
@@ -870,7 +849,7 @@ function saveClassifier() {
                 url = serverUrl + url;
             }
 
-            $('#saveButton').text("Saving...");
+            document.getElementById("saveButton").innerHTML = "Saving...";
 
             $.ajax({
                 url: url,
@@ -879,7 +858,7 @@ function saveClassifier() {
                 contentType: false,
                 processData: false,
                 error: function (jqXHR, textStatus, errorThrown) {
-                    $('#saveButton').text("Save Classifier");
+                    document.getElementById("saveButton").innerHTML = "Save Classifier";
                     if (jqXHR.status == 400)
                         alert("Error: Missing parameters");
                     else if (jqXHR.status == 404)
@@ -889,7 +868,63 @@ function saveClassifier() {
                     }
                 },
                 success: function () {
-                    location.href = serverUrl + "/QRPatterns/Configuration";
+                    document.getElementById("saveButton").innerHTML = "Save Classifier";
+                    var classifiersTree_before = classifiersTree;
+                    buildTree();
+                    if (saveMethod == "PUT") {
+                        var newParent = document.getElementById("parentSelect").value;
+                        var oldParent = formData.get("oldParentClassifier");
+                        if (newParent == "-1") {
+                            if (oldParent == newParent) {
+                                document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
+                            } else {
+                                var classifiersLevel1 = document.getElementById("patternList").querySelectorAll("li");
+                                classifiersLevel1[classifiersLevel1.length-1].setAttribute('style', 'background-color: #efeff8;');
+                                currentSelectionId = classifiersLevel1[classifiersLevel1.length-1].id;
+                            }
+                        } else {
+                            if (oldParent == newParent) {
+                                document.getElementById(currentSelectionId).parentNode.classList.add("in");
+                                document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
+                            } else if (oldParent == "-1") {
+                                //when root -> noRoot parentId could change due to PABRE limitations
+                                //before buildTree
+                                var found_newParent = false, i_newParent;
+                                for (i_newParent=0; i_newParent<classifiersTree_before.length && !found_newParent; i_newParent++) {
+                                    found_newParent = (classifiersTree_before[i_newParent].id == newParent);
+                                }
+                                if (i < i_newParent) {
+                                    i_newParent--;
+                                }
+                                //after buildTree
+                                var newParent_newId = classifiersTree[i_newParent-1].id;
+                                var positionInsideNewParent = classifiersTree[i_newParent-1].internalClassifiers.length-1;
+                                document.getElementById("sonsOf" + newParent_newId).classList.add("in");
+                                currentSelectionId = "classifier" + classifiersTree[i_newParent-1].internalClassifiers[positionInsideNewParent].id;
+                                document.getElementById(currentSelectionId).setAttribute('style', 'background-color: #efeff8;');
+                            } else {
+                                document.getElementById("sonsOf" + newParent).classList.add("in");
+                                var classifiersInside = document.getElementById("sonsOf" + newParent).querySelectorAll("li");
+                                classifiersInside[classifiersInside.length-1].setAttribute('style', 'background-color: #efeff8;');
+                                currentSelectionId = classifiersInside[classifiersInside.length-1].id;
+                            }
+                        }
+                        var classifierNewId = currentSelectionId.replace("classifier", "");
+                        var parentSelect = document.getElementById("parentSelect");
+                        parentSelect.innerHTML = "";
+                        fillParentClassifierSelect(parentSelect, classifierNewId);
+                        var savedText = document.createElement('p');
+                        savedText.setAttribute("id", "savedText");
+                        savedText.setAttribute("style", "color: #286090; text-align: center;");
+                        savedText.appendChild(document.createTextNode("Classifier saved successfully"));
+                        document.getElementById("classifierForm").appendChild(savedText);
+                    } else {
+                        var parent = document.getElementById("parentSelect").value;
+                        if (parent != "-1") {
+                            document.getElementById("sonsOf" + parent).classList.add("in");
+                        }
+                        document.getElementById('patternInfo').innerHTML = "";
+                    }
                 }
             });
         }
@@ -903,45 +938,71 @@ function saveClassifier() {
 }
 
 function deleteClassifier() {
-    var idString = currentSelectionId.split("-")[0];
-    var classifierId = idString.replace("classifier", "");
-    var i, j, found = false, empty = false;
-    for (i=0; i<classifiersTree.length && !found; i++) {
-        found = (classifiersTree[i].id == classifierId);
-        if (found) empty = (classifiersTree[i].internalClassifiers.length == 0);
-        for (j=0; j<classifiersTree[i].internalClassifiers.length && !found; j++) {
-            found = (classifiersTree[i].internalClassifiers[j].id == classifierId);
-            if (found) empty = (classifiersTree[i].internalClassifiers[j].requirementPatterns.length == 0);
-        }
-    }
-    if (empty) {
-        var url = "/api/qrPatternsClassifiers/" + classifierId;
-        if (serverUrl) {
-            url = serverUrl + url;
-        }
-
-        $('#deleteButton').text("Deleting...");
-
-        $.ajax({
-            url: url,
-            type: "DELETE",
-            contentType: false,
-            processData: false,
-            error: function (jqXHR, textStatus, errorThrown) {
-                $('#deleteButton').text("Delete Classifier");
-                if (jqXHR.status == 404)
-                    alert("Error: This classifier does not exist");
-                else {
-                    alert("Internal server error");
-                }
-            },
-            success: function () {
-                location.href = serverUrl + "/QRPatterns/Configuration";
+    if (confirm("Are you sure you want to delete this classifier?")) {
+        var classifierId = currentSelectionId.replace("classifier", "");
+        var i, j, found = false, empty = false;
+        for (i = 0; i < classifiersTree.length && !found; i++) {
+            found = (classifiersTree[i].id == classifierId);
+            if (found) empty = (classifiersTree[i].internalClassifiers.length == 0);
+            for (j = 0; j < classifiersTree[i].internalClassifiers.length && !found; j++) {
+                found = (classifiersTree[i].internalClassifiers[j].id == classifierId);
+                if (found) empty = (classifiersTree[i].internalClassifiers[j].requirementPatterns.length == 0);
             }
-        });
+        }
+        if (empty) {
+            var url = "/api/qrPatternsClassifiers/" + classifierId;
+            if (serverUrl) {
+                url = serverUrl + url;
+            }
+
+            document.getElementById("deleteButton").innerHTML = "Deleting...";
+
+            $.ajax({
+                url: url,
+                type: "DELETE",
+                contentType: false,
+                processData: false,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('#deleteButton').text("Delete Classifier");
+                    if (jqXHR.status == 404)
+                        alert("Error: This classifier does not exist");
+                    else {
+                        alert("Internal server error");
+                    }
+                },
+                success: function () {
+                    var parentClassifierId = document.getElementById(currentSelectionId).parentNode.id;
+                    buildTree();
+                    if (parentClassifierId != "patternList") {
+                        document.getElementById(parentClassifierId).classList.add("in");
+                    }
+                    document.getElementById('patternInfo').innerHTML = "";
+                    currentSelectionId = null;
+                }
+            });
+        } else {
+            alert("You could not delete a classifier that contains patterns or other classifiers");
+        }
     }
-    else {
-        alert("You could not delete a classifier that contains patterns or other classifiers");
+}
+
+function fillParentClassifierSelect(parentSelect, selectedClassifierId) {
+    var optionRoot = document.createElement('option');
+    optionRoot.appendChild(document.createTextNode("(Root)"));
+    optionRoot.setAttribute('value', "-1");
+    parentSelect.appendChild(optionRoot);
+    for (var i=0; i<classifiersTree.length; i++) {
+        if (classifiersTree[i].id != selectedClassifierId) {
+            var option = document.createElement('option');
+            option.appendChild(document.createTextNode(classifiersTree[i].name));
+            option.setAttribute('value', classifiersTree[i].id);
+            parentSelect.appendChild(option);
+            classifiersTree[i].internalClassifiers.forEach(function (c) {
+                if (c.id == selectedClassifierId) {
+                    option.setAttribute('selected', 'selected');
+                }
+            });
+        }
     }
 }
 
@@ -1021,10 +1082,14 @@ function clickOnTreeMetrics(e) {
         document.getElementById(previousSelectionId_metric).classList.remove("active");
     }
     document.getElementById(currentSelectionId_metric).classList.add("active");
-    getChosenMetric(e.target.id.replace("metric", ""));
+    getChosenMetric(currentSelectionId_metric.replace("metric", ""));
 }
 
 function getChosenMetric(currentMetricId) {
+    var saved = document.getElementById("savedText_metric")
+    if (saved != null) {
+        saved.remove();
+    }
     document.getElementById("metricInfo").removeAttribute('style');
     var metricInfoTitle = document.getElementById("metricInfoTitle");
     metricInfoTitle.innerHTML = "";
@@ -1086,6 +1151,10 @@ function getChosenMetric(currentMetricId) {
 }
 
 function newMetric() {
+    var saved = document.getElementById("savedText_metric")
+    if (saved != null) {
+        saved.remove();
+    }
     document.getElementById("metricInfo").removeAttribute('style');
     var metricInfoTitle = document.getElementById("metricInfoTitle");
     metricInfoTitle.innerHTML = "";
@@ -1117,6 +1186,10 @@ function newMetric() {
 }
 
 function saveMetric() {
+    var saved = document.getElementById("savedText_metric")
+    if (saved != null) {
+        saved.remove();
+    }
     if ($('#metricName').val() !== "") {
         var formData = new FormData();
         formData.append("name", $('#metricName').val());
@@ -1169,7 +1242,11 @@ function saveMetric() {
                 buildTreeMetrics();
                 if (saveMethod_metric == "PUT") {
                     document.getElementById(currentSelectionId_metric).classList.add("active");
-                    getChosenMetric(currentSelectionId_metric.replace("metric", ""));
+                    var savedText = document.createElement('p');
+                    savedText.setAttribute("id", "savedText_metric");
+                    savedText.setAttribute("style", "color: #286090; text-align: center;");
+                    savedText.appendChild(document.createTextNode("Metric saved successfully"));
+                    document.getElementById("metricForm").appendChild(savedText);
                 } else {
                     document.getElementById("metricInfo").setAttribute('style', "display: none");
                 }
@@ -1182,31 +1259,33 @@ function saveMetric() {
 }
 
 function deleteMetric() {
-    var url = "/api/qrPatternsMetrics/" + currentSelectionId_metric.replace("metric", "");
-    if (serverUrl) {
-        url = serverUrl + url;
-    }
-
-    $.ajax({
-        url: url,
-        type: "DELETE",
-        contentType: false,
-        processData: false,
-        error: function (jqXHR, textStatus, errorThrown) {
-            if (jqXHR.status == 404)
-                alert("Error: This pattern does not exist");
-            else if (jqXHR.status == 409)
-                alert("Error: This metric is used in one or more patterns");
-            else {
-                alert("Internal server error");
-            }
-        },
-        success: function() {
-            buildTreeMetrics();
-            document.getElementById("metricInfo").setAttribute("style", "display: none");
-            currentSelectionId_metric = null;
+    if (confirm("Are you sure you want to delete this metric?")) {
+        var url = "/api/qrPatternsMetrics/" + currentSelectionId_metric.replace("metric", "");
+        if (serverUrl) {
+            url = serverUrl + url;
         }
-    });
+
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            contentType: false,
+            processData: false,
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status == 404)
+                    alert("Error: This pattern does not exist");
+                else if (jqXHR.status == 409)
+                    alert("Error: This metric is used in one or more patterns");
+                else {
+                    alert("Internal server error");
+                }
+            },
+            success: function () {
+                buildTreeMetrics();
+                document.getElementById("metricInfo").setAttribute("style", "display: none");
+                currentSelectionId_metric = null;
+            }
+        });
+    }
 }
 
 function changeTypeMetric(type) {
