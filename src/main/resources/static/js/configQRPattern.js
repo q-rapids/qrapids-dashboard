@@ -294,15 +294,32 @@ function getChosenPattern(currentPatternId) {
             parameterMetricP.appendChild(document.createTextNode("Parameter metric: "));
             parameterMetricP.setAttribute('style', 'font-size: 18px; margin-right: 1%; white-space: nowrap');
             parameterMetricRow.appendChild(parameterMetricP);
-            var parameterMetricSelect = document.createElement('select');
-            parameterMetricSelect.setAttribute('id', "parameterMetricSelect");
+            var parameterMetricValue = document.createElement("input");
+            parameterMetricValue.setAttribute("id", "parameterMetricSelect-selected");
+            parameterMetricValue.setAttribute("type", "number");
+            parameterMetricValue.setAttribute("style", "display: none;");
+            parameterMetricRow.appendChild(parameterMetricValue);
+            var parameterMetricSelect = document.createElement("div");
+            parameterMetricSelect.classList.add("dropdown");
             parameterMetricSelect.setAttribute('style', 'width: 100%;');
-            fillParameterMetricSelect(parameterMetricSelect, data.forms[0].fixedPart.parameters[0].metricId);
+            var pmsButton = document.createElement("button");
+            pmsButton.setAttribute("id", "parameterMetricSelect-button");
+            pmsButton.classList.add("btn");
+            pmsButton.classList.add("btn-default");
+            pmsButton.classList.add("dropdown-toggle");
+            pmsButton.setAttribute("type", "button");
+            pmsButton.setAttribute("data-toggle", "dropdown");
+            pmsButton.setAttribute("style", "width: 100%; padding: 2px 12px; text-align: left;")
+            parameterMetricSelect.appendChild(pmsButton);
+            var pmsContent = document.createElement("ul");
+            pmsContent.setAttribute("id", "parameterMetricSelect-content");
+            pmsContent.classList.add("dropdown-menu");
+            fillParameterMetricSelect(pmsContent, data.forms[0].fixedPart.parameters[0].metricId);
+            parameterMetricSelect.appendChild(pmsContent);
             parameterMetricRow.appendChild(parameterMetricSelect);
 
             var manageMetricsButton = document.createElement('button');
             manageMetricsButton.classList.add("btn");
-            manageMetricsButton.classList.add("btn-default");
             manageMetricsButton.setAttribute('style', 'margin-left: 1%; padding: 2px 12px;');
             manageMetricsButton.appendChild(document.createTextNode("Manage metrics"));
             manageMetricsButton.addEventListener("click", openMetricsModal);
@@ -578,15 +595,32 @@ function newPattern() {
     parameterMetricP.appendChild(document.createTextNode("Parameter metric: "));
     parameterMetricP.setAttribute('style', 'font-size: 18px; margin-right: 1%; white-space: nowrap');
     parameterMetricRow.appendChild(parameterMetricP);
-    var parameterMetricSelect = document.createElement('select');
-    parameterMetricSelect.setAttribute('id', "parameterMetricSelect");
+    var parameterMetricValue = document.createElement("input");
+    parameterMetricValue.setAttribute("id", "parameterMetricSelect-selected");
+    parameterMetricValue.setAttribute("type", "number");
+    parameterMetricValue.setAttribute("style", "display: none;");
+    parameterMetricRow.appendChild(parameterMetricValue);
+    var parameterMetricSelect = document.createElement("div");
+    parameterMetricSelect.classList.add("dropdown");
     parameterMetricSelect.setAttribute('style', 'width: 100%;');
-    fillParameterMetricSelect(parameterMetricSelect, 0);
+    var pmsButton = document.createElement("button");
+    pmsButton.setAttribute("id", "parameterMetricSelect-button");
+    pmsButton.classList.add("btn");
+    pmsButton.classList.add("btn-default");
+    pmsButton.classList.add("dropdown-toggle");
+    pmsButton.setAttribute("type", "button");
+    pmsButton.setAttribute("data-toggle", "dropdown");
+    pmsButton.setAttribute("style", "width: 100%; padding: 2px 12px; text-align: left;")
+    parameterMetricSelect.appendChild(pmsButton);
+    var pmsContent = document.createElement("ul");
+    pmsContent.setAttribute("id", "parameterMetricSelect-content");
+    pmsContent.classList.add("dropdown-menu");
+    fillParameterMetricSelect(pmsContent, 0);
+    parameterMetricSelect.appendChild(pmsContent);
     parameterMetricRow.appendChild(parameterMetricSelect);
 
     var manageMetricsButton = document.createElement('button');
     manageMetricsButton.classList.add("btn");
-    manageMetricsButton.classList.add("btn-default");
     manageMetricsButton.setAttribute('style', 'margin-left: 1%; padding: 2px 12px;');
     manageMetricsButton.appendChild(document.createTextNode("Manage metrics"));
     manageMetricsButton.addEventListener("click", openMetricsModal);
@@ -650,7 +684,7 @@ function savePattern() {
         formData.append("parameterName", $('#parameterName').val());
         formData.append("parameterDescription", $('#parameterDescription').val());
         formData.append("parameterCorrectnessCondition", $('#parameterCorrectnessCondition').val());
-        formData.append("metricId", $('#parameterMetricSelect').val());
+        formData.append("metricId", $('#parameterMetricSelect-selected').val());
 
         var url = "/api/qrPatterns";
         if (saveMethod == "PUT"){ //Edit pattern: add id to URL
@@ -1018,17 +1052,38 @@ function fillParameterMetricSelect(parameterMetricSelect, selectedMetricId) {
         type: "GET",
         async: true,
         success: function (data) {
+            var searchBox = document.createElement("input");
+            searchBox.setAttribute("id", "parameterMetricSelect-search");
+            searchBox.setAttribute("type", "text");
+            searchBox.setAttribute("onkeyup", "searchParameterMetric()");
+            searchBox.setAttribute("placeholder", "Search metrics...");
+            searchBox.setAttribute("style", "padding-left: 10px; padding-right: 10px; margin: 3px 10px; width: 90%;");
+            parameterMetricSelect.appendChild(searchBox);
             for (var i=0; i<data.length; i++) {
-                var metricOption = document.createElement('option');
-                metricOption.appendChild(document.createTextNode(data[i].name));
-                metricOption.setAttribute('value', data[i].id);
-                if (data[i].id == selectedMetricId) {
-                    metricOption.setAttribute('selected', 'selected');
+                var metricOption = document.createElement("li");
+                metricOption.setAttribute('id', "option" + data[i].id);
+                metricOption.addEventListener("click", selectParameterMetricSelectItem);
+                var metricOptionText = document.createElement("a");
+                metricOptionText.appendChild(document.createTextNode(data[i].name));
+                metricOption.appendChild(metricOptionText);
+                if (data[i].id == selectedMetricId || i == 0) {
+                    document.getElementById("parameterMetricSelect-button").innerHTML = data[i].name + " <span class=\"caret\"></span>";
+                    document.getElementById("parameterMetricSelect-selected").value = selectedMetricId;
                 }
                 parameterMetricSelect.appendChild(metricOption);
             }
+            if (data.length == 0) document.getElementById("parameterMetricSelect-button").innerHTML = "<span class=\"caret\"></span>";
         }
     });
+}
+
+function selectParameterMetricSelectItem(e) {
+    var target = e.target;
+    if (target.getAttribute("id") == null) {
+        target = target.parentNode;
+    }
+    document.getElementById("parameterMetricSelect-button").innerHTML = target.firstChild.innerHTML + " <span class=\"caret\"></span>";
+    document.getElementById("parameterMetricSelect-selected").value = target.getAttribute("id").replace("option", "");
 }
 
 // Metrics modal
@@ -1038,7 +1093,7 @@ function openMetricsModal() {
 }
 
 function closeMetricsModal() {
-    var select = document.getElementById("parameterMetricSelect");
+    var select = document.getElementById("parameterMetricSelect-content");
     select.innerHTML = "";
     if (currentSelectionId == null) {
         fillParameterMetricSelect(select, 0);
@@ -1315,6 +1370,34 @@ function changeTypeMetric(type) {
         document.getElementById("minValueSection").style.display = "none";
         document.getElementById("maxValueSection").style.display = "none";
         document.getElementById("possibleValuesSection").style.display = "none";
+    }
+}
+
+function searchParameterMetric() {
+    var input = document.getElementById("parameterMetricSelect-search");
+    var filter = input.value.toUpperCase();
+    var dropdown = document.getElementById("parameterMetricSelect-content");
+    var options = dropdown.getElementsByTagName("li");
+    for (var i=0; i<options.length; i++) {
+        if (options[i].firstChild.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            options[i].style.display = "";
+        } else {
+            options[i].style.display = "none";
+        }
+    }
+}
+
+function searchMetricModal() {
+    var input = document.getElementById("metricSearch");
+    var filter = input.value.toUpperCase();
+    var list = document.getElementById("metricList");
+    var items = list.getElementsByTagName("li");
+    for (var i=0; i<items.length; i++) {
+        if (items[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+            items[i].style.display = "";
+        } else {
+            items[i].style.display = "none";
+        }
     }
 }
 
