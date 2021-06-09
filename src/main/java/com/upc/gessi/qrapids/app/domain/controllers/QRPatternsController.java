@@ -55,18 +55,25 @@ public class QRPatternsController {
         return gen.getMetricsForPatterns(ids);
     }
 
-    public void createPattern(QualityRequirementPattern newPattern, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
+    public boolean createPattern(QualityRequirementPattern newPattern, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         int newId = gen.createQRPattern(newPattern);
-        List<Integer> classifierPatternsWithNewId = new ArrayList<>(classifierPatterns);
-        classifierPatternsWithNewId.add(newId);
-        gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatternsWithNewId);
+        if (newId > -1) {
+            List<Integer> classifierPatternsWithNewId = new ArrayList<>(classifierPatterns);
+            classifierPatternsWithNewId.add(newId);
+            gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatternsWithNewId);
+            return true;
+        }
+        return false;
     }
 
-    public void editPattern(Integer id, QualityRequirementPattern qrPattern, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
+    public boolean editPattern(Integer id, QualityRequirementPattern qrPattern, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
-        gen.updateQRPattern(id, qrPattern);
-        gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatterns);
+        if (gen.updateQRPattern(id, qrPattern)) {
+            gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatterns);
+            return true;
+        }
+        return false;
     }
 
     public void deletePattern(Integer id) {
