@@ -1068,7 +1068,7 @@ function fillParameterMetricSelect(parameterMetricSelect, selectedMetricId) {
                 metricOption.appendChild(metricOptionText);
                 if (data[i].id == selectedMetricId || i == 0) {
                     document.getElementById("parameterMetricSelect-button").innerHTML = data[i].name + " <span class=\"caret\"></span>";
-                    document.getElementById("parameterMetricSelect-selected").value = selectedMetricId;
+                    document.getElementById("parameterMetricSelect-selected").value = data[i].id;
                 }
                 parameterMetricSelect.appendChild(metricOption);
             }
