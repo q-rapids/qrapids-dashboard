@@ -9,6 +9,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
 import org.springframework.data.util.Pair;
 import qr.models.FixedPart;
 import qr.models.Form;
+import qr.models.Param;
 import qr.models.QualityRequirementPattern;
 
 import java.time.LocalDate;
@@ -356,8 +357,19 @@ public class DomainObjectsBuilder {
     }
 
     public QualityRequirementPattern buildQualityRequirementPattern () {
+        Integer parameterId = 120;
+        String parameterName = "value";
+        String parameterDescription = "value in percentage";
+        String parameterCorrectnessCondition = "Stay between 0 and 100";
+        String parameterType = "integer";
+        String parameterValue = null;
+        Integer parameterMetricId = 172;
+        String parameterMetricName = "Integer that represents a percentage";
+        Param parameter = new Param(parameterId, parameterName, parameterDescription, parameterCorrectnessCondition, parameterType, parameterValue, parameterMetricId, parameterMetricName);
+        List<Param> parameterList = new ArrayList<>();
+        parameterList.add(parameter);
         String formText = "The ratio of files without duplications should be at least %value%";
-        FixedPart fixedPart = new FixedPart(formText);
+        FixedPart fixedPart = new FixedPart(formText, parameterList);
         String formName = "Duplications";
         String formDescription = "The ratio of files without duplications should be at least the given value";
         String formComments = "No comments";

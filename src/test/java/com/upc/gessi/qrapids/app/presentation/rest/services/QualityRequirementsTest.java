@@ -438,6 +438,12 @@ public class QualityRequirementsTest {
                 .andExpect(jsonPath("$[0].forms[0].description", is(qualityRequirementPattern.getForms().get(0).getDescription())))
                 .andExpect(jsonPath("$[0].forms[0].comments", is(qualityRequirementPattern.getForms().get(0).getComments())))
                 .andExpect(jsonPath("$[0].forms[0].fixedPart.formText", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getFormText())))
+                .andExpect(jsonPath("$[0].forms[0].fixedPart.parameters[0].id", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getId())))
+                .andExpect(jsonPath("$[0].forms[0].fixedPart.parameters[0].name", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getName())))
+                .andExpect(jsonPath("$[0].forms[0].fixedPart.parameters[0].description", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getDescription())))
+                .andExpect(jsonPath("$[0].forms[0].fixedPart.parameters[0].correctnessCondition", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getCorrectnessCondition())))
+                .andExpect(jsonPath("$[0].forms[0].fixedPart.parameters[0].metricId", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getMetricId())))
+                .andExpect(jsonPath("$[0].forms[0].fixedPart.parameters[0].metricName", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getMetricName())))
                 .andExpect(jsonPath("$[0].costFunction", is(qualityRequirementPattern.getCostFunction())))
                 .andDo(document("qrs/get-all-qr-patterns",
                         preprocessRequest(prettyPrint()),
@@ -461,6 +467,18 @@ public class QualityRequirementsTest {
                                         .description("Suggested quality requirement comments"),
                                 fieldWithPath("[].forms[].fixedPart.formText")
                                         .description("Suggested quality requirement text"),
+                                fieldWithPath("[].forms[].fixedPart.parameters[].id")
+                                        .description("Suggested quality requirement parameter id"),
+                                fieldWithPath("[].forms[].fixedPart.parameters[].name")
+                                        .description("Suggested quality requirement parameter name"),
+                                fieldWithPath("[].forms[].fixedPart.parameters[].description")
+                                        .description("Suggested quality requirement parameter description"),
+                                fieldWithPath("[].forms[].fixedPart.parameters[].correctnessCondition")
+                                        .description("Suggested quality requirement parameter correctness condition"),
+                                fieldWithPath("[].forms[].fixedPart.parameters[].metricId")
+                                        .description("Suggested quality requirement parameter metric id"),
+                                fieldWithPath("[].forms[].fixedPart.parameters[].metricName")
+                                        .description("Suggested quality requirement parameter metric name"),
                                 fieldWithPath("[].costFunction")
                                         .description("Suggested quality requirement cost function")
                         )
@@ -492,6 +510,12 @@ public class QualityRequirementsTest {
                 .andExpect(jsonPath("$.forms[0].description", is(qualityRequirementPattern.getForms().get(0).getDescription())))
                 .andExpect(jsonPath("$.forms[0].comments", is(qualityRequirementPattern.getForms().get(0).getComments())))
                 .andExpect(jsonPath("$.forms[0].fixedPart.formText", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getFormText())))
+                .andExpect(jsonPath("$.forms[0].fixedPart.parameters[0].id", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getId())))
+                .andExpect(jsonPath("$.forms[0].fixedPart.parameters[0].name", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getName())))
+                .andExpect(jsonPath("$.forms[0].fixedPart.parameters[0].description", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getDescription())))
+                .andExpect(jsonPath("$.forms[0].fixedPart.parameters[0].correctnessCondition", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getCorrectnessCondition())))
+                .andExpect(jsonPath("$.forms[0].fixedPart.parameters[0].metricId", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getMetricId())))
+                .andExpect(jsonPath("$.forms[0].fixedPart.parameters[0].metricName", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getMetricName())))
                 .andExpect(jsonPath("$.costFunction", is(qualityRequirementPattern.getCostFunction())))
                 .andDo(document("qrs/get-single-qr-pattern",
                         preprocessRequest(prettyPrint()),
@@ -519,6 +543,18 @@ public class QualityRequirementsTest {
                                         .description("Suggested quality requirement comments"),
                                 fieldWithPath("forms[].fixedPart.formText")
                                         .description("Suggested quality requirement text"),
+                                fieldWithPath("forms[].fixedPart.parameters[].id")
+                                        .description("Suggested quality requirement parameter id"),
+                                fieldWithPath("forms[].fixedPart.parameters[].name")
+                                        .description("Suggested quality requirement parameter name"),
+                                fieldWithPath("forms[].fixedPart.parameters[].description")
+                                        .description("Suggested quality requirement parameter description"),
+                                fieldWithPath("forms[].fixedPart.parameters[].correctnessCondition")
+                                        .description("Suggested quality requirement parameter correctness condition"),
+                                fieldWithPath("forms[].fixedPart.parameters[].metricId")
+                                        .description("Suggested quality requirement parameter metric id"),
+                                fieldWithPath("forms[].fixedPart.parameters[].metricName")
+                                        .description("Suggested quality requirement parameter metric name"),
                                 fieldWithPath("costFunction")
                                         .description("Suggested quality requirement cost function")
                         )
