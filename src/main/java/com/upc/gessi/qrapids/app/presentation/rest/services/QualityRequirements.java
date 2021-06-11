@@ -316,7 +316,7 @@ public class QualityRequirements {
 
     @PutMapping("/api/qrPatternsClassifiers/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateClassifier(@PathVariable String id, HttpServletRequest request) {
+    public void updateQRPatternsClassifier(@PathVariable String id, HttpServletRequest request) {
         try {
             String name = request.getParameter("name");
             String oldParentClassifierId = request.getParameter("oldParentClassifier");

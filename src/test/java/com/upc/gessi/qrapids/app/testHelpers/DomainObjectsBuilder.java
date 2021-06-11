@@ -7,6 +7,7 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFac
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
 import org.springframework.data.util.Pair;
+import qr.models.Classifier;
 import qr.models.FixedPart;
 import qr.models.Form;
 import qr.models.Param;
@@ -385,6 +386,37 @@ public class DomainObjectsBuilder {
         QualityRequirementPattern qualityRequirementPattern = new QualityRequirementPattern(requirementId, requirementName, requirementComments, requirementDescription, requirementGoal, formList, requirementCostFunction);
 
         return qualityRequirementPattern;
+    }
+
+    public Classifier buildClassifier() {
+        Integer classifierId = 130;
+        String classifierName = "commitresponsetime";
+        List<Classifier> internalClassifierList = new ArrayList<>();
+        List<QualityRequirementPattern> requirementPatternList = new ArrayList<>();
+        Classifier classifier = new Classifier();
+        classifier.setId(classifierId);
+        classifier.setName(classifierName);
+        classifier.setInternalClassifiers(internalClassifierList);
+        classifier.setRequirementPatterns(requirementPatternList);
+
+        return classifier;
+    }
+
+    public qr.models.Metric buildQRPatternsMetric() {
+        Integer metricId = 172;
+        String metricName = "Integer that represents a percentage";
+        String metricDescription = "Integer value that can have a percentage.";
+        String metricType = "integer";
+        Float metricMinValue = 0f;
+        Float metricMaxValue = 100f;
+        List<String> possibleValuesList = new ArrayList<>();
+        qr.models.Metric metric = new qr.models.Metric(metricId, metricName, metricType);
+        metric.setDescription(metricDescription);
+        metric.setMinValue(metricMinValue);
+        metric.setMaxValue(metricMaxValue);
+        metric.setPossibleValues(possibleValuesList);
+
+        return metric;
     }
 
     public Decision buildDecision (Project project, DecisionType type) {

@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.HttpClientErrorException;
+import qr.models.Classifier;
 import qr.models.QualityRequirementPattern;
 
 import java.util.ArrayList;
@@ -593,6 +595,669 @@ public class QualityRequirementsTest {
 
         // Verify mock interactions
         verify(qrPatternsDomainController, times(1)).getMetricForPattern(patternId);
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void createQRPattern() throws Exception {
+        // Given
+        QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
+        Classifier classifier = domainObjectsBuilder.buildClassifier();
+        Integer classifierPos = 0;
+        List<Integer> classifierPatternsId = new ArrayList<>();
+        when(qrPatternsDomainController.createPattern(ArgumentMatchers.any(QualityRequirementPattern.class), eq(classifier.getId()), eq(classifier.getName()), eq(classifierPos), eq(classifierPatternsId))).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/qrPatterns")
+                .param("name", qualityRequirementPattern.getName())
+                .param("goal", qualityRequirementPattern.getGoal())
+                .param("description", qualityRequirementPattern.getForms().get(0).getDescription())
+                .param("requirement", qualityRequirementPattern.getForms().get(0).getFixedPart().getFormText())
+                .param("parameterName", qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getName())
+                .param("parameterDescription", qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getDescription())
+                .param("parameterCorrectnessCondition", qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getCorrectnessCondition())
+                .param("metricId", qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getMetricId().toString())
+                .param("classifierId", classifier.getId().toString())
+                .param("classifierName", classifier.getName())
+                .param("classifierPos", classifierPos.toString())
+                .param("classifierPatterns", "");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated())
+                .andDo(document("qrs/add-qr-pattern",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Quality requirement pattern identifier"),
+                                parameterWithName("goal")
+                                        .description("Quality requirement goal"),
+                                parameterWithName("description")
+                                        .description("Suggested quality requirement description"),
+                                parameterWithName("requirement")
+                                        .description("Suggested quality requirement text"),
+                                parameterWithName("parameterName")
+                                        .description("Suggested quality requirement parameter name"),
+                                parameterWithName("parameterDescription")
+                                        .description("Suggested quality requirement parameter description"),
+                                parameterWithName("parameterCorrectnessCondition")
+                                        .description("Suggested quality requirement parameter correctness condition"),
+                                parameterWithName("metricId")
+                                        .description("Suggested quality requirement parameter metric id"),
+                                parameterWithName("classifierId")
+                                        .description("Identifier of classifier where new pattern will be included"),
+                                parameterWithName("classifierName")
+                                        .description("Name of classifier where new pattern will be included"),
+                                parameterWithName("classifierPos")
+                                        .description("Quality requirement pattern position inside classifier"),
+                                parameterWithName("classifierPatterns")
+                                        .description("Classifier requirement patterns identifiers excluding the new pattern")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).createPattern(ArgumentMatchers.any(QualityRequirementPattern.class), eq(classifier.getId()), eq(classifier.getName()), eq(classifierPos), eq(classifierPatternsId));
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void updateQRPattern() throws Exception {
+        // Given
+        QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
+        Classifier classifier = domainObjectsBuilder.buildClassifier();
+        Integer classifierPos = 0;
+        List<Integer> classifierPatternsId = new ArrayList<>();
+        classifierPatternsId.add(qualityRequirementPattern.getId());
+        when(qrPatternsDomainController.editPattern(eq(qualityRequirementPattern.getId()), ArgumentMatchers.any(QualityRequirementPattern.class), eq(classifier.getId()), eq(classifier.getName()), eq(classifierPos), eq(classifierPatternsId))).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .put("/api/qrPatterns/{id}", qualityRequirementPattern.getId())
+                .param("name", qualityRequirementPattern.getName())
+                .param("goal", qualityRequirementPattern.getGoal())
+                .param("description", qualityRequirementPattern.getForms().get(0).getDescription())
+                .param("requirement", qualityRequirementPattern.getForms().get(0).getFixedPart().getFormText())
+                .param("parameterName", qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getName())
+                .param("parameterDescription", qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getDescription())
+                .param("parameterCorrectnessCondition", qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getCorrectnessCondition())
+                .param("metricId", qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getMetricId().toString())
+                .param("classifierId", classifier.getId().toString())
+                .param("classifierName", classifier.getName())
+                .param("classifierPos", classifierPos.toString())
+                .param("classifierPatterns", qualityRequirementPattern.getId().toString());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("qrs/update-qr-pattern",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Quality requirement pattern identifier")
+                        ),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Quality requirement pattern identifier"),
+                                parameterWithName("goal")
+                                        .description("Quality requirement goal"),
+                                parameterWithName("description")
+                                        .description("Suggested quality requirement description"),
+                                parameterWithName("requirement")
+                                        .description("Suggested quality requirement text"),
+                                parameterWithName("parameterName")
+                                        .description("Suggested quality requirement parameter name"),
+                                parameterWithName("parameterDescription")
+                                        .description("Suggested quality requirement parameter description"),
+                                parameterWithName("parameterCorrectnessCondition")
+                                        .description("Suggested quality requirement parameter correctness condition"),
+                                parameterWithName("metricId")
+                                        .description("Suggested quality requirement parameter metric id"),
+                                parameterWithName("classifierId")
+                                        .description("Identifier of classifier where pattern will be moved"),
+                                parameterWithName("classifierName")
+                                        .description("Name of classifier where pattern will be moved"),
+                                parameterWithName("classifierPos")
+                                        .description("Quality requirement pattern position inside classifier"),
+                                parameterWithName("classifierPatterns")
+                                        .description("Classifier requirement patterns identifiers, including the current pattern")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).editPattern(eq(qualityRequirementPattern.getId()), ArgumentMatchers.any(QualityRequirementPattern.class), eq(classifier.getId()), eq(classifier.getName()), eq(classifierPos), eq(classifierPatternsId));
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void deleteQRPattern() throws Exception {
+        // Given
+        QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .delete("/api/qrPatterns/{id}", qualityRequirementPattern.getId());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("qrs/delete-qr-pattern",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Quality requirement pattern identifier")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).deletePattern(qualityRequirementPattern.getId());
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void getAllQRPatternsClassifiers() throws Exception {
+        // Given
+        QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
+        List<QualityRequirementPattern> qualityRequirementPatternList = new ArrayList<>();
+        qualityRequirementPatternList.add(qualityRequirementPattern);
+        Classifier classifier2 = domainObjectsBuilder.buildClassifier();
+        classifier2.setRequirementPatterns(qualityRequirementPatternList);
+        List<Classifier> classifierList2 = new ArrayList<>();
+        classifierList2.add(classifier2);
+        Classifier classifier1 = domainObjectsBuilder.buildClassifier();
+        classifier1.setInternalClassifiers(classifierList2);
+        List<Classifier> classifierList1 = new ArrayList<>();
+        classifierList1.add(classifier1);
+        when(qrPatternsDomainController.getAllClassifiers()).thenReturn(classifierList1);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qrPatternsClassifiers");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(classifier1.getId())))
+                .andExpect(jsonPath("$[0].name", is(classifier1.getName())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].id", is(classifier2.getId())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].name", is(classifier2.getName())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].internalClassifiers", is(classifier2.getInternalClassifiers())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].id", is(qualityRequirementPattern.getId())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].name", is(qualityRequirementPattern.getName())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].comments", is(qualityRequirementPattern.getComments())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].description", is(qualityRequirementPattern.getDescription())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].goal", is(qualityRequirementPattern.getGoal())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].forms[0].name", is(qualityRequirementPattern.getForms().get(0).getName())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].forms[0].description", is(qualityRequirementPattern.getForms().get(0).getDescription())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].forms[0].comments", is(qualityRequirementPattern.getForms().get(0).getComments())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.formText", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getFormText())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].id", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getId())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].name", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getName())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].description", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getDescription())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].correctnessCondition", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getCorrectnessCondition())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].metricId", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getMetricId())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].metricName", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getMetricName())))
+                .andExpect(jsonPath("$[0].internalClassifiers[0].requirementPatterns[0].costFunction", is(qualityRequirementPattern.getCostFunction())))
+                .andExpect(jsonPath("$[0].requirementPatterns", is(classifier1.getRequirementPatterns())))
+                .andDo(document("qrs/get-all-qr-patterns-classifiers",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Classifier identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Classifier name"),
+                                fieldWithPath("[].internalClassifiers[].id")
+                                        .description("Internal classifier identifier"),
+                                fieldWithPath("[].internalClassifiers[].name")
+                                        .description("Internal classifier name"),
+                                fieldWithPath("[].internalClassifiers[].internalClassifiers")
+                                        .description("Internal classifiers of internal classifier"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].id")
+                                        .description("Quality requirement identifier"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].name")
+                                        .description("Quality requirement name"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].comments")
+                                        .description("Quality requirement comments"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].description")
+                                        .description("Quality requirement description"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].goal")
+                                        .description("Quality requirement goal"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].forms[].name")
+                                        .description("Suggested quality requirement name"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].forms[].description")
+                                        .description("Suggested quality requirement description"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].forms[].comments")
+                                        .description("Suggested quality requirement comments"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].forms[].fixedPart.formText")
+                                        .description("Suggested quality requirement text"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].id")
+                                        .description("Suggested quality requirement parameter id"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].name")
+                                        .description("Suggested quality requirement parameter name"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].description")
+                                        .description("Suggested quality requirement parameter description"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].correctnessCondition")
+                                        .description("Suggested quality requirement parameter correctness condition"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].metricId")
+                                        .description("Suggested quality requirement parameter metric id"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].metricName")
+                                        .description("Suggested quality requirement parameter metric name"),
+                                fieldWithPath("[].internalClassifiers[].requirementPatterns[].costFunction")
+                                        .description("Suggested quality requirement cost function"),
+                                fieldWithPath("[].requirementPatterns")
+                                        .description("Requirement patterns of classifier")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).getAllClassifiers();
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void getQRPatternsClassifier() throws Exception {
+        // Given
+        QualityRequirementPattern qualityRequirementPattern = domainObjectsBuilder.buildQualityRequirementPattern();
+        List<QualityRequirementPattern> qualityRequirementPatternList = new ArrayList<>();
+        qualityRequirementPatternList.add(qualityRequirementPattern);
+        Classifier classifier2 = domainObjectsBuilder.buildClassifier();
+        classifier2.setRequirementPatterns(qualityRequirementPatternList);
+        List<Classifier> classifierList2 = new ArrayList<>();
+        classifierList2.add(classifier2);
+        Classifier classifier1 = domainObjectsBuilder.buildClassifier();
+        classifier1.setInternalClassifiers(classifierList2);
+        when(qrPatternsDomainController.getOneClassifier(classifier1.getId())).thenReturn(classifier1);
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/qrPatternsClassifiers/{id}", classifier1.getId());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(classifier1.getId())))
+                .andExpect(jsonPath("$.name", is(classifier1.getName())))
+                .andExpect(jsonPath("$.internalClassifiers[0].id", is(classifier2.getId())))
+                .andExpect(jsonPath("$.internalClassifiers[0].name", is(classifier2.getName())))
+                .andExpect(jsonPath("$.internalClassifiers[0].internalClassifiers", is(classifier2.getInternalClassifiers())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].id", is(qualityRequirementPattern.getId())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].name", is(qualityRequirementPattern.getName())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].comments", is(qualityRequirementPattern.getComments())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].description", is(qualityRequirementPattern.getDescription())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].goal", is(qualityRequirementPattern.getGoal())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].forms[0].name", is(qualityRequirementPattern.getForms().get(0).getName())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].forms[0].description", is(qualityRequirementPattern.getForms().get(0).getDescription())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].forms[0].comments", is(qualityRequirementPattern.getForms().get(0).getComments())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.formText", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getFormText())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].id", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getId())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].name", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getName())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].description", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getDescription())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].correctnessCondition", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getCorrectnessCondition())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].metricId", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getMetricId())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].forms[0].fixedPart.parameters[0].metricName", is(qualityRequirementPattern.getForms().get(0).getFixedPart().getParameters().get(0).getMetricName())))
+                .andExpect(jsonPath("$.internalClassifiers[0].requirementPatterns[0].costFunction", is(qualityRequirementPattern.getCostFunction())))
+                .andExpect(jsonPath("$.requirementPatterns", is(classifier1.getRequirementPatterns())))
+                .andDo(document("qrs/get-single-qr-patterns-classifier",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Classifier identifier")
+                        ),
+                        responseFields(
+                                fieldWithPath("id")
+                                        .description("Classifier identifier"),
+                                fieldWithPath("name")
+                                        .description("Classifier name"),
+                                fieldWithPath("internalClassifiers[].id")
+                                        .description("Internal classifier identifier"),
+                                fieldWithPath("internalClassifiers[].name")
+                                        .description("Internal classifier name"),
+                                fieldWithPath("internalClassifiers[].internalClassifiers")
+                                        .description("Internal classifiers of internal classifier"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].id")
+                                        .description("Quality requirement identifier"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].name")
+                                        .description("Quality requirement name"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].comments")
+                                        .description("Quality requirement comments"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].description")
+                                        .description("Quality requirement description"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].goal")
+                                        .description("Quality requirement goal"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].forms[].name")
+                                        .description("Suggested quality requirement name"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].forms[].description")
+                                        .description("Suggested quality requirement description"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].forms[].comments")
+                                        .description("Suggested quality requirement comments"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].forms[].fixedPart.formText")
+                                        .description("Suggested quality requirement text"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].id")
+                                        .description("Suggested quality requirement parameter id"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].name")
+                                        .description("Suggested quality requirement parameter name"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].description")
+                                        .description("Suggested quality requirement parameter description"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].correctnessCondition")
+                                        .description("Suggested quality requirement parameter correctness condition"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].metricId")
+                                        .description("Suggested quality requirement parameter metric id"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].forms[].fixedPart.parameters[].metricName")
+                                        .description("Suggested quality requirement parameter metric name"),
+                                fieldWithPath("internalClassifiers[].requirementPatterns[].costFunction")
+                                        .description("Suggested quality requirement cost function"),
+                                fieldWithPath("requirementPatterns")
+                                        .description("Requirement patterns of classifier")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).getOneClassifier(classifier1.getId());
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void createQRPatternsClassifier() throws Exception {
+        // Given
+        String classifierName = "commitresponsetime";
+        Integer parentClassifierId = 129;
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/qrPatternsClassifiers")
+                .param("name", classifierName)
+                .param("parentClassifier", parentClassifierId.toString());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated())
+                .andDo(document("qrs/add-qr-patterns-classifier",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Classifier name"),
+                                parameterWithName("parentClassifier")
+                                        .description("Parent classifier identifier")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).createClassifier(classifierName, parentClassifierId);
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void updateQRPatternsClassifier() throws Exception {
+        // Given
+        Classifier classifier = domainObjectsBuilder.buildClassifier();
+        Integer classifierOldParentId = 123;
+        Integer classifierNewParentId = 129;
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .put("/api/qrPatternsClassifiers/{id}", classifier.getId())
+                .param("name", classifier.getName())
+                .param("oldParentClassifier", classifierOldParentId.toString())
+                .param("parentClassifier", classifierNewParentId.toString());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("qrs/update-qr-patterns-classifier",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Classifier identifier")
+                        ),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Classifier name"),
+                                parameterWithName("oldParentClassifier")
+                                        .description("Old parent classifier identifier"),
+                                parameterWithName("parentClassifier")
+                                        .description("New parent classifier identifier")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).updateClassifier(classifier.getId(), classifier.getName(), classifierOldParentId, classifierNewParentId);
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void deleteQRPatternsClassifier() throws Exception {
+        // Given
+        Classifier classifier = domainObjectsBuilder.buildClassifier();
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .delete("/api/qrPatternsClassifiers/{id}", classifier.getId());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("qrs/delete-qr-patterns-classifier",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Classifier identifier")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).deleteClassifier(classifier.getId());
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void getAllQRPatternsMetrics() throws Exception {
+        // Given
+        qr.models.Metric metric = domainObjectsBuilder.buildQRPatternsMetric();
+        List<qr.models.Metric> metricList = new ArrayList<>();
+        metricList.add(metric);
+        when(qrPatternsDomainController.getAllMetrics()).thenReturn(metricList);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/api/qrPatternsMetrics");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(metric.getId())))
+                .andExpect(jsonPath("$[0].name", is(metric.getName())))
+                .andExpect(jsonPath("$[0].description", is(metric.getDescription())))
+                .andExpect(jsonPath("$[0].type", is(metric.getType())))
+                .andExpect(jsonPath("$[0].minValue", is(metric.getMinValue().doubleValue())))
+                .andExpect(jsonPath("$[0].maxValue", is(metric.getMaxValue().doubleValue())))
+                .andExpect(jsonPath("$[0].possibleValues", is(nullValue())))
+                .andDo(document("qrs/get-all-qr-patterns-metrics",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id")
+                                        .description("Metric identifier"),
+                                fieldWithPath("[].name")
+                                        .description("Metric name"),
+                                fieldWithPath("[].description")
+                                        .description("Metric description"),
+                                fieldWithPath("[].type")
+                                        .description("Metric type"),
+                                fieldWithPath("[].minValue")
+                                        .description("Metric minimum value, if type is integer or float"),
+                                fieldWithPath("[].maxValue")
+                                        .description("Metric maximum value, if type is integer or float"),
+                                fieldWithPath("[].possibleValues")
+                                        .description("Metric possible values, if type is domain")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).getAllMetrics();
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void getQRPatternsMetric() throws Exception {
+        // Given
+        qr.models.Metric metric = domainObjectsBuilder.buildQRPatternsMetric();
+        when(qrPatternsDomainController.getOneMetric(metric.getId())).thenReturn(metric);
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .get("/api/qrPatternsMetrics/{id}", metric.getId());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(metric.getId())))
+                .andExpect(jsonPath("$.name", is(metric.getName())))
+                .andExpect(jsonPath("$.description", is(metric.getDescription())))
+                .andExpect(jsonPath("$.type", is(metric.getType())))
+                .andExpect(jsonPath("$.minValue", is(metric.getMinValue().doubleValue())))
+                .andExpect(jsonPath("$.maxValue", is(metric.getMaxValue().doubleValue())))
+                .andExpect(jsonPath("$.possibleValues", is(nullValue())))
+                .andDo(document("qrs/get-single-qr-patterns-metric",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Quality requirement pattern identifier")
+                        ),
+                        responseFields(
+                                fieldWithPath("id")
+                                        .description("Metric identifier"),
+                                fieldWithPath("name")
+                                        .description("Metric name"),
+                                fieldWithPath("description")
+                                        .description("Metric description"),
+                                fieldWithPath("type")
+                                        .description("Metric type"),
+                                fieldWithPath("minValue")
+                                        .description("Metric minimum value, if type is integer or float"),
+                                fieldWithPath("maxValue")
+                                        .description("Metric maximum value, if type is integer or float"),
+                                fieldWithPath("possibleValues")
+                                        .description("Metric possible values, if type is domain")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).getOneMetric(metric.getId());
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void createQRPatternsMetric() throws Exception {
+        // Given
+        qr.models.Metric metric = domainObjectsBuilder.buildQRPatternsMetric();
+        when(qrPatternsDomainController.createMetric(ArgumentMatchers.any(qr.models.Metric.class))).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/api/qrPatternsMetrics")
+                .param("name", metric.getName())
+                .param("description", metric.getDescription())
+                .param("type", metric.getType())
+                .param("minValue", metric.getMinValue().toString())
+                .param("maxValue", metric.getMaxValue().toString())
+                .param("possibleValues", "");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isCreated())
+                .andDo(document("qrs/add-qr-patterns-metric",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Metric name"),
+                                parameterWithName("description")
+                                        .description("Metric description"),
+                                parameterWithName("type")
+                                        .description("Metric type (integer, float, string, time or domain)"),
+                                parameterWithName("minValue")
+                                        .description("Metric minimum value, if type is integer or float"),
+                                parameterWithName("maxValue")
+                                        .description("Metric maximum value, if type is integer or float"),
+                                parameterWithName("possibleValues")
+                                        .description("Metric possible values, if type is domain")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).createMetric(ArgumentMatchers.any(qr.models.Metric.class));
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void updateQRPatternsMetric() throws Exception {
+        // Given
+        qr.models.Metric metric = domainObjectsBuilder.buildQRPatternsMetric();
+        when(qrPatternsDomainController.updateMetric(eq(metric.getId()), ArgumentMatchers.any(qr.models.Metric.class))).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .put("/api/qrPatternsMetrics/{id}", metric.getId())
+                .param("name", metric.getName())
+                .param("description", metric.getDescription())
+                .param("type", metric.getType())
+                .param("minValue", metric.getMinValue().toString())
+                .param("maxValue", metric.getMaxValue().toString())
+                .param("possibleValues", "");
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("qrs/update-qr-patterns-metric",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Metric identifier")
+                        ),
+                        requestParameters(
+                                parameterWithName("name")
+                                        .description("Metric name"),
+                                parameterWithName("description")
+                                        .description("Metric description"),
+                                parameterWithName("type")
+                                        .description("Metric type (integer, float, string, time or domain)"),
+                                parameterWithName("minValue")
+                                        .description("Metric minimum value, if type is integer or float"),
+                                parameterWithName("maxValue")
+                                        .description("Metric maximum value, if type is integer or float"),
+                                parameterWithName("possibleValues")
+                                        .description("Metric possible values, if type is domain")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).updateMetric(eq(metric.getId()), ArgumentMatchers.any(qr.models.Metric.class));
+        verifyNoMoreInteractions(qrPatternsDomainController);
+    }
+
+    @Test
+    public void deleteQRPatternsMetric() throws Exception {
+        // Given
+        qr.models.Metric metric = domainObjectsBuilder.buildQRPatternsMetric();
+        when(qrPatternsDomainController.deleteMetric(metric.getId())).thenReturn(true);
+
+        // Perform request
+        RequestBuilder requestBuilder = RestDocumentationRequestBuilders
+                .delete("/api/qrPatternsMetrics/{id}", metric.getId());
+
+        this.mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andDo(document("qrs/delete-qr-patterns-metric",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id")
+                                        .description("Metric identifier")
+                        )
+                ));
+
+        // Verify mock interactions
+        verify(qrPatternsDomainController, times(1)).deleteMetric(metric.getId());
         verifyNoMoreInteractions(qrPatternsDomainController);
     }
 }
