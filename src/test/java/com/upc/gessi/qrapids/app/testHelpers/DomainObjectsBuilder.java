@@ -7,8 +7,10 @@ import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsFac
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsMetric;
 import com.upc.gessi.qrapids.app.presentation.rest.dto.relations.DTORelationsSI;
 import org.springframework.data.util.Pair;
+import qr.models.Classifier;
 import qr.models.FixedPart;
 import qr.models.Form;
+import qr.models.Param;
 import qr.models.QualityRequirementPattern;
 
 import java.time.LocalDate;
@@ -356,8 +358,19 @@ public class DomainObjectsBuilder {
     }
 
     public QualityRequirementPattern buildQualityRequirementPattern () {
+        Integer parameterId = 120;
+        String parameterName = "value";
+        String parameterDescription = "value in percentage";
+        String parameterCorrectnessCondition = "Stay between 0 and 100";
+        String parameterType = "integer";
+        String parameterValue = null;
+        Integer parameterMetricId = 172;
+        String parameterMetricName = "Integer that represents a percentage";
+        Param parameter = new Param(parameterId, parameterName, parameterDescription, parameterCorrectnessCondition, parameterType, parameterValue, parameterMetricId, parameterMetricName);
+        List<Param> parameterList = new ArrayList<>();
+        parameterList.add(parameter);
         String formText = "The ratio of files without duplications should be at least %value%";
-        FixedPart fixedPart = new FixedPart(formText);
+        FixedPart fixedPart = new FixedPart(formText, parameterList);
         String formName = "Duplications";
         String formDescription = "The ratio of files without duplications should be at least the given value";
         String formComments = "No comments";
@@ -373,6 +386,37 @@ public class DomainObjectsBuilder {
         QualityRequirementPattern qualityRequirementPattern = new QualityRequirementPattern(requirementId, requirementName, requirementComments, requirementDescription, requirementGoal, formList, requirementCostFunction);
 
         return qualityRequirementPattern;
+    }
+
+    public Classifier buildClassifier() {
+        Integer classifierId = 130;
+        String classifierName = "commitresponsetime";
+        List<Classifier> internalClassifierList = new ArrayList<>();
+        List<QualityRequirementPattern> requirementPatternList = new ArrayList<>();
+        Classifier classifier = new Classifier();
+        classifier.setId(classifierId);
+        classifier.setName(classifierName);
+        classifier.setInternalClassifiers(internalClassifierList);
+        classifier.setRequirementPatterns(requirementPatternList);
+
+        return classifier;
+    }
+
+    public qr.models.Metric buildQRPatternsMetric() {
+        Integer metricId = 172;
+        String metricName = "Integer that represents a percentage";
+        String metricDescription = "Integer value that can have a percentage.";
+        String metricType = "integer";
+        Float metricMinValue = 0f;
+        Float metricMaxValue = 100f;
+        List<String> possibleValuesList = new ArrayList<>();
+        qr.models.Metric metric = new qr.models.Metric(metricId, metricName, metricType);
+        metric.setDescription(metricDescription);
+        metric.setMinValue(metricMinValue);
+        metric.setMaxValue(metricMaxValue);
+        metric.setPossibleValues(possibleValuesList);
+
+        return metric;
     }
 
     public Decision buildDecision (Project project, DecisionType type) {

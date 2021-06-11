@@ -1,10 +1,13 @@
 package com.upc.gessi.qrapids.app.domain.controllers;
 
 import com.upc.gessi.qrapids.app.domain.adapters.QRGeneratorFactory;
+import com.upc.gessi.qrapids.app.domain.exceptions.QRPatternNotFoundException;
 import com.upc.gessi.qrapids.app.domain.models.Alert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import qr.QRGenerator;
+import qr.models.Classifier;
+import qr.models.Metric;
 import qr.models.QualityRequirementPattern;
 import qr.models.enumerations.Type;
 
@@ -50,5 +53,81 @@ public class QRPatternsController {
     public Map<Integer, String> getMetricsForPatterns (List<Integer> ids) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getMetricsForPatterns(ids);
+    }
+
+    public boolean createPattern(QualityRequirementPattern newPattern, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        int newId = gen.createQRPattern(newPattern);
+        if (newId > -1) {
+            List<Integer> classifierPatternsWithNewId = new ArrayList<>(classifierPatterns);
+            classifierPatternsWithNewId.add(newId);
+            gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatternsWithNewId);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean editPattern(Integer id, QualityRequirementPattern qrPattern, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        if (gen.updateQRPattern(id, qrPattern)) {
+            gen.updateClassifierWithPatterns(classifierId, classifierName, classifierPos, classifierPatterns);
+            return true;
+        }
+        return false;
+    }
+
+    public void deletePattern(Integer id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        gen.deleteQRPattern(id);
+    }
+
+    public List<Classifier> getAllClassifiers() {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getAllClassifiers();
+    }
+
+    public Classifier getOneClassifier(Integer id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getClassifier(id.longValue());
+    }
+
+    public void createClassifier(String name, Integer parentId) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        gen.createClassifier(name, parentId.longValue());
+    }
+
+    public void updateClassifier(Integer id, String name, Integer oldParentId, Integer newParentId) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        gen.updateAndMoveClassifier(id.longValue(), name, oldParentId.longValue(), newParentId.longValue());
+    }
+
+    public void deleteClassifier(Integer id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        gen.deleteClassifier(id.longValue());
+    }
+
+    public List<Metric> getAllMetrics() {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getAllMetrics();
+    }
+
+    public Metric getOneMetric(Integer id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.getMetric(id);
+    }
+
+    public boolean createMetric(Metric m) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.createMetric(m);
+    }
+
+    public boolean updateMetric(Integer id, Metric m) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.updateMetric(id, m);
+    }
+
+    public boolean deleteMetric(Integer id) {
+        QRGenerator gen = qrGeneratorFactory.getQRGenerator();
+        return gen.deleteMetric(id);
     }
 }
