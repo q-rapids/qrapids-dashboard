@@ -55,6 +55,15 @@ public class QRPatternsController {
         return gen.getMetricsForPatterns(ids);
     }
 
+    /**
+     * Create a new quality requirement pattern and add it to a classifier.
+     * @param newPattern Pattern that will be created
+     * @param classifierId Identifier of classifier where the new pattern will be added
+     * @param classifierName Name of the classifier
+     * @param classifierPos Position of the classifier
+     * @param classifierPatterns Identifiers of patterns inside the classifier, excluding the new one
+     * @return Pattern created successfully
+     */
     public boolean createPattern(QualityRequirementPattern newPattern, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         int newId = gen.createQRPattern(newPattern);
@@ -67,6 +76,16 @@ public class QRPatternsController {
         return false;
     }
 
+    /**
+     * Edit a quality requirement pattern and add it to a classifier.
+     * @param id Pattern identifier
+     * @param qrPattern Edited pattern
+     * @param classifierId Identifier of classifier where the pattern will be added
+     * @param classifierName Name of the classifier
+     * @param classifierPos Position of the classifier
+     * @param classifierPatterns Identifiers of patterns inside the classifier, including the edited one
+     * @return Pattern edited successfully
+     */
     public boolean editPattern(Integer id, QualityRequirementPattern qrPattern, Integer classifierId, String classifierName, Integer classifierPos, List<Integer> classifierPatterns) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         if (gen.updateQRPattern(id, qrPattern)) {
@@ -76,56 +95,110 @@ public class QRPatternsController {
         return false;
     }
 
+    /**
+     * Delete a quality requirement pattern.
+     * @param id Pattern identifier
+     */
     public void deletePattern(Integer id) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         gen.deleteQRPattern(id);
     }
 
+    /**
+     * Get all the classifiers.
+     * @return List containing all the classifiers
+     */
     public List<Classifier> getAllClassifiers() {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getAllClassifiers();
     }
 
+    /**
+     * Get one classifier.
+     * @param id Classifier identifier
+     * @return Classifier with the given identifier
+     */
     public Classifier getOneClassifier(Integer id) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getClassifier(id.longValue());
     }
 
+    /**
+     * Create a new classifier.
+     * @param name New classifier name
+     * @param parentId Identifier of the classifier where the new classifier will be added
+     */
     public void createClassifier(String name, Integer parentId) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         gen.createClassifier(name, parentId.longValue());
     }
 
+    /**
+     * Edit a classifier.
+     * @param id Classifier identifier
+     * @param name New name of edited classifier
+     * @param oldParentId Old parent classifier identifier
+     * @param newParentId New parent classifier identifier
+     */
     public void updateClassifier(Integer id, String name, Integer oldParentId, Integer newParentId) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         gen.updateAndMoveClassifier(id.longValue(), name, oldParentId.longValue(), newParentId.longValue());
     }
 
+    /**
+     * Delete a classifier.
+     * @param id Classifier identifier
+     */
     public void deleteClassifier(Integer id) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         gen.deleteClassifier(id.longValue());
     }
 
+    /**
+     * Get all the metrics
+     * @return List containing all the metrics
+     */
     public List<Metric> getAllMetrics() {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getAllMetrics();
     }
 
+    /**
+     * Get one metric.
+     * @param id Metric identifier
+     * @return Metric with the given identifier
+     */
     public Metric getOneMetric(Integer id) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.getMetric(id);
     }
 
+    /**
+     * Create a new metric.
+     * @param m Metric that will be created
+     * @return Metric created successfully
+     */
     public boolean createMetric(Metric m) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.createMetric(m);
     }
 
+    /**
+     * Edit a metric.
+     * @param id Metric identifier
+     * @param m Edited metric
+     * @return Metric edited successfully
+     */
     public boolean updateMetric(Integer id, Metric m) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.updateMetric(id, m);
     }
 
+    /**
+     * Delete a metric.
+     * @param id Metric identifier
+     * @return Metric deleted successfully
+     */
     public boolean deleteMetric(Integer id) {
         QRGenerator gen = qrGeneratorFactory.getQRGenerator();
         return gen.deleteMetric(id);

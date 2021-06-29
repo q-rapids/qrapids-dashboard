@@ -1258,7 +1258,7 @@ function saveMetric() {
                 alert("Minimum value or maximum value are not numbers");
                 return;
             }
-            if (minValue > maxValue) {
+            if (parseFloat(minValue) > parseFloat(maxValue)) {
                 alert("Minimum value must be equal or smaller than maximum value");
                 return;
             }
