@@ -9,5 +9,6 @@ public class Messages {
     public static final String CATEGORIES_DO_NOT_MATCH = "The categories do not match";
     public static final String ASSESSMENT_ERROR = "Assessment error";
     public static final String STRATEGIC_INDICATOR_NOT_FOUND = "Strategic indicator not found";
+    public static final String FACTOR_NOT_FOUND = "Factor not found";
     public static final String FACTOR_DELETE_FORBIDDEN = "This factor can't be deleted, it's involved in Strategic Indicators computation";
 }

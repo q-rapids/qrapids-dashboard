@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.ZoneId;
 import java.util.*;
@@ -49,6 +50,9 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 	@Scheduled(cron = "${cron.expression:-}") // default -> disable scheduled task
 	public void scheduleTask() throws ParseException, ProjectNotFoundException, IOException, CategoriesException {
 		// ToDo: decide if we also copy this code to assessSI function
+		Logger logger = LoggerFactory.getLogger(Alerts.class);
+		logger.info("Start Scheduled task: " + new Timestamp(System.currentTimeMillis()));
+		logger.info("projects dir: " + projectsDir);
 		LocalDate evaluationLocalDate = LocalDate.now(); // we need LocalDate for assessStrategicIndicators
 		Date evaluationDate= Date.from(evaluationLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant()); // we need Date for evaluateQualityModel in qrapids-eval libs
 
@@ -58,16 +62,13 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		Eval.evaluateQualityModel(projectsDir, evaluationDate, null);
 
 		boolean correct = true;
-		// first assess factors for all projects
 		correct = context.getBean(FactorsController.class).assessQualityFactors(null, evaluationLocalDate);
 
 		if (correct) {
-			// then assess strategic indicator for all projects
 			correct = context.getBean(StrategicIndicatorsController.class).assessStrategicIndicators(null, evaluationLocalDate);
 		}
 
 		if (!correct) { // check if the assessment complete with error
-			Logger logger = LoggerFactory.getLogger(Alerts.class);
 			logger.error(evaluationLocalDate + ": factors or strategic indicators assessment complete with error.");
 		}
 	}

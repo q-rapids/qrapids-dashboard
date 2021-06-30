@@ -141,6 +141,7 @@ function showProjectSelector (projects) {
             // if without profile select representationMode and qmMode to default values
             sessionStorage.setItem("DSIRepresentationMode", "Radar");
             sessionStorage.setItem("DQFRepresentationMode", "Radar");
+            sessionStorage.setItem("metRepresentationMode", "Gauge");
             sessionStorage.setItem("qmMode", "Graph");
         } else {
             jQuery.ajax({
@@ -153,11 +154,16 @@ function showProjectSelector (projects) {
                     // select representationMode and qmMode by profile
                     sessionStorage.setItem("DSIRepresentationMode", data.dsiView);
                     sessionStorage.setItem("DQFRepresentationMode", data.dqfView);
+                    sessionStorage.setItem("metRepresentationMode", data.mView);
                     sessionStorage.setItem("qmMode", data.qmView);
                     // specific cases: redirect to correct visualization
                     if (currentURL.search("/QualityModel") !== -1) // qm
                         url = serverUrl + "/QualityModel" + sessionStorage.getItem("qmMode");
-                    else if (currentURL.search("/DetailedStrategicIndicators/CurrentChart") !== -1) // dsi
+                    else if (currentURL.search("/Metrics/CurrentChart") !== -1) {// metrics
+                        console.log("else if metrics");
+                        console.log(sessionStorage.getItem("metRepresentationMode"));
+                        url = serverUrl + "/Metrics/CurrentChart" + sessionStorage.getItem("metRepresentationMode");
+                    } else if (currentURL.search("/DetailedStrategicIndicators/CurrentChart") !== -1) // dsi
                         url = serverUrl + "/DetailedStrategicIndicators/CurrentChart" + sessionStorage.getItem("DSIRepresentationMode");
                     else if (currentURL.search("/DetailedQualityFactors/CurrentChart") !== -1) // dqf
                         url = serverUrl + "/DetailedQualityFactors/CurrentChart" + sessionStorage.getItem("DQFRepresentationMode");
@@ -169,7 +175,7 @@ function showProjectSelector (projects) {
                         if (currentURL.search("/Prediction") !== -1)
                             url = serverUrl + "/Metrics/PredictionChart";
                         else
-                            url = serverUrl + "/Metrics/" + time + viewMode;
+                            url = serverUrl + "/Metrics/" + time + viewMode + sessionStorage.getItem("metRepresentationMode");
                     } else if (data.qualityLevel == "METRICS_FACTORS") {
                         sessionStorage.setItem("prediction", "QualityFactors");
                         sessionStorage.setItem("configuration", "Categories");

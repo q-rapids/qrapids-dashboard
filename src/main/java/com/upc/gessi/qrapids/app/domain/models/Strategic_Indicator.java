@@ -10,7 +10,7 @@ import java.util.List;
     'strategic_indicator_quality_factors name for the table in the database, the table storing the quality_factors list
  */
 
-//TODO: refactor to have the name of the table 'strategic_indicator_quality_factor' independent to the this class name
+//ToDo: refactor to have the name of the table 'strategic_indicator_quality_factor' independent to the this class name
 
 @Entity
 @Table(name="strategic_indicator",

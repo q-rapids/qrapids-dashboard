@@ -12,9 +12,9 @@ function drawChart() {
             var name = getParameterByName('si');
             var id = getParameterByName('siid');
             if (name.length != 0) //if we know from which Detailed Strategic Indicator we are coming
-                var urlLink = "../Metrics/CurrentChart?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + title;
+                var urlLink = "../Metrics/CurrentChart" + metRepresentationMode + "?id=" + ids[i] + "&si=" + name + "&siid=" + id + "&name=" + title;
             else
-                var urlLink = "../Metrics/CurrentChart?id=" + ids[i] + "&name=" + title;
+                var urlLink = "../Metrics/CurrentChart" + metRepresentationMode + "?id=" + ids[i] + "&name=" + title;
         }
         a.setAttribute("href", urlLink);
         a.innerHTML = t[0] + "<br/>" + t[1];

@@ -38,7 +38,7 @@ public class Metrics {
     public void importMetrics() {
         try {
             metricsController.importMetricsAndUpdateDatabase();
-        } catch (CategoriesException | ProjectNotFoundException e) {
+        } catch (CategoriesException e) {
             logger.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.CONFLICT, Messages.CATEGORIES_DO_NOT_MATCH);
         } catch (IOException e) {

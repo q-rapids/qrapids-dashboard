@@ -360,8 +360,11 @@ public class StrategicIndicatorsController {
             evaluationDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             factorList = factorsController.getAllFactorsEvaluation(project, null,false);
         }
-        else
-            factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null,evaluationDate, evaluationDate);
+        else {
+            factorList = factorsController.getAllFactorsHistoricalEvaluation(project, null, evaluationDate, evaluationDate);
+            // when there is no historic factors values for specified day --> take the last assessment
+            if (factorList.size() == 0) factorList = factorsController.getAllFactorsEvaluation(project, null,false);
+        }
         factorEvaluationQma.setFactors(factorList);
         return assessProjectStrategicIndicators(evaluationDate, project, factorEvaluationQma);
     }
@@ -677,15 +680,16 @@ public class StrategicIndicatorsController {
     }
 
     public void fetchStrategicIndicators () throws IOException, CategoriesException, ProjectNotFoundException, QualityFactorNotFoundException, StrategicIndicatorQualityFactorNotFoundException, StrategicIndicatorNotFoundException {
-        List<String> projects = projectsController.importProjectsAndUpdateDatabase();
+        List<String> projects = projectsController.getAllProjectsExternalID();
         for(String projectExternalId : projects) {
             List<DTODetailedStrategicIndicatorEvaluation> dtoDetailedStrategicIndicators = new ArrayList<>();
+            Project project = new Project();
             try {
                 dtoDetailedStrategicIndicators = getAllDetailedStrategicIndicatorsCurrentEvaluation(projectExternalId, null, false);
+                project = projectsController.findProjectByExternalId(projectExternalId);
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
-            Project project = projectsController.findProjectByExternalId(projectExternalId);
             for (DTODetailedStrategicIndicatorEvaluation dtoDetailedStrategicIndicator : dtoDetailedStrategicIndicators) {
                 List<String> factors = new ArrayList<>();
                 for (DTOFactorEvaluation f : dtoDetailedStrategicIndicator.getFactors()) {
@@ -696,7 +700,10 @@ public class StrategicIndicatorsController {
                 // check if si is in data base and update it
                 Strategic_Indicator strategicIndicator = strategicIndicatorRepository.findByNameAndProject_Id(dtoDetailedStrategicIndicator.getName(),project.getId());
                 if (strategicIndicator != null) {
-                    editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), strategicIndicator.getThreshold().toString(), null, factors);
+                    if (strategicIndicator.getThreshold() != null)
+                        editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), strategicIndicator.getThreshold().toString(), null, factors);
+                    else
+                        editStrategicIndicator(strategicIndicator.getId(), strategicIndicator.getName(),strategicIndicator.getDescription(), "", null, factors);
                 } else { // save it if it's new
                     saveStrategicIndicator(dtoDetailedStrategicIndicator.getName(), "", "" , null, factors, project);
                 }

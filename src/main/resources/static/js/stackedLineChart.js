@@ -320,9 +320,12 @@ function drawChart() {
             urlLink = "../DetailedStrategicIndicators/HistoricChart?id=" + ids[i] + "&name=" + texts[i];
             a.setAttribute("href", urlLink);
         } else { // case of metrics link
-            urlLink = metricsDB.find(function (element) {
+            console.log(ids[i]);
+            var findMet = metricsDB.find(function (element) {
                 return element.externalId === ids[i];
-            }).webUrl;
+            });
+            if (findMet)  // if metric not found it will be undefined
+                urlLink = findMet.webUrl;
             if (urlLink) {
                 a.setAttribute("href", urlLink);
                 a.setAttribute("target","_blank")

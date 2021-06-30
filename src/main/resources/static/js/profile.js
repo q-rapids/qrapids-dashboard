@@ -8,6 +8,7 @@ var prjExternalID;
 var qualityLevel = ""; // specify (ALL, METRICS_FACTORS, METRICS)
 var dsiView = ""; // specify (Radar, Stacked, Polar)
 var dqfView = ""; // specify (Radar, Stacked, Polar)
+var mView = ""; // specify (Gauge, Slider)
 var qmView = ""; // specify (Graph, Sunburst)
 
 function getProjects() {
@@ -303,7 +304,6 @@ function clickOnTree(e){
             allowedRow.appendChild(allowedSIsCol);
             profileForm.appendChild(allowedRow);
 
-            // TODO
             var title3Row = document.createElement('div');
             title3Row.classList.add("profileInfoRow");
             var title3P = document.createElement('p');
@@ -446,6 +446,54 @@ function clickOnTree(e){
             // add BtnGroup to text paragraph
             dqfViewP.appendChild(dqfViewBtnGroup);
 
+            // Metrics visualization case
+            var mViewP = document.createElement('p');
+            mViewP.appendChild(document.createTextNode("Metrics view:   "));
+            mViewP.setAttribute('id', 'mViewP');
+            mViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+            var mViewBtnGroup = document.createElement('div');
+            mViewBtnGroup.classList.add("btn-group");
+            mViewBtnGroup.setAttribute('id', 'mViewBtnGroup');
+            // Gauge case
+            var mViewGaugeBtn = document.createElement('button');
+            mViewGaugeBtn.classList.add("btn");
+            mViewGaugeBtn.classList.add("btn-primary");
+            mViewGaugeBtn.setAttribute('id', 'mView_Gauge');
+            mViewGaugeBtn.setAttribute('type', 'button');
+            mViewGaugeBtn.setAttribute('style', 'background-color: #ffffff');
+            mViewGaugeBtn.setAttribute('value', 'Gauge');
+            mViewGaugeBtn.onclick = mViewUpdate;
+            var imgGauge = document.createElement('img');
+            imgGauge.setAttribute('class', 'icons');
+            imgGauge.setAttribute('src', '../icons/gauge_chart.png');
+            mViewGaugeBtn.appendChild(imgGauge);
+            // Slider case
+            var mViewSliderBtn = document.createElement('button');
+            mViewSliderBtn.classList.add("btn");
+            mViewSliderBtn.classList.add("btn-primary");
+            mViewSliderBtn.setAttribute('id', 'mView_Slider');
+            mViewSliderBtn.setAttribute('type', 'button');
+            mViewSliderBtn.setAttribute('style', 'background-color: #ffffff');
+            mViewSliderBtn.setAttribute('value', 'Slider');
+            mViewSliderBtn.onclick = mViewUpdate;
+            var imgSlider = document.createElement('img');
+            imgSlider.setAttribute('class', 'icons');
+            imgSlider.setAttribute('src', '../icons/slider_chart.png');
+            mViewSliderBtn.appendChild(imgSlider);
+
+            // update Metrics view visualizations and check the correct button
+            mView = data.mView;
+            if (mView == "Gauge")
+                mViewGaugeBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+            else if (mView == "Slider")
+                mViewSliderBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+
+            // add buttons to BtnGroup
+            mViewBtnGroup.appendChild(mViewGaugeBtn);
+            mViewBtnGroup.appendChild(mViewSliderBtn);
+            // add BtnGroup to text paragraph
+            mViewP.appendChild(mViewBtnGroup);
+
             // QM visualization case
             var qmViewP = document.createElement('p');
             qmViewP.appendChild(document.createTextNode("Quality Model view:   "));
@@ -509,6 +557,7 @@ function clickOnTree(e){
 
             visualizationsCol.appendChild(dsiViewP);
             visualizationsCol.appendChild(dqfViewP);
+            visualizationsCol.appendChild(mViewP);
             visualizationsCol.appendChild(qmViewP);
             visualizationsRow.appendChild(visualizationsCol);
             profileForm.appendChild(visualizationsRow);
@@ -542,7 +591,6 @@ function clickOnTree(e){
 }
 
 function dsiViewUpdate() {
-    // TODO
     console.log("Button clicked, id "+this.value);
     dsiView = this.value;
     var dsiViewBtnGroup = document.getElementById('dsiViewBtnGroup');
@@ -555,7 +603,6 @@ function dsiViewUpdate() {
 }
 
 function dqfViewUpdate() {
-    // TODO
     console.log("Button clicked, value " + this.value);
     dqfView = this.value;
     var dqfViewBtnGroup = document.getElementById('dqfViewBtnGroup');
@@ -564,6 +611,18 @@ function dqfViewUpdate() {
             dqfViewBtnGroup.children[j].setAttribute('style', 'background-color: rgb(255, 195, 128)');
         else
             dqfViewBtnGroup.children[j].setAttribute('style', 'background-color: #ffffff');
+    }
+}
+
+function mViewUpdate() {
+    console.log("Button clicked, value " + this.value);
+    mView = this.value;
+    var mViewBtnGroup = document.getElementById('mViewBtnGroup');
+    for (var j = 0; j < mViewBtnGroup.children.length; j++) {
+        if (mViewBtnGroup.children[j].id == this.id)
+            mViewBtnGroup.children[j].setAttribute('style', 'background-color: rgb(255, 195, 128)');
+        else
+            mViewBtnGroup.children[j].setAttribute('style', 'background-color: #ffffff');
     }
 }
 
@@ -765,7 +824,6 @@ function newProfile() {
     allowedRow.appendChild(allowedSIsCol);
     profileForm.appendChild(allowedRow);
 
-    // TODO
     var title3Row = document.createElement('div');
     title3Row.classList.add("profileInfoRow");
     var title3P = document.createElement('p');
@@ -890,9 +948,50 @@ function newProfile() {
     // add BtnGroup to "Step 3.2 - ..."
     dqfViewP.appendChild(dqfViewBtnGroup);
 
+    // Metrics visualization case
+    var mViewP = document.createElement('p');
+    mViewP.appendChild(document.createTextNode("Step 3.3 - Metrics view:   "));
+    mViewP.setAttribute('id', 'mViewP');
+    mViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
+    var mViewBtnGroup = document.createElement('div');
+    mViewBtnGroup.classList.add("btn-group");
+    mViewBtnGroup.setAttribute('id', 'mViewBtnGroup');
+    // Gauge case DEFAULT
+    var mViewGaugeBtn = document.createElement('button');
+    mViewGaugeBtn.classList.add("btn");
+    mViewGaugeBtn.classList.add("btn-primary");
+    mViewGaugeBtn.setAttribute('id', 'mView_Gauge');
+    mViewGaugeBtn.setAttribute('type', 'button');
+    mViewGaugeBtn.setAttribute('style', 'background-color: rgb(255, 195, 128)');
+    mViewGaugeBtn.setAttribute('value', 'Gauge');
+    mView = "Gauge";
+    mViewGaugeBtn.onclick = mViewUpdate;
+    var imgGauge = document.createElement('img');
+    imgGauge.setAttribute('class', 'icons');
+    imgGauge.setAttribute('src', '../icons/gauge_chart.png');
+    mViewGaugeBtn.appendChild(imgGauge);
+    // Slider case
+    var mViewSliderBtn = document.createElement('button');
+    mViewSliderBtn.classList.add("btn");
+    mViewSliderBtn.classList.add("btn-primary");
+    mViewSliderBtn.setAttribute('id', 'mView_Slider');
+    mViewSliderBtn.setAttribute('type', 'button');
+    mViewSliderBtn.setAttribute('style', 'background-color: #ffffff');
+    mViewSliderBtn.setAttribute('value', 'Slider');
+    mViewSliderBtn.onclick = mViewUpdate;
+    var imgSlider = document.createElement('img');
+    imgSlider.setAttribute('class', 'icons');
+    imgSlider.setAttribute('src', '../icons/slider_chart.png');
+    mViewSliderBtn.appendChild(imgSlider);
+    // add buttons to BtnGroup
+    mViewBtnGroup.appendChild(mViewGaugeBtn);
+    mViewBtnGroup.appendChild(mViewSliderBtn);
+    // add BtnGroup to "Step 3.3 - ..."
+    mViewP.appendChild(mViewBtnGroup);
+
     // QM visualization case
     var qmViewP = document.createElement('p');
-    qmViewP.appendChild(document.createTextNode("Step 3.3 - Quality Model view:   "));
+    qmViewP.appendChild(document.createTextNode("Step 3.4 - Quality Model view:   "));
     qmViewP.setAttribute('id', 'qmViewP');
     qmViewP.setAttribute('style', 'font-size: 19.5px; margin-bottom: 1%');
     var qmViewBtnGroup = document.createElement('div');
@@ -928,11 +1027,12 @@ function newProfile() {
     // add buttons to BtnGroup
     qmViewBtnGroup.appendChild(qmViewGraphBtn);
     qmViewBtnGroup.appendChild(qmViewSunburstBtn);
-    // add BtnGroup to "Step 3.3 - ..."
+    // add BtnGroup to "Step 3.4 - ..."
     qmViewP.appendChild(qmViewBtnGroup);
 
     visualizationsCol.appendChild(dsiViewP);
     visualizationsCol.appendChild(dqfViewP);
+    visualizationsCol.appendChild(mViewP);
     visualizationsCol.appendChild(qmViewP);
     visualizationsRow.appendChild(visualizationsCol);
     profileForm.appendChild(visualizationsRow);
@@ -1496,6 +1596,7 @@ function saveNewProfile() {
 
     console.log(dsiView);
     console.log(dqfView);
+    console.log(mView);
     console.log(qmView);
 
     if ($('#profileName').val() != "" && allowedProjects.length > 0) {
@@ -1505,6 +1606,7 @@ function saveNewProfile() {
         formData.append("quality_level", qualityLevel);
         formData.append("dsi_view", dsiView);
         formData.append("dqf_view", dqfView);
+        formData.append("m_view", mView);
         formData.append("qm_view", qmView);
         formData.append("projects_info", JSON.stringify(allowedProjects));
 
@@ -1603,6 +1705,7 @@ function saveProfile() {
 
     console.log(dsiView);
     console.log(dqfView);
+    console.log(mView);
     console.log(qmView);
 
     if ($('#profileName').val() != "" && allowedProjects.length > 0) {
@@ -1612,6 +1715,7 @@ function saveProfile() {
         formData.append("quality_level", qualityLevel);
         formData.append("dsi_view", dsiView);
         formData.append("dqf_view", dqfView);
+        formData.append("m_view",mView);
         formData.append("qm_view", qmView);
         formData.append("projects_info", JSON.stringify(allowedProjects));
 

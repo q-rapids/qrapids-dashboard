@@ -1232,7 +1232,7 @@ public class StrategicIndicatorsControllerTest {
         List<String> projectsList = new ArrayList<>();
         projectsList.add(project.getExternalId());
 
-        when(projectsController.importProjectsAndUpdateDatabase()).thenReturn(projectsList);
+        when(projectsController.getAllProjectsExternalID()).thenReturn(projectsList);
         when(projectsController.findProjectByExternalId(project.getExternalId())).thenReturn(project);
 
         DTOStrategicIndicatorEvaluation dtoStrategicIndicatorEvaluation = domainObjectsBuilder.buildDTOStrategicIndicatorEvaluation();
@@ -1280,7 +1280,7 @@ public class StrategicIndicatorsControllerTest {
         strategicIndicatorsController.fetchStrategicIndicators();
 
         // Then
-        verify(projectsController, times(1)).importProjectsAndUpdateDatabase();
+        verify(projectsController, times(1)).getAllProjectsExternalID();
         verify(projectsController, times(1)).findProjectByExternalId(project.getExternalId());
 
         ArgumentCaptor<Strategic_Indicator> argumentSI = ArgumentCaptor.forClass(Strategic_Indicator.class);

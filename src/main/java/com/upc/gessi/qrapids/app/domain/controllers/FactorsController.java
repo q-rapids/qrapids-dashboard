@@ -333,8 +333,11 @@ public class FactorsController {
             evaluationDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             metricList = metricsController.getAllMetricsCurrentEvaluation(project, null);
         }
-        else
+        else {
             metricList = metricsController.getAllMetricsHistoricalEvaluation(project, null, evaluationDate, evaluationDate);
+            // when there is no historic metrics values for specified day --> take the last assessment
+            if (metricList.size() == 0) metricList = metricsController.getAllMetricsCurrentEvaluation(project, null);
+        }
         metricEvaluationQma.setMetrics(metricList);
 
         // CHECK METRICS ALERTS

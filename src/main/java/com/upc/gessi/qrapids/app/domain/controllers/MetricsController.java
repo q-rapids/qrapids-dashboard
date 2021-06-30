@@ -10,6 +10,8 @@ import com.upc.gessi.qrapids.app.domain.repositories.MetricCategory.MetricCatego
 import com.upc.gessi.qrapids.app.presentation.rest.dto.DTOMetricEvaluation;
 import com.upc.gessi.qrapids.app.domain.exceptions.CategoriesException;
 import org.elasticsearch.ElasticsearchStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,11 +70,16 @@ public class MetricsController {
         return metricRepository.findByProject_IdOrderByName(project.getId());
     }
 
-    public void importMetricsAndUpdateDatabase() throws IOException, CategoriesException, ProjectNotFoundException {
+    public void importMetricsAndUpdateDatabase() throws IOException, CategoriesException {
         List<String> projects = projectController.getAllProjectsExternalID();
         for (String prj : projects) {
             List<DTOMetricEvaluation> metrics = getAllMetricsCurrentEvaluation(prj, null);
-            updateDataBaseWithNewMetrics(prj,metrics);
+            try {
+                updateDataBaseWithNewMetrics(prj, metrics);
+            } catch (ProjectNotFoundException e) {
+                Logger logger = LoggerFactory.getLogger(MetricsController.class);
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 
