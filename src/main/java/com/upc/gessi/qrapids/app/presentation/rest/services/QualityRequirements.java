@@ -180,6 +180,10 @@ public class QualityRequirements {
         return object;
     }
 
+    /**
+     * Create a new quality requirement pattern.
+     * @param request HTTP request containing the new pattern attributes
+     */
     @PostMapping("/api/qrPatterns")
     @ResponseStatus(HttpStatus.CREATED)
     public void createQRPattern(HttpServletRequest request) {
@@ -223,6 +227,11 @@ public class QualityRequirements {
         }
     }
 
+    /**
+     * Edit a quality requirement pattern.
+     * @param id Pattern identifier
+     * @param request HTTP request containing the edited pattern attributes
+     */
     @PutMapping("/api/qrPatterns/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void updateQRPattern(@PathVariable String id, HttpServletRequest request) {
@@ -264,6 +273,10 @@ public class QualityRequirements {
         }
     }
 
+    /**
+     * Delete a quality requirement pattern.
+     * @param id Pattern identifier
+     */
     @DeleteMapping("/api/qrPatterns/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteQRPattern(@PathVariable String id) {
@@ -275,6 +288,10 @@ public class QualityRequirements {
         }
     }
 
+    /**
+     * Get all the classifiers.
+     * @return List containing all the classifiers
+     */
     @GetMapping("/api/qrPatternsClassifiers")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOQRPatternsClassifier> getAllQRPatternsClassifiers() {
@@ -286,6 +303,11 @@ public class QualityRequirements {
         return dtoClassifierList;
     }
 
+    /**
+     * Get one classifier.
+     * @param id Classifier identifier
+     * @return Classifier with the given identifier
+     */
     @GetMapping("/api/qrPatternsClassifiers/{id}")
     @ResponseStatus(HttpStatus.OK)
     public DTOQRPatternsClassifier getQRPatternsClassifier(@PathVariable String id) {
@@ -293,6 +315,10 @@ public class QualityRequirements {
         return Mappers.mapClassifierToDTOQRPatternsClassifier(classifier);
     }
 
+    /**
+     * Create a new classifier.
+     * @param request HTTP request containing the new classifier attributes
+     */
     @PostMapping("/api/qrPatternsClassifiers")
     @ResponseStatus(HttpStatus.CREATED)
     public void createQRPatternsClassifier(HttpServletRequest request) {
@@ -314,6 +340,11 @@ public class QualityRequirements {
         }
     }
 
+    /**
+     * Edit a classifier
+     * @param id Classifier identifier
+     * @param request HTTP request containing the edited classifier attributes
+     */
     @PutMapping("/api/qrPatternsClassifiers/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void updateQRPatternsClassifier(@PathVariable String id, HttpServletRequest request) {
@@ -336,6 +367,10 @@ public class QualityRequirements {
         }
     }
 
+    /**
+     * Delete a classifier.
+     * @param id Classifier identifier
+     */
     @DeleteMapping("/api/qrPatternsClassifiers/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteQRPatternsClassifier(@PathVariable String id) {
@@ -347,6 +382,10 @@ public class QualityRequirements {
         }
     }
 
+    /**
+     * Get all the metrics.
+     * @return List containing all the metrics
+     */
     @GetMapping("/api/qrPatternsMetrics")
     @ResponseStatus(HttpStatus.OK)
     public List<DTOQRPatternsMetric> getAllQRPatternsMetrics() {
@@ -358,6 +397,11 @@ public class QualityRequirements {
         return dtoMetricList;
     }
 
+    /**
+     * Get one metric.
+     * @param id Metric identifier
+     * @return Metric with the given identifier
+     */
     @GetMapping("/api/qrPatternsMetrics/{id}")
     @ResponseStatus(HttpStatus.OK)
     public DTOQRPatternsMetric getQRPatternsMetric(@PathVariable String id) {
@@ -365,6 +409,10 @@ public class QualityRequirements {
         return Mappers.mapMetricToDTOQRPatternsMetric(metric);
     }
 
+    /**
+     * Create a new metric.
+     * @param request HTTP request containing the new metric attributes
+     */
     @PostMapping("/api/qrPatternsMetrics")
     @ResponseStatus(HttpStatus.CREATED)
     public void createQRPatternsMetric(HttpServletRequest request) {
@@ -414,6 +462,11 @@ public class QualityRequirements {
         }
     }
 
+    /**
+     * Edit a metric.
+     * @param id Metric identifier
+     * @param request HTTP request containing the edited metric attributes
+     */
     @PutMapping("/api/qrPatternsMetrics/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void updateQRPatternsMetric(@PathVariable String id, HttpServletRequest request) {
@@ -463,6 +516,10 @@ public class QualityRequirements {
         }
     }
 
+    /**
+     * Delete a metric.
+     * @param id Metric identifier
+     */
     @DeleteMapping("/api/qrPatternsMetrics/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteQRPatternsMetric(@PathVariable String id) {
