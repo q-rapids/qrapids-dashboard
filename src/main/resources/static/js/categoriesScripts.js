@@ -97,7 +97,8 @@ $('#accept').click(function () {
     formData.append("QFCat", JSON.stringify(dataQF));
 
     if (dataSI.length < 2 || dataQF.length < 2)
-        alert("There has to be at least 2 categories for each indicator.")
+        warningUtils("Warning", "There has to be at least 2 categories for each indicator.");
+        //alert("There has to be at least 2 categories for each indicator.")
     else {
         $.ajax({
             url: '../api/categories',
@@ -107,7 +108,8 @@ $('#accept').click(function () {
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 500)
-                    alert("You can't have two categories with the same name.");
+                    warningUtils("Error", "You can't have two categories with the same name.");
+                    //alert("You can't have two categories with the same name.");
             },
             success: function() {
                 location.reload();

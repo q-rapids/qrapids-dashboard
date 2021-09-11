@@ -43,7 +43,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             contentType: false,
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
-                alert("Error in the ElasticSearch: contact to the system administrator");
+                warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
+                //alert("Error in the ElasticSearch: contact to the system administrator");
                 location.href = "../Metrics/Configuration";
             },
             success: function() {

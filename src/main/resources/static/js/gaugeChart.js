@@ -15,8 +15,10 @@ function checkCategories() {
         type: "GET",
         success: function(categories) {
             if (categories.length === 0) {
-                alert("You need to define Strategic Indicator categories in order to see the chart correctly. " +
+                warningUtils("Warning", "You need to define Strategic Indicator categories in order to see the chart correctly. " +
                     "Please, go to the Categories section of the Configuration menu and define them.");
+                //alert("You need to define Strategic Indicator categories in order to see the chart correctly. " +
+                  //  "Please, go to the Categories section of the Configuration menu and define them.");
             }
         }
     });
@@ -46,9 +48,11 @@ function getData(width, height, showButtons, chartHyperlinked, color) {
         },
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
-                alert("Your datasource and DB categories IDs do not match.");
+                warningUtils("Error","Your datasource and DB categories IDs do not match.");
+                //alert("Your datasource and DB categories IDs do not match.");
             else if (jqXHR.status == 400) {
-                alert("Datasource connection failed.");
+                warningUtils("Error", "Datasource connection failed.");
+                //alert("Datasource connection failed.");
             }
         }
     });
@@ -72,9 +76,11 @@ function seeFeedback(i){
         },
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
-                alert("Your datasource and DB categories IDs do not match.");
+                warningUtils("Error","Your datasource and DB categories IDs do not match.");
+                //alert("Your datasource and DB categories IDs do not match.");
             else if (jqXHR.status == 400) {
-                alert("Datasource connection failed.");
+                warningUtils("Error", "Datasource connection failed.");
+                //alert("Datasource connection failed.");
             }
         }
     });

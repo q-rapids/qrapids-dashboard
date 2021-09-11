@@ -701,7 +701,8 @@ $('#apply').click(function () {
             }
         },
         error: function () {
-            alert("Metric simulation failed");
+            warningUtils("Error", "Metric simulation failed");
+            //alert("Metric simulation failed");
         }
     });
 });
@@ -731,7 +732,8 @@ function simulateSI (qualityFactors) {
         processData: false,
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 405)
-                alert(textStatus);
+                warningUtils("Error", textStatus);
+                //alert(textStatus);
         },
         success: function(result) {
             data = result;
@@ -791,13 +793,15 @@ $('#decision').click(function () {
                     $("#QRModal").modal('hide');
                     if (patternId && alertId)
                         location.href = "../QualityAlerts";
-                    alert("Error on saving the quality requirement to the backlog")
+                    warningUtils("Error", "Error on saving the quality requirement to the backlog");
+                    //alert("Error on saving the quality requirement to the backlog")
                 }
                 else {
                     $("#QRModal").modal('hide');
                     if (patternId && alertId)
                         location.href = "../QualityAlerts";
-                    alert("Error on saving the quality requirement")
+                    warningUtils("Error", "Error on saving the quality requirement");
+                    //alert("Error on saving the quality requirement")
                 }
             }
         });

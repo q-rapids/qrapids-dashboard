@@ -292,6 +292,8 @@
     <script type="text/javascript" th:src="@{/js/scriptDatePicker.js}"></script>
     <th:block th:fragment="scriptsBasic">
         <script type="text/javascript" th:src="@{/js/navScript.js}"></script>
+        <script type="text/javascript" th:src="@{/js/utils.js}"></script>
+        <div th:replace="Fragments/Modals :: warningModal"></div>
     </th:block>
 </th:block>
 </html>

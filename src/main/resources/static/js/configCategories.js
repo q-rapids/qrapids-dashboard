@@ -268,7 +268,8 @@ function getDataThreshold (table) {
 $('#saveSICategories').click(function () {
     var dataSI = getData();
     if (dataSI.length < 2)
-        alert("There has to be at least 2 categories for each indicator");
+        warningUtils("Warning", "There has to be at least 2 categories for each indicator");
+        //alert("There has to be at least 2 categories for each indicator");
     else {
         $.ajax({
             url: '../api/strategicIndicators/categories',
@@ -277,12 +278,15 @@ $('#saveSICategories').click(function () {
             contentType: "application/json",
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 405)
-                    alert("You can't have two categories with the same name");
+                    warningUtils("Error", "You can't have two categories with the same name");
+                    //alert("You can't have two categories with the same name");
                 else
-                    alert("Error on saving categories");
+                    warningUtils("Error", "Error on saving categories");
+                    //alert("Error on saving categories");
             },
             success: function() {
-                alert("Strategic Indicator Categories saved successfully");
+                warningUtils("Ok","Strategic Indicator Categories saved successfully");
+                //alert("Strategic Indicator Categories saved successfully");
             }
         });
 
@@ -292,7 +296,8 @@ $('#saveSICategories').click(function () {
 $('#saveFactorCategories').click(function () {
     var dataQF = getDataThreshold("tableQF");
     if (dataQF.length < 2)
-        alert("There has to be at least 2 categories for each factor");
+        warningUtils("Warning", "There has to be at least 2 categories for each factor");
+        //alert("There has to be at least 2 categories for each factor");
     else {
         $.ajax({
             url: '../api/qualityFactors/categories',
@@ -301,12 +306,15 @@ $('#saveFactorCategories').click(function () {
             contentType: "application/json",
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 405)
-                    alert("You can't have two categories with the same name");
+                    warningUtils("Error", "You can't have two categories with the same name");
+                    //alert("You can't have two categories with the same name");
                 else
-                    alert("Error on saving categories");
+                    warningUtils("Error","Error on saving categories");
+                    //alert("Error on saving categories");
             },
             success: function() {
-                alert("Quality Factor Categories saved successfully");
+                warningUtils("Ok", "Quality Factor Categories saved successfully");
+                //alert("Quality Factor Categories saved successfully");
             }
         });
 
@@ -316,7 +324,8 @@ $('#saveFactorCategories').click(function () {
 $('#saveMetricCategories').click(function () {
     var dataMetrics = getDataThreshold("tableMetrics");
     if (dataMetrics.length < 2)
-        alert("There has to be at least 2 categories for each factor");
+        warningUtils("Warning", "There has to be at least 2 categories for each factor");
+        //alert("There has to be at least 2 categories for each factor");
     else {
         $.ajax({
             url: '../api/metrics/categories',
@@ -325,12 +334,15 @@ $('#saveMetricCategories').click(function () {
             contentType: "application/json",
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 405)
-                    alert("You can't have two categories with the same name");
+                    warningUtils("Error", "You can't have two categories with the same name");
+                    //alert("You can't have two categories with the same name");
                 else
-                    alert("Error on saving categories");
+                    warningUtils("Error","Error on saving categories");
+                    //alert("Error on saving categories");
             },
             success: function() {
-                alert("Metrics Categories saved successfully");
+                warningUtils("Ok","Metrics Categories saved successfully");
+                //alert("Metrics Categories saved successfully");
             }
         });
 

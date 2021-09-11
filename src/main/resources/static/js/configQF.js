@@ -190,7 +190,8 @@ function validaCheckbox(){
             });
             $("#QFweightsModal").modal();
         } else {
-            alert('You have no selected metrics.');
+            warningUtils("Warning", "You have no selected metrics.");
+            //alert('You have no selected metrics.');
             document.getElementById('QFweightCheckbox').checked = false;
             document.getElementById('QFweightCheckbox').checked = false;
         }
@@ -250,7 +251,8 @@ $("#QFweightEditButton").click(function () { // (...) btn
         });
         $("#QFweightsModal").modal();
     } else {
-        alert('You have no selected metrics.');
+        warningUtils("Warning", "You have no selected metrics.");
+        //alert('You have no selected metrics.');
         document.getElementById('QFweightCheckbox').checked = false;
         document.getElementById('QFweightEditButton').disabled = true;
     }
@@ -280,7 +282,10 @@ $("#QFsubmitWeightsButton").click(function () {
         "- Empty fields\n" +
         "- Zero value");
     else {
-        if (totalSum != 100) alert("Total sum is not equals to 100.");
+        if (totalSum != 100) {
+            warningUtils("Warning", "Total sum is not equals to 100.");
+            //alert("Total sum is not equals to 100.");
+        }
         else {
             weightsForMetrics = aux;
             $("#QFweightsModal").modal('hide');
@@ -342,7 +347,8 @@ $("#saveQF").click(function () {
     } else { // when quality factors a weighted
         if (!checkTotalSum()) {
             totalSum = false;
-            alert("Total sum is not equals to 100.");
+            warningUtils( "Warning", "Total sum is not equals to 100.");
+            //alert("Total sum is not equals to 100.");
         }
         qualityMetrics = weightsForMetrics;
     }
@@ -369,9 +375,11 @@ $("#saveQF").click(function () {
             //ToDo: the service produces more than one error, the current message does not fit all of them
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status === 409)
-                    alert("This Quality Factor name is already in use");
+                    warningUtils("Error", "This Quality Factor name is already in use");
+                    //alert("This Quality Factor name is already in use");
                 else {
-                    alert("Error in the ElasticSearch: contact to the system administrator");
+                    warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
+                    //alert("Error in the ElasticSearch: contact to the system administrator");
                     location.href = "../QualityFactors/Configuration";
                 }
             },
@@ -384,7 +392,8 @@ $("#saveQF").click(function () {
                     processData: false,
                     //ToDo: the service produces more than one error, the current message does not fit all of them
                     error: function (jqXHR, textStatus, errorThrown) {
-                        alert("Error in the ElasticSearch: contact to the system administrator");
+                        warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
+                        //alert("Error in the ElasticSearch: contact to the system administrator");
                         location.href = "../QualityFactors/Configuration";
                     },
                     success: function () {
@@ -393,7 +402,8 @@ $("#saveQF").click(function () {
                 });
             }
         });
-    } else alert("Make sure that you have completed correctly all fields marked with an *");
+    } else warningUtils("Warning","Make sure that you have completed correctly all fields marked with an *");
+        //alert("Make sure that you have completed correctly all fields marked with an *");
 });
 
 $("#deleteQF").click(function () {
@@ -409,7 +419,8 @@ $("#deleteQF").click(function () {
             },
             error: function (error) {
                 if (error.status === 403) {
-                    alert("This factor can't be deleted, it's involved in Strategic Indicators computation.");
+                    warningUtils("Error","This factor can't be deleted, it's involved in Strategic Indicators computation.");
+                    //alert("This factor can't be deleted, it's involved in Strategic Indicators computation.");
                 }
             }
         });

@@ -252,7 +252,8 @@ app.controller('TablesCtrl', function($scope, $http) {
             url : url
         }).then(function (response) {
             if (response.data.length == 0){
-                alert("No QR");
+                warningUtils("Error","No QR");
+                //alert("No QR");
             }
             else if (response.data.length == 1) {
                 $scope.showQRCandidate(response.data[0], alertId);
@@ -339,12 +340,14 @@ app.controller('TablesCtrl', function($scope, $http) {
                 if (response.status === 500) {
                     $("#QRModal").modal('hide');
                     $scope.getAlerts();
-                    alert("Error on saving the quality requirement to the backlog")
+                    warningUtils("Error", "Error on saving the quality requirement to the backlog");
+                    //alert("Error on saving the quality requirement to the backlog")
                 }
                 else {
                     $("#QRModal").modal('hide');
                     $scope.getAlerts();
-                    alert("Error on saving the quality requirement")
+                    warningUtils("Error", "Error on saving the quality requirement");
+                    //alert("Error on saving the quality requirement")
                 }
             });
         };
@@ -834,7 +837,8 @@ app.controller('TablesCtrl', function($scope, $http) {
     };
 
     $scope.gotoQR = function(id){
-      alert(id);
+        warningUtils("Ok", id);
+      //alert(id);
     };
 
     $scope.sortType = 'date';

@@ -28,9 +28,11 @@ function getDataFactors(width, height, chartHyperlinked, color) {
         },
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
-                alert("Your datasource and DB categories IDs do not match.");
+                warningUtils("Error","Your datasource and DB categories IDs do not match.");
+                //alert("Your datasource and DB categories IDs do not match.");
             else if (jqXHR.status == 400)
-                alert("Datasource connection failed.");
+                warningUtils("Error", "Datasource connection failed.");
+                //alert("Datasource connection failed.");
         }
     });
 }
