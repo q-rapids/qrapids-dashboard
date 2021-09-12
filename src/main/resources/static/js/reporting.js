@@ -157,7 +157,6 @@ function linkWithJasper(dirName){
         },
         error: function() {
             warningUtils("Error","Error loading reports");
-            //alert("Error loading reports");
         }
     });
 }

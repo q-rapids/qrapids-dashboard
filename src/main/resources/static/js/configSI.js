@@ -231,7 +231,6 @@ function validaCheckbox(){
             $("#SIweightsModal").modal();
         } else {
             warningUtils("Warning", "You have no selected factors.");
-            //alert('You have no selected factors.');
             document.getElementById('weightCheckbox').checked = false;
         }
     }
@@ -292,7 +291,6 @@ $("#weightEditButton").click(function () {
         $("#SIweightsModal").modal();
     } else {
         warningUtils("Warning", "You have no selected factors.");
-        //alert('You have no selected factors.');
         document.getElementById('weightCheckbox').checked = false;
         document.getElementById('weightEditButton').disabled = true;
     }
@@ -324,7 +322,6 @@ $("#SIsubmitWeightsButton").click(function () {
     else {
         if (totalSum != 100) {
             warningUtils( "Warning", "Total sum is not equals to 100.");
-            //alert("Total sum is not equals to 100.");
         }
         else {
             weightsForFactors = aux;
@@ -389,7 +386,6 @@ $("#saveSI").click(function () {
         if (!checkTotalSum()) {
             totalSum = false;
             warningUtils( "Warning", "Total sum is not equals to 100.");
-            //alert("Total sum is not equals to 100.");
         }
         qualityFactors = weightsForFactors;
     }
@@ -417,10 +413,8 @@ $("#saveSI").click(function () {
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status === 409)
                     warningUtils("Error","This Strategic Indicator name is already in use");
-                    //alert("This Strategic Indicator name is already in use");
                 else {
                     warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
-                    //alert("Error in the ElasticSearch: contact to the system administrator");
                     location.href = "../StrategicIndicators/Configuration";
                 }
             },
@@ -429,7 +423,6 @@ $("#saveSI").click(function () {
             }
         });
     } else warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
-        //alert("Make sure that you have completed correctly all fields marked with an *");
 });
 
 $("#deleteSI").click(function () {

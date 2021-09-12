@@ -118,10 +118,8 @@ $('#newSI').click(function () {
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 409)
                     warningUtils("Error", "This Strategic Indicator name is already in use");
-                    //alert("This Strategic Indicator name is already in use");
                 else {
                     warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
-                    //alert("Error in the ElasticSearch: contact to the system administrator");
                     location.href = "../StrategicIndicators/CurrentChart";
                 }
             },
@@ -130,5 +128,4 @@ $('#newSI').click(function () {
             }
         });
     } else warningUtils("Warning","Make sure that you have completed all fields marked with an *");
-        //alert("Make sure that you have completed all fields marked with an *");
 });
