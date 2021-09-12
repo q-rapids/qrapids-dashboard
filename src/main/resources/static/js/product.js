@@ -233,7 +233,7 @@ function getChosenProject(currentProjectId) {
 					type: "GET",
 					async: true,
 					error: function(jqXHR, textStatus, errorThrown) {
-						if (jqXHR.status == 500) alert("There is no information to show about milestones.");
+						if (jqXHR.status == 500) warningUtils("Warning", "There is no information to show about milestones.");
 					},
 					success: function (milestones) {
 						if (milestones.length > 0) {
@@ -242,7 +242,7 @@ function getChosenProject(currentProjectId) {
 								$("#milestonesItems").append('<tr class="milestoneItem"><td>' + milestone.date + '</td><td>' + milestone.type + '</td><td>' + milestone.name + '</td><td>' + milestone.description + '</td></tr>');
 							});
 							$("#milestonesModal").modal();
-						} else alert("There is no information to show about milestones.");
+						} else warningUtils("Warning", "There is no information to show about milestones.");
 					}
 				})
 			};
@@ -260,7 +260,7 @@ function getChosenProject(currentProjectId) {
 					type: "GET",
 					async: true,
 					error: function(jqXHR, textStatus, errorThrown) {
-						if (jqXHR.status == 500) alert("There is no information to show about phases.");
+						if (jqXHR.status == 500) warningUtils("Warning", "There is no information to show about phases.");
 					},
 					success: function (phases) {
 						if (phases.length > 0) {
@@ -269,7 +269,7 @@ function getChosenProject(currentProjectId) {
 								$("#phasesItems").append('<tr class="phaseItem"><td>' + phase.dateFrom + '</td><td>' + phase.dateTo + '</td><td>' + phase.name + '</td><td>' + phase.description + '</td></tr>');
 							});
 							$("#phasesModal").modal();
-						} else alert("There is no information to show about phases.");
+						} else warningUtils("Warning", "There is no information to show about phases.");
 					}
 				})
 			};
@@ -328,9 +328,9 @@ function saveProject() {
 	            processData: false,
 	            error: function(jqXHR, textStatus, errorThrown) {
 	                if (jqXHR.status == 409)
-	                    alert("This Project name is already in use");
+	                	warningUtils("Error", "This Project name is already in use");
 	                else {
-	                    alert("Error in the ElasticSearch: contact to the system administrator");
+						warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
 	                    location.href = "../Products/Configuration";
 	                }
 	            },
@@ -342,9 +342,9 @@ function saveProject() {
 	            }
 	        });
     	} else {
-        	alert("The logo exceeds its maximum permitted size of 1Mb.");
+    		warningUtils("Error", "The logo exceeds its maximum permitted size of 1Mb.");
         } 
-    } else alert("Make sure that you have completed all fields marked with an *");
+    } else warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
 };
 
 function getChosenProduct(currentProductId) {
@@ -599,9 +599,9 @@ function saveProduct() {
                 processData: false,
                 error: function(jqXHR, textStatus, errorThrown) {
                     if (jqXHR.status == 409)
-                        alert("This Product name is already in use");
+						warningUtils("Error", "This Product name is already in use");
                     else {
-                        alert("Error in the ElasticSearch: contact to the system administrator");
+						warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
                         location.href = serverUrl + "/Products/Configuration";
                     }
                 },
@@ -611,9 +611,9 @@ function saveProduct() {
                 }
             });
         } else {
-        	alert("The logo exceeds its maximum permitted size of 1Mb.");
+			warningUtils("Error", "The logo exceeds its maximum permitted size of 1Mb.");
         } 
-    } else alert("Make sure that you have completed all fields marked with an *");
+    } else warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
 };
 
 function deleteProduct() {
@@ -629,7 +629,7 @@ function deleteProduct() {
             contentType: false,
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
-                alert("Error in the ElasticSearch: contact to the system administrator");
+				warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
                 location.href = serverUrl + "/Products/Configuration";
             },
             success: function() {
@@ -829,9 +829,9 @@ function saveNewProduct() {
                 processData: false,
                 error: function(jqXHR, textStatus, errorThrown) {
                     if (jqXHR.status == 409)
-                        alert("This Product name is already in use");
+                    	warningUtils("Error", "This Product name is already in use");
                     else {
-                        alert("Error in the ElasticSearch: contact to the system administrator");
+						warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
                         location.href = serverUrl + "/Products/Configuration";
                     }
                 },
@@ -842,9 +842,9 @@ function saveNewProduct() {
                 }
             });
         } else {
-        	alert("The logo exceeds its maximum permitted size of 1Mb.");
+			warningUtils("Error", "The logo exceeds its maximum permitted size of 1Mb.");
         } 
-    } else alert("Make sure that you have completed all fields marked with an *");
+    } else warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
 };
 
 function goToDetailedEvaluation() {

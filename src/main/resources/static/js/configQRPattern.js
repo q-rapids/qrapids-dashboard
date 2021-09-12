@@ -705,13 +705,17 @@ function savePattern() {
             error: function (jqXHR, textStatus, errorThrown) {
                 document.getElementById("saveButton").innerHTML = "Save Pattern";
                 if (jqXHR.status == 400)
-                    alert("Error: Missing parameters");
+                    warningUtils("Error","Error: Missing parameters");
+                    //alert("Error: Missing parameters");
                 else if (jqXHR.status == 404)
-                    alert("Error: This pattern does not exist");
+                    warningUtils("Error","Error: This pattern does not exist");
+                    //alert("Error: This pattern does not exist");
                 else if (jqXHR.status == 409)
-                    alert("Error: Pattern name already exists");
+                    warningUtils("Error","Error: Pattern name already exists");
+                    //alert("Error: Pattern name already exists");
                 else {
-                    alert("Internal server error");
+                    warningUtils("Error","Internal server error");
+                    //alert("Internal server error");
                 }
             },
             success: function() {
@@ -736,7 +740,8 @@ function savePattern() {
         });
     }
     else {
-        alert("Make sure that you have completed all fields marked with an *");
+        warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
+        //alert("Make sure that you have completed all fields marked with an *");
     }
 }
 
@@ -757,9 +762,11 @@ function deletePattern() {
             error: function (jqXHR, textStatus, errorThrown) {
                 $('#deleteButton').text("Delete Pattern");
                 if (jqXHR.status == 404)
-                    alert("Error: This pattern does not exist");
+                    warningUtils("Error", "Error: This pattern does not exist");
+                    //alert("Error: This pattern does not exist");
                 else {
-                    alert("Internal server error");
+                    warningUtils("Error","Internal server error");
+                    //alert("Internal server error");
                 }
             },
             success: function () {
@@ -894,11 +901,14 @@ function saveClassifier() {
                 error: function (jqXHR, textStatus, errorThrown) {
                     document.getElementById("saveButton").innerHTML = "Save Classifier";
                     if (jqXHR.status == 400)
-                        alert("Error: Missing parameters");
+                        warningUtils("Error","Error: Missing parameters");
+                       //alert("Error: Missing parameters");
                     else if (jqXHR.status == 404)
-                        alert("Error: This classifier does not exist");
+                        warningUtils("Error","Error: This classifier does not exist");
+                       //alert("Error: This classifier does not exist");
                     else {
-                        alert("Internal server error");
+                        warningUtils("Error","Internal server error");
+                        //alert("Internal server error");
                     }
                 },
                 success: function () {
@@ -963,11 +973,13 @@ function saveClassifier() {
             });
         }
         else {
-            alert("You could not move a classifier that contains patterns or other classifiers");
+            warningUtils("Warning", "You could not move a classifier that contains patterns or other classifiers");
+            //alert("You could not move a classifier that contains patterns or other classifiers");
         }
     }
     else {
-        alert("Make sure that you have completed all fields marked with an *");
+        warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
+        //alert("Make sure that you have completed all fields marked with an *");
     }
 }
 
@@ -999,9 +1011,11 @@ function deleteClassifier() {
                 error: function (jqXHR, textStatus, errorThrown) {
                     $('#deleteButton').text("Delete Classifier");
                     if (jqXHR.status == 404)
-                        alert("Error: This classifier does not exist");
+                        warningUtils("Error", "Error: This classifier does not exist")
+                        //alert("Error: This classifier does not exist");
                     else {
-                        alert("Internal server error");
+                        warningUtils("Error","Internal server error");
+                        //alert("Internal server error");
                     }
                 },
                 success: function () {
@@ -1015,7 +1029,8 @@ function deleteClassifier() {
                 }
             });
         } else {
-            alert("You could not delete a classifier that contains patterns or other classifiers");
+            warningUtils("Warning", "You could not move a classifier that contains patterns or other classifiers");
+            //alert("You could not delete a classifier that contains patterns or other classifiers");
         }
     }
 }
@@ -1255,11 +1270,13 @@ function saveMetric() {
             var minValue = $('#metricMinValue').val();
             var maxValue = $('#metricMaxValue').val();
             if (minValue == "" || maxValue == "") {
-                alert("Minimum value or maximum value are not numbers");
+                warningUtils("Warning", "Minimum value or maximum value are not numbers");
+                //alert("Minimum value or maximum value are not numbers");
                 return;
             }
             if (parseFloat(minValue) > parseFloat(maxValue)) {
-                alert("Minimum value must be equal or smaller than maximum value");
+                warningUtils("Warning", "Minimum value must be equal or smaller than maximum value");
+                //alert("Minimum value must be equal or smaller than maximum value");
                 return;
             }
             formData.append("minValue", minValue);
@@ -1284,13 +1301,17 @@ function saveMetric() {
             processData: false,
             error: function (jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 400)
-                    alert("Error: Missing parameters");
+                    warningUtils("Error","Error: Missing parameters");
+                    //alert("Error: Missing parameters");
                 else if (jqXHR.status == 404)
-                    alert("Error: This metric does not exist");
+                    warningUtils("Error", "Error: This metric does not exist");
+                    //alert("Error: This metric does not exist");
                 else if (jqXHR.status == 409)
-                    alert("Error: Metric name already exists");
+                    warningUtils("Error", "Error: Metric name already exists");
+                    //alert("Error: Metric name already exists");
                 else {
-                    alert("Internal server error");
+                    warningUtils("Error","Internal server error");
+                    //alert("Internal server error");
                 }
             },
             success: function() {
@@ -1309,7 +1330,8 @@ function saveMetric() {
         });
     }
     else {
-        alert("Make sure that you have completed all fields marked with an *");
+        warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
+        //alert("Make sure that you have completed all fields marked with an *");
     }
 }
 
@@ -1327,11 +1349,14 @@ function deleteMetric() {
             processData: false,
             error: function (jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 404)
-                    alert("Error: This pattern does not exist");
+                    warningUtils("Error", "Error: This pattern does not exist");
+                    //alert("Error: This pattern does not exist");
                 else if (jqXHR.status == 409)
-                    alert("Error: This metric is used in one or more patterns");
+                    warningUtils("Error", "Error: This metric is used in one or more patterns");
+                    //alert("Error: This metric is used in one or more patterns");
                 else {
-                    alert("Internal server error");
+                    warningUtils("Error","Internal server error");
+                    //alert("Internal server error");
                 }
             },
             success: function () {
