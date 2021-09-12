@@ -230,7 +230,7 @@ function validaCheckbox(){
             });
             $("#SIweightsModal").modal();
         } else {
-            alert('You have no selected factors.');
+            warningUtils("Warning", "You have no selected factors.");
             document.getElementById('weightCheckbox').checked = false;
         }
     }
@@ -290,7 +290,7 @@ $("#weightEditButton").click(function () {
         });
         $("#SIweightsModal").modal();
     } else {
-        alert('You have no selected factors.');
+        warningUtils("Warning", "You have no selected factors.");
         document.getElementById('weightCheckbox').checked = false;
         document.getElementById('weightEditButton').disabled = true;
     }
@@ -320,7 +320,9 @@ $("#SIsubmitWeightsButton").click(function () {
         "- Empty fields\n" +
         "- Zero value");
     else {
-        if (totalSum != 100) alert("Total sum is not equals to 100.");
+        if (totalSum != 100) {
+            warningUtils( "Warning", "Total sum is not equals to 100.");
+        }
         else {
             weightsForFactors = aux;
             $("#SIweightsModal").modal('hide');
@@ -383,7 +385,7 @@ $("#saveSI").click(function () {
     } else { // when quality factors a weighted
         if (!checkTotalSum()) {
             totalSum = false;
-            alert("Total sum is not equals to 100.");
+            warningUtils( "Warning", "Total sum is not equals to 100.");
         }
         qualityFactors = weightsForFactors;
     }
@@ -410,9 +412,9 @@ $("#saveSI").click(function () {
             //ToDo: the service produces more than one error, the current message does not fit all of them
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status === 409)
-                    alert("This Strategic Indicator name is already in use");
+                    warningUtils("Error","This Strategic Indicator name is already in use");
                 else {
-                    alert("Error in the ElasticSearch: contact to the system administrator");
+                    warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
                     location.href = "../StrategicIndicators/Configuration";
                 }
             },
@@ -420,7 +422,7 @@ $("#saveSI").click(function () {
                 location.href = "../StrategicIndicators/Configuration";
             }
         });
-    } else alert("Make sure that you have completed correctly all fields marked with an *");
+    } else warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
 });
 
 $("#deleteSI").click(function () {

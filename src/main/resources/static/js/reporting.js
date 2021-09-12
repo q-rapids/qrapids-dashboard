@@ -156,7 +156,7 @@ function linkWithJasper(dirName){
             $("#tableREPdiv").show();
         },
         error: function() {
-            alert("Error loading reports");
+            warningUtils("Error","Error loading reports");
         }
     });
 }

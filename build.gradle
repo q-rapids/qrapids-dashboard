@@ -81,7 +81,7 @@ dependencies {
 	compile files('libs/qrapids-qma-elastic-1.1.jar')
 
 	//API QR Generator
-	compile files('libs/qrapids-qr_generator-0.2.jar')
+	compile files('libs/qrapids-qr_generator-0.3.jar')
 
 	//Add qr-eval jar compilation
 	compile files('libs/qrapids-eval-2.1.jar')

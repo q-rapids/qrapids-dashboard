@@ -47,7 +47,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 
 	static ConfigurableApplicationContext context;
 
-	@Scheduled(cron = "${cron.expression:-}") // default -> disable scheduled task
+	/*@Scheduled(cron = "${cron.expression:-}") // default -> disable scheduled task
 	public void scheduleTask() throws ParseException, ProjectNotFoundException, IOException, CategoriesException {
 		// ToDo: decide if we also copy this code to assessSI function
 		Logger logger = LoggerFactory.getLogger(Alerts.class);
@@ -71,7 +71,7 @@ public class QrapidsApplication extends SpringBootServletInitializer {
 		if (!correct) { // check if the assessment complete with error
 			logger.error(evaluationLocalDate + ": factors or strategic indicators assessment complete with error.");
 		}
-	}
+	}*/
 
 
 	public static void main(String[] args) throws Exception {

@@ -555,7 +555,7 @@ $('#apply').click(function () {
             }
         },
         error: function() {
-            alert("Metrics simulation failed");
+            warningUtils("Error", "Metrics simulation failed");
         }
     });
 });

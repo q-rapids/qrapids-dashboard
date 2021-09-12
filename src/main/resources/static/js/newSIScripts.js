@@ -117,9 +117,9 @@ $('#newSI').click(function () {
             //ToDo: the service produces more than one error, the current message does not fit all of them
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 409)
-                    alert("This Strategic Indicator name is already in use");
+                    warningUtils("Error", "This Strategic Indicator name is already in use");
                 else {
-                    alert("Error in the ElasticSearch: contact to the system administrator");
+                    warningUtils("Error", "Error in the ElasticSearch: contact to the system administrator");
                     location.href = "../StrategicIndicators/CurrentChart";
                 }
             },
@@ -127,5 +127,5 @@ $('#newSI').click(function () {
                 location.href = "../StrategicIndicators/CurrentChart";
             }
         });
-    } else alert("Make sure that you have completed all fields marked with an *");
+    } else warningUtils("Warning","Make sure that you have completed all fields marked with an *");
 });

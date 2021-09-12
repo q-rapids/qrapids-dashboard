@@ -3,6 +3,26 @@
 <head>
 </head>
 <body>
+
+    <th:block th:fragment="warningModal">
+        <div class="modal fade" id="warningModal" role="dialog" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="border-bottom:0px;padding-bottom:0px;">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <p id="warningModalType"> </p>
+                    </div>
+                    <div class="modal-body" style="border-bottom:0px; padding: 0">
+                        <p id="warningModalBody"> </p>
+                    </div>
+                    <div class="modal-footer" style="border-top:0px">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </th:block>
+
     <th:block th:fragment="projectModal">
         <div class="modal fade" id="projectsModal" role="dialog" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog">

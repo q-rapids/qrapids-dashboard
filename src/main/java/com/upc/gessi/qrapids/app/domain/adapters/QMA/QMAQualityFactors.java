@@ -224,9 +224,9 @@ public class QMAQualityFactors {
             else found = true; // because we want make fetch
             // only return Detailed Quality Factor if it is in local database
             if (found) {
-                // check metric composition this factor
+                // check metric composition this factor, if we don't fetch it
                 String factorExternalID = null;
-                if (currentData) factorExternalID = qualityFactor.getID();
+                if ((filterDB != false) && currentData) factorExternalID = qualityFactor.getID();
                 DTODetailedFactorEvaluation df = new DTODetailedFactorEvaluation(qualityFactor.getID(), qualityFactor.getName(), QMAMetrics.MetricEvaluationDTOListToDTOMetricList(factorExternalID, qualityFactor.getMetrics(), project.getExternalId() ,profileId));
                 EvaluationDTO evaluation = qualityFactor.getEvaluations().get(0);
                 df.setDate(evaluation.getEvaluationDate());
