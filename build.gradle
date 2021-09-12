@@ -26,7 +26,7 @@ apply plugin: 'jacoco'
 apply plugin: 'org.asciidoctor.convert'
 
 group = 'com.upc.gessi.qrapids'
-version = '2.0.1'
+version = '2.2'
 sourceCompatibility = 1.8
 
 war {
