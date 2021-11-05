@@ -17,8 +17,6 @@ function checkCategories() {
             if (categories.length === 0) {
                 warningUtils("Warning", "You need to define Strategic Indicator categories in order to see the chart correctly. " +
                     "Please, go to the Categories section of the Configuration menu and define them.");
-                //alert("You need to define Strategic Indicator categories in order to see the chart correctly. " +
-                  //  "Please, go to the Categories section of the Configuration menu and define them.");
             }
         }
     });
@@ -49,10 +47,8 @@ function getData(width, height, showButtons, chartHyperlinked, color) {
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
                 warningUtils("Error","Your datasource and DB categories IDs do not match.");
-                //alert("Your datasource and DB categories IDs do not match.");
             else if (jqXHR.status == 400) {
                 warningUtils("Error", "Datasource connection failed.");
-                //alert("Datasource connection failed.");
             }
         }
     });
@@ -77,10 +73,8 @@ function seeFeedback(i){
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 409)
                 warningUtils("Error","Your datasource and DB categories IDs do not match.");
-                //alert("Your datasource and DB categories IDs do not match.");
             else if (jqXHR.status == 400) {
                 warningUtils("Error", "Datasource connection failed.");
-                //alert("Datasource connection failed.");
             }
         }
     });

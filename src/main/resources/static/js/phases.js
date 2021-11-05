@@ -59,8 +59,7 @@ function getPhasesList () {
                 });
                 getData(p);
             } else {
-                warningUtils("Error", "No information about phases of this project.");
-                //alert("No information about phases of this project.");
+                warningUtils("Warning", "No information about phases of this project.");
             }
         });
 }
@@ -76,8 +75,6 @@ function checkCategories() {
             if (categories.length === 0) {
                 warningUtils("Warning", "You need to define Strategic Indicator categories in order to see the heatmap correctly. " +
                     "Please, go to the Categories section of the Configuration menu and define them.");
-                //alert("You need to define Strategic Indicator categories in order to see the heatmap correctly. " +
-                  //  "Please, go to the Categories section of the Configuration menu and define them.");
             } else {
                 // add special color for SI with no data
                 r.push({

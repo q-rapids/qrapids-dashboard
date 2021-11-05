@@ -1203,7 +1203,6 @@ $("#submitProfileSelectProjectsModalBtn").click(function () {
         }
 
     } else warningUtils("Warning","Make sure that you have completed all fields marked with an *");
-        //alert("Make sure that you have completed all fields marked with an *");
 });
 
 function openSelectSIsModal() {
@@ -1366,7 +1365,6 @@ $("#submitProfileProjectSelectSIsModalBtn").click(function () {
         }
 
     } else warningUtils("Warning","Make sure that you have completed all fields marked with an *");
-        //alert("Make sure that you have completed all fields marked with an *");
 });
 
 function showSIsList() {
@@ -1626,11 +1624,10 @@ function saveNewProfile() {
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 409)
                     warningUtils("Error", "This Profile name is already in use");
-                    //alert("This Profile name is already in use");
+
                 else {
                     warningUtils()
                     warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
-                    //alert("Error in the ElasticSearch: contact to the system administrator");
                     location.href = serverUrl + "/Profiles/Configuration";
                 }
             },
@@ -1639,7 +1636,6 @@ function saveNewProfile() {
             }
         });
     } else warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
-        //alert("Make sure that you have completed all fields marked with an *");
 };
 
 function saveProfile() {
@@ -1739,10 +1735,8 @@ function saveProfile() {
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 409)
                     warningUtils("Error", "This Profile name is already in use");
-                    //alert("This Profile name is already in use");
                 else {
                     warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
-                    //alert("Error in the ElasticSearch: contact to the system administrator");
                     location.href = "../Profiles/Configuration";
                 }
             },
@@ -1751,7 +1745,6 @@ function saveProfile() {
             }
         });
     } else warningUtils("Warning", "Make sure that you have completed all fields marked with an *");
-    //alert("Make sure that you have completed all fields marked with an *");
 };
 
 function deleteProfile() {
@@ -1768,7 +1761,6 @@ function deleteProfile() {
             processData: false,
             error: function(jqXHR, textStatus, errorThrown) {
                 warningUtils("Error","Error in the ElasticSearch: contact to the system administrator");
-                //alert("Error in the ElasticSearch: contact to the system administrator");
                 location.href = serverUrl + "/Profiles/Configuration";
             },
             success: function() {

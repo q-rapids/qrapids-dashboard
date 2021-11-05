@@ -98,7 +98,6 @@ $('#accept').click(function () {
 
     if (dataSI.length < 2 || dataQF.length < 2)
         warningUtils("Warning", "There has to be at least 2 categories for each indicator.");
-        //alert("There has to be at least 2 categories for each indicator.")
     else {
         $.ajax({
             url: '../api/categories',
@@ -109,7 +108,6 @@ $('#accept').click(function () {
             error: function(jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 500)
                     warningUtils("Error", "You can't have two categories with the same name.");
-                    //alert("You can't have two categories with the same name.");
             },
             success: function() {
                 location.reload();

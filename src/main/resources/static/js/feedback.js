@@ -202,7 +202,6 @@ function newFeedback(strategicIndicator, newvalue){
         processData: false,
         success: function() {
             warningUtils("Ok", "Your feedback has been stored successfully");
-            //alert("Your feedback has been stored successfully");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
         }

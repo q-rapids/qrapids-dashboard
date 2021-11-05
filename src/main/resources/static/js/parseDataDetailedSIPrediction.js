@@ -34,7 +34,6 @@ function getData() {
     var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
     if (diffDays < 1) {
         warningUtils("Warning", "To date has to be bigger than from date");
-        //alert('To date has to be bigger than from date');
     } else {
         //get predicted data from API
         jQuery.ajax({

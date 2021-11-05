@@ -556,7 +556,6 @@ $('#apply').click(function () {
         },
         error: function() {
             warningUtils("Error", "Metrics simulation failed");
-            //alert("Metrics simulation failed");
         }
     });
 });
@@ -582,8 +581,7 @@ function simulateSI (qualityFactors) {
         processData: false,
         error: function(jqXHR, textStatus, errorThrown) {
             if (jqXHR.status == 500)
-                warningUtils("Error", textStatus);
-                //alert(textStatus);
+                alert(textStatus);
         },
         success: function(result) {
             data = result;
