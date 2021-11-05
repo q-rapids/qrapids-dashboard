@@ -17,6 +17,7 @@ function warningUtils(type, text) {
 
     $("#warningModalBody").append('<span style="padding-left:15px;font-size:15px">' + "&nbsp;" + text + '</span>');
     $("#warningModal").modal();
-    //$("#SIweightsModal").modal();
-    //$("#SIweightsModal").modal();
+
 }
+
+

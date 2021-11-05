@@ -132,8 +132,10 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             // Test elements and try to verify if the current route is allowed for the current user
             else{
                 // Cast set object ot List of AppUSers
-                routes.addAll( user.getUserGroup().getRoutes() );
-                isAllowed = this.routeFilter.filterShiled( origin_request, token, routes );
+                isAllowed = true;
+                //old version that checks if the route is allowed for a not admin user
+                //routes.addAll( user.getUserGroup().getRoutes() );
+                //isAllowed = this.routeFilter.filterShiled( origin_request, token, routes );
             }
 
         }
@@ -155,6 +157,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
 	}
+	public AppUser getUser(String token) {
+        return  this.userRepository.findByUsername( this.authTools.getUserToken( token ) );
+    }
 
 	private void logMessage (String message) {
         if (this.DEBUG)

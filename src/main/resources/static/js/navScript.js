@@ -1,6 +1,6 @@
 var currentURL = window.location.href;
 var viewMode, DSIRepresentationMode, DQFRepresentationMode, metRepresentationMode, qmMode, time, assessment, prediction, products, simulation, configuration, userName;
-
+getIfUserIsAdmin();
 var serverUrl = null;
 if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
     jQuery.ajax({
@@ -21,6 +21,46 @@ if (!(serverUrl = sessionStorage.getItem("serverUrl"))) {
 else {
     connect();
     checkAlertsPending();
+}
+
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function getIfUserIsAdmin() {
+
+    token = getCookie("xFOEto4jYAjdMeR3Pas6_");
+    console.log("TOKEN: " + token);
+    if(token!="") {
+        jQuery.ajax({
+            dataType: "json",
+            url: "../api/isAdmin?token="+token,
+            cache: false,
+            type: "GET",
+            async: false,
+            success: function (data) {
+                console.log("DATA:" + data);
+                sessionStorage.setItem("isAdmin", data);
+                return data;
+            },
+            error: function() {
+                console.log("ERROR");
+            }
+        });
+    }
+
 }
 
 function getUserName () {
@@ -399,7 +439,10 @@ else if (assessment === "DetailedStrategicIndicators") {
 } else $("#Assessment").attr("href", serverUrl + "/" + assessment  + "/" + time + viewMode);
 
 $("#Prediction").attr("href", serverUrl + "/" + prediction + "/" + "PredictionChart");
-
+if(!getIfUserIsAdmin()) {
+    console.log("HA ENTRAT");
+    $("#Prediction").hide();
+}
 $("#StrategicIndicatorsAssessment").attr("href", serverUrl + "/StrategicIndicators/" + time + viewMode);
 
 $("#StrategicIndicatorsPrediction").attr("href", serverUrl + "/StrategicIndicators/PredictionChart");
@@ -460,7 +503,9 @@ $("#ProductsEvaluation").attr("href", serverUrl+"/Products/Evaluation");
 $("#ProductsDetailedEvaluation").attr("href", serverUrl+"/Products/DetailedEvaluation");
 
 $("#Configuration").attr("href", serverUrl + "/" + configuration + "/Configuration");
-
+if(!getIfUserIsAdmin()) {
+    $("#Configuration").hide();
+}
 $("#StrategicIndicatorsConfig").attr("href", serverUrl + "/StrategicIndicators/Configuration");
 
 $("#QualityFactorsConfig").attr("href", serverUrl + "/QualityFactors/Configuration");

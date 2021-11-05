@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "project")
-public class Project {	
+public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,17 +21,17 @@ public class Project {
     private boolean active;
     @Column(name = "backlogId")
     private String backlogId;
-    
+
     public Project(){}
-    
+
     public Project(String externalId, String name, String description, byte[] logo, boolean active) {
-    	this.externalId = externalId;
-    	this.name = name;
-    	this.description = description;
-    	this.logo = logo;
-    	this.active = active;
+        this.externalId = externalId;
+        this.name = name;
+        this.description = description;
+        this.logo = logo;
+        this.active = active;
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -71,7 +71,7 @@ public class Project {
     public void setLogo(byte[] logo) {
         this.logo = logo;
     }
-    
+
     public boolean getActive() {
         return active;
     }

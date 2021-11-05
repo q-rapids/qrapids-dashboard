@@ -18,17 +18,17 @@ public class AppUser implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	@Column(name="username", unique = true)
-	private String username;
+    @Column(name="username", unique = true)
+    private String username;
 
-	@Column(name="email", unique = true)
-	private String email;
+    @Column(name="email", unique = true)
+    private String email;
 
-	@Column(name="admin")
-	private boolean admin;
+    @Column(name="admin")
+    private boolean admin;
 
-	@Column(name="password")
-	private String password;
+    @Column(name="password")
+    private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="usergroup_id")
@@ -40,7 +40,13 @@ public class AppUser implements Serializable{
     @Column(name="question")
     private String question;
 
-	public AppUser() { }
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable( name = "user_project",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "project_id") })
+    private List<Project> allowedProjects;
+
+    public AppUser() { }
 
     public AppUser(String username, String email, boolean admin, String password, UserGroup userGroup, Question appuser_question, String question) {
         this.username = username;
@@ -109,8 +115,12 @@ public class AppUser implements Serializable{
 
     public String getPassword() {
 
-	    return password;
+        return password;
 
+    }
+
+    public List<Project> getAllowedProjects() {
+        return allowedProjects;
     }
 
     public UserGroup getUserGroup() {
@@ -131,7 +141,7 @@ public class AppUser implements Serializable{
         if ( this.admin )
             return true;
 
-	    else if (this.userGroup != null) {
+        else if (this.userGroup != null) {
 
             // Validation library
             RouteFilter filter = new RouteFilter();
@@ -142,7 +152,7 @@ public class AppUser implements Serializable{
 
         }
 
-	    return false;
+        return false;
     }
 
     @Override
